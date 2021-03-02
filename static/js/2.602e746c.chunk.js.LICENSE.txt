@@ -1,0 +1,171 @@
+/*
+object-assign
+(c) Sindre Sorhus
+@license MIT
+*/
+
+/*! ./bookmarksManager */
+
+/*! ./config */
+
+/*! ./create */
+
+/*! ./dashboard */
+
+/*! ./embed */
+
+/*! ./errors */
+
+/*! ./factories */
+
+/*! ./page */
+
+/*! ./qna */
+
+/*! ./report */
+
+/*! ./service */
+
+/*! ./tile */
+
+/*! ./util */
+
+/*! ./visual */
+
+/*! ./visualDescriptor */
+
+/*! http-post-message */
+
+/*! http-post-message v0.2.3 | (c) 2016 Microsoft Corporation MIT */
+
+/*! no static exports found */
+
+/*! powerbi-client v2.17.2 | (c) 2016 Microsoft Corporation MIT */
+
+/*! powerbi-models */
+
+/*! powerbi-models v1.8.0 | (c) 2016 Microsoft Corporation MIT */
+
+/*! powerbi-router */
+
+/*! powerbi-router v0.1.5 | (c) 2016 Microsoft Corporation MIT */
+
+/*! window-post-message-proxy */
+
+/*! window-post-message-proxy v0.2.6 | (c) 2016 Microsoft Corporation MIT */
+
+/*!********************!*\
+        !*** ./src/qna.ts ***!
+        \********************/
+
+/*!*********************!*\
+        !*** ./src/page.ts ***!
+        \*********************/
+
+/*!*********************!*\
+        !*** ./src/tile.ts ***!
+        \*********************/
+
+/*!*********************!*\
+        !*** ./src/util.ts ***!
+        \*********************/
+
+/*!**********************!*\
+        !*** ./src/embed.ts ***!
+        \**********************/
+
+/*!***********************!*\
+        !*** ./src/config.ts ***!
+        \***********************/
+
+/*!***********************!*\
+        !*** ./src/create.ts ***!
+        \***********************/
+
+/*!***********************!*\
+        !*** ./src/errors.ts ***!
+        \***********************/
+
+/*!***********************!*\
+        !*** ./src/report.ts ***!
+        \***********************/
+
+/*!***********************!*\
+        !*** ./src/visual.ts ***!
+        \***********************/
+
+/*!************************!*\
+        !*** ./src/service.ts ***!
+        \************************/
+
+/*!**************************!*\
+        !*** ./src/dashboard.ts ***!
+        \**************************/
+
+/*!**************************!*\
+        !*** ./src/factories.ts ***!
+        \**************************/
+
+/*!*******************************!*\
+        !*** ./src/powerbi-client.ts ***!
+        \*******************************/
+
+/*!*********************************!*\
+        !*** ./src/bookmarksManager.ts ***!
+        \*********************************/
+
+/*!*********************************!*\
+        !*** ./src/visualDescriptor.ts ***!
+        \*********************************/
+
+/*!****************************************************!*\
+        !*** ./node_modules/powerbi-models/dist/models.js ***!
+        \****************************************************/
+
+/*!****************************************************!*\
+        !*** ./node_modules/powerbi-router/dist/router.js ***!
+        \****************************************************/
+
+/*!****************************************************************!*\
+        !*** ./node_modules/http-post-message/dist/httpPostMessage.js ***!
+        \****************************************************************/
+
+/*!*******************************************************************************!*\
+        !*** ./node_modules/window-post-message-proxy/dist/windowPostMessageProxy.js ***!
+        \*******************************************************************************/
+
+/** @license React v0.20.1
+ * scheduler.production.min.js
+ *
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/** @license React v17.0.1
+ * react-dom.production.min.js
+ *
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/** @license React v17.0.1
+ * react-jsx-runtime.production.min.js
+ *
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/** @license React v17.0.1
+ * react.production.min.js
+ *
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
