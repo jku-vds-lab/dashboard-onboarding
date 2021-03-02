@@ -48,15 +48,7 @@ export async function getRequestHeader() {
 
 
 async function getPBIAccessToken() {
-    let adal = require("adal-node");
 
-    let AuthenticationContext = adal.AuthenticationContext;
-
-    let config = require("./config.json");
-
-    let authorityUrl = config.authorityUri;
-
-    let context = new AuthenticationContext(authorityUrl);
 
     // const body:FormData = {
     //     'grant_type': 'password',
@@ -95,7 +87,7 @@ const getAccessToken = async function () {
     let AuthenticationContext = adal.AuthenticationContext;
 
     // Create a config variable that store credentials from config.json
-    let config = require("./config.json");
+    let config: any = '';//require("./config.json");
     console.log('Scope -->', config.scope);
 
 
