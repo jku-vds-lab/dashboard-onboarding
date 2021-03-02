@@ -4,8 +4,10 @@
 import React, { useState } from 'react';
 import { models, Report, Embed, service, Page } from 'powerbi-client';
 import { PowerBIEmbed } from 'powerbi-client-react';
+import  {getRequestHeader} from './authentication';
 import 'powerbi-report-authoring';
 import './App.css';
+import fetch from 'node-fetch';
 
 // Root Component to demonstrate usage of wrapper component
 function App (): JSX.Element {
@@ -14,7 +16,7 @@ function App (): JSX.Element {
 	const [report, setReport] = useState<Report>();
 
 	// API end-point url to get embed config for a sample report
-	const sampleReportUrl = 'https://aka.ms/sampleReportEmbedConfig';
+	const sampleReportUrl = `https://api.powerbi.com/v1.0/myorg/groups/2713d9da-5f81-45ac-a841-d7d5a7cb7336/reports/9c474757-d094-406c-ae95-960e131ac6c4/GenerateToken`;
 
 	// Report config useState hook
 	// Values for properties like embedUrl, accessToken and settings will be set on click of buttons below
@@ -47,8 +49,11 @@ function App (): JSX.Element {
 	// Fetch sample report's config (eg. embedUrl and AccessToken) for embedding
 	const mockSignIn = async () => {
 
-		// Fetch sample report's embed config
-		const reportConfigResponse = await fetch(sampleReportUrl);
+		const headers:HeadersInit = await getRequestHeader();
+		const reportConfigResponse = await fetch(sampleReportUrl, {
+			method: 'POST',
+			headers: headers,
+	});
 
 		if (!reportConfigResponse.ok) {
 			console.error(`Failed to fetch config for report. Status: ${ reportConfigResponse.status } ${ reportConfigResponse.statusText }`);
