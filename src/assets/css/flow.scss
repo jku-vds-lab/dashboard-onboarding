@@ -1,0 +1,55 @@
+$default-handle-color: rgb(158, 159, 160);
+$dashboard-color: rgb(233, 78, 127);
+$line-chart-color: rgb(22,88,108);
+$bar-chart-color: rgb(8,52,108);
+
+
+.empty{
+  background-color: #{$default-handle-color} !important;
+}
+
+.react-flow__background {
+  display: none;
+}
+
+.react-flow__attribution {
+  display: none;
+}
+
+.box-node {
+  background-color: #595959;
+  width: 200px;
+  height: 150px;
+  border-radius: 4px;
+  box-shadow: 0 0 4px #000000;
+  //   overflow: hidden;
+
+  .header {
+    height: 20px;
+    width: 100%;
+    border-radius: 4px 4px 0 0;
+
+    .title {
+      color: #ffffff;
+      font-size: 12px;
+      padding-left: 8px;
+      margin: 0;
+    }
+  }
+  .dashboard{
+    background-color: #{$dashboard-color};
+  }
+  .bar-chart{
+    background-color: #{$bar-chart-color};
+  }
+  .line-chart{
+    background-color: #{$line-chart-color};
+  }
+}
+
+.react-flow__handle{
+  width:8px;
+  height:8px;
+  background-color: #{$default-handle-color};
+  border: 1px solid rgb(27,29,40);
+}
