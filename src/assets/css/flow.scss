@@ -16,10 +16,10 @@ $bar-chart-color: rgb(8,52,108);
   display: none;
 }
 
-.box-node {
+.box-node, .simple-node {
   background-color: #595959;
-  width: 200px;
-  height: 150px;
+  width: 100px;
+  height: 80px;
   border-radius: 4px;
   box-shadow: 0 0 4px #000000;
   //   overflow: hidden;

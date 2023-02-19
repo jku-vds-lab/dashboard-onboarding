@@ -7,7 +7,7 @@ const BoxNode = ({data}) => {
                 <p className="title">{data?.title ?? "Title"}</p>
             </div>
 
-            <Handle
+           <Handle
                 id="input-1"
                 type="target" // target | source
                 position={Position.Left}

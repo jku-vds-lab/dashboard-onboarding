@@ -1,6 +1,9 @@
 import React, { useEffect } from "react";
 import Accordion from 'react-bootstrap/Accordion';
 import Form from 'react-bootstrap/Form';
+import Tab from 'react-bootstrap/Tab';
+import Tabs from 'react-bootstrap/Tabs';
+
 import {
   ResizeContent, ResizeHandleLeft,
   ResizeHandleRight,
@@ -18,9 +21,9 @@ const Dashboard = () => {
 
   return (
       <div className="dashboard" style={{ flexFlow: "row nowrap", flexGrow: 1, display: "flex" }}>
-        <ResizePanel className="component-cont" initialWidth={300} maxWidth={400}>
+        <ResizePanel className="component-cont" initialWidth={250} maxWidth={400} minWidth={100}>
           <ResizeContent>
-              <Accordion>
+              <Accordion defaultActiveKey={['0']} alwaysOpen>
                   <Accordion.Item eventKey="0">
                       <Accordion.Header>Traversal strategies</Accordion.Header>
                       <Accordion.Body>
@@ -31,12 +34,15 @@ const Dashboard = () => {
                                       name="traversal"
                                       id="depth-first"
                                       label="Depth first"
+                                      className="check-button"
+                                      checked="true"
                                   />
                                   <Form.Check
                                       type="radio"
                                       name="traversal"
                                       id="custom"
                                       label="Custom"
+                                      className="check-button"
                                   />
 
                               </div>
@@ -46,13 +52,11 @@ const Dashboard = () => {
                   <Accordion.Item eventKey="1">
                       <Accordion.Header>Components</Accordion.Header>
                       <Accordion.Body>
-                          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-                          minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-                          aliquip ex ea commodo consequat. Duis aute irure dolor in
-                          reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-                          pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-                          culpa qui officia deserunt mollit anim id est laborum.
+                      </Accordion.Body>
+                  </Accordion.Item>
+                  <Accordion.Item eventKey="2">
+                      <Accordion.Header>Subcomponents</Accordion.Header>
+                      <Accordion.Body>
                       </Accordion.Body>
                   </Accordion.Item>
               </Accordion>
@@ -69,13 +73,33 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <ResizePanel initialWidth={400} maxWidth={600}>
+        <ResizePanel initialWidth={400} maxWidth={500} minWidth={150}>
           <ResizeHandleLeft className="resize">
             <div className="col-resize" />
           </ResizeHandleLeft>
           <ResizeContent>
-            <div className="inner">
-            </div>
+              <Tabs
+                  defaultActiveKey="output"
+                  id=""
+                  className="mb-3"
+                  justify>
+                  <Tab eventKey="output" title="Output view">
+                    <div className="px-4">
+                        Content
+                    </div>
+                  </Tab>
+                  <Tab eventKey="story" title="Story text">
+                      <div className="px-4">
+                          Content
+                      </div>
+                  </Tab>
+                  <Tab eventKey="settings" title="Settings">
+                      <div className="px-4">
+                          Content
+                      </div>
+                  </Tab>
+              </Tabs>
+
           </ResizeContent>
         </ResizePanel>
         <div />

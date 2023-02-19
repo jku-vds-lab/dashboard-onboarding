@@ -9,42 +9,36 @@ import "../../assets/css/flow.scss";
 
 // Node types
 import BoxNode from "./nodeTypes/boxNode";
+import SimpleNode from "./nodeTypes/simpleNode";
 //Custom edge
 import Path from "./path";
 
 const initialNodes = [
     {
         id: "node-1",
-        type: "boxNode",
+        type: "simple",
         position: {x: 0, y: 0},
         data: {title: "Dashboard", type: "dashboard"},
     },
     {
         id: "node-2",
-        type: "output",
+        type: "simple",
         targetPosition: "top",
-        position: {x: 0, y: 200},
-        data: {label: "Component"},
-    },
-    {
-        id: "node-3",
-        type: "boxNode",
-        targetPosition: "top",
-        position: {x: 300, y: 0},
+        position: {x: 120, y: 0},
         data: {title: "Line Chart", type: "line-chart"},
     },
     {
-        id: "node-4",
-        type: "boxNode",
+        id: "node-3",
+        type: "simple",
         targetPosition: "top",
-        position: {x: 300, y: 200},
+        position: {x: 240, y: 0},
         data: {title: "Bar chart", type: "bar-chart"},
     },
 
 ];
-
+/** Create edges between nodes if needed*/
 const initialEdges = [
-    {
+    /*{
         id: "edge-1",
         source: "node-1",
         target: "node-2",
@@ -71,12 +65,13 @@ const initialEdges = [
         label: "storyline 2",
         labelStyle: {fill: "white"},
         labelBgStyle: {fill: "#2b2b2b"},
-    },
+    },*/
 ];
+
 
 // we define the nodeTypes outside of the component to prevent re-renderings
 // you could also use useMemo inside the component
-const nodeTypes = {boxNode: BoxNode};
+const nodeTypes = {boxNode: BoxNode, simple: SimpleNode};
 const edgeTypes = {
     path: Path,
 };
@@ -197,13 +192,7 @@ function NodesCanvas() {
             nodes={nodes}
             edges={edges}
             onNodesChange={onNodesChange}
-            onEdgesChange={onEdgesChange}
-            onConnect={onConnect}
-            onEdgeUpdate={onEdgeUpdate}
             nodeTypes={nodeTypes}
-            edgeTypes={edgeTypes}
-            onConnectStart={onConnectStart}
-            onConnectEnd={onConnectEnd}
             snapToGrid
             fitView
         />
