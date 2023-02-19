@@ -18,7 +18,7 @@ import "../../assets/css/dashboard.scss";
 const Dashboard = () => {
   useEffect(() => {
   }, []);
-
+const [checked, setChecked] = React.useState(true);
   return (
       <div className="dashboard" style={{ flexFlow: "row nowrap", flexGrow: 1, display: "flex" }}>
         <ResizePanel className="component-cont" initialWidth={250} maxWidth={400} minWidth={100}>
@@ -35,7 +35,8 @@ const Dashboard = () => {
                                       id="depth-first"
                                       label="Depth first"
                                       className="check-button"
-                                      checked="true"
+                                      defaultChecked={checked}
+                                      onChange={() => setChecked(!checked)}
                                   />
                                   <Form.Check
                                       type="radio"

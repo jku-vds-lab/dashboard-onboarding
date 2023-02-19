@@ -19,10 +19,9 @@ $bar-chart-color: rgb(8,52,108);
 .box-node, .simple-node {
   background-color: #595959;
   width: 100px;
-  height: 80px;
+  height: 60px;
   border-radius: 4px;
   box-shadow: 0 0 4px #000000;
-  //   overflow: hidden;
 
   .header {
     height: 20px;
@@ -52,4 +51,11 @@ $bar-chart-color: rgb(8,52,108);
   height:8px;
   background-color: #{$default-handle-color};
   border: 1px solid rgb(27,29,40);
+}
+
+.node-group{
+  background-color: rgba(83,83,83,0.3);
+  border: 1px solid rgb(83,83,83);
+  height: 200px;
+  width: 280px;
 }
