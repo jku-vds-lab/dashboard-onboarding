@@ -1,60 +1,85 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
+import Accordion from 'react-bootstrap/Accordion';
+import Form from 'react-bootstrap/Form';
+import {
+  ResizeContent, ResizeHandleLeft,
+  ResizeHandleRight,
+  ResizePanel,
+} from "react-hook-resize-panel";
+
 
 import NodesCanvas from "../nodesCanvas";
 
 import "../../assets/css/dashboard.scss";
 
-let enableResizeVar = false;
-
 const Dashboard = () => {
-  const [width, setWidth] = useState({ left: 70, right: 30 });
-  const [resizing, setResizing] = useState(false);
-
   useEffect(() => {
-    const handleWindowMouseMove = (event) => {
-      if (!enableResizeVar) return;
-
-      const x = event.clientX;
-      const screenWidth = window.innerWidth;
-      const takenSpace = screenWidth - x;
-
-      setWidth({
-        left: (x / screenWidth) * 100,
-        right: (takenSpace / screenWidth) * 100,
-      });
-    };
-    window.addEventListener("mousemove", handleWindowMouseMove);
-
-    return () => {
-      window.removeEventListener("mousemove", handleWindowMouseMove);
-    };
   }, []);
 
   return (
-    <div className={`dashboard ${resizing ? "resizing" : ""}`}>
-      <div className="left" style={{ width: `${width.left}%` }}>
-        <div className="flow">
-          <NodesCanvas />
+      <div className="dashboard" style={{ flexFlow: "row nowrap", flexGrow: 1, display: "flex" }}>
+        <ResizePanel className="component-cont" initialWidth={300} maxWidth={400}>
+          <ResizeContent>
+              <Accordion>
+                  <Accordion.Item eventKey="0">
+                      <Accordion.Header>Traversal strategies</Accordion.Header>
+                      <Accordion.Body>
+                          <Form>
+                              <div key={`default-checkbox`} className="mb-3">
+                                  <Form.Check
+                                      type="radio"
+                                      name="traversal"
+                                      id="depth-first"
+                                      label="Depth first"
+                                  />
+                                  <Form.Check
+                                      type="radio"
+                                      name="traversal"
+                                      id="custom"
+                                      label="Custom"
+                                  />
+
+                              </div>
+                          </Form>
+                      </Accordion.Body>
+                  </Accordion.Item>
+                  <Accordion.Item eventKey="1">
+                      <Accordion.Header>Components</Accordion.Header>
+                      <Accordion.Body>
+                          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
+                          minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+                          aliquip ex ea commodo consequat. Duis aute irure dolor in
+                          reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+                          pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+                          culpa qui officia deserunt mollit anim id est laborum.
+                      </Accordion.Body>
+                  </Accordion.Item>
+              </Accordion>
+
+          </ResizeContent>
+          <ResizeHandleRight className="resize">
+            <div className="col-resize"/>
+          </ResizeHandleRight>
+        </ResizePanel>
+
+        <div style={{ flexGrow: 1}}>
+          <div className="flow">
+            <NodesCanvas />
+          </div>
         </div>
-        <div className="timeline">Timeline</div>
+
+        <ResizePanel initialWidth={400} maxWidth={600}>
+          <ResizeHandleLeft className="resize">
+            <div className="col-resize" />
+          </ResizeHandleLeft>
+          <ResizeContent>
+            <div className="inner">
+            </div>
+          </ResizeContent>
+        </ResizePanel>
+        <div />
       </div>
-      <div className="right" style={{ width: `${width.right}%` }}>
-        <div className="inner">
-          <p>Sidebar</p>
-          <div
-            className="resize"
-            onMouseDown={() => {
-              enableResizeVar = true;
-              setResizing(true);
-            }}
-            onMouseUp={() => {
-              enableResizeVar = false;
-              setResizing(false);
-            }}
-          ></div>
-        </div>
-      </div>
-    </div>
   );
 };
 
