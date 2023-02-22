@@ -23,8 +23,9 @@ $bar-chart-color: rgb(8,52,108);
   border-radius: 4px;
   box-shadow: 0 0 4px #000000;
 
+
   .header {
-    height: 20px;
+    padding: 5px 0;
     width: 100%;
     border-radius: 4px 4px 0 0;
 
@@ -35,13 +36,13 @@ $bar-chart-color: rgb(8,52,108);
       margin: 0;
     }
   }
-  .dashboard{
+  &.dashboard{
     background-color: #{$dashboard-color};
   }
-  .bar-chart{
+  &.bar-chart{
     background-color: #{$bar-chart-color};
   }
-  .line-chart{
+  &.line-chart{
     background-color: #{$line-chart-color};
   }
 }
@@ -56,6 +57,67 @@ $bar-chart-color: rgb(8,52,108);
 .node-group{
   background-color: rgba(83,83,83,0.3);
   border: 1px solid rgb(83,83,83);
+  color: rgba(255,255,255,0.7);
   height: 200px;
   width: 280px;
+}
+
+.dndflow {
+  flex-direction: column;
+  display: flex;
+  flex-grow: 1;
+  height: 100%;
+}
+
+.dndflow aside {
+  border-right: 1px solid #eee;
+  padding: 15px 10px;
+  font-size: 12px;
+  background: #fcfcfc;
+}
+
+.dndflow aside .description {
+  margin-bottom: 10px;
+}
+
+.dndnode {
+  padding: 4px;
+  border: 1px solid #1a192b;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: grab;
+  background-color: #595959;
+  width: 100px;
+  height: 40px;
+  border-radius: 4px;
+  box-shadow: 0 0 4px #000000;
+
+  .dashboard{
+    background-color: #{$dashboard-color};
+  }
+  .bar-chart{
+    background-color: #{$bar-chart-color};
+  }
+  .line-chart{
+    background-color: #{$line-chart-color};
+  }
+}
+
+
+.reactflow-wrapper {
+  flex-grow: 1;
+  height: 100%;
+}
+
+.selectall {
+  margin-top: 10px;
+}
+
+.react-flow__controls-button{
+  background-color: #{$default-handle-color};
+}
+.react-flow__controls-button{
+  border: none;
 }

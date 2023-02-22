@@ -1,7 +1,7 @@
-import {useCallback, useState} from "react";
+import {useState, useRef, useCallback} from "react";
 
 import ReactFlow, {
-    useNodesState, useEdgesState, Controls, updateEdge, addEdge
+    useNodesState, useEdgesState, Controls, updateEdge, addEdge, ReactFlowProvider,
 } from "reactflow";
 
 import "reactflow/dist/style.css";
@@ -12,6 +12,8 @@ import BoxNode from "./nodeTypes/boxNode";
 import SimpleNode from "./nodeTypes/simpleNode";
 //Custom edge
 import Path from "./path";
+
+import Sidebar from '../dashboard/index';
 
 const initialNodes = [
     {
@@ -106,10 +108,14 @@ const nodeTypes = {boxNode: BoxNode, simple: SimpleNode};
 const edgeTypes = {
     path: Path,
 };
+let id = 0;
+const getId = () => `dndnode_${id++}`;
 
 function NodesCanvas() {
+    const reactFlowWrapper = useRef(null);
     const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
     const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+    const [reactFlowInstance, setReactFlowInstance] = useState(null);
     /**
      * Called after end of edge gets dragged to another source or target
      * @type {function(*=, *=): void}
@@ -183,6 +189,41 @@ function NodesCanvas() {
 
     }, []);
 
+    const onDragOver = useCallback((event) => {
+        event.preventDefault();
+        event.dataTransfer.dropEffect = 'move';
+        console.log(event);
+    }, []);
+
+    const onDrop = useCallback(
+        (event) => {
+            event.preventDefault();
+
+            const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
+            const type = event.dataTransfer.getData('application/reactflow');
+
+            // check if the dropped element is valid
+            if (typeof type === 'undefined' || !type) {
+                return;
+            }
+
+          const position = reactFlowInstance.project({
+                x: event.clientX - reactFlowBounds.left,
+                y: event.clientY - reactFlowBounds.top,
+            });
+            const newNode = {
+                id: getId(),
+                type,
+                position,
+                data: {title: "Dashboard", type: "dashboard"},
+            };
+
+            setNodes((nds) => nds.concat(newNode));
+        },
+        [reactFlowInstance]
+    );
+
+
 
     /**
      * Called, when the node is clicked – do something
@@ -219,14 +260,25 @@ function NodesCanvas() {
 
 
     return (
+        <div className="dndflow">
+        <ReactFlowProvider>
+        <div className="reactflow-wrapper" ref={reactFlowWrapper}>
         <ReactFlow
             nodes={nodes}
             edges={edges}
             onNodesChange={onNodesChange}
             nodeTypes={nodeTypes}
+            onInit={setReactFlowInstance}
+            onDrop={onDrop}
+            onDragOver={onDragOver}
             snapToGrid
             fitView
-        />
+        >
+            <Controls />
+        </ReactFlow>
+        </div>
+        </ReactFlowProvider>
+        </div>
     );
 }
 

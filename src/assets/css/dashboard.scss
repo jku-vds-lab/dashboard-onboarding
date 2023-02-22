@@ -8,7 +8,7 @@ html,body{
   background-color: #{$bg-dark};
   color: #{$color-white};
 }
-.dashboard {
+.d-board {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
@@ -69,6 +69,7 @@ html,body{
     border: none !important;
     .accordion-item{
       border-color: #{$bg-dark};
+      color:  #{$color-white};
 
       .accordion-button{
         background-color: #{$bg-dark-1};
@@ -92,6 +93,10 @@ html,body{
 
       .accordion-body{
         background-color: #{$bg-dark};
+
+        .description{
+          margin-bottom: 1rem;
+        }
       }
     }
 

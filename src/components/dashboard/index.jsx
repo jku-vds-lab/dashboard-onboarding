@@ -18,10 +18,15 @@ import "../../assets/css/dashboard.scss";
 const Dashboard = () => {
   useEffect(() => {
   }, []);
+    const onDragStart = (event, nodeType) => {
+        event.dataTransfer.setData('application/reactflow', nodeType);
+        event.dataTransfer.effectAllowed = 'move';
+    };
+
 const [checked, setChecked] = React.useState(true);
   return (
-      <div className="dashboard" style={{ flexFlow: "row nowrap", flexGrow: 1, display: "flex" }}>
-        <ResizePanel className="component-cont" initialWidth={250} maxWidth={400} minWidth={100}>
+      <div className="d-board" style={{ flexFlow: "row nowrap", flexGrow: 1, display: "flex" }}>
+        <ResizePanel className="component-cont" initialWidth={250} maxWidth={400} minWidth={250}>
           <ResizeContent>
               <Accordion defaultActiveKey={['0']} alwaysOpen>
                   <Accordion.Item eventKey="0">
@@ -53,6 +58,18 @@ const [checked, setChecked] = React.useState(true);
                   <Accordion.Item eventKey="1">
                       <Accordion.Header>Components</Accordion.Header>
                       <Accordion.Body>
+                          <aside>
+                              <div className="description">You can drag these nodes to the pane on the right.</div>
+                              <div className="dndnode dashboard" onDragStart={(event) => onDragStart(event, 'simple')} draggable>
+                                  Dashboard
+                              </div>
+                              <div className="dndnode bar-chart" onDragStart={(event) => onDragStart(event, 'simple')} draggable>
+                                  Bar chart
+                              </div>
+                              <div className="dndnode line-chart" onDragStart={(event) => onDragStart(event, 'simple')} draggable>
+                                  Line chart
+                              </div>
+                          </aside>
                       </Accordion.Body>
                   </Accordion.Item>
                   <Accordion.Item eventKey="2">
@@ -72,6 +89,20 @@ const [checked, setChecked] = React.useState(true);
           <div className="flow">
             <NodesCanvas />
           </div>
+            <div id="annotation-box">
+                <div className="input-group">
+                    <div className="input-group-prepend">
+                    <span className="input-group-text" id="basic-addon">
+                      <i className="fas fa-pencil-alt prefix"></i>
+                    </span>
+                    </div>
+                    <textarea
+                        className="form-control"
+                        id="exampleFormControlTextarea1"
+                        rows="5"
+                    ></textarea>
+                </div>
+            </div>
         </div>
 
         <ResizePanel initialWidth={400} maxWidth={500} minWidth={150}>
