@@ -3,6 +3,7 @@ import Accordion from 'react-bootstrap/Accordion';
 import Form from 'react-bootstrap/Form';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
+import { FaPencilAlt } from "react-icons/fa";
 
 import {
   ResizeContent, ResizeHandleLeft,
@@ -22,8 +23,13 @@ const Dashboard = () => {
         event.dataTransfer.setData('application/reactflow', nodeType);
         event.dataTransfer.effectAllowed = 'move';
     };
+    const saveAnnotationChanges = (e) => {
+        e.preventDefault();
+        console.log('The link was clicked.');
+    }
 
-const [checked, setChecked] = React.useState(true);
+
+    const [checked, setChecked] = React.useState(true);
   return (
       <div className="d-board" style={{ flexFlow: "row nowrap", flexGrow: 1, display: "flex" }}>
         <ResizePanel className="component-cont" initialWidth={250} maxWidth={400} minWidth={250}>
@@ -89,19 +95,21 @@ const [checked, setChecked] = React.useState(true);
           <div className="flow">
             <NodesCanvas />
           </div>
-            <div id="annotation-box">
+            <div id="annotation-box" className="text-end">
                 <div className="input-group">
                     <div className="input-group-prepend">
                     <span className="input-group-text" id="basic-addon">
-                      <i className="fas fa-pencil-alt prefix"></i>
+                      <FaPencilAlt></FaPencilAlt>
                     </span>
                     </div>
-                    <textarea
-                        className="form-control"
-                        id="exampleFormControlTextarea1"
-                        rows="5"
-                    ></textarea>
+
+                        <textarea
+                            className="form-control"
+                            id="exampleFormControlTextarea1"
+                            rows="4"
+                        ></textarea>
                 </div>
+                <div className="btn btn-secondary btn-sm me-auto" onClick={saveAnnotationChanges}>Save changes</div>
             </div>
         </div>
 

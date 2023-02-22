@@ -189,10 +189,14 @@ function NodesCanvas() {
 
     }, []);
 
+    const onClick = useCallback((event) => {
+
+    }, []);
+
+
     const onDragOver = useCallback((event) => {
         event.preventDefault();
         event.dataTransfer.dropEffect = 'move';
-        console.log(event);
     }, []);
 
     const onDrop = useCallback(
@@ -230,7 +234,10 @@ function NodesCanvas() {
      * @type {(function(): void)|*}
      */
     const onNodeClick = useCallback(
-        () => {
+        (event) => {
+            console.log(event);
+            let annotation = document.getElementById('annotation-box');
+            (event.target.classList.contains('react-flow__pane'))?annotation.classList.remove('show'):annotation.classList.add('show');
         },
         [],
     );
@@ -271,6 +278,8 @@ function NodesCanvas() {
             onInit={setReactFlowInstance}
             onDrop={onDrop}
             onDragOver={onDragOver}
+            onNodeClick={onNodeClick}
+            onClick={onClick}
             snapToGrid
             fitView
         >
