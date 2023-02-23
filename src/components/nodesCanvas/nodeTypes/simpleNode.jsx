@@ -2,9 +2,9 @@ import {Position} from "reactflow";
 
 const SimpleNode = ({data}) => {
     return (
-        <div className={`simple-node ${data.type}`}>
+        <div className={`node simple-node ${data.type}`}>
             <div className={`header`}>
-                <p className="title">{data?.title ?? "Title"}</p>
+                <p className="title">{data?.title ?? "Untitled"}</p>
             </div>
         </div>
     );

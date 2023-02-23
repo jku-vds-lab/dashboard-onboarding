@@ -1,7 +1,7 @@
-import {useState, useRef, useCallback} from "react";
-
+import {useState, useRef, useCallback, MouseEvent} from "react";
 import ReactFlow, {
-    useNodesState, useEdgesState, Controls, updateEdge, addEdge, ReactFlowProvider,
+    useNodesState, useEdgesState, Controls, updateEdge, addEdge, ReactFlowProvider, useReactFlow, Background, Node,
+    Edge,
 } from "reactflow";
 
 import "reactflow/dist/style.css";
@@ -115,6 +115,7 @@ function NodesCanvas() {
     const reactFlowWrapper = useRef(null);
     const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
     const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+    const { getIntersectingNodes } = useReactFlow();
     const [reactFlowInstance, setReactFlowInstance] = useState(null);
     /**
      * Called after end of edge gets dragged to another source or target
@@ -194,6 +195,8 @@ function NodesCanvas() {
     }, []);
 
 
+
+
     const onDragOver = useCallback((event) => {
         event.preventDefault();
         event.dataTransfer.dropEffect = 'move';
@@ -248,6 +251,18 @@ function NodesCanvas() {
         [],
     );
 
+    const onNodeDrag = useCallback((_: MouseEvent, node: Node) => {
+        const intersections = getIntersectingNodes(node).map((n) => n.id);
+        console.log(intersections);
+
+        setNodes((ns) =>
+            ns.map((n) => ({
+                ...n,
+                className: intersections.includes(n.id) ? 'highlight' : '',
+            }))
+        );
+    }, []);
+
 
     /**
      * Called when nodes get deleted. The handles are updated. The narrative trajectory is broken.
@@ -274,7 +289,6 @@ function NodesCanvas() {
 
     return (
         <div className="dndflow">
-        <ReactFlowProvider>
         <div className="reactflow-wrapper" ref={reactFlowWrapper}>
         <ReactFlow
             nodes={nodes}
@@ -286,13 +300,14 @@ function NodesCanvas() {
             onDragOver={onDragOver}
             onNodeClick={onNodeClick}
             onClick={onClick}
+            onNodeDrag={onNodeDrag}
             snapToGrid
             fitView
         >
             <Controls />
         </ReactFlow>
         </div>
-        </ReactFlowProvider>
+
         </div>
     );
 }

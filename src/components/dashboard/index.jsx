@@ -4,7 +4,7 @@ import Form from 'react-bootstrap/Form';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import { FaPencilAlt } from "react-icons/fa";
-
+import ReactFlow, {ReactFlowProvider} from "reactflow";
 import {
   ResizeContent, ResizeHandleLeft,
   ResizeHandleRight,
@@ -95,7 +95,9 @@ const [checked, setChecked] = React.useState(true);
 
         <div style={{ flexGrow: 1}}>
           <div className="flow">
+          <ReactFlowProvider>
             <NodesCanvas />
+          </ReactFlowProvider>
           </div>
             <div id="annotation-box" className="text-end">
                 <div className="input-group">

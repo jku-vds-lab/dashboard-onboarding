@@ -21,7 +21,7 @@ $bar-chart-color: rgb(8,52,108);
   width: 100px;
   height: 40px;
   border-radius: 4px;
-  box-shadow: 0 0 4px #000000;
+  box-shadow: 0 0 4px #1a1717;
 
 
   .header {
@@ -92,7 +92,7 @@ $bar-chart-color: rgb(8,52,108);
   width: 100px;
   height: 40px;
   border-radius: 4px;
-  box-shadow: 0 0 4px #000000;
+  box-shadow: 0 0 4px #1a1717;
 
   &.dashboard{
     background-color: #{$dashboard-color};
@@ -120,4 +120,24 @@ $bar-chart-color: rgb(8,52,108);
 }
 .react-flow__controls-button{
   border: none;
+}
+
+.react-flow__node.selected .node{
+  box-shadow: 0px 0px 3px 2px #bbbbbb;
+}
+
+.react-flow__node.highlight {
+  background-color: rgba(199, 189, 189, 0.3);
+}
+
+.react-flow__node-default, .react-flow__node-input, .react-flow__node-output, .react-flow__node-group{
+  padding: 10px;
+  border-radius: 3px;
+  font-size: 12px;
+  text-align: center;
+  background-color: rgba(83,83,83,0.3);
+  border: 1px solid rgb(83,83,83);
+  color: rgba(255,255,255,0.7);
+  height: 200px;
+  width: 280px;
 }
