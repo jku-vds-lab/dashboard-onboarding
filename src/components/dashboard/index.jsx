@@ -3,7 +3,6 @@ import Accordion from 'react-bootstrap/Accordion';
 import Form from 'react-bootstrap/Form';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
-import { FaPencilAlt } from "react-icons/fa";
 
 import {
   ResizeContent, ResizeHandleLeft,
@@ -19,17 +18,14 @@ import "../../assets/css/dashboard.scss";
 const Dashboard = () => {
   useEffect(() => {
   }, []);
-    const onDragStart = (event, nodeType) => {
-        event.dataTransfer.setData('application/reactflow', nodeType);
+    const onDragStart = (event, nodeType, nodeData, title) => {
+        event.dataTransfer.setData('nodeType', nodeType);
+        event.dataTransfer.setData('data', nodeData);
+        event.dataTransfer.setData('title', title);
         event.dataTransfer.effectAllowed = 'move';
     };
-    const saveAnnotationChanges = (e) => {
-        e.preventDefault();
-        console.log('The link was clicked.');
-    }
 
-
-    const [checked, setChecked] = React.useState(true);
+const [checked, setChecked] = React.useState(true);
   return (
       <div className="d-board" style={{ flexFlow: "row nowrap", flexGrow: 1, display: "flex" }}>
         <ResizePanel className="component-cont" initialWidth={250} maxWidth={400} minWidth={250}>
@@ -66,13 +62,13 @@ const Dashboard = () => {
                       <Accordion.Body>
                           <aside>
                               <div className="description">You can drag these nodes to the pane on the right.</div>
-                              <div className="dndnode dashboard" onDragStart={(event) => onDragStart(event, 'simple')} draggable>
+                              <div className="dndnode dashboard" onDragStart={(event) => onDragStart(event, 'simple', 'dashboard', 'Dashboard')} draggable>
                                   Dashboard
                               </div>
-                              <div className="dndnode bar-chart" onDragStart={(event) => onDragStart(event, 'simple')} draggable>
+                              <div className="dndnode bar-chart" onDragStart={(event) => onDragStart(event, 'simple', 'bar-chart', 'Bar chart')} draggable>
                                   Bar chart
                               </div>
-                              <div className="dndnode line-chart" onDragStart={(event) => onDragStart(event, 'simple')} draggable>
+                              <div className="dndnode line-chart" onDragStart={(event) => onDragStart(event, 'simple', 'line-chart', 'Line chart')} draggable>
                                   Line chart
                               </div>
                           </aside>
@@ -95,21 +91,19 @@ const Dashboard = () => {
           <div className="flow">
             <NodesCanvas />
           </div>
-            <div id="annotation-box" className="text-end">
+            <div id="annotation-box">
                 <div className="input-group">
                     <div className="input-group-prepend">
                     <span className="input-group-text" id="basic-addon">
-                      <FaPencilAlt></FaPencilAlt>
+                      <i className="fas fa-pencil-alt prefix"></i>
                     </span>
                     </div>
-
-                        <textarea
-                            className="form-control"
-                            id="exampleFormControlTextarea1"
-                            rows="4"
-                        ></textarea>
+                    <textarea
+                        className="form-control"
+                        id="exampleFormControlTextarea1"
+                        rows="5"
+                    ></textarea>
                 </div>
-                <div className="btn btn-secondary btn-sm me-auto" onClick={saveAnnotationChanges}>Save changes</div>
             </div>
         </div>
 

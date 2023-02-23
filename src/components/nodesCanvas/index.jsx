@@ -189,11 +189,6 @@ function NodesCanvas() {
 
     }, []);
 
-    const onClick = useCallback((event) => {
-
-    }, []);
-
-
     const onDragOver = useCallback((event) => {
         event.preventDefault();
         event.dataTransfer.dropEffect = 'move';
@@ -204,7 +199,10 @@ function NodesCanvas() {
             event.preventDefault();
 
             const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
-            const type = event.dataTransfer.getData('application/reactflow');
+            const type = event.dataTransfer.getData('nodeType');
+            const data = event.dataTransfer.getData('data');
+            const title = event.dataTransfer.getData('title');
+
 
             // check if the dropped element is valid
             if (typeof type === 'undefined' || !type) {
@@ -219,7 +217,10 @@ function NodesCanvas() {
                 id: getId(),
                 type,
                 position,
-                data: {title: "Dashboard", type: "dashboard"},
+                data: {
+                    title: title,
+                    type: data,
+                },
             };
 
             setNodes((nds) => nds.concat(newNode));
@@ -234,10 +235,7 @@ function NodesCanvas() {
      * @type {(function(): void)|*}
      */
     const onNodeClick = useCallback(
-        (event) => {
-            console.log(event);
-            let annotation = document.getElementById('annotation-box');
-            (event.target.classList.contains('react-flow__pane'))?annotation.classList.remove('show'):annotation.classList.add('show');
+        () => {
         },
         [],
     );
@@ -278,8 +276,6 @@ function NodesCanvas() {
             onInit={setReactFlowInstance}
             onDrop={onDrop}
             onDragOver={onDragOver}
-            onNodeClick={onNodeClick}
-            onClick={onClick}
             snapToGrid
             fitView
         >

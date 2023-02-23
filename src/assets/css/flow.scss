@@ -19,7 +19,7 @@ $bar-chart-color: rgb(8,52,108);
 .box-node, .simple-node {
   background-color: #595959;
   width: 100px;
-  height: 60px;
+  height: 40px;
   border-radius: 4px;
   box-shadow: 0 0 4px #000000;
 
@@ -94,13 +94,13 @@ $bar-chart-color: rgb(8,52,108);
   border-radius: 4px;
   box-shadow: 0 0 4px #000000;
 
-  .dashboard{
+  &.dashboard{
     background-color: #{$dashboard-color};
   }
-  .bar-chart{
+  &.bar-chart{
     background-color: #{$bar-chart-color};
   }
-  .line-chart{
+  &.line-chart{
     background-color: #{$line-chart-color};
   }
 }
