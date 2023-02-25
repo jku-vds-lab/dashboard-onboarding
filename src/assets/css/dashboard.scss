@@ -1,5 +1,6 @@
 @import "~bootstrap/scss/bootstrap";
 $bg-dark: rgb(32,32,32);
+$bg-darker: rgb(17, 17, 17);
 $bg-dark-1: rgb(83,83,83);
 $bg-dark-1-lighter: rgb(170, 170, 170);
 $color-white: #f1f1f1;
@@ -8,6 +9,9 @@ html,body{
   background-color: #{$bg-dark};
   color: #{$color-white};
 }
+
+
+
 .d-board {
   display: flex;
   flex-direction: row;
@@ -18,15 +22,15 @@ html,body{
   .flow {
     position: relative;
     width: 100%;
-    height: 80%;
+    height: 100%;
     border-radius: 4px;
     z-index: 0;
 
-    &:after{
+    &:after {
       content: '';
       position: absolute;
-      top:0;
-      left:0;
+      top: 0;
+      left: 0;
       width: 100%;
       height: 100%;
       background: url("../img/pattern-1.png");
@@ -34,6 +38,17 @@ html,body{
       background-size: 40%;
       opacity: 0.2;
       z-index: -1;
+    }
+
+  }
+
+  .canvas-cont{
+    position: relative;
+    &.show{
+      #annotation-box{
+        display: block;
+      }
+
     }
   }
 
@@ -49,17 +64,19 @@ html,body{
     position: relative;
   }
 
-  .col-resize{
+  .col-resize {
     cursor: ew-resize;
     width: 2px;
     background-color: #000;
   }
-  .resize{
+
+  .resize {
     background-color: #000;
     cursor: ew-resize;
     border-left: 1px solid grey;
     border-right: 1px solid grey;
   }
+
 
   /*----------------------------------
   -------------Accordion--------------
@@ -153,33 +170,42 @@ html,body{
   #annotation-box{
     background-color: #{$bg-dark};
     border-radius: 5px;
-
+    position: absolute;
+    left:0;
+    bottom:0;
+    z-index: 1;
     display: none;
-    height: 20%;
-
-    &.show{
-      display: block;
-    }
+    width:100%;
 
     .input-group{
       height:120px;
       border: 2px solid #{$bg-dark-1};
-      margin-bottom: 1rem;
+      margin-bottom: 0.4rem;
     }
 
     .input-group-text{
       height: 100%;
       background-color: rgb(158, 159, 160);
+      border:2px solid rgb(158, 159, 160);
+      border-radius: 0;
     }
 
     textarea{
+      height:100%;
       background-color: #{$bg-dark};
       outline: none;
       color: #{$white};
+      border: none;
       &:focus{
         outline: none;
       }
     }
   }
+
+}
+.toolbar{
+  text-align: right;
+  background-color: #{$bg-dark};
+  border-top: 1px solid rgb(83, 83, 83);
 
 }

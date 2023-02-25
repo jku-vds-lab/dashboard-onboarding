@@ -10,6 +10,7 @@ import "../../assets/css/flow.scss";
 // Node types
 import BoxNode from "./nodeTypes/boxNode";
 import SimpleNode from "./nodeTypes/simpleNode";
+import GroupNode from "./nodeTypes/groupNode";
 //Custom edge
 import Path from "./path";
 
@@ -31,15 +32,15 @@ const initialNodes = [
     },
     {
         id: 'node-3',
-        data: { label: 'OR' },
+        type: 'group',
+        data: { label: 'Group' },
         position: { x: 240, y: 0 },
-        className: 'node-group',
     },
     {
         id: "node-4",
         type: "simple",
         targetPosition: "top",
-        position: {x: 30, y: 40},
+        position: {x: 30, y: 60},
         data: {title: "Bar chart", type: "bar-chart"},
         parentNode: 'node-3',
     },
@@ -47,7 +48,7 @@ const initialNodes = [
         id: "node-5",
         type: "simple",
         targetPosition: "top",
-        position: {x: 140, y: 40},
+        position: {x: 140, y: 60},
         data: {title: "Bar chart", type: "bar-chart"},
         parentNode: 'node-3',
     },
@@ -87,24 +88,13 @@ const initialEdges = [
         type: 'path',
         data: { n_source: "1", n_target: "3", h_output: "1", h_input: "1", color: "#f1ed00", class: "story-1"},
         deletable: true,
-    },
-    {
-        id: "edge-4",
-        source: "node-1",
-        target: "node-4",
-        sourceHandle: "output-2",
-        targetHandle: "input-1",
-        deletable: true,
-        label: "storyline 2",
-        labelStyle: {fill: "white"},
-        labelBgStyle: {fill: "#2b2b2b"},
-    },*/
+    }*/
 ];
 
 
 // we define the nodeTypes outside of the component to prevent re-renderings
 // you could also use useMemo inside the component
-const nodeTypes = {boxNode: BoxNode, simple: SimpleNode};
+const nodeTypes = {boxNode: BoxNode, simple: SimpleNode, group: GroupNode};
 const edgeTypes = {
     path: Path,
 };
@@ -124,7 +114,7 @@ function NodesCanvas() {
     const onEdgeUpdate = useCallback(
         (oldEdge, newConnection) => {
 
-            //TODO: create a method to return nodeTarget, inputHandle, sourcetarget, outputHandle
+            //TODO: create a method to return nodeTarget, inputHandle, sourceTarget, outputHandle
 
             //reset the color
             let nodeTarget = document.querySelector('[data-id="'+oldEdge.target+'"]');
@@ -196,7 +186,6 @@ function NodesCanvas() {
 
 
 
-
     const onDragOver = useCallback((event) => {
         event.preventDefault();
         event.dataTransfer.dropEffect = 'move';
@@ -216,6 +205,7 @@ function NodesCanvas() {
             if (typeof type === 'undefined' || !type) {
                 return;
             }
+
 
           const position = reactFlowInstance.project({
                 x: event.clientX - reactFlowBounds.left,
@@ -244,16 +234,32 @@ function NodesCanvas() {
      */
     const onNodeClick = useCallback(
         (event) => {
-            console.log(event);
-            let annotation = document.getElementById('annotation-box');
-            (event.target.classList.contains('react-flow__pane'))?annotation.classList.remove('show'):annotation.classList.add('show');
+            let container = document.getElementById('canvas-container');
+            (event.target.classList.contains('react-flow__pane'))?container.classList.remove('show'):container.classList.add('show');
+
+            //when the options button on a group node clicked, set the index of the child nodes to 0,
+            // and change the connection type
+            if(event.target.classList.contains('options')){
+
+            }
+
         },
         [],
     );
 
     const onNodeDrag = useCallback((_: MouseEvent, node: Node) => {
-        const intersections = getIntersectingNodes(node).map((n) => n.id);
-        console.log(intersections);
+        const intersections = getIntersectingNodes(node).map(
+            (n) => n.id);
+        getIntersectingNodes(node).forEach(function (n){
+            console.log(n.type);
+            if(n.type === "group"){
+                node.parentNode = 'node-3';
+                console.log(node);
+            }
+        })
+
+        //check if the node is dropped to the group
+
 
         setNodes((ns) =>
             ns.map((n) => ({
@@ -286,6 +292,15 @@ function NodesCanvas() {
         [],
     );
 
+    const onLoad = useCallback(
+        () => {
+            //n-button options
+
+        },
+        [],
+    );
+
+
 
     return (
         <div className="dndflow">
@@ -301,6 +316,7 @@ function NodesCanvas() {
             onNodeClick={onNodeClick}
             onClick={onClick}
             onNodeDrag={onNodeDrag}
+            onLoad={onLoad}
             snapToGrid
             fitView
         >
