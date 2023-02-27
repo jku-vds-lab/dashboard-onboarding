@@ -14,6 +14,8 @@ import GroupNode from "./nodeTypes/groupNode";
 //Custom edge
 import Path from "./path";
 
+import {ContextMenu} from "./context-menu";
+
 import Sidebar from '../dashboard/index';
 
 const initialNodes = [
@@ -22,6 +24,8 @@ const initialNodes = [
         type: "simple",
         position: {x: 0, y: 70},
         data: {title: "Dashboard", type: "dashboard"},
+        parentNode: '',
+        extent: 'parent'
     },
     {
         id: "node-2",
@@ -29,6 +33,8 @@ const initialNodes = [
         targetPosition: "top",
         position: {x: 120, y: 70},
         data: {title: "Line Chart", type: "line-chart"},
+        extent: 'parent',
+        parentNode: ''
     },
     {
         id: 'node-3',
@@ -42,6 +48,7 @@ const initialNodes = [
         targetPosition: "top",
         position: {x: 30, y: 60},
         data: {title: "Bar chart", type: "bar-chart"},
+        extent: 'parent',
         parentNode: 'node-3',
     },
     {
@@ -50,6 +57,7 @@ const initialNodes = [
         targetPosition: "top",
         position: {x: 140, y: 60},
         data: {title: "Bar chart", type: "bar-chart"},
+        extent: 'parent',
         parentNode: 'node-3',
     },
     {
@@ -58,6 +66,7 @@ const initialNodes = [
         targetPosition: "top",
         position: {x: 30, y: 110},
         data: {title: "Dashboard", type: "dashboard"},
+        extent: 'parent',
         parentNode: 'node-3',
     },
     {
@@ -66,6 +75,7 @@ const initialNodes = [
         targetPosition: "top",
         position: {x: 140, y: 110},
         data: {title: "Line chart", type: "line-chart"},
+        extent: 'parent',
         parentNode: 'node-3',
     },
 
@@ -105,8 +115,10 @@ function NodesCanvas() {
     const reactFlowWrapper = useRef(null);
     const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
     const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
-    const { getIntersectingNodes } = useReactFlow();
+    const { getIntersectingNodes, deleteElements } = useReactFlow();
     const [reactFlowInstance, setReactFlowInstance] = useState(null);
+    const [position, setPosition] = useState({x:0, y:0});
+    const [isOpen, setIsOpen] = useState(false);
     /**
      * Called after end of edge gets dragged to another source or target
      * @type {function(*=, *=): void}
@@ -248,13 +260,14 @@ function NodesCanvas() {
     );
 
     const onNodeDrag = useCallback((_: MouseEvent, node: Node) => {
+        console.log(node);
         const intersections = getIntersectingNodes(node).map(
             (n) => n.id);
         getIntersectingNodes(node).forEach(function (n){
             console.log(n.type);
             if(n.type === "group"){
                 node.parentNode = 'node-3';
-                console.log(node);
+
             }
         })
 
@@ -301,6 +314,27 @@ function NodesCanvas() {
     );
 
 
+    const onNodeContextMenu = useCallback(
+        (e) => {
+            e.preventDefault();
+            const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
+            setPosition({x:e.clientX - reactFlowBounds.left, y:e.clientY- reactFlowBounds.top});
+            setIsOpen(true);
+        },
+        [],
+    );
+
+    /*const onNodeContextMenu = useCallback((_: MouseEvent, node: Node) => {
+        console.log(node);
+        e.preventDefault();
+    }, []);
+*/
+
+    const deleteNode = () => {
+       //TODO: delete the node from canvas
+       setIsOpen(false);
+    };
+
 
     return (
         <div className="dndflow">
@@ -317,10 +351,16 @@ function NodesCanvas() {
             onClick={onClick}
             onNodeDrag={onNodeDrag}
             onLoad={onLoad}
+            onNodeContextMenu={onNodeContextMenu}
             snapToGrid
             fitView
         >
             <Controls />
+            <ContextMenu isOpen={isOpen} position={position}
+                         onMouseLeave={()=>setIsOpen(false)}
+            actions={[{label: 'Delete', effect:deleteNode}]}>
+
+            </ContextMenu>
         </ReactFlow>
         </div>
 
