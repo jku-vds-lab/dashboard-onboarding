@@ -115,6 +115,8 @@ function NodesCanvas() {
     const reactFlowWrapper = useRef(null);
     const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
     const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+    const [nodeData, setNodeData] = useState(null);
+    const [elements, setElements] = useState([]);
     const { getIntersectingNodes, deleteElements } = useReactFlow();
     const [reactFlowInstance, setReactFlowInstance] = useState(null);
     const [position, setPosition] = useState({x:0, y:0});
@@ -282,6 +284,13 @@ function NodesCanvas() {
         );
     }, []);
 
+    const onNodeDragStop = (event, node) => {
+        const findElIndex = elements.findIndex((el)=>el.id===node.id);
+        if(findElIndex>-1){
+            elements[findElIndex]=node;
+            setElements([...elements])
+        }
+    }
 
     /**
      * Called when nodes get deleted. The handles are updated. The narrative trajectory is broken.
@@ -313,9 +322,14 @@ function NodesCanvas() {
         [],
     );
 
+    const onNodeMouseEnter = (e, node) => {
+        console.log(node);
+        setNodeData(node);
+    }
 
-    const onNodeContextMenu = useCallback(
+   const onNodeContextMenu = useCallback(
         (e) => {
+            console.log(e.target);
             e.preventDefault();
             const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
             setPosition({x:e.clientX - reactFlowBounds.left, y:e.clientY- reactFlowBounds.top});
@@ -324,14 +338,11 @@ function NodesCanvas() {
         [],
     );
 
-    /*const onNodeContextMenu = useCallback((_: MouseEvent, node: Node) => {
-        console.log(node);
-        e.preventDefault();
-    }, []);
-*/
+
 
     const deleteNode = () => {
        //TODO: delete the node from canvas
+        //setElements((elements)=> elements.filter((el)=>el.id===nodeData.id));
        setIsOpen(false);
     };
 
@@ -340,14 +351,17 @@ function NodesCanvas() {
         <div className="dndflow">
         <div className="reactflow-wrapper" ref={reactFlowWrapper}>
         <ReactFlow
+            elements={elements}
             nodes={nodes}
             edges={edges}
             onNodesChange={onNodesChange}
             nodeTypes={nodeTypes}
             onInit={setReactFlowInstance}
             onDrop={onDrop}
+            onNodeDragStop={onNodeDragStop}
             onDragOver={onDragOver}
             onNodeClick={onNodeClick}
+            onNodeMouseEnter={onNodeMouseEnter}
             onClick={onClick}
             onNodeDrag={onNodeDrag}
             onLoad={onLoad}
