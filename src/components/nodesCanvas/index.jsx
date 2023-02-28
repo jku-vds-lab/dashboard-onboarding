@@ -262,11 +262,9 @@ function NodesCanvas() {
     );
 
     const onNodeDrag = useCallback((_: MouseEvent, node: Node) => {
-        console.log(node);
         const intersections = getIntersectingNodes(node).map(
             (n) => n.id);
         getIntersectingNodes(node).forEach(function (n){
-            console.log(n.type);
             if(n.type === "group"){
                 node.parentNode = 'node-3';
 
@@ -285,11 +283,11 @@ function NodesCanvas() {
     }, []);
 
     const onNodeDragStop = (event, node) => {
-        const findElIndex = elements.findIndex((el)=>el.id===node.id);
+        /*const findElIndex = nodes.findIndex((n)=>n.id===node.id);
         if(findElIndex>-1){
-            elements[findElIndex]=node;
-            setElements([...elements])
-        }
+            nodes[findElIndex]=node;
+            setElements([...nodes])
+        }*/
     }
 
     /**
@@ -324,12 +322,14 @@ function NodesCanvas() {
 
     const onNodeMouseEnter = (e, node) => {
         console.log(node);
+        if(node.type==="group"){
+
+        }
         setNodeData(node);
     }
 
    const onNodeContextMenu = useCallback(
         (e) => {
-            console.log(e.target);
             e.preventDefault();
             const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
             setPosition({x:e.clientX - reactFlowBounds.left, y:e.clientY- reactFlowBounds.top});
@@ -341,9 +341,8 @@ function NodesCanvas() {
 
 
     const deleteNode = () => {
-       //TODO: delete the node from canvas
-        //setElements((elements)=> elements.filter((el)=>el.id===nodeData.id));
-       setIsOpen(false);
+        setNodes((nodes)=> nodes.filter((n)=>n.id!==nodeData.id));
+        setIsOpen(false);
     };
 
 
@@ -351,7 +350,6 @@ function NodesCanvas() {
         <div className="dndflow">
         <div className="reactflow-wrapper" ref={reactFlowWrapper}>
         <ReactFlow
-            elements={elements}
             nodes={nodes}
             edges={edges}
             onNodesChange={onNodesChange}
