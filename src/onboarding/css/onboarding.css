@@ -1,0 +1,141 @@
+.rectLeftBig:before {
+    content: "";
+    position: absolute;
+    top: 0px;
+    right: -16px;
+    width: 0px;
+    height: 0px;
+    border-top: 15px solid lightsteelblue;
+    border-bottom: 15px solid transparent;
+    border-left: 15px solid lightsteelblue;
+    border-right: 15px solid transparent;
+  }
+
+.rectRightBig:before {
+    content: "";
+    position: absolute;
+    top: 0px;
+    left: -16px;
+    width: 0px;
+    height: 0px;
+    border-top: 15px solid lightsteelblue;
+    border-bottom: 15px solid transparent;
+    border-left: 15px solid transparent;
+    border-right: 15px solid lightsteelblue;
+}
+
+.rectLeftSmall:before {
+    content: "";
+    position: absolute;
+    top: 0px;
+    right: -7px;
+    width: 0px;
+    height: 0px;
+    border-top: 7px solid lightgreen;
+    border-bottom: 7px solid transparent;
+    border-left: 7px solid lightgreen;
+    border-right: 7px solid transparent;
+  }
+
+.rectRightSmall:before {
+    content: "";
+    position: absolute;
+    top: 0px;
+    left: -7px;
+    width: 0px;
+    height: 0px;
+    border-top: 7px solid lightgreen;
+    border-bottom: 7px solid transparent;
+    border-left: 7px solid transparent;
+    border-right: 7px solid lightgreen;
+}
+
+.positionRight{
+    float: right;
+}
+
+.positionLeft{
+    float: left;
+}
+  
+.contentPlacementBig{
+    padding:0px 30px 20px 30px;
+    align-items:center;
+}
+
+.contentPlacementSmall{
+    padding:0px 5px 5px 5px;
+    text-align:center;
+}
+
+#cardButtons{
+    width:100%;
+    margin-top:20px;
+}
+
+#cardHeadline{
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.closeButtonPlacementBig{
+    margin-top:20px;
+    margin-left:20px;
+}
+
+.closeButtonPlacementSmall{
+    margin-top:10px;
+    margin-left:10px;
+}
+
+#visualInfoTabs{
+    box-shadow: 5px 5px 5px gray,
+    0px 5px 5px gray;
+}
+
+#visualInfo{
+    box-shadow: 5px 5px 5px gray,
+    0px 5px 5px gray;
+    padding: 5px;
+    margin-bottom: 10px;
+    border: 1px solid black;
+}
+
+#pillsTab a{
+     color: black;
+     border: 1px solid black;
+     border-bottom-left-radius: 0px;
+     border-bottom-right-radius: 0px;
+}
+    
+#pillsTab .active{
+     color: white;
+     background-color: #343a40;
+}
+
+#pillsTabContent{
+    padding: 5px;
+    margin-bottom: 10px;
+    border: 1px solid black;
+}
+
+#pillsTabContent ul {
+    padding-left: 30px;
+}
+  
+#pillsTabContent ul li {
+    padding-left: 5px;
+}
+
+.greenBorder {
+    border: 5px solid lightgreen;
+}
+
+.noBorder {
+    border: none;
+}
+
+.draggable {
+    cursor: pointer;
+    user-select: none;
+}

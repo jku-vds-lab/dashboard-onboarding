@@ -1,0 +1,27 @@
+/* Copyright (c) Microsoft Corporation.
+Licensed under the MIT license. */
+
+#root {
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 5%;
+  width: 100%;
+}
+
+header {
+  padding-left: 1%;
+  padding-right: 1%;
+  padding-top: 2%;  
+}
+
+#title {
+  color: #2A22F0;
+  float: left;
+  font: Lighter 30px Segoe UI;
+}
+
+#welcome {
+  color: #2C2C2C;
+  padding-top: 10px;
+  text-align: right;
+}
