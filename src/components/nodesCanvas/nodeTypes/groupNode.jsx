@@ -8,8 +8,11 @@ const GroupNode = ({data}) => {
     function updateLabel(e) {
         e.target.closest('.dropdown').nextElementSibling.innerText = e.target.innerText;
     }
+    function updateGroup(e){
+
+    }
     return (
-        <div className={`node node-group`}>
+        <div className={`node node-group`} onClick={updateGroup}>
             <div className={`header`}>
                 <Dropdown>
                     <Dropdown.Toggle variant="" className="n-button options">
