@@ -5,8 +5,6 @@ export const footerHeight = 37;
 export const filterClosedWidth = 32;
 export const filterOpenedWidth = 248;
 
-export const guidedTourButtonWidth = 150;
-export const explorationModeButtonWidth = 250;
 export const darkOutlineButtonClass = "btn btn-outline-dark";
 export const onboardingButtonStyle =  "margin:10px;";
 

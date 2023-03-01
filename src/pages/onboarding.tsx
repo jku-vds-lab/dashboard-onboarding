@@ -10,6 +10,7 @@ import * as config from "../Config";
 import * as onboarding from "../onboarding/ts/onboarding";
 import * as global from "../onboarding/ts/globalVariables";
 import {provectories} from '../Provenance/Provectories';
+import { Link } from "react-router-dom";
 const powerbi = new service.Service(factories.hpmFactory, factories.wpmpFactory, factories.routerFactory);
 
 export let accessToken = "";
@@ -37,7 +38,11 @@ class Onboarding extends React.Component<AppProps, AppState> {
         this.myReport = this.renderMyReport();
         return (
         <div className = "container-fluid" id = "flexContainer">
-            <div className="row" id="onboarding-header"></div>
+            <div className="row" id="onboarding-header">
+                <Link to="/editor" className="col-2" style={{padding: "0px"}}>
+                    <button id="editOnboarding" className={`${global.darkOutlineButtonClass}`} style={{margin: "10px"}}>Edit Dashboard Onboarding</button>
+                </Link>
+            </div>
             <div className = "row">
                 <div className = "col-10" id = "reportContainer">
                     <div id="embed-container" ref={this.state.reportRef} > Loading the report...</div>

@@ -6,6 +6,7 @@
 import 'react-app-polyfill/ie11';
 import 'react-app-polyfill/stable';
 import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import App from './App';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
@@ -15,9 +16,8 @@ import "./onboarding/css/onboarding.css";
 import "./UI/assets/css/dashboard.scss"
 import "./UI/assets/css/flow.scss"
 
-ReactDOM.render((
+createRoot(document.getElementById('root')!).render(
   <BrowserRouter>
     <App />
   </BrowserRouter>
-  ), document.getElementById('root')
 );

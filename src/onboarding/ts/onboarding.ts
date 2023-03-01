@@ -15,7 +15,7 @@ export async function onLoadReport(){
     await helpers.createComponentGraph();
     await helpers.getSettings();
     
-    helpers.createEditOnboardingButtons();
+    //helpers.createEditOnboardingButtons();
     helpers.createOnboardingButtons();
 
     helpers.resizeEmbed(global.filterClosedWidth);

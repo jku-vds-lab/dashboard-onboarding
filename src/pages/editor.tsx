@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import Dashboard from "../UI/components/dashboard";
 
 const Editor = () => {
@@ -8,7 +9,11 @@ const Editor = () => {
     return (
         <div className="editor">
         <Dashboard />
-            <div className="toolbar"><div className="btn btn-success m-1 px-5" onClick={saveSequence}>Save</div></div>
+            <div className="toolbar">
+                <Link to="/">
+                    <div className="btn btn-success m-1 px-5" onClick={saveSequence}>Save</div>
+                </Link>  
+            </div>
         </div>
     );
 }
