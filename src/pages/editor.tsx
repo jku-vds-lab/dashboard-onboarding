@@ -6,7 +6,7 @@ const Editor = () => {
     }
 
     return (
-        <div className="main">
+        <div className="editor">
         <Dashboard />
             <div className="toolbar"><div className="btn btn-success m-1 px-5" onClick={saveSequence}>Save</div></div>
         </div>

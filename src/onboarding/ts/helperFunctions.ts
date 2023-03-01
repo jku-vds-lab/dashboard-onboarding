@@ -23,9 +23,8 @@ import Filter from "../../componentGraph/Filter";
 import { exportData } from "../../Provenance/utils";
 
 export function addContainerOffset(){
-    const headerHeight = document.getElementById("header")!.clientHeight;
     const buttonHeaderHeight = document.getElementById("onboarding-header")!.clientHeight;
-    const topOffset = global.interactionCardHeight - headerHeight - buttonHeaderHeight;
+    const topOffset = global.interactionCardHeight - buttonHeaderHeight;
 
     const header = document.getElementById("onboarding-header");
     if(header){
