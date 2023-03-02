@@ -214,14 +214,16 @@ export function createDisableButton(parentId: string){
 }
 
 export function createEditOnboardingButtons(){
-    const attributes = global.createButtonAttributes();
-    attributes.id = "editOnboarding";
-    attributes.content = "Edit Dashboard Onboarding";
-    attributes.style =  global.onboardingButtonStyle;
-    attributes.classes = "col-2 " + global.darkOutlineButtonClass;
-    attributes.function = createOnboardingEditing;
-    attributes.parentId = "onboarding-header";
-    elements.createButton(attributes);
+    const editButton = document.getElementById("editOnboarding");
+    editButton?.removeAttribute("hidden");
+//     const attributes = global.createButtonAttributes();
+//     attributes.id = "editOnboarding";
+//     attributes.content = "Edit Dashboard Onboarding";
+//     attributes.style =  global.onboardingButtonStyle;
+//     attributes.classes = "col-2 " + global.darkOutlineButtonClass;
+//     attributes.function = createOnboardingEditing;
+//     attributes.parentId = "onboarding-header";
+//     elements.createButton(attributes);
 }
  
 
