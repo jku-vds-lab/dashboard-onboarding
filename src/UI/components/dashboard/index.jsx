@@ -10,6 +10,7 @@ import {
     ResizeHandleRight,
     ResizePanel,
 } from "react-hook-resize-panel";
+import Onboarding from "../../../pages/onboarding";
 
 
 import NodesCanvas from "../nodesCanvas";
@@ -139,7 +140,7 @@ const Dashboard = () => {
                         justify>
                         <Tab eventKey="output" title="Output view">
                             <div className="px-4">
-                                Content
+                                <Onboarding/>
                             </div>
                         </Tab>
                         <Tab eventKey="story" title="Story text">
