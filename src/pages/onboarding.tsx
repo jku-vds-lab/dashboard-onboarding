@@ -39,8 +39,8 @@ class Onboarding extends React.Component<AppProps, AppState> {
         return (
         <div className = "container-fluid" id = "flexContainer">
             <div className="row" id="onboarding-header">
-                <Link to="/editor" id="editOnboarding" className="col-2" style={{padding: "0px"}} hidden>
-                    <button className={`${global.darkOutlineButtonClass}`} style={{margin: "10px"}}>Edit Dashboard Onboarding</button>
+                <Link to="/editor" id="editOnboarding" className="col-2" style={{margin: "10px", padding: "0px"}} hidden>
+                    <button type="button" className={`${global.darkOutlineButtonClass}`} style={{width: "100%"}}>Edit Dashboard Onboarding</button>
                 </Link>
             </div>
             <div className = "row">
