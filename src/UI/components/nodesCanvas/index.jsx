@@ -25,7 +25,6 @@ const initialNodes = [
         position: {x: 0, y: 70},
         data: {title: "Dashboard", type: "dashboard"},
         parentNode: '',
-        extent: 'parent'
     },
     {
         id: "node-2",
@@ -34,13 +33,13 @@ const initialNodes = [
         position: {x: 120, y: 70},
         data: {title: "Line Chart", type: "line-chart"},
         extent: 'parent',
-        parentNode: ''
     },
     {
         id: 'node-3',
         type: 'group',
         data: { label: 'Group' },
         position: { x: 240, y: 0 },
+        childNodes: [{id: "node-4"}, {id: "node-5"}, {id: "node-6"},{id: "node-7"}]
     },
     {
         id: "node-4",
@@ -48,7 +47,6 @@ const initialNodes = [
         targetPosition: "top",
         position: {x: 30, y: 60},
         data: {title: "Bar chart", type: "bar-chart"},
-        extent: 'parent',
         parentNode: 'node-3',
     },
     {
@@ -57,7 +55,6 @@ const initialNodes = [
         targetPosition: "top",
         position: {x: 140, y: 60},
         data: {title: "Bar chart", type: "bar-chart"},
-        extent: 'parent',
         parentNode: 'node-3',
     },
     {
@@ -66,7 +63,6 @@ const initialNodes = [
         targetPosition: "top",
         position: {x: 30, y: 110},
         data: {title: "Dashboard", type: "dashboard"},
-        extent: 'parent',
         parentNode: 'node-3',
     },
     {
@@ -75,7 +71,6 @@ const initialNodes = [
         targetPosition: "top",
         position: {x: 140, y: 110},
         data: {title: "Line chart", type: "line-chart"},
-        extent: 'parent',
         parentNode: 'node-3',
     },
 
@@ -247,15 +242,23 @@ function NodesCanvas() {
      * @type {(function(): void)|*}
      */
     const onNodeClick = useCallback(
-        (event) => {
+        (event, el) => {
+           console.log(el);
             let container = document.getElementById('canvas-container');
             (event.target.classList.contains('react-flow__pane'))?container.classList.remove('show'):container.classList.add('show');
 
             //when the options button on a group node clicked, set the index of the child nodes to 0,
             // and change the connection type
-            if(event.target.classList.contains('options')){
+            /*     setNodes((nds) =>
+                nds.map((node) => {
+                    if (node.id === el.id) {
+                      node.className = 'z-index';
+                    }
 
-            }
+                    return node;
+                })
+            );
+       */
 
         },
         [],
@@ -282,12 +285,47 @@ function NodesCanvas() {
         );
     }, []);
 
-    const onNodeDragStop = (event, node) => {
-        /*const findElIndex = nodes.findIndex((n)=>n.id===node.id);
-        if(findElIndex>-1){
-            nodes[findElIndex]=node;
-            setElements([...nodes])
-        }*/
+    const onNodeDragStart = (event, n) => {
+        console.log(event.clientX);
+         if(n.parentNode){
+             setNodes((nds) =>
+                 nds.map((node) => {
+                     if (node.id===n.id) {
+                         // it's important that you create a new object here
+                         // in order to notify react flow about the change
+                         node.parentNode = ''
+                         node.position = {x:event.clientX, y:event.clientY}
+                     }
+                     return node;
+                 })
+             );
+            }
+
+    }
+
+    const onNodeDragStop = (event, n) => {
+       if(n){
+           getIntersectingNodes(n).forEach(function (interaction){
+               if(interaction.type === "group"){
+                   console.log(interaction);
+                   setNodes((nds) =>
+                       nds.map((node) => {
+                           if (node.id===n.id) {
+                               // it's important that you create a new object here
+                               // in order to notify react flow about the change
+                               node.parentNode = interaction.id
+                               node.position = {x:0, y:0}
+
+
+                           }
+                           return node;
+                       })
+                   );
+
+               }
+           })
+       }
+
     }
 
     /**
@@ -321,7 +359,6 @@ function NodesCanvas() {
     );
 
     const onNodeMouseEnter = (e, node) => {
-        console.log(node);
         if(node.type==="group"){
 
         }
@@ -356,6 +393,7 @@ function NodesCanvas() {
             nodeTypes={nodeTypes}
             onInit={setReactFlowInstance}
             onDrop={onDrop}
+            onNodeDragStart={onNodeDragStart}
             onNodeDragStop={onNodeDragStop}
             onDragOver={onDragOver}
             onNodeClick={onNodeClick}

@@ -170,6 +170,9 @@ $color-white: #f1f1f1;
 .react-flow__node.highlight {
   background-color: rgba(199, 189, 189, 0.3);
 }
+.react-flow__node.z-index{
+  z-index: 1100 !important;
+}
 
 .react-flow__node-default, .react-flow__node-input, .react-flow__node-output, .react-flow__node-group{
   padding: 0px;
@@ -183,7 +186,7 @@ $color-white: #f1f1f1;
   width: 280px;
 }
 .react-flow__node-group{
-  z-index: 1001 !important;
+
 }
 
 .context-menu{
