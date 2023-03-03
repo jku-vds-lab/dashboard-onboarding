@@ -1,0 +1,14 @@
+$bg-dark: rgb(32,32,32);
+$color-white: #f1f1f1;
+
+.editor {
+  width: 100%;
+  height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #{$bg-dark};
+  color: #{$color-white};
+}
