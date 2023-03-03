@@ -190,7 +190,9 @@ function NodesCanvas() {
     }, []);
 
     const onClick = useCallback((event) => {
-
+       //document.getElementById('canvas-container').classList.remove('show');
+        let container = document.getElementById('canvas-container');
+        (event.target.classList.contains('react-flow__pane'))?container.classList.remove('show'):container.classList.add('show');
     }, []);
 
 
@@ -243,23 +245,16 @@ function NodesCanvas() {
      */
     const onNodeClick = useCallback(
         (event, el) => {
-           console.log(el);
-            let container = document.getElementById('canvas-container');
-            (event.target.classList.contains('react-flow__pane'))?container.classList.remove('show'):container.classList.add('show');
-
-            //when the options button on a group node clicked, set the index of the child nodes to 0,
-            // and change the connection type
-            /*     setNodes((nds) =>
-                nds.map((node) => {
-                    if (node.id === el.id) {
-                      node.className = 'z-index';
+       /* if(el.selected){
+            setNodes((nds) =>
+                nds.map((n) => {
+                    if (n.id===el.id) {
+                       n.selected=false
                     }
-
-                    return node;
+                    return n;
                 })
             );
-       */
-
+        } */
         },
         [],
     );
@@ -267,26 +262,31 @@ function NodesCanvas() {
     const onNodeDrag = useCallback((_: MouseEvent, node: Node) => {
         const intersections = getIntersectingNodes(node).map(
             (n) => n.id);
+
         getIntersectingNodes(node).forEach(function (n){
             if(n.type === "group"){
                 node.parentNode = 'node-3';
-
             }
         })
 
         //check if the node is dropped to the group
-
-
         setNodes((ns) =>
             ns.map((n) => ({
                 ...n,
                 className: intersections.includes(n.id) ? 'highlight' : '',
             }))
         );
+
+
     }, []);
 
     const onNodeDragStart = (event, n) => {
-        console.log(event.clientX);
+        /*const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
+        const position = reactFlowInstance.project({
+            x: event.clientX - reactFlowBounds.left,
+            y: event.clientY - reactFlowBounds.top,
+        });
+
          if(n.parentNode){
              setNodes((nds) =>
                  nds.map((node) => {
@@ -294,12 +294,12 @@ function NodesCanvas() {
                          // it's important that you create a new object here
                          // in order to notify react flow about the change
                          node.parentNode = ''
-                         node.position = {x:event.clientX, y:event.clientY}
+                         node.position = position
                      }
                      return node;
                  })
              );
-            }
+            }*/
 
     }
 
@@ -307,21 +307,31 @@ function NodesCanvas() {
        if(n){
            getIntersectingNodes(n).forEach(function (interaction){
                if(interaction.type === "group"){
-                   console.log(interaction);
+                   const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
+                   const position = reactFlowInstance.project({
+                       x: event.clientX - interaction.position.x - reactFlowBounds.left - n.width,
+                       y: event.clientY - interaction.position.y - reactFlowBounds.top - n.height,
+                   });
                    setNodes((nds) =>
                        nds.map((node) => {
                            if (node.id===n.id) {
                                // it's important that you create a new object here
                                // in order to notify react flow about the change
                                node.parentNode = interaction.id
-                               node.position = {x:0, y:0}
-
-
+                               node.position = position
                            }
                            return node;
                        })
                    );
-
+               } else{
+                   setNodes((nds) =>
+                       nds.map((node) => {
+                           if (node.id===n.id) {
+                               node.parentNode = ''
+                           }
+                           return node;
+                       })
+                   );
                }
            })
        }
@@ -378,7 +388,14 @@ function NodesCanvas() {
 
 
     const deleteNode = () => {
-        setNodes((nodes)=> nodes.filter((n)=>n.id!==nodeData.id));
+        if(nodeData.type==='group'){
+            //delete children nodes
+            setNodes((nodes)=> nodes.filter((n)=>n.parentNode!==nodeData.id));
+            setNodes((nodes)=> nodes.filter((n)=>n.id!==nodeData.id));
+        } else{
+            setNodes((nodes)=> nodes.filter((n)=>n.id!==nodeData.id));
+
+        }
         setIsOpen(false);
     };
 
