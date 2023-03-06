@@ -139,7 +139,7 @@ const Dashboard = () => {
                     className="mb-3"
                     justify>
                     <Tab eventKey="output" title="Output view">
-                        <div className="px-4" style={{color: "black"}}>
+                        <div style={{color: "black"}}>
                             <Onboarding/>
                         </div>
                     </Tab>
