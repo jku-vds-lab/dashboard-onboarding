@@ -1,11 +1,12 @@
 import * as global from "./globalVariables";
 import * as elements from "./elements";
+import { divisor } from "./sizes";
 import { getClickableStyle } from "./helperFunctions";
 
 export function disableAll(){
     const attributes = global.createDivAttributes();
     attributes.id = "disabledPage";
-    attributes.style = getGrayDivStyle(0, 0, global.page.defaultSize.width!, global.page.defaultSize.height!);
+    attributes.style = getGrayDivStyle(0, 0, global.reportWidth!, global.reportHeight!);
     attributes.parentId = "onboarding";
     elements.createDiv(attributes);
     disableFrame();
@@ -22,7 +23,7 @@ export function disableFrame(){
 export function disableTop(){
     const attributes = global.createDivAttributes();
     attributes.id = "disabledTop";
-    attributes.style = getGrayDivStyle(global.containerPaddingTop - global.settings.reportOffset.top, global.containerPaddingLeft - global.settings.reportOffset.left, global.page.defaultSize.width! + global.settings.reportOffset.left, global.settings.reportOffset.top);
+    attributes.style = getGrayDivStyle(global.containerPaddingTop - global.settings.reportOffset.top, global.containerPaddingLeft - global.settings.reportOffset.left, global.reportWidth! + global.settings.reportOffset.left, global.settings.reportOffset.top);
     attributes.parentId = "embed-container";
     elements.createDiv(attributes);
 }
@@ -30,7 +31,7 @@ export function disableTop(){
 export function disableFilter(){
     const attributes = global.createDivAttributes();
     attributes.id = "disabledFilter";
-    attributes.style = getGrayDivStyle(global.containerPaddingTop - global.settings.reportOffset.top, global.page.defaultSize.width! + global.containerPaddingLeft, global.filterOpenedWidth + global.settings.reportOffset.right, global.page.defaultSize.height!  + global.settings.reportOffset.top);
+    attributes.style = getGrayDivStyle(global.containerPaddingTop - global.settings.reportOffset.top, global.reportWidth! + global.containerPaddingLeft, global.filterOpenedWidth + global.settings.reportOffset.right, global.reportHeight!  + global.settings.reportOffset.top);
     attributes.parentId = "embed-container";
     elements.createDiv(attributes);
 }
@@ -38,7 +39,7 @@ export function disableFilter(){
 export function disableFooter(){
     const attributes = global.createDivAttributes();
     attributes.id = "disabledFooter";
-    attributes.style = getGrayDivStyle(global.page.defaultSize.height! + global.containerPaddingTop, global.containerPaddingLeft, global.page.defaultSize.width! + global.settings.reportOffset.right + global.filterOpenedWidth, global.footerHeight + global.settings.reportOffset.bottom);
+    attributes.style = getGrayDivStyle(global.reportHeight! + global.containerPaddingTop, global.containerPaddingLeft, global.reportWidth! + global.settings.reportOffset.right + global.filterOpenedWidth, global.footerHeight + global.settings.reportOffset.bottom);
     attributes.parentId = "embed-container";
     elements.createDiv(attributes);
 }
@@ -46,7 +47,7 @@ export function disableFooter(){
 export function disableLeftOffset(){
     const attributes = global.createDivAttributes();
     attributes.id = "disabledLeftOffset";
-    attributes.style = getGrayDivStyle(global.containerPaddingTop, global.containerPaddingLeft - global.settings.reportOffset.left, global.settings.reportOffset.left, global.page.defaultSize.height! + global.footerHeight + global.settings.reportOffset.bottom);
+    attributes.style = getGrayDivStyle(global.containerPaddingTop, global.containerPaddingLeft - global.settings.reportOffset.left, global.settings.reportOffset.left, global.reportHeight! + global.footerHeight + global.settings.reportOffset.bottom);
     attributes.parentId = "embed-container";
     elements.createDiv(attributes);
 }
@@ -59,32 +60,32 @@ export function removeFrame(){
 }
 
 export function createDisabledArea(visual: any){
-    const rightX = visual.layout.x + visual.layout.width;
-    const lowerY = visual.layout.y + visual.layout.height;
-    const lowerDistance = global.page.defaultSize.height! - lowerY;
-    const rightDistance = global.page.defaultSize.width! - rightX;
+    const rightX = (visual.layout.x/divisor) + (visual.layout.width/divisor);
+    const lowerY = (visual.layout.y/divisor) + (visual.layout.height/divisor);
+    const lowerDistance = global.reportHeight! - lowerY;
+    const rightDistance = global.reportWidth! - rightX;
 
     let attributes = global.createDivAttributes();
     attributes.id = "disabledUpper";
-    attributes.style = getGrayDivStyle(0, 0, global.page.defaultSize.width!, visual.layout.y);
+    attributes.style = getGrayDivStyle(0, 0, global.reportWidth!, visual.layout.y/divisor);
     attributes.parentId = "onboarding";
     elements.createDiv(attributes);
 
     attributes = global.createDivAttributes();
     attributes.id = "disabledLower";
-    attributes.style =  getGrayDivStyle(lowerY, 0, global.page.defaultSize.width!, lowerDistance);
+    attributes.style =  getGrayDivStyle(lowerY, 0, global.reportWidth!, lowerDistance);
     attributes.parentId = "onboarding";
     elements.createDiv(attributes);
 
     attributes = global.createDivAttributes();
     attributes.id = "disabledRight";
-    attributes.style =  getGrayDivStyle(visual.layout.y, rightX, rightDistance, visual.layout.height);
+    attributes.style =  getGrayDivStyle(visual.layout.y/divisor, rightX, rightDistance, visual.layout.height/divisor);
     attributes.parentId = "onboarding";
     elements.createDiv(attributes);
     
     attributes = global.createDivAttributes();
     attributes.id = "disabledLeft";
-    attributes.style =  getGrayDivStyle(visual.layout.y, 0, visual.layout.x, visual.layout.height);
+    attributes.style =  getGrayDivStyle(visual.layout.y/divisor, 0, visual.layout.x/divisor, visual.layout.height/divisor);
     attributes.parentId = "onboarding";
     elements.createDiv(attributes);
 }
@@ -98,7 +99,7 @@ export function createFilterDisabledArea(){
     
     const attributes = global.createDivAttributes();
     attributes.id = "disabledLeft";
-    attributes.style =  getGrayDivStyle(0, 0, global.page.defaultSize.width!, global.page.defaultSize.height!);
+    attributes.style =  getGrayDivStyle(0, 0, global.reportWidth!, global.reportHeight!);
     attributes.parentId = "onboarding";
     elements.createDiv(attributes);
 }

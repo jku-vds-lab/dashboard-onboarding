@@ -1,23 +1,26 @@
 import { Report, Page } from "powerbi-client";
 import ComponentGraph from "../../componentGraph/ComponentGraph";
+import * as sizes from "./sizes";
 
 export const footerHeight = 37;
-export const filterClosedWidth = 32;
-export const filterOpenedWidth = 248;
+export const filterClosedWidth = 33;
+export let filterOpenedWidth = sizes.filterOpenedWidthOriginal;
 
 export const darkOutlineButtonClass = "btn btn-outline-dark";
-export const onboardingButtonStyle =  "margin:10px;";
+export const onboardingButtonStyle =  "margin:10px;background-color: white;";
 
-export const infoCardMargin = 10;
-export const infoCardWidth = 500;
-export const introCardMargin = 60;
-export const introCardWidth = 500;
-export const interactionCardWidth = 500;
-export const interactionCardHeight = 300;
-export const hintCardMargin = 5;
-export const hintCardWidth = 200;
-export const editCardMargin = 0;
-export const editCardWidth = 500;
+export let infoCardMargin = sizes.infoCardMarginOriginal;
+export let infoCardWidth = sizes.infoCardWidthOriginal;
+export let introCardMargin = sizes.introCardMarginOriginal;
+export let introCardWidth = sizes.introCardWidthOriginal;
+export let interactionCardWidth = sizes.interactionCardWidthOriginal;
+export let interactionCardHeight = sizes.interactionCardHeightOriginal;
+export let hintCardMargin = sizes.hintCardMarginOriginal;
+export let hintCardWidth = sizes.hintCardWidthOriginal;
+export let editCardMargin = sizes.editCardMarginOriginal;
+export let editCardWidth = sizes.editCardWidthOriginal;
+export let reportWidth:number;
+export let reportHeight:number;
 
 export let settings: Settings;
 export let componentGraph: ComponentGraph;
@@ -195,6 +198,47 @@ export function createInteractionExample(){
    }
 }
 
+export function setFilterOpenedWidth(newFilterOpenedWidth: number){
+    filterOpenedWidth = newFilterOpenedWidth;
+}
+
+export function setInfoCardMargin(newInfoCardMargin: number){
+    infoCardMargin = newInfoCardMargin;
+}
+export function setInfoCardWidth (newInfoCardWidth: number){
+    infoCardWidth = newInfoCardWidth;
+}
+export function setIntroCardMargin(newIntroCardMargin: number){
+    introCardMargin = newIntroCardMargin;
+}
+export function setIntroCardWidth(newIntroCardWidth: number){
+    introCardWidth = newIntroCardWidth;
+}
+export function setInteractionCardWidth(newInteractionCardWidth: number){
+    interactionCardWidth = newInteractionCardWidth;
+}
+export function setInteractionCardHeight(newInteractionCardHeight: number){
+    interactionCardHeight = newInteractionCardHeight;
+}
+export function setHintCardMargin(newHintCardMargin: number){
+    hintCardMargin = newHintCardMargin;
+}
+export function setHintCardWidth(newHintCardWidth: number){
+    hintCardWidth = newHintCardWidth;
+}
+export function setEditCardMargin(newEditCardMargin: number){
+    editCardMargin = newEditCardMargin;
+}
+export function setEditCardWidth(newEditCardWidth: number){
+    editCardWidth = newEditCardWidth;
+}
+export function setReportWidth(newReportWidth: number){
+    reportWidth = newReportWidth;
+}
+export function setReportHeight(newReportHeight: number){
+    reportHeight = newReportHeight;
+}
+
 export function setSettings(newSettings: Settings){
     settings = newSettings;
 }
@@ -295,6 +339,7 @@ export function createSpanAttributes(){
         id: "",
         content: "",
         hidden: "false",
+        style: "",
         parentId: ""
     };
 }

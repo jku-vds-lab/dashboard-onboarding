@@ -60,10 +60,11 @@ export function createButton(attributes: { id: any; content: any; style: any; cl
     document.getElementById(attributes.parentId)?.appendChild(button);
 }
 
-export function createSpan(attributes: { id: any; content: any; hidden: any; parentId: any; }){
+export function createSpan(attributes: { id: any; content: any; hidden: any; style: any, parentId: any; }){
     const span = document.createElement('span');
     span.id = attributes.id;
     span.innerHTML = attributes.content;
+    span.style.cssText = attributes.style;
     span.setAttribute("aria-hidden", attributes.hidden);
 
     document.getElementById(attributes.parentId)?.appendChild(span);

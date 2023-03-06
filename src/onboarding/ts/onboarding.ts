@@ -8,6 +8,7 @@ import { removeInteractionCard } from "./interactionExample";
 import { createSettings } from "./createSettings";
 import { showReportChanges } from "./showReportChanges";
 import { createDashboardInfoCard } from "./dashboardInfoCard";
+import { divisor, resize, setDivisor } from "./sizes";
 
 export async function onLoadReport(){
     await helpers.getActivePage();
@@ -17,6 +18,8 @@ export async function onLoadReport(){
     
     helpers.createEditOnboardingButtons();
     helpers.createOnboardingButtons();
+
+    resize();
 
     helpers.resizeEmbed(global.filterClosedWidth);
 
@@ -96,11 +99,11 @@ export async function createOnboardingOverlay(){
     removeInteractionCard();
 
     global.currentVisuals.forEach(function (visual: any) {
-        const style = helpers.getClickableStyle(visual.layout.y, visual.layout.x, visual.layout.width, visual.layout.height);
+        const style = helpers.getClickableStyle(visual.layout.y, visual.layout.x/divisor, visual.layout.width/divisor, visual.layout.height/divisor);
         createOverlay(visual.name, style);
     });
 
-    const style = helpers.getClickableStyle(-global.settings.reportOffset.top, global.page.defaultSize.width!, global.filterOpenedWidth, global.page.defaultSize.height!);
+    const style = helpers.getClickableStyle(-global.settings.reportOffset.top, global.reportWidth!, global.filterOpenedWidth, global.reportHeight!);
     createOverlay("filter", style);
 }
 

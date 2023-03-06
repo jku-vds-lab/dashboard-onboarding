@@ -16,6 +16,7 @@ import Onboarding from "../../../pages/onboarding";
 import NodesCanvas from "../nodesCanvas";
 
 import "../../assets/css/dashboard.scss";
+import { setDivisor } from "../../../onboarding/ts/sizes";
 
 const Dashboard = () => {
     useEffect(() => {
@@ -34,6 +35,9 @@ const Dashboard = () => {
 
 
     const [checked, setChecked] = React.useState(true);
+    
+    setDivisor(3);
+
     return (
         <div className="d-board" style={{flexFlow: "row nowrap", flexGrow: 1, display: "flex"}}>
             <ResizePanel className="component-cont" initialWidth={250} maxWidth={400} minWidth={250}>
@@ -128,35 +132,29 @@ const Dashboard = () => {
                 </div>
             </div>
 
-            <ResizePanel initialWidth={400} maxWidth={500} minWidth={150}>
-                <ResizeHandleLeft className="resize">
-                    <div className="col-resize"/>
-                </ResizeHandleLeft>
-                <ResizeContent>
-                    <Tabs
-                        defaultActiveKey="output"
-                        id=""
-                        className="mb-3"
-                        justify>
-                        <Tab eventKey="output" title="Output view">
-                            <div className="px-4">
-                                <Onboarding/>
-                            </div>
-                        </Tab>
-                        <Tab eventKey="story" title="Story text">
-                            <div className="px-4">
-                                Content
-                            </div>
-                        </Tab>
-                        <Tab eventKey="settings" title="Settings">
-                            <div className="px-4">
-                                Content
-                            </div>
-                        </Tab>
-                    </Tabs>
-
-                </ResizeContent>
-            </ResizePanel>
+            <div style={{width: "400px", borderLeft: "double gray"}}>
+                <Tabs
+                    defaultActiveKey="output"
+                    id=""
+                    className="mb-3"
+                    justify>
+                    <Tab eventKey="output" title="Output view">
+                        <div className="px-4" style={{color: "black"}}>
+                            <Onboarding/>
+                        </div>
+                    </Tab>
+                    <Tab eventKey="story" title="Story text">
+                        <div className="px-4">
+                            Content
+                        </div>
+                    </Tab>
+                    <Tab eventKey="settings" title="Settings">
+                        <div className="px-4">
+                            Content
+                        </div>
+                    </Tab>
+                </Tabs>
+            </div>
             <div/>
         </div>
     );
