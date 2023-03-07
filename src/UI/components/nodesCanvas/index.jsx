@@ -263,39 +263,45 @@ function NodesCanvas() {
     const onNodeDrag = useCallback((_: MouseEvent, node: Node) => {
         const intersections = getIntersectingNodes(node).map(
             (n) => n.id);
+
         getIntersectingNodes(node).forEach(function (n) {
             if (n.type === "group") {
                 node.parentNode = 'node-3';
-
             }
         })
 
         //check if the node is dropped to the group
-
-
         setNodes((ns) =>
             ns.map((n) => ({
                 ...n,
                 className: intersections.includes(n.id) ? 'highlight' : '',
             }))
         );
+
+
     }, []);
 
     const onNodeDragStart = (event, n) => {
-        /*   if(n.parentNode){
+        /*const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
+        const position = reactFlowInstance.project({
+            x: event.clientX - reactFlowBounds.left,
+            y: event.clientY - reactFlowBounds.top,
+        });
+
+            if(n.parentNode){
                setNodes((nds) =>
                    nds.map((node) => {
                        if (node.id===n.id) {
                            // it's important that you create a new object here
                            // in order to notify react flow about the change
                            node.parentNode = ''
-                           node.position = {x:event.clientX, y:event.clientY}
+                           node.position = position
                        }
                        return node;
                    })
                );
-              }
-*/
+              }*/
+
     }
 
     const onNodeDragStop = (event, n) => {
@@ -327,7 +333,6 @@ function NodesCanvas() {
                             return node;
                         })
                     );
-
                 }
             })
         }
