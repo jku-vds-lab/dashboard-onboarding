@@ -21,32 +21,79 @@ import { allVisuals } from "../../../onboarding/ts/globalVariables";
 
 const Dashboard = () => {
     useEffect(() => {
+        const cardElements = allVisuals.filter(function (visual) {
+            return visual.type == "card";
+        });
+        const cardElementsLength = cardElements.length;
+        let index = 0;
         for(const vis of allVisuals){
-            createComponentNode({ id: vis.name, classes: `dndnode`, content: `${vis.type}`, parentId: "componentNodes" });
+            let visTitle = createNodeTitle(vis.type);
+            if(vis.type == 'card') {
+                if (cardElementsLength > 1) {
+                index = index + 1;
+                visTitle = visTitle + index;
+                }
+            }
+
+            createComponentNode({ id: vis.name, classes: `dndnode`, content: `${visTitle}`, parentId: "componentNodes" });
             switch(vis.type){
                 case "card":
-                    createComponentNode({ id: vis.name + " insight", classes: `dndnode`, content: `${vis.type} insight`, function: "", parentId: "subcomponentNodes" });
+                    createComponentNode({ id: vis.name + " insight", classes: `dndnode`, content: `${visTitle} insight`, function: "", parentId: "subcomponentNodes" });
                     break;
                 case "slicer":
-                    createComponentNode({ id: vis.name + " interaction", classes: `dndnode`, content: `${vis.type} interaction`, function: "", parentId: "subcomponentNodes" });
+                    createComponentNode({ id: vis.name + " interaction", classes: `dndnode`, content: `${visTitle} interaction`, function: "", parentId: "subcomponentNodes" });
                     break;
                 default:
-                    createComponentNode({ id: vis.name + " interaction", classes: `dndnode`, content: `${vis.type} interaction`, function: "", parentId: "subcomponentNodes" });
-                    createComponentNode({ id: vis.name + " insight", classes: `dndnode`, content: `${vis.type} insight`, function: "", parentId: "subcomponentNodes" });
+                    createComponentNode({ id: vis.name + " interaction", classes: `dndnode`, content: `${visTitle} interaction`, function: "", parentId: "subcomponentNodes" });
+                    createComponentNode({ id: vis.name + " insight", classes: `dndnode`, content: `${visTitle} insight`, function: "", parentId: "subcomponentNodes" });
             }
         }
     }, []);
 
+    // TODO #1
+    function createIndex(allVisuals) {
+        const cardElements = allVisuals.filter(function (visual) {
+            return visual.type == "card";
+        });
+        const cardElementsLength = cardElements.length;
+    }
+
+    function createNodeTitle(title, index='') {
+        let newTitle = title;
+        switch(title){
+            case "card":
+                newTitle = 'KPI';
+                break;
+            case "slicer":
+                newTitle = 'Filter';
+                break;
+            case "lineClusteredColumnComboChart":
+                newTitle = 'Column';
+                break;
+            case "clusteredBarChart":
+                    newTitle = 'Bar';
+                    break;
+            case "lineChart":
+                    newTitle = 'Line';
+                    break;
+            default:
+                newTitle = title;
+
+        }
+        newTitle = newTitle + index;
+        return  newTitle;
+    }
+
     function createComponentNode(attributes){
         const div = document.createElement('div');
         div.id = attributes.id;
-        div.className = attributes.classes;
+        div.className = attributes.classes + ' ' + attributes.content;
         div.innerHTML = attributes.content;
         div.setAttribute("draggable", "true");
         div.addEventListener("dragstart", function(){
             onDragStart(event, "simple", attributes.id, attributes.content, attributes.content);
         });
-    
+
         document.getElementById(attributes.parentId)?.appendChild(div);
     }
 
@@ -65,7 +112,7 @@ const Dashboard = () => {
 
 
     const [checked, setChecked] = React.useState(true);
-    
+
     setDivisor(3);
 
     return (

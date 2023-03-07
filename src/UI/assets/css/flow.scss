@@ -2,8 +2,11 @@ $bg-dark: rgb(32,32,32);
 $bg-dark-1: rgb(83,83,83);
 $default-handle-color: rgb(158, 159, 160);
 $dashboard-color: rgb(233, 78, 127);
-$line-chart-color: rgb(22,88,108);
-$bar-chart-color: rgb(8,52,108);
+$line-chart-color: rgb(27,158,119);
+$bar-chart-color: rgb(217,95,2);
+$kpi-color: rgb(117,112,179);
+$filter-color: rgb(231,41,138);
+$column-color: rgb(102,166,30);
 $color-white: #f1f1f1;
 
 .empty{
@@ -41,11 +44,23 @@ $color-white: #f1f1f1;
   &.dashboard{
     background-color: #{$dashboard-color};
   }
-  &.bar-chart{
+  &.Bar{
     background-color: #{$bar-chart-color};
   }
-  &.line-chart{
+  &.Line{
     background-color: #{$line-chart-color};
+  }
+  &.KPI1{
+    background-color: #{$kpi-color};
+  }
+  &.KPI2{
+    background-color: #{$kpi-color};
+  }
+  &.Filter{
+    background-color: #{$filter-color};
+  }
+  &.Column{
+    background-color: #{$column-color};
   }
 }
 
@@ -138,11 +153,23 @@ $color-white: #f1f1f1;
   &.dashboard{
     background-color: #{$dashboard-color};
   }
-  &.bar-chart{
+  &.Bar{
     background-color: #{$bar-chart-color};
   }
-  &.line-chart{
+  &.Line{
     background-color: #{$line-chart-color};
+  }
+  &.KPI1{
+    background-color: #{$kpi-color};
+  }
+  &.KPI2{
+    background-color: #{$kpi-color};
+  }
+  &.Filter{
+    background-color: #{$filter-color};
+  }
+  &.Column{
+    background-color: #{$column-color};
   }
 }
 
