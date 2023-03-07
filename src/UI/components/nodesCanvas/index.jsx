@@ -18,16 +18,19 @@ import {ContextMenu} from "./context-menu";
 
 import Sidebar from '../dashboard/index';
 
+import * as helpers from "../../../onboarding/ts/helperFunctions";
+import { getVisualInfos } from "../../../onboarding/ts/listOfVisuals";
+
 const initialNodes = [
     {
-        id: "node-1",
+        id: "VisualContainer1",
         type: "simple",
         position: {x: 0, y: 70},
         data: {title: "Dashboard", type: "dashboard"},
         parentNode: '',
     },
     {
-        id: "node-2",
+        id: "VisualContainer2",
         type: "simple",
         targetPosition: "top",
         position: {x: 120, y: 70},
@@ -190,11 +193,27 @@ function NodesCanvas() {
 
     }, []);
 
-    const onClick = useCallback((event) => {
+    const onClick = useCallback(async (event) => {
         //document.getElementById('canvas-container').classList.remove('show');
         let container = document.getElementById('canvas-container');
         (event.target.classList.contains('react-flow__pane')) ? container.classList.remove('show') : container.classList.add('show');
 
+        let nodeId;
+        if(event.target.classList.contains('title')){
+            nodeId = event.target.parentNode.parentNode.parentNode.getAttribute("data-id");
+        } else if (event.target.classList.contains('header')){
+            nodeId = event.target.parentNode.parentNode.getAttribute("data-id");
+        } else{
+            nodeId = event.target.parentNode.getAttribute("data-id");
+        }
+        const visualData = helpers.getDataWithId(nodeId);
+        if(!visualData){
+            return;
+        }
+        const visualInfos = await getVisualInfos(visualData);
+        let info = visualInfos.generalInfos.join('\r\n');
+        info = info.replaceAll("<br>", '\r\n');
+        document.getElementById('textBox').value = info;
     }, []);
 
 

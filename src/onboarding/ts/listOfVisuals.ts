@@ -66,7 +66,7 @@ async function createCollapseForm(visualID: string){
     helpers.createInfoForm("insight", visualID, visualInfos.insightInfos);
 }
 
-async function getVisualInfos(visualData: global.SettingsVisual){
+export async function getVisualInfos(visualData: global.SettingsVisual){
     const visual = global.allVisuals.find(function (visual) {
         return visual.name == visualData.id;
     });
