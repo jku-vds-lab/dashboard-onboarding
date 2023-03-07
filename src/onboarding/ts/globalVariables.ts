@@ -7,7 +7,7 @@ export const filterClosedWidth = 33;
 export let filterOpenedWidth = sizes.filterOpenedWidthOriginal;
 
 export const darkOutlineButtonClass = "btn btn-outline-dark";
-export const onboardingButtonStyle =  "margin:10px;background-color: white;";
+export const onboardingButtonStyle =  "margin:10px;";
 
 export let infoCardMargin = sizes.infoCardMarginOriginal;
 export let infoCardWidth = sizes.infoCardWidthOriginal;

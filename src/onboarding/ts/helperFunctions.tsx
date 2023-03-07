@@ -308,7 +308,7 @@ export function createOnboardingButtons(){
     attributes.id = "guidedTour";
     attributes.content = "Start Guided Tour";
     attributes.style =  global.onboardingButtonStyle;
-    attributes.classes = "col-2 " + global.darkOutlineButtonClass;
+    attributes.classes = "onboardingButton col-2 " + global.darkOutlineButtonClass;
     attributes.function = createGuidedTour;
     attributes.parentId = "onboarding-header";
     elements.createButton(attributes);
@@ -317,7 +317,7 @@ export function createOnboardingButtons(){
     attributes.id = "dashboardExploration";
     attributes.content = "Start Dashboard Exploration";
     attributes.style =  global.onboardingButtonStyle;
-    attributes.classes = "col-2 " + global.darkOutlineButtonClass;
+    attributes.classes = "onboardingButton col-2 " + global.darkOutlineButtonClass;
     attributes.function = createDashboardExploration;
     attributes.parentId = "onboarding-header";
     elements.createButton(attributes);

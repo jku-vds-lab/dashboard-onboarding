@@ -1,9 +1,20 @@
+@import "~bootstrap/scss/bootstrap";
+$bg-dark: rgb(32,32,32);
+
 .container-fluid {
     padding-left: 5%;
     padding-right: 5%;
     padding-top: 5%;
     width: 100%;
   }
+
+.onboardingButton{
+    background-color: white;
+}
+.onboardingButton:hover{
+    background-color: #{$bg-dark};
+    border-color: white;
+}
 
 .rectLeftBig:before {
     content: "";
