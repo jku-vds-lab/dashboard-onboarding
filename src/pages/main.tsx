@@ -2,12 +2,12 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 
 import Editor from "./editor";
-import Onboarding from './onboarding';
+import Home from './home';
 
 const Main = () => {
   return (
     <Routes>
-      <Route path='/' element={<Onboarding/>}></Route>
+      <Route path='/' element={<Home/>}></Route>
       <Route path='/editor' element={<Editor/>}></Route>
     </Routes>
   );

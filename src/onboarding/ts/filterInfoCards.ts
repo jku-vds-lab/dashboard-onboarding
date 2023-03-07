@@ -6,7 +6,7 @@ import Filter from "../../componentGraph/Filter";
 export async function createFilterInfoCard(){
     createFilterDisabledArea();
   
-    const style = helpers.getCardStyle(global.infoCardMargin, global.page.defaultSize.width! - global.infoCardMargin - global.infoCardWidth, global.infoCardWidth, "");
+    const style = helpers.getCardStyle(global.infoCardMargin, global.reportWidth! - global.infoCardMargin - global.infoCardWidth, global.infoCardWidth, "");
     helpers.createCard("infoCard", style, "rectLeftBig")
 
     helpers.createCloseButton("closeButton", "closeButtonPlacementBig", "", helpers.getCloseFunction(), "infoCard");

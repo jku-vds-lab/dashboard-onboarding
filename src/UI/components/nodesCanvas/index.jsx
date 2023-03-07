@@ -18,16 +18,19 @@ import {ContextMenu} from "./context-menu";
 
 import Sidebar from '../dashboard/index';
 
+import * as helpers from "../../../onboarding/ts/helperFunctions";
+import { getVisualInfos } from "../../../onboarding/ts/listOfVisuals";
+
 const initialNodes = [
     {
-        id: "node-1",
+        id: "VisualContainer1",
         type: "simple",
         position: {x: 0, y: 70},
         data: {title: "Dashboard", type: "dashboard"},
         parentNode: '',
     },
     {
-        id: "node-2",
+        id: "VisualContainer2",
         type: "simple",
         targetPosition: "top",
         position: {x: 120, y: 70},
@@ -37,9 +40,9 @@ const initialNodes = [
     {
         id: 'node-3',
         type: 'group',
-        data: { label: 'Group' },
-        position: { x: 240, y: 0 },
-        childNodes: [{id: "node-4"}, {id: "node-5"}, {id: "node-6"},{id: "node-7"}]
+        data: {label: 'Group'},
+        position: {x: 240, y: 0},
+        childNodes: [{id: "node-4"}, {id: "node-5"}, {id: "node-6"}, {id: "node-7"}]
     },
     {
         id: "node-4",
@@ -112,9 +115,9 @@ function NodesCanvas() {
     const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
     const [nodeData, setNodeData] = useState(null);
     const [elements, setElements] = useState([]);
-    const { getIntersectingNodes, deleteElements } = useReactFlow();
+    const {getIntersectingNodes, deleteElements} = useReactFlow();
     const [reactFlowInstance, setReactFlowInstance] = useState(null);
-    const [position, setPosition] = useState({x:0, y:0});
+    const [position, setPosition] = useState({x: 0, y: 0});
     const [isOpen, setIsOpen] = useState(false);
     /**
      * Called after end of edge gets dragged to another source or target
@@ -126,25 +129,26 @@ function NodesCanvas() {
             //TODO: create a method to return nodeTarget, inputHandle, sourceTarget, outputHandle
 
             //reset the color
-            let nodeTarget = document.querySelector('[data-id="'+oldEdge.target+'"]');
-            let inputHandle = nodeTarget.querySelector('[data-handleid="'+oldEdge.targetHandle+'"]');
+            let nodeTarget = document.querySelector('[data-id="' + oldEdge.target + '"]');
+            let inputHandle = nodeTarget.querySelector('[data-handleid="' + oldEdge.targetHandle + '"]');
             inputHandle.classList.add("empty");
             //if the new connection is not empty
-            nodeTarget = document.querySelector('[data-id="'+newConnection.target+'"]');
-            inputHandle = nodeTarget.querySelector('[data-handleid="'+newConnection.targetHandle+'"]');
+            nodeTarget = document.querySelector('[data-id="' + newConnection.target + '"]');
+            inputHandle = nodeTarget.querySelector('[data-handleid="' + newConnection.targetHandle + '"]');
 
-            if(inputHandle.classList.contains("empty")){
+            if(inputHandle.classList.contains("empty")) {
                 //connect
             }
 
             //get path color
-            let nodeSource = document.querySelector('[data-id="'+newConnection.source+'"]');
-            let outputHandle = nodeSource.querySelector('[data-handleid="'+newConnection.sourceHandle+'"]');
+            let nodeSource = document.querySelector('[data-id="' + newConnection.source + '"]');
+            let outputHandle = nodeSource.querySelector('[data-handleid="' + newConnection.sourceHandle + '"]');
             inputHandle.classList.remove("empty");
-            inputHandle.style.background=outputHandle.style.background;
+            inputHandle.style.background = outputHandle.style.background;
 
 
-            setEdges((els) => updateEdge(oldEdge, newConnection, els))},
+            setEdges((els) => updateEdge(oldEdge, newConnection, els))
+        },
         []
     );
   /**
@@ -177,10 +181,10 @@ function NodesCanvas() {
      */
     const onConnect = useCallback((params) => {
 
-        const nodeSource = document.querySelector('[data-id="'+params.source+'"]');
-        const nodeTarget = document.querySelector('[data-id="'+params.target+'"]');
-        let outputHandle = nodeSource.querySelector('[data-handleid="'+params.sourceHandle+'"]');
-        let inputHandle = nodeTarget.querySelector('[data-handleid="'+params.targetHandle+'"]');
+        const nodeSource = document.querySelector('[data-id="' + params.source + '"]');
+        const nodeTarget = document.querySelector('[data-id="' + params.target + '"]');
+        let outputHandle = nodeSource.querySelector('[data-handleid="' + params.sourceHandle + '"]');
+        let inputHandle = nodeTarget.querySelector('[data-handleid="' + params.targetHandle + '"]');
         inputHandle.style.background = outputHandle.style.background;
         setEdges((els) => addEdge(params, els))
         //finding the path to assign the color
@@ -189,10 +193,28 @@ function NodesCanvas() {
 
     }, []);
 
-    const onClick = useCallback((event) => {
+    const onClick = useCallback(async (event) => {
+        //document.getElementById('canvas-container').classList.remove('show');
+        let container = document.getElementById('canvas-container');
+        (event.target.classList.contains('react-flow__pane')) ? container.classList.remove('show') : container.classList.add('show');
 
+        let nodeId;
+        if(event.target.classList.contains('title')){
+            nodeId = event.target.parentNode.parentNode.parentNode.getAttribute("data-id");
+        } else if (event.target.classList.contains('header')){
+            nodeId = event.target.parentNode.parentNode.getAttribute("data-id");
+        } else{
+            nodeId = event.target.parentNode.getAttribute("data-id");
+        }
+        const visualData = helpers.getDataWithId(nodeId);
+        if(!visualData){
+            return;
+        }
+        const visualInfos = await getVisualInfos(visualData);
+        let info = visualInfos.generalInfos.join('\r\n');
+        info = info.replaceAll("<br>", '\r\n');
+        document.getElementById('textBox').value = info;
     }, []);
-
 
 
     const onDragOver = useCallback((event) => {
@@ -216,7 +238,7 @@ function NodesCanvas() {
             }
 
 
-          const position = reactFlowInstance.project({
+           const position = reactFlowInstance.project({
                 x: event.clientX - reactFlowBounds.left,
                 y: event.clientY - reactFlowBounds.top,
             });
@@ -236,29 +258,22 @@ function NodesCanvas() {
     );
 
 
-
     /**
      * Called, when the node is clicked – do something
      * @type {(function(): void)|*}
      */
     const onNodeClick = useCallback(
         (event, el) => {
-           console.log(el);
-            let container = document.getElementById('canvas-container');
-            (event.target.classList.contains('react-flow__pane'))?container.classList.remove('show'):container.classList.add('show');
 
-            //when the options button on a group node clicked, set the index of the child nodes to 0,
-            // and change the connection type
-            /*     setNodes((nds) =>
-                nds.map((node) => {
-                    if (node.id === el.id) {
-                      node.className = 'z-index';
-                    }
-
-                    return node;
-                })
-            );
-       */
+            /* if(el.selected) {
+                 setNodes((nds) =>
+                     nds.map((n) => {
+                         if (n.id === el.id) {
+                             n.selected = false
+                         }
+                         return n;
+                     }));
+             }*/
 
         },
         [],
@@ -267,64 +282,79 @@ function NodesCanvas() {
     const onNodeDrag = useCallback((_: MouseEvent, node: Node) => {
         const intersections = getIntersectingNodes(node).map(
             (n) => n.id);
-        getIntersectingNodes(node).forEach(function (n){
-            if(n.type === "group"){
-                node.parentNode = 'node-3';
 
+        getIntersectingNodes(node).forEach(function (n) {
+            if (n.type === "group") {
+                node.parentNode = 'node-3';
             }
         })
 
         //check if the node is dropped to the group
-
-
         setNodes((ns) =>
             ns.map((n) => ({
                 ...n,
                 className: intersections.includes(n.id) ? 'highlight' : '',
             }))
         );
+
+
     }, []);
 
     const onNodeDragStart = (event, n) => {
-        console.log(event.clientX);
-         if(n.parentNode){
-             setNodes((nds) =>
-                 nds.map((node) => {
-                     if (node.id===n.id) {
-                         // it's important that you create a new object here
-                         // in order to notify react flow about the change
-                         node.parentNode = ''
-                         node.position = {x:event.clientX, y:event.clientY}
-                     }
-                     return node;
-                 })
-             );
-            }
+        /*const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
+        const position = reactFlowInstance.project({
+            x: event.clientX - reactFlowBounds.left,
+            y: event.clientY - reactFlowBounds.top,
+        });
+
+            if(n.parentNode){
+               setNodes((nds) =>
+                   nds.map((node) => {
+                       if (node.id===n.id) {
+                           // it's important that you create a new object here
+                           // in order to notify react flow about the change
+                           node.parentNode = ''
+                           node.position = position
+                       }
+                       return node;
+                   })
+               );
+              }*/
 
     }
 
     const onNodeDragStop = (event, n) => {
-       if(n){
-           getIntersectingNodes(n).forEach(function (interaction){
-               if(interaction.type === "group"){
-                   console.log(interaction);
-                   setNodes((nds) =>
-                       nds.map((node) => {
-                           if (node.id===n.id) {
-                               // it's important that you create a new object here
-                               // in order to notify react flow about the change
-                               node.parentNode = interaction.id
-                               node.position = {x:0, y:0}
-
-
-                           }
-                           return node;
-                       })
-                   );
-
-               }
-           })
-       }
+        if (n) {
+            getIntersectingNodes(n).forEach(function (interaction) {
+                if (interaction.type === "group") {
+                    const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
+                    const position = reactFlowInstance.project({
+                        x: event.clientX - interaction.position.x - reactFlowBounds.left - n.width,
+                        y: event.clientY - interaction.position.y - reactFlowBounds.top - n.height,
+                    });
+                    setNodes((nds) =>
+                        nds.map((node) => {
+                            if (node.id === n.id) {
+                                // it's important that you create a new object here
+                                // in order to notify react flow about the change
+                                node.parentNode = interaction.id
+                                node.position = position
+                            }
+                            return node;
+                        })
+                    );
+                } else {
+                    setNodes((nds) =>
+                        nds.map((node) => {
+                            if (node.id === n.id) {
+                                node.parentNode = ''
+                            }
+                            return node;
+                        })
+                    );
+                }
+            })
+        }
 
     }
 
@@ -359,60 +389,66 @@ function NodesCanvas() {
     );
 
     const onNodeMouseEnter = (e, node) => {
-        if(node.type==="group"){
+        if (node.type === "group" ){
 
         }
         setNodeData(node);
     }
 
-   const onNodeContextMenu = useCallback(
+    const onNodeContextMenu = useCallback(
         (e) => {
             e.preventDefault();
             const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
-            setPosition({x:e.clientX - reactFlowBounds.left, y:e.clientY- reactFlowBounds.top});
+            setPosition({x: e.clientX - reactFlowBounds.left, y: e.clientY - reactFlowBounds.top});
             setIsOpen(true);
         },
         [],
     );
 
 
-
     const deleteNode = () => {
-        setNodes((nodes)=> nodes.filter((n)=>n.id!==nodeData.id));
+        if (nodeData.type === 'group') {
+            //delete children nodes
+            setNodes((nodes) => nodes.filter((n) => n.parentNode !== nodeData.id));
+            setNodes((nodes) => nodes.filter((n) => n.id !== nodeData.id));
+        } else {
+            setNodes((nodes) => nodes.filter((n) => n.id !== nodeData.id));
+
+        }
         setIsOpen(false);
     };
 
 
     return (
         <div className="dndflow">
-        <div className="reactflow-wrapper" ref={reactFlowWrapper}>
-        <ReactFlow
-            nodes={nodes}
-            edges={edges}
-            onNodesChange={onNodesChange}
-            nodeTypes={nodeTypes}
-            onInit={setReactFlowInstance}
-            onDrop={onDrop}
-            onNodeDragStart={onNodeDragStart}
-            onNodeDragStop={onNodeDragStop}
-            onDragOver={onDragOver}
-            onNodeClick={onNodeClick}
-            onNodeMouseEnter={onNodeMouseEnter}
-            onClick={onClick}
-            onNodeDrag={onNodeDrag}
-            onLoad={onLoad}
-            onNodeContextMenu={onNodeContextMenu}
-            snapToGrid
-            fitView
-        >
-            <Controls />
-            <ContextMenu isOpen={isOpen} position={position}
-                         onMouseLeave={()=>setIsOpen(false)}
-            actions={[{label: 'Delete', effect:deleteNode}]}>
+            <div className="reactflow-wrapper" ref={reactFlowWrapper}>
+                <ReactFlow
+                    nodes={nodes}
+                    edges={edges}
+                    onNodesChange={onNodesChange}
+                    nodeTypes={nodeTypes}
+                    onInit={setReactFlowInstance}
+                    onDrop={onDrop}
+                    onNodeDragStart={onNodeDragStart}
+                    onNodeDragStop={onNodeDragStop}
+                    onDragOver={onDragOver}
+                    onNodeClick={onNodeClick}
+                    onNodeMouseEnter={onNodeMouseEnter}
+                    onClick={onClick}
+                    onNodeDrag={onNodeDrag}
+                    onLoad={onLoad}
+                    onNodeContextMenu={onNodeContextMenu}
+                    snapToGrid
+                    fitView
+                >
+                    <Controls />
+                    <ContextMenu isOpen={isOpen} position={position}
+                                onMouseLeave={()=>setIsOpen(false)}
+                    actions={[{label: 'Delete', effect:deleteNode}]}>
 
-            </ContextMenu>
-        </ReactFlow>
-        </div>
+                    </ContextMenu>
+                </ReactFlow>
+            </div>
 
         </div>
     );

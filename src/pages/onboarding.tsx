@@ -11,6 +11,8 @@ import * as onboarding from "../onboarding/ts/onboarding";
 import * as global from "../onboarding/ts/globalVariables";
 import {provectories} from '../Provenance/Provectories';
 import { Link } from "react-router-dom";
+import { getActivePage } from "../onboarding/ts/helperFunctions";
+import { resize, setDivisor, setReportHeightDivision, setReportWidthDivision } from "../onboarding/ts/sizes";
 const powerbi = new service.Service(factories.hpmFactory, factories.wpmpFactory, factories.routerFactory);
 
 export let accessToken = "";
@@ -40,12 +42,12 @@ class Onboarding extends React.Component<AppProps, AppState> {
         <div className = "container-fluid" id = "flexContainer">
             <div className="row" id="onboarding-header">
                 <Link to="/editor" id="editOnboarding" className="col-2" style={{margin: "10px", padding: "0px"}} hidden>
-                    <button type="button" className={`${global.darkOutlineButtonClass}`} style={{width: "100%"}}>Edit Dashboard Onboarding</button>
+                    <button id="editButton" type="button" className={`onboardingButton + ${global.darkOutlineButtonClass}`} style={{width: "100%"}}>Edit Dashboard Onboarding</button>
                 </Link>
             </div>
             <div className = "row">
                 <div className = "col-10" id = "reportContainer">
-                    <div id="embed-container" ref={this.state.reportRef} > Loading the report...</div>
+                    <div id="embed-container" ref={this.state.reportRef}> Loading the report...</div>
                 </div>
                 <div className = "col-2" id = 'provDiv' hidden></div>
             </div>
@@ -107,7 +109,6 @@ class Onboarding extends React.Component<AppProps, AppState> {
 
             report = powerbi.embed(reportContainer, embedConfiguration) as Report;
             global.setReport(report);
-
 
             // Clear any other loaded handler events
             report.off("loaded");

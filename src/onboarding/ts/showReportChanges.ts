@@ -3,6 +3,7 @@ import * as global from "./globalVariables";
 import * as disable from "./disableArea";
 import * as elements from "./elements";
 import { removeInteractionCard } from "./interactionExample";
+import { divisor } from "./sizes";
 
 export function showReportChanges(){
     disable.removeFrame();
@@ -62,7 +63,7 @@ export function createInteractionOverlay(){
 }
 
 export function createInteractionVisualOverlay(visual: any){
-    const style = helpers.getClickableStyle(visual.layout.y, visual.layout.x, visual.layout.width, visual.layout.height);
+    const style = helpers.getClickableStyle(visual.layout.y/divisor, visual.layout.x/divisor, visual.layout.width/divisor, visual.layout.height/divisor);
     const attributes = global.createDivAttributes();
     attributes.id = visual.name;
     attributes.style = style;

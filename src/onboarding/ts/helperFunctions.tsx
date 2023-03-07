@@ -18,9 +18,10 @@ import { IFilterColumnTarget, IFilterMeasureTarget } from "powerbi-models";
 import 'powerbi-report-authoring';
 import { VisualDescriptor} from "powerbi-client";
 import lightbulbImg from "../assets/lightbulb.png";
-import ComponentGraph, { getComponentGraph } from "../../componentGraph/ComponentGraph";
+import ComponentGraph from "../../componentGraph/ComponentGraph";
 import Filter from "../../componentGraph/Filter";
 import { exportData } from "../../Provenance/utils";
+import * as sizes from "./sizes";
 
 export function addContainerOffset(){
     const buttonHeaderHeight = document.getElementById("onboarding-header")!.clientHeight;
@@ -82,7 +83,8 @@ export function createCardButtons(leftButton: string, rightButton: string){
 
     if(leftButton != ""){
         const buttonAttributes = global.createButtonAttributes();
-        buttonAttributes.classes = global.darkOutlineButtonClass;
+        buttonAttributes.classes = global.darkOutlineButtonClass + " positionLeft";
+        buttonAttributes.style = `font-size: ${sizes.textSize}rem; margin-bottom: 20px;`;
         buttonAttributes.parentId = "cardButtons";
         switch(leftButton){
             case "skip":
@@ -111,6 +113,7 @@ export function createCardButtons(leftButton: string, rightButton: string){
     if(rightButton != ""){
         const buttonAttributes = global.createButtonAttributes();
         buttonAttributes.classes = global.darkOutlineButtonClass + " positionRight";
+        buttonAttributes.style = `font-size: ${sizes.textSize}rem; margin-bottom: 20px;`;
         buttonAttributes.parentId = "cardButtons";
         if(leftButton == ""){
             buttonAttributes.style += "margin-bottom: 20px;"
@@ -165,6 +168,7 @@ export function createCardContent(headline: string | undefined, description: str
        h1Attributes.content = headline; 
     }
     h1Attributes.parentId = "cardContent";
+    h1Attributes.style = `font-size: ${sizes.headlineSize}rem`;
     elements.createH1(h1Attributes);
 
     const spanAttributes = global.createSpanAttributes();
@@ -175,6 +179,7 @@ export function createCardContent(headline: string | undefined, description: str
         spanAttributes.content = description;
     }
     spanAttributes.parentId = "cardContent";
+    spanAttributes.style = `font-size: ${sizes.textSize}rem`;
     elements.createSpan(spanAttributes);
 }
 
@@ -182,6 +187,9 @@ export function createCloseButton(buttonId: string, buttonClasses: string, butto
     const buttonAttributes = global.createButtonAttributes();
     buttonAttributes.id = buttonId;
     buttonAttributes.classes = "btn-close " + buttonClasses;
+    if(sizes.divisor>2){
+        buttonStyle += `; width: 5px; height: 5px`
+    }
     buttonAttributes.style = buttonStyle;
     buttonAttributes.function = functionName;
     buttonAttributes.parentId = parentId;
@@ -286,7 +294,7 @@ export async function createInteractionExampleButton(parentId: string, visual: a
 }
 
 export function createOnboarding(){
-    const style = getDisabledStyle(global.containerPaddingTop, global.containerPaddingLeft, global.page.defaultSize.width!, global.page.defaultSize.height!);
+    const style = getDisabledStyle(global.containerPaddingTop, global.containerPaddingLeft, global.reportWidth!, global.reportHeight!);
     
     const attributes = global.createDivAttributes();
     attributes.id = "onboarding";
@@ -300,7 +308,7 @@ export function createOnboardingButtons(){
     attributes.id = "guidedTour";
     attributes.content = "Start Guided Tour";
     attributes.style =  global.onboardingButtonStyle;
-    attributes.classes = "col-2 " + global.darkOutlineButtonClass;
+    attributes.classes = "onboardingButton col-2 " + global.darkOutlineButtonClass;
     attributes.function = createGuidedTour;
     attributes.parentId = "onboarding-header";
     elements.createButton(attributes);
@@ -309,7 +317,7 @@ export function createOnboardingButtons(){
     attributes.id = "dashboardExploration";
     attributes.content = "Start Dashboard Exploration";
     attributes.style =  global.onboardingButtonStyle;
-    attributes.classes = "col-2 " + global.darkOutlineButtonClass;
+    attributes.classes = "onboardingButton col-2 " + global.darkOutlineButtonClass;
     attributes.function = createDashboardExploration;
     attributes.parentId = "onboarding-header";
     elements.createButton(attributes);
@@ -632,9 +640,9 @@ export function getTargetInteractionFilter(target: string){
 }
 
 export function getVisualCardPos(visual: any, cardWidth: number, offset: number){
-    const leftDistance = visual.layout.x;
-    const rightX = leftDistance + visual.layout.width;
-    const rightDistance = global.page.defaultSize.width! - rightX;
+    const leftDistance = visual.layout.x/sizes.divisor;
+    const rightX = leftDistance + (visual.layout.width/sizes.divisor);
+    const rightDistance = global.reportWidth! - rightX;
 
     const position = {
         x: 0,
@@ -649,7 +657,7 @@ export function getVisualCardPos(visual: any, cardWidth: number, offset: number)
         position.x = leftDistance - offset - cardWidth;
         position.pos = "left";
     }
-    position.y = offset + visual.layout.y
+    position.y = offset + (visual.layout.y/sizes.divisor)
     
     return position;
 }
@@ -844,7 +852,7 @@ export function removeOnboardingOverlay(){
 }
 
 export function resizeEmbed(filterWidth: number){
-    document.getElementById("embed-container")!.style.cssText = `top:0px;left:0px;width:${global.page.defaultSize.width! + filterWidth}px;height:${global.page.defaultSize.height! + global.settings.reportOffset.top + global.footerHeight}px;`;
+    document.getElementById("embed-container")!.style.cssText = `top:0px;left:0px;width:${global.reportWidth! + filterWidth}px;height:${global.reportHeight! + global.settings.reportOffset.top + global.footerHeight}px;`;
 }
 
 export function saveIntInput(inputId: string){
@@ -883,25 +891,26 @@ export function startExplorationMode(){
 }
 
 export function toggleFilter(open: boolean){
-    const newSettings = {
-        panes: {
-            filters: {
-                expanded: open,
-                visible: true
-            },
-            pageNavigation: {
-                visible: true
+    if(sizes.divisor<=2){
+        const newSettings = {
+            panes: {
+                filters: {
+                    expanded: open,
+                    visible: true
+                },
+                pageNavigation: {
+                    visible: true
+                }
             }
-        }
-    };    
-    global.report.updateSettings(newSettings);
+        };    
+        global.report.updateSettings(newSettings);
 
-    if(open){
-        resizeEmbed(global.filterOpenedWidth);
-    } else {
-        resizeEmbed(global.filterClosedWidth);
+        if(open){
+            resizeEmbed(global.filterOpenedWidth);
+        } else {
+            resizeEmbed(global.filterClosedWidth);
+        }
     }
-    
 }
 
 export function getLocalFilterText(visual: any){

@@ -16,12 +16,43 @@ import Onboarding from "../../../pages/onboarding";
 import NodesCanvas from "../nodesCanvas";
 
 import "../../assets/css/dashboard.scss";
+import { setDivisor } from "../../../onboarding/ts/sizes";
+import { allVisuals } from "../../../onboarding/ts/globalVariables";
 
 const Dashboard = () => {
     useEffect(() => {
+        for(const vis of allVisuals){
+            createComponentNode({ id: vis.name, classes: `dndnode`, content: `${vis.type}`, parentId: "componentNodes" });
+            switch(vis.type){
+                case "card":
+                    createComponentNode({ id: vis.name + " insight", classes: `dndnode`, content: `${vis.type} insight`, function: "", parentId: "subcomponentNodes" });
+                    break;
+                case "slicer":
+                    createComponentNode({ id: vis.name + " interaction", classes: `dndnode`, content: `${vis.type} interaction`, function: "", parentId: "subcomponentNodes" });
+                    break;
+                default:
+                    createComponentNode({ id: vis.name + " interaction", classes: `dndnode`, content: `${vis.type} interaction`, function: "", parentId: "subcomponentNodes" });
+                    createComponentNode({ id: vis.name + " insight", classes: `dndnode`, content: `${vis.type} insight`, function: "", parentId: "subcomponentNodes" });
+            }
+        }
     }, []);
-    const onDragStart = (event, nodeType, nodeData, title) => {
+
+    function createComponentNode(attributes){
+        const div = document.createElement('div');
+        div.id = attributes.id;
+        div.className = attributes.classes;
+        div.innerHTML = attributes.content;
+        div.setAttribute("draggable", "true");
+        div.addEventListener("dragstart", function(){
+            onDragStart(event, "simple", attributes.id, attributes.content, attributes.content);
+        });
+    
+        document.getElementById(attributes.parentId)?.appendChild(div);
+    }
+
+    const onDragStart = (event, nodeType, nodeId, nodeData, title) => {
         event.dataTransfer.setData('nodeType', nodeType);
+        event.dataTransfer.setData('id', nodeId);
         event.dataTransfer.setData('data', nodeData);
         event.dataTransfer.setData('title', title);
         event.dataTransfer.effectAllowed = 'move';
@@ -34,6 +65,9 @@ const Dashboard = () => {
 
 
     const [checked, setChecked] = React.useState(true);
+    
+    setDivisor(3);
+
     return (
         <div className="d-board" style={{flexFlow: "row nowrap", flexGrow: 1, display: "flex"}}>
             <ResizePanel className="component-cont" initialWidth={250} maxWidth={400} minWidth={250}>
@@ -68,26 +102,11 @@ const Dashboard = () => {
                         <Accordion.Item eventKey="1">
                             <Accordion.Header>Components</Accordion.Header>
                             <Accordion.Body>
-                                <aside>
+                                <aside id="componentNodes">
                                     <div className="description">You can drag these nodes to the pane on the right.
                                     </div>
-                                    <div className="dndnode dashboard"
-                                         onDragStart={(event) => onDragStart(event, 'simple', 'dashboard', 'Dashboard')}
-                                         draggable>
-                                        Dashboard
-                                    </div>
-                                    <div className="dndnode bar-chart"
-                                         onDragStart={(event) => onDragStart(event, 'simple', 'bar-chart', 'Bar chart')}
-                                         draggable>
-                                        Bar chart
-                                    </div>
-                                    <div className="dndnode line-chart"
-                                         onDragStart={(event) => onDragStart(event, 'simple', 'line-chart', 'Line chart')}
-                                         draggable>
-                                        Line chart
-                                    </div>
                                     <div className="dndnode node-group"
-                                         onDragStart={(event) => onDragStart(event, 'group', )}
+                                         onDragStart={(event) => onDragStart(event, 'group', "group")}
                                          draggable>
                                         Group
                                     </div>
@@ -97,6 +116,10 @@ const Dashboard = () => {
                         <Accordion.Item eventKey="2">
                             <Accordion.Header>Subcomponents</Accordion.Header>
                             <Accordion.Body>
+                                <aside id="subcomponentNodes">
+                                    <div className="description">You can drag these nodes to the pane on the right.
+                                    </div>
+                                </aside>
                             </Accordion.Body>
                         </Accordion.Item>
                     </Accordion>
@@ -121,6 +144,7 @@ const Dashboard = () => {
                     </span>
                         </div>
                         <textarea
+                            id="textBox"
                             className="form-control"
                             rows="4"/>
                     </div>
@@ -128,35 +152,29 @@ const Dashboard = () => {
                 </div>
             </div>
 
-            <ResizePanel initialWidth={400} maxWidth={500} minWidth={150}>
-                <ResizeHandleLeft className="resize">
-                    <div className="col-resize"/>
-                </ResizeHandleLeft>
-                <ResizeContent>
-                    <Tabs
-                        defaultActiveKey="output"
-                        id=""
-                        className="mb-3"
-                        justify>
-                        <Tab eventKey="output" title="Output view">
-                            <div className="px-4">
-                                <Onboarding/>
-                            </div>
-                        </Tab>
-                        <Tab eventKey="story" title="Story text">
-                            <div className="px-4">
-                                Content
-                            </div>
-                        </Tab>
-                        <Tab eventKey="settings" title="Settings">
-                            <div className="px-4">
-                                Content
-                            </div>
-                        </Tab>
-                    </Tabs>
-
-                </ResizeContent>
-            </ResizePanel>
+            <div style={{width: "400px", borderLeft: "double gray"}}>
+                <Tabs
+                    defaultActiveKey="output"
+                    id=""
+                    className="mb-3"
+                    justify>
+                    <Tab eventKey="output" title="Output view">
+                        <div style={{color: "black"}}>
+                            <Onboarding/>
+                        </div>
+                    </Tab>
+                    <Tab eventKey="story" title="Story text">
+                        <div className="px-4">
+                            Content
+                        </div>
+                    </Tab>
+                    <Tab eventKey="settings" title="Settings">
+                        <div className="px-4">
+                            Content
+                        </div>
+                    </Tab>
+                </Tabs>
+            </div>
             <div/>
         </div>
     );
