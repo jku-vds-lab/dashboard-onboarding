@@ -227,6 +227,7 @@ function NodesCanvas() {
             event.preventDefault();
 
             const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
+            const id = event.dataTransfer.getData("id");
             const type = event.dataTransfer.getData('nodeType');
             const data = event.dataTransfer.getData('data');
             const title = event.dataTransfer.getData('title');
@@ -243,7 +244,7 @@ function NodesCanvas() {
                 y: event.clientY - reactFlowBounds.top,
             });
             const newNode = {
-                id: getId(),
+                id,
                 type,
                 position,
                 data: {
