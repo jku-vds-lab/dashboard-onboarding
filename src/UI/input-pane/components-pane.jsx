@@ -1,27 +1,9 @@
+import { allVisuals } from "../../onboarding/ts/globalVariables";
 import React, { useEffect } from "react";
 import Accordion from "react-bootstrap/Accordion";
-import Form from "react-bootstrap/Form";
-import Tab from "react-bootstrap/Tab";
-import Tabs from "react-bootstrap/Tabs";
-import { FaPencilAlt } from "react-icons/fa";
-import ReactFlow, { ReactFlowProvider } from "reactflow";
-import TraversalStrategies from "./traversal-strategies";
-import Components from "./components";
-import {
-  ResizeContent,
-  ResizeHandleLeft,
-  ResizeHandleRight,
-  ResizePanel,
-} from "react-hook-resize-panel";
-import Onboarding from "../../../pages/onboarding";
+import "../assets/css/dashboard.scss";
 
-import NodesCanvas from "../nodesCanvas/canvas-index";
-
-import "../../assets/css/dashboard.scss";
-import { setDivisor } from "../../../onboarding/ts/sizes";
-import { allVisuals } from "../../../onboarding/ts/globalVariables";
-
-export default function Componentss() {
+export default function ComponentsPane() {
   useEffect(() => {
     const cardElements = allVisuals.filter(function (visual) {
       return visual.type == "card";

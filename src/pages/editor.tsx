@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import Dashboard from "../UI/components/dashboard/dashboard-index";
+import MainLayout from "../UI/main-layout";
 
 const Editor = () => {
   //TODO: implement to saves all changes, stops the authoring process and leads back to the onboarding
@@ -14,7 +14,7 @@ const Editor = () => {
           </div>
         </Link>
       </div>
-      <Dashboard />
+      <MainLayout />
     </div>
   );
 };
