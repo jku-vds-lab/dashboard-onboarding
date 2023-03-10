@@ -61,6 +61,13 @@ export interface ReportOffset{
     bottom: number;
 }
 
+export interface DashboardInfo{ 
+    titleStatus: string;
+    changedTitle: string;
+    infoStatus: string[];
+    changedInfos: string[];
+}
+
 export interface SettingsVisual{
     id: string;
     title: string | undefined;
@@ -83,6 +90,7 @@ export interface Target{
 
 export interface Settings{
     reportOffset: ReportOffset;
+    dashboardInfo: DashboardInfo;
     visuals: SettingsVisual[];
     filterVisual: FilterVisual;
     interactionExample: InteractionExample;
@@ -115,6 +123,7 @@ export interface InteractionVisual{
 export function createSettingsObject(){
     const settings : Settings = {
         reportOffset: createReportOffset(),
+        dashboardInfo: createDashboardInfo(),
         visuals: [] as SettingsVisual[],
         filterVisual: createFilterVisual(),
         interactionExample: createInteractionExample()
@@ -130,6 +139,16 @@ export function createReportOffset(){
         right: 0,
     }
     return offset;
+}
+
+export function createDashboardInfo(){
+    const dashboardInfo: DashboardInfo = {
+        titleStatus: "",
+        changedTitle: "",
+        infoStatus: [],
+        changedInfos: []
+    }
+    return dashboardInfo;
 }
 
 export function createVisual(){
