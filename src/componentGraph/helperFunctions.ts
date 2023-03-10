@@ -4,6 +4,7 @@ import 'powerbi-report-authoring';
 import * as helper from "../onboarding/ts/helperFunctions";
 import { visuals } from "./ComponentGraph";
 import { exportData } from "../Provenance/utils";
+import * as global from "../onboarding/ts/globalVariables";
 
 /*
 Get encoding of the visualization
@@ -419,7 +420,8 @@ export async function getHighestValue(visualData: Map<string, string>[], dataNam
 export async function getData(visual: any, categories: string[]){
     const exportedData = await exportData(visual);
 	if(!exportedData){
-		return null;
+		const CGVisual = global.componentGraph.dashboard.visualizations.find(vis => vis.id === visual.name); 
+      	return CGVisual?.data.data;
 	}
 	const visualData = exportedData.data;
 	const data = [];

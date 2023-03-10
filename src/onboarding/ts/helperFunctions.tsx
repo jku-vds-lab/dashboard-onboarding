@@ -683,19 +683,6 @@ export async function getVisualData(visual: any){
 
     for (let i = 0; i < headers.length; i++) {
         let dataArray = visualDataMap.get(headers[i])??[];
-        if(!isNaN(Number(dataArray[0]))){
-            let numberArray = dataArray.map((str: string) => {
-                return Number(str);
-            });
-
-            const intArray = [];
-            intArray.push(Math.min(...numberArray));
-            intArray.push(Math.max(...numberArray));
-            numberArray = intArray;
-            dataArray = numberArray.map((num: number) => {
-                return num.toString();
-            });
-        }
 
         dataArray = Array.from(new Set(dataArray));
 
@@ -703,6 +690,37 @@ export async function getVisualData(visual: any){
     }
 
     return visualDataMap;
+}
+
+export async function getDataRange(visual: any, categorie: string){
+    const data = await getVisualData(visual);
+    if(!data){
+        return null;
+    }
+    
+    let dataPoints = data.get(categorie);
+    if(!dataPoints){
+        return null;
+    }
+
+    let numberArray:number[] = [];
+    if(!isNaN(Number(dataPoints[0]))){
+        numberArray = dataPoints.map((str: string) => {
+            return Number(str);
+        });
+    }
+
+    for (let i = 0; i < dataPoints.length; i++) {
+        const intArray = [];
+        intArray.push(Math.min(...numberArray));
+        intArray.push(Math.max(...numberArray));
+        numberArray = intArray;
+        dataPoints = numberArray.map((num: number) => {
+            return num.toString();
+        });
+    }
+
+    return dataPoints;
 }
 
 export function getVisualIndex(name: string){

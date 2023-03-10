@@ -17,9 +17,9 @@ class ComponentGraph {
     }
 
     async setComponentGraphData(){
-       await this.dashboard.setDashboardData();
-       localStorage.setItem("componentGraph", JSON.stringify({"dashboard": this.dashboard}));
-       setComponentGraph(getComponentGraph());
+      await this.dashboard.setDashboardData();
+      localStorage.setItem("componentGraph", JSON.stringify({"dashboard": this.dashboard}, replacer));
+      setComponentGraph(getComponentGraph());
     }
   }
 
@@ -36,11 +36,28 @@ class ComponentGraph {
 export default ComponentGraph;
 
 export function saveComponentGraph(graph: any){
-  localStorage.setItem("componentGraph", JSON.stringify(graph));
+  localStorage.setItem("componentGraph", JSON.stringify(graph, replacer));
   setComponentGraph(getComponentGraph());
 }
 
 export function getComponentGraph(){
-  const componentGraph = JSON.parse(localStorage.getItem("componentGraph")!);
+  const componentGraph = JSON.parse(localStorage.getItem("componentGraph")!, reviver);
   return componentGraph;
+}
+
+function replacer(key: string, value: any) {
+  if(value instanceof Map) {
+    return Object.fromEntries(value);
+  } else {
+    return value;
+  }
+}
+
+function reviver(key: string, value: any) {
+  if(typeof value === 'object' && value !== null) {
+    if (value.dataType === 'Map') {
+      return new Map(value.value);
+    }
+  }
+  return value;
 }

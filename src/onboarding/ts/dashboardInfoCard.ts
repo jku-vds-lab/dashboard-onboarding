@@ -18,6 +18,7 @@ export function createDashboardInfoCard(){
 
     helpers.createCloseButton("closeButton", "closeButtonPlacementBig", "", helpers.getCloseFunction(), "infoCard");
 
+    const dashboard = global.componentGraph.dashboard;
     const title = setDashboardTitle(dashboard);
     helpers.createCardContent(title, "", "infoCard");
     setDashboardInfos(dashboard);

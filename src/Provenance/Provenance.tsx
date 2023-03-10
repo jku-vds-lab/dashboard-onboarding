@@ -214,7 +214,7 @@ export function setupProvenance(defaultState: IAppState): IAppProvenance {
     } else if (eventType == 'loaded'){
       const currentNode = provenance.current
       nodeBookmarkMap[currentNode.id] = {node: currentNode, bookmark: bookmark}
-      importedGraph = graph
+      importedGraph = getComponentGraph();
       graphMap[currentNode.id] = {node: currentNode, graph: makeDeepCopy(importedGraph)}
     }
 

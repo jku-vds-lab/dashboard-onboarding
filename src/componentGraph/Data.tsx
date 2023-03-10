@@ -1,5 +1,6 @@
 import { getVisualData } from "../onboarding/ts/helperFunctions";
 import { getVisualDataFields } from "./helperFunctions";
+import * as global from "../onboarding/ts/globalVariables";
 
 // Data
 export default class Data {
@@ -13,6 +14,12 @@ export default class Data {
 
   async setData(visual: any){
     this.attributes = await getVisualDataFields(visual);
-    this.data = await getVisualData(visual);
+    const newData = await getVisualData(visual);
+    if(newData){
+      this.data = newData;
+    } else {
+      const CGVisual = global.componentGraph.dashboard.visualizations.find(vis => vis.id === visual.name); 
+      this.data = CGVisual?.data.data;
+    }
   }
 }
