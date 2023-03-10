@@ -13,7 +13,7 @@ import ReactFlow, {
 } from "reactflow";
 
 import "reactflow/dist/style.css";
-import "../../assets/css/flow.scss";
+import "../assets/css/flow.scss";
 
 // Node types
 import BoxNode from "./nodeTypes/boxNode";
@@ -24,10 +24,10 @@ import Path from "./path";
 
 import { ContextMenu } from "./context-menu";
 
-import Sidebar from "../dashboard/dashboard-index";
+import Sidebar from "../main-layout";
 
-import * as helpers from "../../../onboarding/ts/helperFunctions";
-import { getVisualInfos } from "../../../onboarding/ts/listOfVisuals";
+import * as helpers from "../../onboarding/ts/helperFunctions";
+import { getVisualInfos } from "../../onboarding/ts/listOfVisuals";
 
 const initialNodes = [
   {

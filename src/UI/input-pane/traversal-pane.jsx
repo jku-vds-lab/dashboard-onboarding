@@ -2,7 +2,7 @@ import React from "react";
 import Accordion from "react-bootstrap/Accordion";
 import Form from "react-bootstrap/Form";
 
-export default function TraversalStrategies() {
+export default function TraversalPane() {
   const [checked, setChecked] = React.useState(true);
   return (
     <Accordion.Item eventKey="0">
