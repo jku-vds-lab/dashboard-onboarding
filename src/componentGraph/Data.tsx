@@ -1,5 +1,4 @@
-import { getVisualData } from "../onboarding/ts/helperFunctions";
-import { getVisualDataFields } from "./helperFunctions";
+import { getData, getVisualDataFields } from "./helperFunctions";
 import * as global from "../onboarding/ts/globalVariables";
 
 // Data
@@ -14,7 +13,7 @@ export default class Data {
 
   async setData(visual: any){
     this.attributes = await getVisualDataFields(visual);
-    const newData = await getVisualData(visual);
+    const newData = await getData(visual, []);
     if(newData){
       this.data = newData;
     } else {

@@ -682,10 +682,7 @@ export async function getVisualData(visual: any){
     }
 
     for (let i = 0; i < headers.length; i++) {
-        let dataArray = visualDataMap.get(headers[i])??[];
-
-        dataArray = Array.from(new Set(dataArray));
-
+        const dataArray = visualDataMap.get(headers[i])??[];
         visualDataMap.set(headers[i], dataArray);
     }
 

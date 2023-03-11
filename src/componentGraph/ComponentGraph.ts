@@ -23,16 +23,6 @@ class ComponentGraph {
     }
   }
 
-  //how to create component graph and test if it is correct:
-  //let graph = new ComponentGraph(report, page, visuals);
-  //await graph.setComponentGraphData();
-  //getComponentGraph();
-
-  //how to update a veriable of the component graph:
-  //let componentGraph = getComponentGraph();
-  //componentGraph.dashboard.task = "test";
-  //saveComponentGraph(componentGraph);
-
 export default ComponentGraph;
 
 export function saveComponentGraph(graph: any){
@@ -45,17 +35,19 @@ export function getComponentGraph(){
   return componentGraph;
 }
 
-function replacer(key: string, value: any) {
+function replacer(key:string, value:any) {
   if(value instanceof Map) {
-    return Object.fromEntries(value);
+    return {
+      type: 'map',
+      value: Array.from(value.entries())
+    };
   } else {
     return value;
   }
 }
-
-function reviver(key: string, value: any) {
+function reviver(key:string, value:any) {
   if(typeof value === 'object' && value !== null) {
-    if (value.dataType === 'Map') {
+    if (value.type === 'map') {
       return new Map(value.value);
     }
   }
