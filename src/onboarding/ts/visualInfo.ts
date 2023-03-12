@@ -7,6 +7,8 @@ import { divisor } from "./sizes";
 
 export async function createVisualInfo(visual: any){
     const visualInfos = await helpers.getVisualInfos(visual);
+
+    document.getElementById("contentText")!.innerHTML = "";
     info.createTabsWithContent(visual, visualInfos);
 }
 

@@ -30,8 +30,8 @@ export function createDiv(attributes: { id: any; style: any; classes: any; conte
                 removeShowChangesCard();
                 removeHintCard();
 
-                const selectedVisual = global.currentVisuals[getVisualIndex(attributes.id)];
-                showVisualChanges(selectedVisual);
+                global.setInteractionSelectedVisual(global.currentVisuals[getVisualIndex(attributes.id)]);
+                showVisualChanges(global.interactionSelectedVisual);
             }else{
                 removeOnboardingOverlay();
                 if(attributes.id === "filter"){

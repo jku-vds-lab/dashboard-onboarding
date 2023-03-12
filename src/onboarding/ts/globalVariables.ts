@@ -1,24 +1,23 @@
 import { Report, Page } from "powerbi-client";
 import ComponentGraph from "../../componentGraph/ComponentGraph";
-import * as sizes from "./sizes";
 
 export const footerHeight = 37;
 export const filterClosedWidth = 33;
-export let filterOpenedWidth = sizes.filterOpenedWidthOriginal;
+export let filterOpenedWidth = 0;
 
 export const darkOutlineButtonClass = "btn btn-outline-dark";
 export const onboardingButtonStyle =  "margin:10px;";
 
-export let infoCardMargin = sizes.infoCardMarginOriginal;
-export let infoCardWidth = sizes.infoCardWidthOriginal;
-export let introCardMargin = sizes.introCardMarginOriginal;
-export let introCardWidth = sizes.introCardWidthOriginal;
-export let interactionCardWidth = sizes.interactionCardWidthOriginal;
-export let interactionCardHeight = sizes.interactionCardHeightOriginal;
-export let hintCardMargin = sizes.hintCardMarginOriginal;
-export let hintCardWidth = sizes.hintCardWidthOriginal;
-export let editCardMargin = sizes.editCardMarginOriginal;
-export let editCardWidth = sizes.editCardWidthOriginal;
+export let infoCardMargin = 0;
+export let infoCardWidth = 0;
+export let introCardMargin = 0;
+export let introCardWidth = 0;
+export let interactionCardWidth = 0;
+export let interactionCardHeight = 0;
+export let hintCardMargin = 0;
+export let hintCardWidth = 0;
+export let editCardMargin = 0;
+export let editCardWidth = 0;
 export let reportWidth:number;
 export let reportHeight:number;
 
@@ -29,10 +28,12 @@ export let currentVisuals: any[];
 export let allVisuals: any[];
 export let page: Page;
 export let selectedTargets: Target[];
+export let interactionSelectedVisual: any;
 
 export let explorationMode = false;
 export let isGuidedTour = false;
 export let interactionMode = false;
+export let hasOverlay = false;
 
 export let currentVisualIndex: number;
 export let showsDashboardInfo = false;
@@ -281,6 +282,9 @@ export function setPage(newPage: Page){
 export function setSelectedTargets(newSelectedTargets: Target[]){
     selectedTargets = newSelectedTargets;
 }
+export function setInteractionSelectedVisual(newInteractionSelectedVisual: any){
+    interactionSelectedVisual = newInteractionSelectedVisual;
+}
 
 export function setExplorationMode(newExplorationMode: boolean){
     explorationMode = newExplorationMode;
@@ -290,6 +294,9 @@ export function setIsGuidedTour(newIsGuidedTour: boolean){
 }
 export function setInteractionMode(newInteractionMode: boolean){
     interactionMode = newInteractionMode;
+}
+export function setHasOverlay(newHasOverlay: boolean){
+    hasOverlay = newHasOverlay;
 }
 
 export function setCurrentVisualIndex(newCurrentVisualIndex: number){

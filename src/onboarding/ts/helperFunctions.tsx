@@ -61,6 +61,7 @@ export function createBasicCardContent(description: string, parentId: string){
 
     const spanAttributes = global.createSpanAttributes();
     spanAttributes.id = "basicContentText";
+    spanAttributes.style = `font-size: ${sizes.textSize}rem`;
     spanAttributes.content = description;
     spanAttributes.parentId = "basicCardContent";
     elements.createSpan(spanAttributes);
@@ -83,7 +84,7 @@ export function createCardButtons(leftButton: string, rightButton: string){
 
     if(leftButton != ""){
         const buttonAttributes = global.createButtonAttributes();
-        buttonAttributes.classes = global.darkOutlineButtonClass + " positionLeft";
+        buttonAttributes.classes = global.darkOutlineButtonClass + " positionLeft cardButtons";
         buttonAttributes.style = `font-size: ${sizes.textSize}rem; margin-bottom: 20px;`;
         buttonAttributes.parentId = "cardButtons";
         switch(leftButton){
@@ -112,7 +113,7 @@ export function createCardButtons(leftButton: string, rightButton: string){
 
     if(rightButton != ""){
         const buttonAttributes = global.createButtonAttributes();
-        buttonAttributes.classes = global.darkOutlineButtonClass + " positionRight";
+        buttonAttributes.classes = global.darkOutlineButtonClass + " positionRight cardButtons";
         buttonAttributes.style = `font-size: ${sizes.textSize}rem; margin-bottom: 20px;`;
         buttonAttributes.parentId = "cardButtons";
         if(leftButton == ""){
@@ -282,11 +283,12 @@ export async function createInteractionExampleButton(parentId: string, visual: a
     if(!await getVisualData(visual)){
         return;
     }
-    
+    elements.removeElement("interactionExample");
+
     const attributes = global.createButtonAttributes();
     attributes.id = "interactionExample";
     attributes.content = "Try it out";
-    attributes.style =  "display:block;margin:0 auto;margin-top:10px;margin-bottom:10px;";
+    attributes.style =  "display:block;margin:0 auto;margin-top:10px;margin-bottom:10px;" + `font-size: ${sizes.textSize}rem;`;
     attributes.classes = global.darkOutlineButtonClass;
     attributes.function = startInteractionExample;
     attributes.parentId = parentId;
@@ -372,6 +374,7 @@ export function dataToStringNoConnection(dataArray: string | any[]){
 function endExplorationMode(){
     elements.removeElement("dashboardExplaination");
     global.setExplorationMode(false);
+    global.setHasOverlay(false);
     const button = document.getElementById("dashboardExploration");
     if(!button){
         return;
@@ -484,6 +487,13 @@ export async function getFilterInfo(){
     }
 
     return filterInfos;
+}
+
+export function getElementWidth(element: HTMLElement){
+    let elementWidth = element.clientWidth;
+    const computedStyle = getComputedStyle(element);
+    elementWidth -= parseFloat(computedStyle.paddingLeft) + parseFloat(computedStyle.paddingRight);
+    return elementWidth;
 }
 
 export function getGeneralInfoInteractionExampleText(){
@@ -640,8 +650,8 @@ export function getTargetInteractionFilter(target: string){
 }
 
 export function getVisualCardPos(visual: any, cardWidth: number, offset: number){
-    const leftDistance = visual.layout.x/sizes.divisor;
-    const rightX = leftDistance + (visual.layout.width/sizes.divisor);
+    const leftDistance = visual.layout.x/sizes.reportDivisor;
+    const rightX = leftDistance + (visual.layout.width/sizes.reportDivisor);
     const rightDistance = global.reportWidth! - rightX;
 
     const position = {
@@ -657,7 +667,7 @@ export function getVisualCardPos(visual: any, cardWidth: number, offset: number)
         position.x = leftDistance - offset - cardWidth;
         position.pos = "left";
     }
-    position.y = offset + (visual.layout.y/sizes.divisor)
+    position.y = offset + (visual.layout.y/sizes.reportDivisor)
     
     return position;
 }
@@ -851,14 +861,22 @@ export function removeOnboarding(){
 
     global.setInteractionMode(false);
     global.setIsGuidedTour(false);
-    toggleFilter(false);
     endExplorationMode();
 
     elements.removeElement("onboarding");
     removeFrame();
 }
 
+export function reloadOnboarding(){
+    removeContainerOffset();
+    removeFrame();
+    elements.removeElement("dashboardExplaination");
+    elements.removeElement("onboarding");
+    createOnboarding();
+}
+
 export function removeOnboardingOverlay(){
+    global.setHasOverlay(false);
     elements.removeElement("dashboardExplaination");
     global.currentVisuals.forEach(function (visual) {
         elements.removeElement(visual.name);
@@ -906,25 +924,23 @@ export function startExplorationMode(){
 }
 
 export function toggleFilter(open: boolean){
-    if(sizes.divisor<=2){
-        const newSettings = {
-            panes: {
-                filters: {
-                    expanded: open,
-                    visible: true
-                },
-                pageNavigation: {
-                    visible: true
-                }
+    const newSettings = {
+        panes: {
+            filters: {
+                expanded: open,
+                visible: true
+            },
+            pageNavigation: {
+                visible: true
             }
-        };    
-        global.report.updateSettings(newSettings);
-
-        if(open){
-            resizeEmbed(global.filterOpenedWidth);
-        } else {
-            resizeEmbed(global.filterClosedWidth);
         }
+    };    
+    global.report.updateSettings(newSettings);
+
+    if(open){
+        resizeEmbed(global.filterOpenedWidth);
+    } else {
+        resizeEmbed(global.filterClosedWidth);
     }
 }
 

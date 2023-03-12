@@ -3,7 +3,7 @@ import * as global from "./globalVariables";
 import * as elements from "./elements";
 import * as disable from "./disableArea";
 import { createIntroCard } from "./introCards";
-import { createFilterInfoCard } from "./filterInfoCards";
+import { createFilterInfoCard, removeFilterInfoCard } from "./filterInfoCards";
 import { createVisualInfo } from "./visualInfo";
 import { createDashboardInfoCard, removeDashboardInfoCard } from "./dashboardInfoCard";
 
@@ -24,9 +24,9 @@ export async function createInfoCard(visual: any){
 
     const visualData = helpers.getDataOfVisual(visual);
     helpers.createCardContent(visualData?.title, "", "infoCard");
-    createVisualInfo(visual);
-
     helpers.createCardButtons("previous", "next");
+
+    await createVisualInfo(visual);
 }
 
 export function removeInfoCard(){
@@ -48,6 +48,7 @@ export function nextInfoCard(){
         removeInfoCard();
         createFilterInfoCard();
     } else{
+        removeFilterInfoCard();
         removeInfoCard();
         if(!global.isGuidedTour && global.currentVisualIndex == global.currentVisuals.length){
             createDashboardInfoCard();
@@ -72,6 +73,7 @@ export function previousInfoCard(){
         removeInfoCard();
         createDashboardInfoCard();
     }else{
+        removeFilterInfoCard();
         if(global.isGuidedTour && global.currentVisualIndex == global.currentVisuals.length){
             disable.disableFilter();
         }

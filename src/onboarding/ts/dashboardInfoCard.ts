@@ -14,13 +14,13 @@ export function createDashboardInfoCard(){
     disableAll();
     
     const style = helpers.getCardStyle(global.introCardMargin, 0, global.introCardWidth, "") + `right:0;margin:auto;`;
-    helpers.createCard("infoCard", style, "");
+    helpers.createCard("dashboardInfoCard", style, "");
 
-    helpers.createCloseButton("closeButton", "closeButtonPlacementBig", "", helpers.getCloseFunction(), "infoCard");
+    helpers.createCloseButton("closeButton", "closeButtonPlacementBig", "", helpers.getCloseFunction(), "dashboardInfoCard");
 
     const dashboard = global.componentGraph.dashboard;
     const title = setDashboardTitle(dashboard);
-    helpers.createCardContent(title, "", "infoCard");
+    helpers.createCardContent(title, "", "dashboardInfoCard");
     setDashboardInfos(dashboard);
     helpers.createCardButtons("previous", "next");
 }
@@ -71,7 +71,7 @@ function setDashboardInfos(dashboard: Dashboard){
 
 export function removeDashboardInfoCard(){
     global.setShowsDashboardInfo(false);
-    removeElement("infoCard");
+    removeElement("dashboardInfoCard");
     removeElement("disabledPage");
 }
 

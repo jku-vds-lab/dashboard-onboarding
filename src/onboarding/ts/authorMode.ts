@@ -12,7 +12,6 @@ export function createOnboardingEditing(){
     helpers.removeOnboarding();
     helpers.createOnboarding();
 
-    helpers.toggleFilter(true);
     disableAll();
 
     const style = helpers.getCardStyle(global.editCardMargin, 0, global.editCardWidth, "") + `right:0;margin:auto;`;
