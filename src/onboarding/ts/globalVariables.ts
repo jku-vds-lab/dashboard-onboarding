@@ -7,17 +7,17 @@ export const filterClosedWidth = 33;
 export const darkOutlineButtonClass = "btn btn-outline-dark";
 export const onboardingButtonStyle = "margin:10px;";
 
-export let filterOpenedWidth = sizes.filterOpenedWidthOriginal;
-export let infoCardMargin = sizes.infoCardMarginOriginal;
-export let infoCardWidth = sizes.infoCardWidthOriginal;
-export let introCardMargin = sizes.introCardMarginOriginal;
-export let introCardWidth = sizes.introCardWidthOriginal;
-export let interactionCardWidth = sizes.interactionCardWidthOriginal;
-export let interactionCardHeight = sizes.interactionCardHeightOriginal;
-export let hintCardMargin = sizes.hintCardMarginOriginal;
-export let hintCardWidth = sizes.hintCardWidthOriginal;
-export let editCardMargin = sizes.editCardMarginOriginal;
-export let editCardWidth = sizes.editCardWidthOriginal;
+export let filterOpenedWidth = 0;
+export let infoCardMargin = 0;
+export let infoCardWidth = 0;
+export let introCardMargin = 0;
+export let introCardWidth = 0;
+export let interactionCardWidth = 0;
+export let interactionCardHeight = 0;
+export let hintCardMargin = 0;
+export let hintCardWidth = 0;
+export let editCardMargin = 0;
+export let editCardWidth = 0;
 
 export let reportWidth: number;
 export let reportHeight: number;
