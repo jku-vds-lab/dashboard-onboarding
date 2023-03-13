@@ -2,21 +2,18 @@ import { allVisuals } from "../../onboarding/ts/globalVariables";
 import React, { useEffect } from "react";
 import Accordion from "react-bootstrap/Accordion";
 import "../assets/css/dashboard.scss";
+import ComponentsProperties from "./component-properties";
 
 export default function ComponentsPane() {
   useEffect(() => {
-    const cardElements = allVisuals.filter(function (visual) {
-      return visual.type == "card";
-    });
-    const cardElementsLength = cardElements.length;
-    let index = 0;
+    // ComponentsProperties('dndnode', 'componentNodes');
     for (const vis of allVisuals) {
+      let index = 0;
       let visTitle = createNodeTitle(vis.type);
-      if (vis.type == "card") {
-        if (cardElementsLength > 1) {
-          index = index + 1;
-          visTitle = visTitle + index;
-        }
+      const itemLength = checkDuplicateComponents(vis.type);
+      if (itemLength > 1) {
+        index = index + 1;
+        visTitle = visTitle + index;
       }
 
       createComponentNode({
@@ -46,6 +43,13 @@ export default function ComponentsPane() {
 
     document.getElementById(attributes.parentId)?.appendChild(div);
   }
+
+  const checkDuplicateComponents = (visType) => {
+    const componentItems = allVisuals.filter(function (visual) {
+      return visual.type == visType;
+    });
+    return componentItems.length;
+  };
 
   function createNodeTitle(title, index = "") {
     let newTitle = title;
