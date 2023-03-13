@@ -4,7 +4,7 @@ import { getStartFunction } from "./introCards";
 import { previousInfoCard, nextInfoCard, createInfoCard } from "./infoCards";
 import { removeFrame } from "./disableArea";
 import { createGuidedTour, createDashboardExploration, createOnboardingOverlay } from "./onboarding";
-import { createOnboardingEditing, saveOnboardingChanges } from "./authorMode";
+import { saveOnboardingChanges } from "./authorMode";
 import { createSettings } from "./createSettings";
 import { addVisualTextarea } from "./listOfVisuals";
 import { getInteractionText, removeInteractionCard, startInteractionExample } from "./interactionExample";
@@ -24,21 +24,24 @@ import { exportData } from "../../Provenance/utils";
 import * as sizes from "./sizes";
 
 export function addContainerOffset(){
+    const pageOffset = parseInt(window.getComputedStyle(document.getElementById("flexContainer")!).paddingTop);
     const buttonHeaderHeight = document.getElementById("onboarding-header")!.clientHeight;
-    const topOffset = global.interactionCardHeight - buttonHeaderHeight;
+    const reportOffsetTop = parseInt(window.getComputedStyle(document.getElementById("reportContainer")!).paddingTop);
 
     const header = document.getElementById("onboarding-header");
     if(header){
-        const headerOffset = topOffset;
+        const headerOffset = global.interactionCardHeight - pageOffset + global.interactionCardTop;
         header.style.marginTop = headerOffset + "px";
     }
 
     const onboarding = document.getElementById("onboarding");
     if(onboarding){
-        global.setOnboardingOffset(onboarding.offsetTop);
-        const top =  global.onboardingOffset + topOffset;
+        global.setOnboardingOffset(pageOffset + buttonHeaderHeight + reportOffsetTop);
+        const top = global.interactionCardTop + global.interactionCardHeight + buttonHeaderHeight + reportOffsetTop;
         onboarding.style.top = top + "px";
     }
+
+    global.setContainerPaddingTop(global.report.iframe.offsetTop + global.settings.reportOffset.top);
 }
 
 function backToVisual(){
@@ -847,6 +850,8 @@ export function removeContainerOffset(){
     if(onboarding){
         onboarding.style.top = global.onboardingOffset + "px";
     }
+
+    global.setContainerPaddingTop(global.report.iframe.offsetTop + global.settings.reportOffset.top);
 }
 
 function removeDesignVisuals(){
@@ -868,7 +873,6 @@ export function removeOnboarding(){
 }
 
 export function reloadOnboarding(){
-    removeContainerOffset();
     removeFrame();
     elements.removeElement("dashboardExplaination");
     elements.removeElement("onboarding");

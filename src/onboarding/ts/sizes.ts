@@ -1,5 +1,5 @@
 import * as global from "./globalVariables";
-import { getElementWidth, toggleFilter } from "./helperFunctions";
+import { getElementWidth, resizeEmbed, toggleFilter } from "./helperFunctions";
 
 export const infoCardMarginOriginal = 10;
 export const infoCardWidthOriginal = 500;
@@ -62,6 +62,11 @@ export async function resize(){
     setReportHeightDivision(global.page.defaultSize.height!);
 
     resizeReport();
+
+    resizeEmbed(global.filterOpenedWidth);
+
+    global.setContainerPaddingTop(global.report.iframe.offsetTop + global.settings.reportOffset.top);
+    global.setContainerPaddingLeft(global.report.iframe.offsetLeft + global.settings.reportOffset.left);
 
     await zoom();
 }

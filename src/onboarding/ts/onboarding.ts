@@ -13,7 +13,6 @@ import { createFilterInfoCard, removeFilterInfoCard } from "./filterInfoCards";
 import { showVisualChanges } from "./showVisualsChanges";
 
 export async function onLoadReport(){
-    helpers.removeOnboarding();
     await helpers.getActivePage();
     await helpers.getVisuals();
     await helpers.createComponentGraph();
@@ -24,11 +23,6 @@ export async function onLoadReport(){
 
     resize();
 
-    helpers.resizeEmbed(global.filterOpenedWidth);
-
-    global.setContainerPaddingTop(global.report.iframe.offsetTop + global.settings.reportOffset.top);
-    global.setContainerPaddingLeft(global.report.iframe.offsetLeft + global.settings.reportOffset.left);
-    
     elements.addStylesheet("/onboarding/css/onboarding.css");
 
     createGuidedTour();
@@ -59,12 +53,6 @@ export async function onDataSelected(event: { detail: { dataPoints: any[]; }; })
 
 export async function reloadOnboarding(){
     await resize();
-
-    helpers.resizeEmbed(global.filterOpenedWidth);
-
-    global.setContainerPaddingTop(global.report.iframe.offsetTop + global.settings.reportOffset.top);
-    global.setContainerPaddingLeft(global.report.iframe.offsetLeft + global.settings.reportOffset.left);
-
     await reloadOnboardingAt();
 }
 
@@ -105,6 +93,7 @@ export async function startOnboardingAt(type: string, visualId?: number){
             await startInteractionExample();
             break;
         case "reportChanged":
+            helpers.removeContainerOffset();
             showReportChanges();
             break;
         case "visualChanged":
@@ -186,8 +175,4 @@ function createOverlay(id: string, style: string){
     attributes.clickable = true;
     attributes.parentId = "onboarding";
     elements.createDiv(attributes);
-}
-
-function endExplorationMode() {
-    throw new Error("Function not implemented.");
 }

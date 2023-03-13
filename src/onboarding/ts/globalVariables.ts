@@ -14,6 +14,7 @@ export let introCardMargin = 0;
 export let introCardWidth = 0;
 export let interactionCardWidth = 0;
 export let interactionCardHeight = 0;
+export const interactionCardTop = 10;
 export let hintCardMargin = 0;
 export let hintCardWidth = 0;
 export let editCardMargin = 0;
