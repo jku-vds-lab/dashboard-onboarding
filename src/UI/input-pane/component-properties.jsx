@@ -42,7 +42,7 @@ export default function ComponentsProperties(className, parentId) {
         newTitle = "Filter";
         break;
       case "lineClusteredColumnComboChart":
-        newTitle = "Column Chart";
+        newTitle = "Column";
         break;
       case "clusteredBarChart":
         newTitle = "Bar Chart";
