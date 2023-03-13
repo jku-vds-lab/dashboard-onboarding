@@ -636,6 +636,15 @@ export async function getSpecificDataInfo(visual: any, dataName: string){
         return [];
     }
     
+    if(dataMap === "exportError"){
+        const dataPoints = [];
+        const data = global.componentGraph.dashboard.visualizations.find(vis => vis.id === visual.name)!.data.data;
+        for (const map of data) {
+            dataPoints.push(map.get(dataName));
+        }
+        return dataPoints;
+    }
+    
     return dataMap.get(dataName)??[];
 }
 
@@ -678,7 +687,7 @@ export function getVisualCardPos(visual: any, cardWidth: number, offset: number)
 export async function getVisualData(visual: any){
     const exportedData = await exportData(visual);
     if(!exportedData){
-        return null;
+        return "exportError";
     }
     const visualData = exportedData.data;
     const headers = visualData.slice(0, visualData.indexOf('\r')).split(',');
@@ -704,7 +713,7 @@ export async function getVisualData(visual: any){
 
 export async function getDataRange(visual: any, categorie: string){
     const data = await getVisualData(visual);
-    if(!data){
+    if(!data || data === "exportError"){
         return null;
     }
     
