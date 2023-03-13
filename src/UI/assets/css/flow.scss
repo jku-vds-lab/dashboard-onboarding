@@ -165,7 +165,10 @@ $color-white: #f1f1f1;
   &.KPI2{
     background-color: #{$kpi-color};
   }
-  &.Filter{
+  &.Filter1{
+    background-color: #{$filter-color};
+  }
+  &.Filter2{
     background-color: #{$filter-color};
   }
   &.Column{
