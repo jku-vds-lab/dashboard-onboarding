@@ -5,7 +5,7 @@ import { ProvVisCreator } from "@visdesignlab/trrack-vis";
 // import { ProvVisCreator } from "@trrack/vis-react";
 import { makeDeepCopy, toCamelCaseString } from "./utils";
 import Global_Filter from "../componentGraph/Global_Filter";
-import { saveComponentGraph } from "../componentGraph/ComponentGraph";
+import { replacer, reviver, saveComponentGraph } from "../componentGraph/ComponentGraph";
 import { getComponentGraph } from "../componentGraph/ComponentGraph";
 import Visualization from "../componentGraph/Visualization";
 import { visuals } from "../componentGraph/ComponentGraph";
@@ -118,7 +118,7 @@ export function setupProvenance(defaultState: IAppState): IAppProvenance {
     let usedLabel: string = label
     //console.log("event ", eventType)
     hideButtons();
-    const stateAsString: string = JSON.stringify(newState)
+    const stateAsString: string = JSON.stringify(newState, replacer)
     const oneNotRendered: boolean = stack[0] !== "rendered" || stack[1] !== "rendered"
     const dataChanged: boolean = (eventType == "rendered" && stack[0] != 'dataSelected' && stateAsString !== prevState[0])
     const renderedAfterSelection: boolean = (eventType == "rendered" && stack[0] == 'dataSelected')
@@ -208,7 +208,7 @@ export function setupProvenance(defaultState: IAppState): IAppProvenance {
       graphMap[currentNode.id] = {node: currentNode, graph: makeDeepCopy(componentGraph)}
       console.log(
         "Provenance Data",
-        JSON.parse(provenance.exportProvenanceGraph())
+        JSON.parse(provenance.exportProvenanceGraph(), reviver)
       );
 
     } else if (eventType == 'loaded'){

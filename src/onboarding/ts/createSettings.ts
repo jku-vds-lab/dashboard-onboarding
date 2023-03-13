@@ -1,6 +1,7 @@
 import * as helpers from "./helperFunctions";
 import * as global from "./globalVariables";
 import { getDashboardInfo } from "./dashboardInfoCard";
+import { replacer } from "../../componentGraph/ComponentGraph";
 
 export async function createSettings(){
     const settings = global.createSettingsObject();
@@ -11,7 +12,7 @@ export async function createSettings(){
 
     global.setSettings(settings);
 
-    localStorage.setItem("settings", JSON.stringify(global.settings));
+    localStorage.setItem("settings", JSON.stringify(global.settings, replacer));
 }
 
 

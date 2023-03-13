@@ -35,7 +35,7 @@ export function getComponentGraph(){
   return componentGraph;
 }
 
-function replacer(key:string, value:any) {
+export function replacer(key:string, value:any) {
   if(value instanceof Map) {
     return {
       type: 'map',
@@ -45,7 +45,8 @@ function replacer(key:string, value:any) {
     return value;
   }
 }
-function reviver(key:string, value:any) {
+
+export function reviver(key:string, value:any) {
   if(typeof value === 'object' && value !== null) {
     if (value.type === 'map') {
       return new Map(value.value);

@@ -18,7 +18,7 @@ import { IFilterColumnTarget, IFilterMeasureTarget } from "powerbi-models";
 import 'powerbi-report-authoring';
 import { VisualDescriptor} from "powerbi-client";
 import lightbulbImg from "../assets/lightbulb.png";
-import ComponentGraph from "../../componentGraph/ComponentGraph";
+import ComponentGraph, { reviver } from "../../componentGraph/ComponentGraph";
 import Filter from "../../componentGraph/Filter";
 import { exportData } from "../../Provenance/utils";
 import * as sizes from "./sizes";
@@ -624,10 +624,10 @@ export async function createComponentGraph(){
 }
 
 export async function getSettings(){
-    //if (localStorage.getItem("settings") == null){
+    if (localStorage.getItem("settings") == null){
         await createSettings();
-    //}
-    global.setSettings(JSON.parse(localStorage.getItem("settings")!));
+    }
+    global.setSettings(JSON.parse(localStorage.getItem("settings")!, reviver));
 }
 
 export async function getSpecificDataInfo(visual: any, dataName: string){
@@ -635,7 +635,7 @@ export async function getSpecificDataInfo(visual: any, dataName: string){
     if(!dataMap||!dataName){
         return [];
     }
-    
+
     if(dataMap === "exportError"){
         const dataPoints = [];
         const data = global.componentGraph.dashboard.visualizations.find(vis => vis.id === visual.name)!.data.data;

@@ -7,6 +7,7 @@ import { createVisualsGroup, orderVisuals } from "./editVisuals";
 import { createFiltersGroup } from "./editFilters";
 import { createInteractionExampleGroup } from "./editInteractionExample";
 import { createReportOffsetGroup } from "./editReportOffset";
+import { replacer } from "../../componentGraph/ComponentGraph";
 
 export function createOnboardingEditing(){
     helpers.removeOnboarding();
@@ -203,7 +204,7 @@ export async function saveOnboardingChanges(){
         }
     }
 
-    localStorage.setItem('settings', JSON.stringify(global.settings));
+    localStorage.setItem('settings', JSON.stringify(global.settings, replacer));
 
     helpers.removeOnboarding();
 }
