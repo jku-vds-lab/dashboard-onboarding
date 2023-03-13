@@ -116,29 +116,29 @@ export default function NodesCanvas() {
           const reactFlowBounds =
             reactFlowWrapper.current.getBoundingClientRect();
           console.log("Reactflowbounds", reactFlowBounds);
-          // const position = reactFlowInstance.project({
-          //   x:
-          //     event.clientX -
-          //     iNode.position.x -
-          //     reactFlowBounds.left -
-          //     node.width,
-          //   y:
-          //     event.clientY -
-          //     iNode.position.y -
-          //     reactFlowBounds.top -
-          //     node.height,
-          // });
-
           const position = reactFlowInstance.project({
-            x: event.clientX - reactFlowBounds.left,
-            y: event.clientY - reactFlowBounds.top,
+            x:
+              event.clientX -
+              iNode.position.x -
+              reactFlowBounds.left -
+              node.width,
+            y:
+              event.clientY -
+              iNode.position.y -
+              reactFlowBounds.top -
+              node.height,
           });
+
+          // const position = reactFlowInstance.project({
+          //   x: event.clientX - reactFlowBounds.left,
+          //   y: event.clientY - reactFlowBounds.top,
+          // });
 
           setNodes((nodes) =>
             nodes.map((n) => {
               if (n.id === node.id) {
                 n.parentNode = iNode.id;
-                n.position = position;
+                // n.position = reactFlowInstance.project(position);
               }
               return n;
             })
