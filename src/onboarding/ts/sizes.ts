@@ -68,6 +68,7 @@ export async function resize(){
     global.setContainerPaddingTop(global.report.iframe.offsetTop + global.settings.reportOffset.top);
     global.setContainerPaddingLeft(global.report.iframe.offsetLeft + global.settings.reportOffset.left);
 
+    await toggleFilter(global.openedFilter);
     await zoom();
 }
 
@@ -93,7 +94,7 @@ async function zoom(){
 
 function closeFilterForSmallReport(){
     if(divisor>2){
-        toggleFilter(false);
+        global.setOpenedFilter(false);
         global.setFilterOpenedWidth(global.filterClosedWidth);
         document.getElementById("reportContainer")!.className = "col-12";
         document.getElementById("provDiv")!.className = "col-12";
@@ -101,7 +102,7 @@ function closeFilterForSmallReport(){
         calcDivisors(global.filterClosedWidth);
         document.getElementById("provDiv")!.style.paddingTop = "10px";
     } else {
-        toggleFilter(true);
+        global.setOpenedFilter(true);
         global.setFilterOpenedWidth(filterOpenedWidthOriginal);
     }
 }

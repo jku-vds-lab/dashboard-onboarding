@@ -927,7 +927,7 @@ export function startExplorationMode(){
     button!.innerHTML = "End Dashboard Exploration";
 }
 
-export function toggleFilter(open: boolean){
+export async function toggleFilter(open: boolean){
     const newSettings = {
         panes: {
             filters: {
@@ -938,14 +938,15 @@ export function toggleFilter(open: boolean){
                 visible: true
             }
         }
-    };    
-    global.report.updateSettings(newSettings);
-
+    };   
+    
     if(open){
         resizeEmbed(global.filterOpenedWidth);
     } else {
         resizeEmbed(global.filterClosedWidth);
-    }
+    } 
+
+    await global.report.updateSettings(newSettings);
 }
 
 export function getLocalFilterText(visual: any){

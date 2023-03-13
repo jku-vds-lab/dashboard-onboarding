@@ -35,6 +35,7 @@ export let explorationMode = false;
 export let isGuidedTour = false;
 export let interactionMode = false;
 export let hasOverlay = false;
+export let openedFilter = true;
 
 export let currentVisualIndex: number;
 export let showsDashboardInfo = false;
@@ -298,6 +299,9 @@ export function setInteractionMode(newInteractionMode: boolean){
 }
 export function setHasOverlay(newHasOverlay: boolean){
     hasOverlay = newHasOverlay;
+}
+export function setOpenedFilter(newOpenedFilter: boolean){
+    openedFilter = newOpenedFilter;
 }
 
 export function setCurrentVisualIndex(newCurrentVisualIndex: number){
