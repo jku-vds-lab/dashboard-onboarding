@@ -3,18 +3,16 @@ import ComponentGraph from "../../componentGraph/ComponentGraph";
 
 export const footerHeight = 37;
 export const filterClosedWidth = 33;
-export let filterOpenedWidth = 0;
-
 export const darkOutlineButtonClass = "btn btn-outline-dark";
 export const onboardingButtonStyle = "margin:10px;";
 
+export let filterOpenedWidth = 0;
 export let infoCardMargin = 0;
 export let infoCardWidth = 0;
 export let introCardMargin = 0;
 export let introCardWidth = 0;
 export let interactionCardWidth = 0;
 export let interactionCardHeight = 0;
-export const interactionCardTop = 10;
 export let hintCardMargin = 0;
 export let hintCardWidth = 0;
 export let editCardMargin = 0;
@@ -64,13 +62,6 @@ export interface ReportOffset {
   bottom: number;
 }
 
-export interface DashboardInfo {
-  titleStatus: string;
-  changedTitle: string;
-  infoStatus: string[];
-  changedInfos: string[];
-}
-
 export interface SettingsVisual {
   id: string;
   title: string | undefined;
@@ -93,7 +84,6 @@ export interface Target {
 
 export interface Settings {
   reportOffset: ReportOffset;
-  dashboardInfo: DashboardInfo;
   visuals: SettingsVisual[];
   filterVisual: FilterVisual;
   interactionExample: InteractionExample;
@@ -126,7 +116,6 @@ export interface InteractionVisual {
 export function createSettingsObject() {
   const settings: Settings = {
     reportOffset: createReportOffset(),
-    dashboardInfo: createDashboardInfo(),
     visuals: [] as SettingsVisual[],
     filterVisual: createFilterVisual(),
     interactionExample: createInteractionExample(),
@@ -142,16 +131,6 @@ export function createReportOffset() {
     right: 0,
   };
   return offset;
-}
-
-export function createDashboardInfo() {
-  const dashboardInfo: DashboardInfo = {
-    titleStatus: "",
-    changedTitle: "",
-    infoStatus: [],
-    changedInfos: [],
-  };
-  return dashboardInfo;
 }
 
 export function createVisual() {
@@ -284,11 +263,6 @@ export function setPage(newPage: Page) {
 export function setSelectedTargets(newSelectedTargets: Target[]) {
   selectedTargets = newSelectedTargets;
 }
-export function setInteractionSelectedVisual(
-  newInteractionSelectedVisual: any
-) {
-  interactionSelectedVisual = newInteractionSelectedVisual;
-}
 
 export function setExplorationMode(newExplorationMode: boolean) {
   explorationMode = newExplorationMode;
@@ -298,12 +272,6 @@ export function setIsGuidedTour(newIsGuidedTour: boolean) {
 }
 export function setInteractionMode(newInteractionMode: boolean) {
   interactionMode = newInteractionMode;
-}
-export function setHasOverlay(newHasOverlay: boolean) {
-  hasOverlay = newHasOverlay;
-}
-export function setOpenedFilter(newOpenedFilter: boolean) {
-  openedFilter = newOpenedFilter;
 }
 
 export function setCurrentVisualIndex(newCurrentVisualIndex: number) {
