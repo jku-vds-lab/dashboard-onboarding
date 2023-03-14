@@ -16,17 +16,17 @@ export async function showVisualChanges(selectedVisual: any) {
 
         const style = helpers.getCardStyle(position.y, position.x, global.infoCardWidth, "");
         if(position.pos === "left"){
-            helpers.createCard("showChangesCard", style, "rectLeftBig");
-            helpers.createCloseButton("closeButton", "closeButtonPlacementBig", "", helpers.removeOnboarding, "showChangesCard");
+            helpers.createCard("showVisualChangesCard", style, "rectLeftBig");
+            helpers.createCloseButton("closeButton", "closeButtonPlacementBig", "", helpers.removeOnboarding, "showVisualChangesCard");
         }else{
-            helpers.createCard("showChangesCard", style, "rectRightBig");
-            helpers.createCloseButton("closeButton", "closeButtonPlacementBig", "", helpers.removeOnboarding, "showChangesCard");
+            helpers.createCard("showVisualChangesCard", style, "rectRightBig");
+            helpers.createCloseButton("closeButton", "closeButtonPlacementBig", "", helpers.removeOnboarding, "showVisualChangesCard");
         }
 
-        helpers.createCardContent(global.settings.interactionExample.title, "", "showChangesCard");
-        await createShowVisualChangesInfo(selectedVisual);
-
+        helpers.createCardContent(global.settings.interactionExample.title, "", "showVisualChangesCard");
         helpers.createCardButtons("back to visual", "back to overview");
+        
+        await createShowVisualChangesInfo(selectedVisual);
     } else {
         showReportChanges();
     }
@@ -48,6 +48,7 @@ async function createShowVisualChangesInfo(visual: any){
             break;
     }
 
+    document.getElementById("contentText")!.innerHTML = "";
     document.getElementById("contentText")!.innerHTML += visualChangeInfo;
 }
 

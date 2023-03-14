@@ -11,8 +11,6 @@ import * as onboarding from "../onboarding/ts/onboarding";
 import * as global from "../onboarding/ts/globalVariables";
 import {provectories} from '../Provenance/Provectories';
 import { Link } from "react-router-dom";
-import { getActivePage } from "../onboarding/ts/helperFunctions";
-import { resize, setDivisor, setReportHeightDivision, setReportWidthDivision } from "../onboarding/ts/sizes";
 const powerbi = new service.Service(factories.hpmFactory, factories.wpmpFactory, factories.routerFactory);
 
 export let accessToken = "";
@@ -36,7 +34,7 @@ class Onboarding extends React.Component<AppProps, AppState> {
     }
 
     // React function
-    render(): JSX.Element {
+    render(): JSX.Element {        
         this.myReport = this.renderMyReport();
         return (
         <div className = "container-fluid" id = "flexContainer">
@@ -57,6 +55,8 @@ class Onboarding extends React.Component<AppProps, AppState> {
 
     // React function
     async componentDidMount(): Promise<void> {
+
+        window.addEventListener('resize', onboarding.reloadOnboarding)
 
         if (this.state.reportRef !== null) {
             reportContainer = this.state.reportRef["current"];
@@ -98,6 +98,7 @@ class Onboarding extends React.Component<AppProps, AppState> {
                     visualRenderedEvents: true,
                     panes: {
                         filters: {
+                            expanded: true,
                             visible: true
                         },
                         pageNavigation: {
@@ -153,6 +154,7 @@ class Onboarding extends React.Component<AppProps, AppState> {
 
     // React function
     componentWillUnmount(): void {
+        window.removeEventListener('resize', onboarding.reloadOnboarding);
         powerbi.reset(reportContainer);
     }
 

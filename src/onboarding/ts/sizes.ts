@@ -1,4 +1,5 @@
 import * as global from "./globalVariables";
+import { getElementWidth, resizeEmbed, toggleFilter } from "./helperFunctions";
 
 export const infoCardMarginOriginal = 10;
 export const infoCardWidthOriginal = 500;
@@ -15,21 +16,23 @@ export const headlineSizeOriginal = 2.5;
 export const filterOpenedWidthOriginal = 250;
 
 export let divisor=1;
+export let reportDivisor = 1;
+export let newWidth = 0;
 export let reportWidthOriginal:number;
 export let reportHeightOriginal:number;
 export let textSize = textSizeOriginal;
 export let headlineSize = headlineSizeOriginal;
 
-export function setDivisor(newDivisor: number){
-    divisor = newDivisor;
+export function setWidth(width: number){
+    newWidth = width;
 }
 export function setReportWidthDivision(newReportWidth: number){
     reportWidthOriginal = newReportWidth;
-    global.setReportWidth(newReportWidth/divisor);
+    global.setReportWidth(newReportWidth/reportDivisor);
 }
 export function setReportHeightDivision(newReportHeight: number){
     reportHeightOriginal = newReportHeight;
-    global.setReportHeight(newReportHeight/divisor);
+    global.setReportHeight(newReportHeight/reportDivisor);
 }
 
 export function setSizeVariables(){
@@ -48,27 +51,77 @@ export function setSizeVariables(){
 }
 
 export async function resize(){
+    calcReportWidth();
+
+    closeFilterForSmallReport();
     setSizeVariables();
-    document.getElementById("editButton")!.style.fontSize = textSize + "rem";
-    document.getElementById("guidedTour")!.style.fontSize = textSize + "rem";
-    document.getElementById("dashboardExploration")!.style.fontSize = textSize + "rem";
+
+    resizeHeaderButtons();
 
     setReportWidthDivision(global.page.defaultSize.width!);
     setReportHeightDivision(global.page.defaultSize.height!);
-    if(divisor>2){
-        global.setFilterOpenedWidth(global.filterClosedWidth);
-        document.getElementById("reportContainer")!.className = "col-12";
-        document.getElementById("provDiv")!.className = "col-12";
-    } else{
-        global.setFilterOpenedWidth(filterOpenedWidthOriginal);
+
+    resizeReport();
+
+    resizeEmbed(global.filterOpenedWidth);
+
+    global.setContainerPaddingTop(global.report.iframe.offsetTop + global.settings.reportOffset.top);
+    global.setContainerPaddingLeft(global.report.iframe.offsetLeft + global.settings.reportOffset.left);
+
+    await toggleFilter(global.openedFilter);
+    await zoom();
+}
+
+function calcDivisors(filterWidth: number){
+    if(newWidth == 0){
+        divisor = 1;
+        reportDivisor = 1;
+    } else {
+        divisor = (global.page.defaultSize.width! + filterWidth)/newWidth;
+        reportDivisor = global.page.defaultSize.width!/(newWidth - filterWidth);
     }
-    document.getElementsByTagName("iframe")[0].style.width = `${global.reportWidth! + global.filterOpenedWidth + global.settings.reportOffset.left}px`;
-    document.getElementsByTagName("iframe")[0].style.height = `${global.reportHeight! + global.footerHeight + global.settings.reportOffset.top}px`;
+}
+
+async function zoom(){
     try {
-        const newZoom = 1/divisor;
+        const newZoom = 1/reportDivisor;
         await global.report.setZoom(newZoom);
     }
     catch (errors) {
         console.log(errors);
     }
+}
+
+function closeFilterForSmallReport(){
+    if(divisor>2){
+        global.setOpenedFilter(false);
+        global.setFilterOpenedWidth(global.filterClosedWidth);
+        document.getElementById("reportContainer")!.className = "col-12";
+        document.getElementById("provDiv")!.className = "col-12";
+        setWidth(getElementWidth(document.getElementById("reportContainer")!));
+        calcDivisors(global.filterClosedWidth);
+        document.getElementById("provDiv")!.style.paddingTop = "10px";
+    } else {
+        global.setOpenedFilter(true);
+        global.setFilterOpenedWidth(filterOpenedWidthOriginal);
+    }
+}
+
+function resizeReport(){
+    document.getElementsByTagName("iframe")[0].style.width = `${global.reportWidth! + global.filterOpenedWidth + global.settings.reportOffset.left}px`;
+    document.getElementsByTagName("iframe")[0].style.height = `${global.reportHeight! + global.footerHeight + global.settings.reportOffset.top}px`;
+    document.getElementById("reportContainer")!.style.height = `${global.reportHeight! + global.footerHeight + global.settings.reportOffset.top}px`;
+}
+
+function resizeHeaderButtons(){
+    document.getElementById("editButton")!.style.fontSize = textSize + "rem";
+    document.getElementById("guidedTour")!.style.fontSize = textSize + "rem";
+    document.getElementById("dashboardExploration")!.style.fontSize = textSize + "rem";
+}
+
+function calcReportWidth(){
+    document.getElementById("reportContainer")!.className = "col-10";
+    document.getElementById("provDiv")!.className = "col-2";
+    setWidth(getElementWidth(document.getElementById("reportContainer")!));
+    calcDivisors(filterOpenedWidthOriginal);
 }

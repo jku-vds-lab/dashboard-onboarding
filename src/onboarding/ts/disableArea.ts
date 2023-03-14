@@ -1,6 +1,6 @@
 import * as global from "./globalVariables";
 import * as elements from "./elements";
-import { divisor } from "./sizes";
+import { reportDivisor } from "./sizes";
 import { getClickableStyle } from "./helperFunctions";
 
 export function disableAll(){
@@ -60,14 +60,14 @@ export function removeFrame(){
 }
 
 export function createDisabledArea(visual: any){
-    const rightX = (visual.layout.x/divisor) + (visual.layout.width/divisor);
-    const lowerY = (visual.layout.y/divisor) + (visual.layout.height/divisor);
+    const rightX = (visual.layout.x/reportDivisor) + (visual.layout.width/reportDivisor);
+    const lowerY = (visual.layout.y/reportDivisor) + (visual.layout.height/reportDivisor);
     const lowerDistance = global.reportHeight! - lowerY;
     const rightDistance = global.reportWidth! - rightX;
 
     let attributes = global.createDivAttributes();
     attributes.id = "disabledUpper";
-    attributes.style = getGrayDivStyle(0, 0, global.reportWidth!, visual.layout.y/divisor);
+    attributes.style = getGrayDivStyle(0, 0, global.reportWidth!, visual.layout.y/reportDivisor);
     attributes.parentId = "onboarding";
     elements.createDiv(attributes);
 
@@ -79,13 +79,13 @@ export function createDisabledArea(visual: any){
 
     attributes = global.createDivAttributes();
     attributes.id = "disabledRight";
-    attributes.style =  getGrayDivStyle(visual.layout.y/divisor, rightX, rightDistance, visual.layout.height/divisor);
+    attributes.style =  getGrayDivStyle(visual.layout.y/reportDivisor, rightX, rightDistance, visual.layout.height/reportDivisor);
     attributes.parentId = "onboarding";
     elements.createDiv(attributes);
     
     attributes = global.createDivAttributes();
     attributes.id = "disabledLeft";
-    attributes.style =  getGrayDivStyle(visual.layout.y/divisor, 0, visual.layout.x/divisor, visual.layout.height/divisor);
+    attributes.style =  getGrayDivStyle(visual.layout.y/reportDivisor, 0, visual.layout.x/reportDivisor, visual.layout.height/reportDivisor);
     attributes.parentId = "onboarding";
     elements.createDiv(attributes);
 }

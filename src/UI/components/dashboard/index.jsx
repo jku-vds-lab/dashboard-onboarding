@@ -16,7 +16,6 @@ import Onboarding from "../../../pages/onboarding";
 import NodesCanvas from "../nodesCanvas";
 
 import "../../assets/css/dashboard.scss";
-import { setDivisor } from "../../../onboarding/ts/sizes";
 import { allVisuals } from "../../../onboarding/ts/globalVariables";
 
 const Dashboard = () => {
@@ -65,8 +64,6 @@ const Dashboard = () => {
 
 
     const [checked, setChecked] = React.useState(true);
-    
-    setDivisor(3);
 
     return (
         <div className="d-board" style={{flexFlow: "row nowrap", flexGrow: 1, display: "flex"}}>
