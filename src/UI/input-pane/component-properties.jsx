@@ -27,20 +27,6 @@ export default function ComponentsProperties(className, visParentId) {
       titles = result?.contents;
     }
     ids.forEach((id, idx) => {
-      console.log(
-        "Id ",
-        id,
-        "Class ",
-        visClassName,
-        " Content ",
-        titles[idx],
-        "Parent ",
-        visParentId,
-        "visName ",
-        visName,
-        "visTitle ",
-        visTitle
-      );
       createNode(id, visClassName, titles[idx], visParentId, visName);
     });
   }
@@ -101,7 +87,7 @@ export default function ComponentsProperties(className, visParentId) {
         newTitle = "Filter";
         break;
       case "lineClusteredColumnComboChart":
-        newTitle = "Column";
+        newTitle = "Column Chart";
         break;
       case "clusteredBarChart":
         newTitle = "Bar Chart";
