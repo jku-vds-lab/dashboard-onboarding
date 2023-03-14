@@ -4,7 +4,7 @@ import { getStartFunction } from "./introCards";
 import { previousInfoCard, nextInfoCard, createInfoCard } from "./infoCards";
 import { removeFrame } from "./disableArea";
 import { createGuidedTour, createDashboardExploration, createOnboardingOverlay } from "./onboarding";
-import { createOnboardingEditing, saveOnboardingChanges } from "./authorMode";
+import { saveOnboardingChanges } from "./authorMode";
 import { createSettings } from "./createSettings";
 import { addVisualTextarea } from "./listOfVisuals";
 import { getInteractionText, removeInteractionCard, startInteractionExample } from "./interactionExample";
@@ -18,27 +18,30 @@ import { IFilterColumnTarget, IFilterMeasureTarget } from "powerbi-models";
 import 'powerbi-report-authoring';
 import { VisualDescriptor} from "powerbi-client";
 import lightbulbImg from "../assets/lightbulb.png";
-import ComponentGraph from "../../componentGraph/ComponentGraph";
+import ComponentGraph, { reviver } from "../../componentGraph/ComponentGraph";
 import Filter from "../../componentGraph/Filter";
 import { exportData } from "../../Provenance/utils";
 import * as sizes from "./sizes";
 
 export function addContainerOffset(){
+    const pageOffset = parseInt(window.getComputedStyle(document.getElementById("flexContainer")!).paddingTop);
     const buttonHeaderHeight = document.getElementById("onboarding-header")!.clientHeight;
-    const topOffset = global.interactionCardHeight - buttonHeaderHeight;
+    const reportOffsetTop = parseInt(window.getComputedStyle(document.getElementById("reportContainer")!).paddingTop);
 
     const header = document.getElementById("onboarding-header");
     if(header){
-        const headerOffset = topOffset;
+        const headerOffset = global.interactionCardHeight - pageOffset + global.interactionCardTop;
         header.style.marginTop = headerOffset + "px";
     }
 
     const onboarding = document.getElementById("onboarding");
     if(onboarding){
-        global.setOnboardingOffset(onboarding.offsetTop);
-        const top =  global.onboardingOffset + topOffset;
+        global.setOnboardingOffset(pageOffset + buttonHeaderHeight + reportOffsetTop);
+        const top = global.interactionCardTop + global.interactionCardHeight + buttonHeaderHeight + reportOffsetTop;
         onboarding.style.top = top + "px";
     }
+
+    global.setContainerPaddingTop(global.report.iframe.offsetTop + global.settings.reportOffset.top);
 }
 
 function backToVisual(){
@@ -61,6 +64,7 @@ export function createBasicCardContent(description: string, parentId: string){
 
     const spanAttributes = global.createSpanAttributes();
     spanAttributes.id = "basicContentText";
+    spanAttributes.style = `font-size: ${sizes.textSize}rem`;
     spanAttributes.content = description;
     spanAttributes.parentId = "basicCardContent";
     elements.createSpan(spanAttributes);
@@ -83,7 +87,7 @@ export function createCardButtons(leftButton: string, rightButton: string){
 
     if(leftButton != ""){
         const buttonAttributes = global.createButtonAttributes();
-        buttonAttributes.classes = global.darkOutlineButtonClass + " positionLeft";
+        buttonAttributes.classes = global.darkOutlineButtonClass + " positionLeft cardButtons";
         buttonAttributes.style = `font-size: ${sizes.textSize}rem; margin-bottom: 20px;`;
         buttonAttributes.parentId = "cardButtons";
         switch(leftButton){
@@ -112,7 +116,7 @@ export function createCardButtons(leftButton: string, rightButton: string){
 
     if(rightButton != ""){
         const buttonAttributes = global.createButtonAttributes();
-        buttonAttributes.classes = global.darkOutlineButtonClass + " positionRight";
+        buttonAttributes.classes = global.darkOutlineButtonClass + " positionRight cardButtons";
         buttonAttributes.style = `font-size: ${sizes.textSize}rem; margin-bottom: 20px;`;
         buttonAttributes.parentId = "cardButtons";
         if(leftButton == ""){
@@ -282,11 +286,12 @@ export async function createInteractionExampleButton(parentId: string, visual: a
     if(!await getVisualData(visual)){
         return;
     }
-    
+    elements.removeElement("interactionExample");
+
     const attributes = global.createButtonAttributes();
     attributes.id = "interactionExample";
     attributes.content = "Try it out";
-    attributes.style =  "display:block;margin:0 auto;margin-top:10px;margin-bottom:10px;";
+    attributes.style =  "display:block;margin:0 auto;margin-top:10px;margin-bottom:10px;" + `font-size: ${sizes.textSize}rem;`;
     attributes.classes = global.darkOutlineButtonClass;
     attributes.function = startInteractionExample;
     attributes.parentId = parentId;
@@ -372,6 +377,7 @@ export function dataToStringNoConnection(dataArray: string | any[]){
 function endExplorationMode(){
     elements.removeElement("dashboardExplaination");
     global.setExplorationMode(false);
+    global.setHasOverlay(false);
     const button = document.getElementById("dashboardExploration");
     if(!button){
         return;
@@ -484,6 +490,13 @@ export async function getFilterInfo(){
     }
 
     return filterInfos;
+}
+
+export function getElementWidth(element: HTMLElement){
+    let elementWidth = element.clientWidth;
+    const computedStyle = getComputedStyle(element);
+    elementWidth -= parseFloat(computedStyle.paddingLeft) + parseFloat(computedStyle.paddingRight);
+    return elementWidth;
 }
 
 export function getGeneralInfoInteractionExampleText(){
@@ -611,16 +624,25 @@ export async function createComponentGraph(){
 }
 
 export async function getSettings(){
-    //if (localStorage.getItem("settings") == null){
+    if (localStorage.getItem("settings") == null){
         await createSettings();
-    //}
-    global.setSettings(JSON.parse(localStorage.getItem("settings")!));
+    }
+    global.setSettings(JSON.parse(localStorage.getItem("settings")!, reviver));
 }
 
 export async function getSpecificDataInfo(visual: any, dataName: string){
     const dataMap = await getVisualData(visual);  
     if(!dataMap||!dataName){
         return [];
+    }
+
+    if(dataMap === "exportError"){
+        const dataPoints = [];
+        const data = global.componentGraph.dashboard.visualizations.find(vis => vis.id === visual.name)!.data.data;
+        for (const map of data) {
+            dataPoints.push(map.get(dataName));
+        }
+        return dataPoints;
     }
     
     return dataMap.get(dataName)??[];
@@ -640,8 +662,8 @@ export function getTargetInteractionFilter(target: string){
 }
 
 export function getVisualCardPos(visual: any, cardWidth: number, offset: number){
-    const leftDistance = visual.layout.x/sizes.divisor;
-    const rightX = leftDistance + (visual.layout.width/sizes.divisor);
+    const leftDistance = visual.layout.x/sizes.reportDivisor;
+    const rightX = leftDistance + (visual.layout.width/sizes.reportDivisor);
     const rightDistance = global.reportWidth! - rightX;
 
     const position = {
@@ -657,7 +679,7 @@ export function getVisualCardPos(visual: any, cardWidth: number, offset: number)
         position.x = leftDistance - offset - cardWidth;
         position.pos = "left";
     }
-    position.y = offset + (visual.layout.y/sizes.divisor)
+    position.y = offset + (visual.layout.y/sizes.reportDivisor)
     
     return position;
 }
@@ -665,7 +687,7 @@ export function getVisualCardPos(visual: any, cardWidth: number, offset: number)
 export async function getVisualData(visual: any){
     const exportedData = await exportData(visual);
     if(!exportedData){
-        return null;
+        return "exportError";
     }
     const visualData = exportedData.data;
     const headers = visualData.slice(0, visualData.indexOf('\r')).split(',');
@@ -682,27 +704,42 @@ export async function getVisualData(visual: any){
     }
 
     for (let i = 0; i < headers.length; i++) {
-        let dataArray = visualDataMap.get(headers[i])??[];
-        if(!isNaN(Number(dataArray[0]))){
-            let numberArray = dataArray.map((str: string) => {
-                return Number(str);
-            });
-
-            const intArray = [];
-            intArray.push(Math.min(...numberArray));
-            intArray.push(Math.max(...numberArray));
-            numberArray = intArray;
-            dataArray = numberArray.map((num: number) => {
-                return num.toString();
-            });
-        }
-
-        dataArray = Array.from(new Set(dataArray));
-
+        const dataArray = visualDataMap.get(headers[i])??[];
         visualDataMap.set(headers[i], dataArray);
     }
 
     return visualDataMap;
+}
+
+export async function getDataRange(visual: any, categorie: string){
+    const data = await getVisualData(visual);
+    if(!data || data === "exportError"){
+        return null;
+    }
+    
+    let dataPoints = data.get(categorie);
+    if(!dataPoints){
+        return null;
+    }
+
+    let numberArray:number[] = [];
+    if(!isNaN(Number(dataPoints[0]))){
+        numberArray = dataPoints.map((str: string) => {
+            return Number(str);
+        });
+    }
+
+    for (let i = 0; i < dataPoints.length; i++) {
+        const intArray = [];
+        intArray.push(Math.min(...numberArray));
+        intArray.push(Math.max(...numberArray));
+        numberArray = intArray;
+        dataPoints = numberArray.map((num: number) => {
+            return num.toString();
+        });
+    }
+
+    return dataPoints;
 }
 
 export function getVisualIndex(name: string){
@@ -822,6 +859,8 @@ export function removeContainerOffset(){
     if(onboarding){
         onboarding.style.top = global.onboardingOffset + "px";
     }
+
+    global.setContainerPaddingTop(global.report.iframe.offsetTop + global.settings.reportOffset.top);
 }
 
 function removeDesignVisuals(){
@@ -836,14 +875,21 @@ export function removeOnboarding(){
 
     global.setInteractionMode(false);
     global.setIsGuidedTour(false);
-    toggleFilter(false);
     endExplorationMode();
 
     elements.removeElement("onboarding");
     removeFrame();
 }
 
+export function reloadOnboarding(){
+    removeFrame();
+    elements.removeElement("dashboardExplaination");
+    elements.removeElement("onboarding");
+    createOnboarding();
+}
+
 export function removeOnboardingOverlay(){
+    global.setHasOverlay(false);
     elements.removeElement("dashboardExplaination");
     global.currentVisuals.forEach(function (visual) {
         elements.removeElement(visual.name);
@@ -890,27 +936,26 @@ export function startExplorationMode(){
     button!.innerHTML = "End Dashboard Exploration";
 }
 
-export function toggleFilter(open: boolean){
-    if(sizes.divisor<=2){
-        const newSettings = {
-            panes: {
-                filters: {
-                    expanded: open,
-                    visible: true
-                },
-                pageNavigation: {
-                    visible: true
-                }
+export async function toggleFilter(open: boolean){
+    const newSettings = {
+        panes: {
+            filters: {
+                expanded: open,
+                visible: true
+            },
+            pageNavigation: {
+                visible: true
             }
-        };    
-        global.report.updateSettings(newSettings);
-
-        if(open){
-            resizeEmbed(global.filterOpenedWidth);
-        } else {
-            resizeEmbed(global.filterClosedWidth);
         }
-    }
+    };   
+    
+    if(open){
+        resizeEmbed(global.filterOpenedWidth);
+    } else {
+        resizeEmbed(global.filterClosedWidth);
+    } 
+
+    await global.report.updateSettings(newSettings);
 }
 
 export function getLocalFilterText(visual: any){

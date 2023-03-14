@@ -2,12 +2,13 @@ import { Report } from "report";
 import { IExportDataResult } from "powerbi-models";
 import { models, VisualDescriptor } from "powerbi-client";
 import 'powerbi-report-authoring';
+import { replacer, reviver } from "../componentGraph/ComponentGraph";
 /**
  * Create exact copy of object without referencing on it
  * @param obj Object to copy
  */
 export function makeDeepCopy<T>(obj: T): T {
-	return typeof obj === 'object' ? JSON.parse(JSON.stringify(obj)) : obj;
+	return typeof obj === 'object' ? JSON.parse(JSON.stringify(obj, replacer), reviver) : obj;
 }
 
 /**

@@ -17,30 +17,40 @@ class ComponentGraph {
     }
 
     async setComponentGraphData(){
-       await this.dashboard.setDashboardData();
-       localStorage.setItem("componentGraph", JSON.stringify({"dashboard": this.dashboard}));
-       setComponentGraph(getComponentGraph());
+      await this.dashboard.setDashboardData();
+      localStorage.setItem("componentGraph", JSON.stringify({"dashboard": this.dashboard}, replacer));
+      setComponentGraph(getComponentGraph());
     }
   }
-
-  //how to create component graph and test if it is correct:
-  //let graph = new ComponentGraph(report, page, visuals);
-  //await graph.setComponentGraphData();
-  //getComponentGraph();
-
-  //how to update a veriable of the component graph:
-  //let componentGraph = getComponentGraph();
-  //componentGraph.dashboard.task = "test";
-  //saveComponentGraph(componentGraph);
 
 export default ComponentGraph;
 
 export function saveComponentGraph(graph: any){
-  localStorage.setItem("componentGraph", JSON.stringify(graph));
+  localStorage.setItem("componentGraph", JSON.stringify(graph, replacer));
   setComponentGraph(getComponentGraph());
 }
 
 export function getComponentGraph(){
-  const componentGraph = JSON.parse(localStorage.getItem("componentGraph")!);
+  const componentGraph = JSON.parse(localStorage.getItem("componentGraph")!, reviver);
   return componentGraph;
+}
+
+export function replacer(key:string, value:any) {
+  if(value instanceof Map) {
+    return {
+      type: 'map',
+      value: Array.from(value.entries())
+    };
+  } else {
+    return value;
+  }
+}
+
+export function reviver(key:string, value:any) {
+  if(typeof value === 'object' && value !== null) {
+    if (value.type === 'map') {
+      return new Map(value.value);
+    }
+  }
+  return value;
 }

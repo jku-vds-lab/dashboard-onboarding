@@ -28,11 +28,10 @@ export async function createInteractionCard(visual: any){
         helpers.createCard("interactionCard", style, "rectRightBig");
         helpers.createCloseButton("closeButton", "closeButtonPlacementBig", "", helpers.getCloseFunction(), "interactionCard");
     }
-
     helpers.createCardContent(global.settings.interactionExample.title, "", "interactionCard");
-    await createInteractionInfo(visual);
-   
     helpers.createCardButtons("", "back to visual");
+
+    await createInteractionInfo(visual);
 }
 
 async function createInteractionInfo(visual: any){

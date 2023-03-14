@@ -1,15 +1,33 @@
 import * as helpers from "./helperFunctions";
 import * as global from "./globalVariables";
+import { getDashboardInfo } from "./dashboardInfoCard";
+import { replacer } from "../../componentGraph/ComponentGraph";
 
 export async function createSettings(){
     const settings = global.createSettingsObject();
+    settings.dashboardInfo = setDashboardInfo();
     settings.visuals = await setVisualsInfo();
     settings.filterVisual = await setFilterInfo();
     settings.interactionExample = setInteractionExampleInfo();
 
     global.setSettings(settings);
 
-    localStorage.setItem("settings", JSON.stringify(global.settings));
+    localStorage.setItem("settings", JSON.stringify(global.settings, replacer));
+}
+
+
+function setDashboardInfo(){
+    const settingsDashboardInfo = global.createDashboardInfo();
+    settingsDashboardInfo.titleStatus = "original";
+    settingsDashboardInfo.changedTitle = "";
+
+    const dashboardInfo = getDashboardInfo(global.componentGraph.dashboard);
+    for (let i = 0; i < dashboardInfo[1].length; ++i) {
+        settingsDashboardInfo.infoStatus.push("original");
+        settingsDashboardInfo.changedInfos.push("");
+    }
+
+    return settingsDashboardInfo;
 }
 
 async function setVisualsInfo(){

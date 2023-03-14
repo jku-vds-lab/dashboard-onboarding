@@ -1,25 +1,26 @@
 import * as helpers from "./helperFunctions";
 import * as global from "./globalVariables";
-import { createFilterDisabledArea } from "./disableArea";
+import { createFilterDisabledArea, removeFrame } from "./disableArea";
 import Filter from "../../componentGraph/Filter";
+import { removeElement } from "./elements";
 
 export async function createFilterInfoCard(){
     createFilterDisabledArea();
   
     const style = helpers.getCardStyle(global.infoCardMargin, global.reportWidth! - global.infoCardMargin - global.infoCardWidth, global.infoCardWidth, "");
-    helpers.createCard("infoCard", style, "rectLeftBig")
+    helpers.createCard("filterInfoCard", style, "rectLeftBig")
 
-    helpers.createCloseButton("closeButton", "closeButtonPlacementBig", "", helpers.getCloseFunction(), "infoCard");
+    helpers.createCloseButton("closeButton", "closeButtonPlacementBig", "", helpers.getCloseFunction(), "filterInfoCard");
 
-    helpers.createCardContent(global.settings.filterVisual.title, global.settings.filterVisual.generalInformation, "infoCard");
-    const filters = await getFilterInfos();
-    createFilterList(filters, "contentText");
-    
+    helpers.createCardContent(global.settings.filterVisual.title, global.settings.filterVisual.generalInformation, "filterInfoCard");
     if(global.isGuidedTour){
         helpers.createCardButtons("previous", "close");
     }else{
         helpers.createCardButtons("previous", "next");
     }
+    
+    const filters = await getFilterInfos();
+    createFilterList(filters, "contentText");
 }
 
 export function createFilterList(list: string | any[], parentId: string){
@@ -65,4 +66,10 @@ async function getFilterInfos(){
        }
     }
     return newFilters;
+}
+
+export function removeFilterInfoCard(){
+    removeElement("filterInfoCard");
+    removeElement("disabledLeft");
+    removeFrame();
 }
