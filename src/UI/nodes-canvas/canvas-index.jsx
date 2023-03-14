@@ -10,13 +10,11 @@ import { ContextMenu } from "./context-menu";
 
 import * as helpers from "../../onboarding/ts/helperFunctions";
 import { getVisualInfos } from "../../onboarding/ts/listOfVisuals";
+import { debug } from "util";
 
 const initialNodes = [];
 
 const nodeTypes = { simple: SimpleNode, group: GroupNode };
-
-// let id = 0;
-// const getId = () => `dndnode_${id++}`;
 
 export default function NodesCanvas() {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
@@ -59,6 +57,7 @@ export default function NodesCanvas() {
 
   const onDrop = useCallback(
     (event) => {
+      debugger;
       event.preventDefault();
       const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
       const id = event.dataTransfer.getData("id");
@@ -136,10 +135,12 @@ export default function NodesCanvas() {
 
           setNodes((nodes) =>
             nodes.map((n) => {
+              console.log("Old Node position", n.position);
               if (n.id === node.id) {
                 n.parentNode = iNode.id;
-                // n.position = reactFlowInstance.project(position);
+                // n.position = position;
               }
+              console.log("New Node position", n.position);
               return n;
             })
           );
