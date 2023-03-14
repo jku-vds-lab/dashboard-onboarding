@@ -64,6 +64,7 @@ export default function NodesCanvas() {
       const type = event.dataTransfer.getData("nodeType");
       const data = event.dataTransfer.getData("data");
       const title = event.dataTransfer.getData("title");
+      // console.log(id, type, data, title);
 
       // check if the dropped element is valid
       if (typeof type === "undefined" || !type) {

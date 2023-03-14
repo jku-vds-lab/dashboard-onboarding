@@ -3,69 +3,84 @@ import React, { useEffect } from "react";
 import Accordion from "react-bootstrap/Accordion";
 import "../assets/css/dashboard.scss";
 
-export default function ComponentsProperties(className, parentId) {
+export default function ComponentsProperties(className, visParentId) {
   for (const vis of allVisuals) {
     let visTitle = createNodeTitle(vis.type);
+    let visClassName = className + " " + visTitle;
     const itemLength = checkDuplicateComponents(vis.type);
     if (itemLength > 1) {
       visTitle = visTitle + " (" + vis.title + ")";
     }
 
     let ids = [];
-    let contents = [];
+    let titles = [];
     let visName = "";
-    let visClassName = "";
 
     ids.push(vis.name);
-    contents.push(visTitle);
-    visClassName = className + " " + visTitle;
+    titles.push(visTitle);
     visName = vis.name;
-    debugger;
 
-    if (parentId.includes("sub")) {
+    if (visParentId.includes("sub")) {
       debugger;
-      let result = getSubComponents(ids, contents, vis.type);
+      let result = getSubComponents(ids, titles, vis.type);
       ids = result?.ids;
-      contents = result?.contents;
+      titles = result?.contents;
     }
     ids.forEach((id, idx) => {
-      createNode(id, visClassName, contents[idx], parentId, visName, visTitle);
+      console.log(
+        "Id ",
+        id,
+        "Class ",
+        visClassName,
+        " Content ",
+        titles[idx],
+        "Parent ",
+        visParentId,
+        "visName ",
+        visName,
+        "visTitle ",
+        visTitle
+      );
+      createNode(id, visClassName, titles[idx], visParentId, visName);
     });
   }
 
-  function createNode(id, visClassName, content, parentId, visName, visTitle) {
+  function createNode(id, visClassName, visTitle, visParentId, visName) {
+    if (visParentId.includes("sub")) {
+      console.log("Id: ", id);
+    }
     const div = document.createElement("div");
     div.id = id;
     div.className = visClassName;
-    div.innerHTML = content;
+    div.innerHTML = visTitle;
     div.setAttribute("draggable", "true");
     div.addEventListener("dragstart", function () {
-      onDragStart(event, "simple", visName, visTitle, visTitle);
+      onDragStart(event, "simple", id, visTitle, visTitle);
     });
-    document.getElementById(parentId)?.appendChild(div);
+    document.getElementById(visParentId)?.appendChild(div);
   }
 
-  function getSubComponents(oldId, oldContent, type) {
+  function getSubComponents(oldId, oldTitle, type) {
     let ids = [];
-    let contents = [];
+    let titles = [];
     switch (type) {
       case "card":
         ids.push(oldId[0] + " Insight");
-        contents.push(oldContent[0] + " Insight");
+        titles.push(oldTitle[0] + " Insight");
         break;
       case "slicer":
         ids.push(oldId[0] + " Interaction");
-        contents.push(oldContent[0] + " Interaction");
+        titles.push(oldTitle[0] + " Interaction");
         break;
       default:
         ids.push(oldId[0] + " Insight");
-        contents.push(oldContent[0] + " Insight");
+        titles.push(oldTitle[0] + " Insight");
         ids.push(oldId[0] + " Interaction");
-        contents.push(oldContent[0] + " Interaction");
+        titles.push(oldTitle[0] + " Interaction");
     }
     return {
       ids: ids,
-      contents: contents,
+      contents: titles,
     };
   }
 
