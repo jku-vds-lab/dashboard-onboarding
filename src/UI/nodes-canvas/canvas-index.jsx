@@ -40,12 +40,23 @@ export default function NodesCanvas() {
     } else {
       nodeId = event.target.parentNode.getAttribute("data-id");
     }
-    const visualData = helpers.getDataWithId(nodeId);
+
+    const idParts = nodeId.split(" ");
+
+    const visualData = helpers.getDataWithId(idParts[0]);
     if (!visualData) {
       return;
     }
     const visualInfos = await getVisualInfos(visualData);
-    let info = visualInfos.generalInfos.join("\r\n");
+
+    let info;
+    if(idParts.length > 1 && idParts[1] == "Insight"){
+      info = visualInfos.insightInfos.join("\r\n");
+    } else if(idParts.length > 1 && idParts[1] == "Interaction"){
+      info = visualInfos.interactionInfos.join("\r\n");
+    } else {
+      info = visualInfos.generalInfos.join("\r\n");
+    }
     info = info.replaceAll("<br>", "\r\n");
     document.getElementById("textBox").value = info;
   }, []);
