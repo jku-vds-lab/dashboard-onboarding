@@ -23,21 +23,23 @@ $color-white: #f1f1f1;
 
 .box-node, .simple-node {
   background-color: #595959;
-  width: 100px;
-  height: 30px;
+  width: 80px;
+  height: 20px;
   border-radius: 4px;
   box-shadow: 0 0 4px #1a1717;
 
 
   .header {
-    padding: 5px 0;
+    padding: 3px 0;
     width: 100%;
     border-radius: 4px 4px 0 0;
 
     .title {
       color: #ffffff;
-      font-size: 12px;
-      padding-left: 8px;
+      font-size: 8px;
+      // padding-left: 8px;
+      text-align: center;
+      // text-align: justify;
       margin: 0;
     }
   }
@@ -50,10 +52,7 @@ $color-white: #f1f1f1;
   &.Line{
     background-color: #{$line-chart-color};
   }
-  &.KPI1{
-    background-color: #{$kpi-color};
-  }
-  &.KPI2{
+  &.KPI{
     background-color: #{$kpi-color};
   }
   &.Filter{
@@ -149,6 +148,7 @@ $color-white: #f1f1f1;
   height: 40px;
   border-radius: 4px;
   box-shadow: 0 0 4px #1a1717;
+  font-size: small;
 
   &.dashboard{
     background-color: #{$dashboard-color};
@@ -159,16 +159,10 @@ $color-white: #f1f1f1;
   &.Line{
     background-color: #{$line-chart-color};
   }
-  &.KPI1{
+  &.KPI{
     background-color: #{$kpi-color};
   }
-  &.KPI2{
-    background-color: #{$kpi-color};
-  }
-  &.Filter1{
-    background-color: #{$filter-color};
-  }
-  &.Filter2{
+  &.Filter{
     background-color: #{$filter-color};
   }
   &.Column{
