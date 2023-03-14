@@ -6,6 +6,7 @@ import { createIntroCard } from "./introCards";
 import { createFilterInfoCard, removeFilterInfoCard } from "./filterInfoCards";
 import { createVisualInfo } from "./visualInfo";
 import { createDashboardInfoCard, removeDashboardInfoCard } from "./dashboardInfoCard";
+import { currentId, getCurrentTraversalElementType, setCurrentId, traversialStrategy } from "./traversal";
 
 export async function createInfoCard(visual: any){
     disable.disableFrame();
@@ -39,46 +40,62 @@ export function removeInfoCard(){
 }
 
 export function nextInfoCard(){
-    if(global.showsDashboardInfo){
-        global.setCurrentVisualIndex(0);
-        removeDashboardInfoCard();
-        createInfoCard(global.currentVisuals[global.currentVisualIndex]);
-    } else if(global.currentVisualIndex == global.currentVisuals.length -1) {
-        global.setCurrentVisualIndex(global.currentVisualIndex + 1);
-        removeInfoCard();
-        createFilterInfoCard();
-    } else{
-        removeFilterInfoCard();
-        removeInfoCard();
-        if(!global.isGuidedTour && global.currentVisualIndex == global.currentVisuals.length){
-            createDashboardInfoCard();
-        }else{
-            global.setCurrentVisualIndex(global.currentVisualIndex + 1);
-            createInfoCard(global.currentVisuals[global.currentVisualIndex]);
-        }
-    }
+    if(currentId == traversialStrategy.length-1){
+        setCurrentId(0);
+    } else {
+        setCurrentId(currentId + 1);
+    } 
+
+    getCurrentTraversalElementType();
+    
+    // if(global.showsDashboardInfo){
+    //     global.setCurrentVisualIndex(0);
+    //     removeDashboardInfoCard();
+    //     createInfoCard(global.currentVisuals[global.currentVisualIndex]);
+    // } else if(global.currentVisualIndex == global.currentVisuals.length -1) {
+    //     global.setCurrentVisualIndex(global.currentVisualIndex + 1);
+    //     removeInfoCard();
+    //     createFilterInfoCard();
+    // } else{
+    //     removeFilterInfoCard();
+    //     removeInfoCard();
+    //     if(!global.isGuidedTour && global.currentVisualIndex == global.currentVisuals.length){
+    //         createDashboardInfoCard();
+    //     }else{
+    //         global.setCurrentVisualIndex(global.currentVisualIndex + 1);
+    //         createInfoCard(global.currentVisuals[global.currentVisualIndex]);
+    //     }
+    // }
 }
 
 export function previousInfoCard(){
-    if(global.showsDashboardInfo){
-        if(global.isGuidedTour){
-            removeDashboardInfoCard();
-            createIntroCard();
-        } else {
-            global.setCurrentVisualIndex(global.currentVisuals.length);
-            removeDashboardInfoCard();
-            createFilterInfoCard();
-        }
-    } else if(global.currentVisualIndex == 0){
-        removeInfoCard();
-        createDashboardInfoCard();
-    }else{
-        removeFilterInfoCard();
-        if(global.isGuidedTour && global.currentVisualIndex == global.currentVisuals.length){
-            disable.disableFilter();
-        }
-        global.setCurrentVisualIndex(global.currentVisualIndex - 1);
-        removeInfoCard();
-        createInfoCard(global.currentVisuals[global.currentVisualIndex]);
-    }   
+    if(currentId == 0){
+        setCurrentId(traversialStrategy.length-1);
+    } else {
+        setCurrentId(currentId - 1);
+    } 
+
+    getCurrentTraversalElementType();
+
+    // if(global.showsDashboardInfo){
+    //     if(global.isGuidedTour){
+    //         removeDashboardInfoCard();
+    //         createIntroCard();
+    //     } else {
+    //         global.setCurrentVisualIndex(global.currentVisuals.length);
+    //         removeDashboardInfoCard();
+    //         createFilterInfoCard();
+    //     }
+    // } else if(global.currentVisualIndex == 0){
+    //     removeInfoCard();
+    //     createDashboardInfoCard();
+    // }else{
+    //     removeFilterInfoCard();
+    //     if(global.isGuidedTour && global.currentVisualIndex == global.currentVisuals.length){
+    //         disable.disableFilter();
+    //     }
+    //     global.setCurrentVisualIndex(global.currentVisualIndex - 1);
+    //     removeInfoCard();
+    //     createInfoCard(global.currentVisuals[global.currentVisualIndex]);
+    // }   
 }

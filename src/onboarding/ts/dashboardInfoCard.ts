@@ -22,7 +22,11 @@ export function createDashboardInfoCard(){
     const title = setDashboardTitle(dashboard);
     helpers.createCardContent(title, "", "dashboardInfoCard");
     setDashboardInfos(dashboard);
-    helpers.createCardButtons("previous", "next");
+    if(global.isGuidedTour){
+        helpers.createCardButtons("", "next");
+    }else{
+        helpers.createCardButtons("previous", "next");
+    }
 }
 
 function setDashboardTitle(dashboard: Dashboard){

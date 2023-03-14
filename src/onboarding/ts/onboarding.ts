@@ -11,12 +11,14 @@ import { createDashboardInfoCard, removeDashboardInfoCard } from "./dashboardInf
 import { reportDivisor, resize, textSize } from "./sizes";
 import { createFilterInfoCard, removeFilterInfoCard } from "./filterInfoCards";
 import { showVisualChanges } from "./showVisualsChanges";
+import { setBasicTraversalStrategy } from "./traversal";
 
 export async function onLoadReport(){
     await helpers.getActivePage();
     await helpers.getVisuals();
     await helpers.createComponentGraph();
     await helpers.getSettings();
+    setBasicTraversalStrategy();
     
     helpers.createEditOnboardingButtons();
     helpers.createOnboardingButtons();
@@ -129,8 +131,9 @@ export function createDashboardExploration(){
 }
 
 export function startGuidedTour(){
-    global.setCurrentVisualIndex(0);
+    //global.setCurrentVisualIndex(0);
     removeIntroCard();
+
     createDashboardInfoCard();
 }
 
@@ -161,6 +164,23 @@ export function createOnboardingOverlay(){
 
     const style = helpers.getClickableStyle(-global.settings.reportOffset.top, global.reportWidth!, global.filterOpenedWidth, global.reportHeight!);
     createOverlay("filter", style);
+}
+
+export function createOverlayForVisuals(visuals: any[]){
+    global.setHasOverlay(true);
+    global.setInteractionMode(false);
+    removeFrame();
+    removeIntroCard();
+    removeInfoCard();
+    removeDashboardInfoCard();
+    removeFilterInfoCard();
+    removeInteractionCard();
+
+    visuals.forEach(function (visual: any) {
+        let style = helpers.getClickableStyle(visual.layout.y/reportDivisor, visual.layout.x/reportDivisor, visual.layout.width/reportDivisor, visual.layout.height/reportDivisor);
+        style += "border-color: green";
+        createOverlay(visual.name, style);
+    });
 }
 
 function createDashboardInfoOnButtonClick(){
