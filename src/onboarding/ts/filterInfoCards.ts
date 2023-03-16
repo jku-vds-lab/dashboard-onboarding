@@ -48,7 +48,7 @@ export function getFilterDescription(filter: Filter){
     return filter.attribute + ": " + filterText;
 }
 
-async function getFilterInfos(){
+export async function getFilterInfos(){
     const filterInfos = await helpers.getFilterInfo();
 
     const newFilters = [];

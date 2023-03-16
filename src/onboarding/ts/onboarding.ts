@@ -11,14 +11,14 @@ import { createDashboardInfoCard, removeDashboardInfoCard } from "./dashboardInf
 import { reportDivisor, resize, textSize } from "./sizes";
 import { createFilterInfoCard, removeFilterInfoCard } from "./filterInfoCards";
 import { showVisualChanges } from "./showVisualsChanges";
-import { setBasicTraversalStrategy } from "./traversal";
+import { findCurrentTraversalVisual, setBasicTraversalStrategy, setCurrentId, setTestAllGroupsTraversalStrategy } from "./traversal";
 
 export async function onLoadReport(){
     await helpers.getActivePage();
     await helpers.getVisuals();
     await helpers.createComponentGraph();
     await helpers.getSettings();
-    setBasicTraversalStrategy();
+    setTestAllGroupsTraversalStrategy();
     
     helpers.createEditOnboardingButtons();
     helpers.createOnboardingButtons();
@@ -70,15 +70,18 @@ export async function reloadOnboardingAt(){
     } else if(document.getElementById("showChangesCard")){
         await startOnboardingAt("reportChanged");
     } else if(document.getElementById("showVisualChangesCard")){
-        await startOnboardingAt("visualChanged", helpers.getVisualIndex(global.interactionSelectedVisual.name));
+        await startOnboardingAt("visualChanged", global.interactionSelectedVisual);
     } else if(document.getElementById("infoCard")){
-        await startOnboardingAt("visual", global.currentVisualIndex);
+        const visual = findCurrentTraversalVisual();
+        if(visual){
+            await startOnboardingAt("visual", visual);
+        }
     } else if(global.hasOverlay && !global.interactionMode){
         await startOnboardingAt("explorationOverlay");
     }
 }
 
-export async function startOnboardingAt(type: string, visualId?: number){
+export async function startOnboardingAt(type: string, visual?: any){
     helpers.reloadOnboarding();
 
     switch(type){
@@ -99,10 +102,10 @@ export async function startOnboardingAt(type: string, visualId?: number){
             showReportChanges();
             break;
         case "visualChanged":
-            await showVisualChanges(global.currentVisuals[visualId!]);
+            await showVisualChanges(visual);
             break;
         case "visual":
-            await createInfoCard(global.currentVisuals[visualId!]);
+            await createInfoCard(visual);
             break;
         case "explorationOverlay":
             createOnboardingOverlay()
@@ -166,7 +169,7 @@ export function createOnboardingOverlay(){
     createOverlay("filter", style);
 }
 
-export function createOverlayForVisuals(visuals: any[]){
+export function createOverlayForVisuals(visualIds: string[]){
     global.setHasOverlay(true);
     global.setInteractionMode(false);
     removeFrame();
@@ -176,7 +179,8 @@ export function createOverlayForVisuals(visuals: any[]){
     removeFilterInfoCard();
     removeInteractionCard();
 
-    visuals.forEach(function (visual: any) {
+    visualIds.forEach(function (visualId: string) {
+        const visual = global.currentVisuals.find((vis: any) => vis.name === visualId);
         let style = helpers.getClickableStyle(visual.layout.y/reportDivisor, visual.layout.x/reportDivisor, visual.layout.width/reportDivisor, visual.layout.height/reportDivisor);
         style += "border-color: green";
         createOverlay(visual.name, style);
@@ -185,6 +189,7 @@ export function createOverlayForVisuals(visuals: any[]){
 
 function createDashboardInfoOnButtonClick(){
     helpers.removeOnboardingOverlay();
+    setCurrentId(0);
     createDashboardInfoCard();
 }
 

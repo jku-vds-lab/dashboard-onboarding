@@ -21,7 +21,7 @@ export function createDashboardInfoCard(){
     const dashboard = global.componentGraph.dashboard;
     const title = setDashboardTitle(dashboard);
     helpers.createCardContent(title, "", "dashboardInfoCard");
-    setDashboardInfos(dashboard);
+    setDashboardInfos();
     if(global.isGuidedTour){
         helpers.createCardButtons("", "next");
     }else{
@@ -47,8 +47,16 @@ function setDashboardTitle(dashboard: Dashboard){
     
     return newTitle;
 }
-function setDashboardInfos(dashboard: Dashboard){
-    const dashboardInfo = getDashboardInfo(dashboard);
+
+function setDashboardInfos(){
+    const dashboardInfos = getDashboardInfos();
+    
+    createInfoList(dashboardInfos[0], dashboardInfos[1], "contentText");
+}
+
+export function getDashboardInfos(){
+    const dashboard = global.componentGraph.dashboard;
+    const dashboardInfo = getNewDashboardInfo(dashboard);
     const images = dashboardInfo[0];
     const infos = dashboardInfo[1];
 
@@ -69,8 +77,7 @@ function setDashboardInfos(dashboard: Dashboard){
                 break;
        }
     }
-    
-    createInfoList(newImages, newInfos, "contentText");
+    return [newImages, newInfos];
 }
 
 export function removeDashboardInfoCard(){
@@ -79,7 +86,7 @@ export function removeDashboardInfoCard(){
     removeElement("disabledPage");
 }
 
-export function getDashboardInfo(dashboard: Dashboard){
+export function getNewDashboardInfo(dashboard: Dashboard){
     const images = [infoImg, dataImg, layoutImg];
     const infos = [dashboard.purpose, dashboard.task, dashboard.layout];
 

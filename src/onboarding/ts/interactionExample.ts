@@ -7,11 +7,15 @@ import { getSlicerInteractionExample } from "./basicVisualContent";
 import { getBarChartInteractionExample } from "./barChartVisualContent";
 import { getLineChartInteractionExample } from "./lineChartVisualContent";
 import { getLineClusteredColumnComboChartInteractionExample } from "./complexVisualContent";
+import { findCurrentTraversalVisual } from "./traversal";
 
 export function startInteractionExample(){
     global.setInteractionMode(true);
     infoCard.removeInfoCard();
-    createInteractionCard(global.currentVisuals[global.currentVisualIndex]);
+    const visual = findCurrentTraversalVisual();
+        if(visual){
+            createInteractionCard(visual);
+        }
 }
 
 export async function createInteractionCard(visual: any){

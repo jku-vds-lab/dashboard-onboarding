@@ -1,6 +1,6 @@
 import * as helpers from "./helperFunctions";
 import * as global from "./globalVariables";
-import { getDashboardInfo } from "./dashboardInfoCard";
+import { getNewDashboardInfo } from "./dashboardInfoCard";
 import { replacer } from "../../componentGraph/ComponentGraph";
 
 export async function createSettings(){
@@ -21,7 +21,7 @@ function setDashboardInfo(){
     settingsDashboardInfo.titleStatus = "original";
     settingsDashboardInfo.changedTitle = "";
 
-    const dashboardInfo = getDashboardInfo(global.componentGraph.dashboard);
+    const dashboardInfo = getNewDashboardInfo(global.componentGraph.dashboard);
     for (let i = 0; i < dashboardInfo[1].length; ++i) {
         settingsDashboardInfo.infoStatus.push("original");
         settingsDashboardInfo.changedInfos.push("");

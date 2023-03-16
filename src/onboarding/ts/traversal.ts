@@ -1,4 +1,3 @@
-import { indexOf } from "lodash";
 import { createDashboardInfoCard, removeDashboardInfoCard } from "./dashboardInfoCard";
 import { removeFrame } from "./disableArea";
 import { createFilterInfoCard, removeFilterInfoCard } from "./filterInfoCards";
@@ -116,7 +115,6 @@ export function createInformationCard(type: string, visuals?: any[], visualId?:s
 }
 
 export function getCurrentTraversalElementType(){
-    console.log(currentId)
     const currentElement = traversialStrategy[currentId];
 
     if(isGroup(currentElement)){
@@ -145,4 +143,24 @@ export function findVisualInTraversal(id: string){
        index = 0;
     }
     return index;
+}
+
+export function findCurrentTraversalVisual(){
+    const traversalElem = traversialStrategy[currentId];
+    
+    if(!isGroup(traversalElem) && traversalElem !== "dashboard" && traversalElem !== "globalFilter"){
+        return currentVisuals.find((vis: any) => vis.name === traversalElem);
+    }
+
+    return null;
+}
+
+export function findCurrentTraversalVisualIndex(){
+    const traversalElem = traversialStrategy[currentId];
+    
+    if(!isGroup(traversalElem) && traversalElem !== "dashboard" && traversalElem !== "globalFilter"){
+        return currentVisuals.findIndex((vis: any) => vis.name === traversalElem);
+    }
+
+    return 0;
 }

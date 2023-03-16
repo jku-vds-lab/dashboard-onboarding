@@ -22,6 +22,7 @@ import ComponentGraph, { reviver } from "../../componentGraph/ComponentGraph";
 import Filter from "../../componentGraph/Filter";
 import { exportData } from "../../Provenance/utils";
 import * as sizes from "./sizes";
+import { findCurrentTraversalVisual, findCurrentTraversalVisualIndex } from "./traversal";
 
 export function addContainerOffset(){
     const pageOffset = parseInt(window.getComputedStyle(document.getElementById("flexContainer")!).paddingTop);
@@ -52,7 +53,10 @@ function backToVisual(){
     removeInteractionCard();
     removeShowChangesCard();
     removeHintCard();
-    createInfoCard(global.currentVisuals[global.currentVisualIndex]);
+    const visual = findCurrentTraversalVisual();
+        if(visual){
+            createInfoCard(visual);
+        }
 }
 
 export function createBasicCardContent(description: string, parentId: string){
@@ -605,10 +609,12 @@ export function getNextVisual(){
         return visual.type !== "slicer"
     });
 
-    if(global.currentVisualIndex >= visuals.length - 1){
+    const index = findCurrentTraversalVisualIndex();
+
+    if(index >= visuals.length - 1){
         nextVisual = visuals[0]; 
     }else{
-       nextVisual = visuals[global.currentVisualIndex + 1]; 
+       nextVisual = visuals[index + 1]; 
     }
     return nextVisual;
 }
@@ -624,9 +630,9 @@ export async function createComponentGraph(){
 }
 
 export async function getSettings(){
-    if (localStorage.getItem("settings") == null){
+    //if (localStorage.getItem("settings") == null){
         await createSettings();
-    }
+    //}
     global.setSettings(JSON.parse(localStorage.getItem("settings")!, reviver));
 }
 
