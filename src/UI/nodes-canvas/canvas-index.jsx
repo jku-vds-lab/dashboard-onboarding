@@ -11,6 +11,10 @@ import { ContextMenu } from "./context-menu";
 import * as helpers from "../../onboarding/ts/helperFunctions";
 import { getVisualInfos } from "../../onboarding/ts/listOfVisuals";
 import { debug } from "util";
+import { currentVisuals } from "../../onboarding/ts/globalVariables"
+import { startOnboardingAt } from "../../onboarding/ts/onboarding";
+import { getDashboardInfos } from "../../onboarding/ts/dashboardInfoCard";
+import { getFilterInfos } from "../../onboarding/ts/filterInfoCards";
 
 const initialNodes = [];
 
@@ -43,23 +47,56 @@ export default function NodesCanvas() {
 
     const idParts = nodeId.split(" ");
 
-    const visualData = helpers.getDataWithId(idParts[0]);
-    if (!visualData) {
-      return;
-    }
-    const visualInfos = await getVisualInfos(visualData);
-
-    let info;
-    if(idParts.length > 1 && idParts[1] == "Insight"){
-      info = visualInfos.insightInfos.join("\r\n");
-    } else if(idParts.length > 1 && idParts[1] == "Interaction"){
-      info = visualInfos.interactionInfos.join("\r\n");
-    } else {
-      info = visualInfos.generalInfos.join("\r\n");
-    }
+    let info = await showExplanation(idParts);
     info = info.replaceAll("<br>", "\r\n");
     document.getElementById("textBox").value = info;
+
+    await showInOutputView(idParts[0]);
   }, []);
+
+  async function showInOutputView(nodeId){
+    switch(nodeId){
+      case "dashboard":
+        await startOnboardingAt("dashboard");
+        break;
+      case "globalFilter":
+        await startOnboardingAt("globalFilter");
+        break;
+      default:
+        await startOnboardingAt("visual", currentVisuals.find(vis => vis.name = nodeId));
+        break;
+    }
+  }
+
+  async function showExplanation(idParts){
+    let info;
+    switch(idParts[0]){
+      case "dashboard":
+        info = await getDashboardInfos();
+        info = info[1].join("\r\n");
+        break;
+      case "globalFilter":
+        info = await getFilterInfos();
+        info = info.join("\r\n");
+        break;
+      default:
+        const visualData = helpers.getDataWithId(idParts[0]);
+        if (!visualData) {
+          return;
+        }
+        const visualInfos = await getVisualInfos(visualData);
+
+        if(idParts.length > 1 && idParts[1] == "Insight"){
+          info = visualInfos.insightInfos.join("\r\n");
+        } else if(idParts.length > 1 && idParts[1] == "Interaction"){
+          info = visualInfos.interactionInfos.join("\r\n");
+        } else {
+          info = visualInfos.generalInfos.join("\r\n");
+        }
+        break;
+    }
+    return info;
+  }
 
   const onDragOver = useCallback((event) => {
     event.preventDefault();
@@ -68,13 +105,13 @@ export default function NodesCanvas() {
 
   const onDrop = useCallback(
     (event) => {
-      debugger;
       event.preventDefault();
       const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
       const id = event.dataTransfer.getData("id");
       const type = event.dataTransfer.getData("nodeType");
       const data = event.dataTransfer.getData("data");
       const title = event.dataTransfer.getData("title");
+      const classes = event.dataTransfer.getData("classes");
       // console.log(id, type, data, title);
 
       // check if the dropped element is valid
@@ -93,7 +130,7 @@ export default function NodesCanvas() {
         position,
         data: {
           title: title,
-          type: data,
+          classes: classes,
         },
       };
 

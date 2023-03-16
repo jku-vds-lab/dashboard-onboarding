@@ -7,6 +7,7 @@ $bar-chart-color: rgb(217,95,2);
 $kpi-color: rgb(117,112,179);
 $filter-color: rgb(231,41,138);
 $column-color: rgb(102,166,30);
+$globalFilter-color: rgb(55,126,184);
 $color-white: #f1f1f1;
 
 .empty{
@@ -41,7 +42,7 @@ $color-white: #f1f1f1;
       margin: 0;
     }
   }
-  &.dashboard{
+  &.Dashboard{
     background-color: #{$dashboard-color};
   }
   &.Bar{
@@ -58,6 +59,9 @@ $color-white: #f1f1f1;
   }
   &.Column{
     background-color: #{$column-color};
+  }
+  &.GlobalFilter{
+    background-color: #{$globalFilter-color};
   }
 }
 
@@ -148,7 +152,7 @@ $color-white: #f1f1f1;
   box-shadow: 0 0 4px #1a1717;
   font-size: small;
 
-  &.dashboard{
+  &.Dashboard{
     background-color: #{$dashboard-color};
   }
   &.Bar{
@@ -165,6 +169,9 @@ $color-white: #f1f1f1;
   }
   &.Column{
     background-color: #{$column-color};
+  }
+  &.GlobalFilter{
+    background-color: #{$globalFilter-color};
   }
 }
 

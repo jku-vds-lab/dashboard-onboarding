@@ -4,6 +4,9 @@ import Accordion from "react-bootstrap/Accordion";
 import "../assets/css/dashboard.scss";
 
 export default function ComponentsProperties(className, visParentId) {
+  if (!visParentId.includes("sub")) {
+    createNode("dashboard", className + " Dashboard", "Dashboard", visParentId, "Dashboard");
+  }
   for (const vis of allVisuals) {
     let visTitle = createNodeTitle(vis.type);
     let visClassName = className + " " + visTitle;
@@ -21,14 +24,16 @@ export default function ComponentsProperties(className, visParentId) {
     visName = vis.name;
 
     if (visParentId.includes("sub")) {
-      debugger;
       let result = getSubComponents(ids, titles, vis.type);
       ids = result?.ids;
       titles = result?.contents;
     }
     ids.forEach((id, idx) => {
-      createNode(id, visClassName, titles[idx], visParentId, visName);
+      createNode(id, visClassName, titles[idx], visParentId, visTitle);
     });
+  }
+  if (!visParentId.includes("sub")) {
+    createNode("globalFilter", className + " GlobalFilter", "Global Filter", visParentId, "GlobalFilter");
   }
 
   function createNode(id, visClassName, visTitle, visParentId, visName) {
@@ -41,7 +46,7 @@ export default function ComponentsProperties(className, visParentId) {
     div.innerHTML = visTitle;
     div.setAttribute("draggable", "true");
     div.addEventListener("dragstart", function () {
-      onDragStart(event, "simple", id, visTitle, visTitle);
+      onDragStart(event, "simple", id, visTitle, visTitle, visName);
     });
     document.getElementById(visParentId)?.appendChild(div);
   }
@@ -102,11 +107,12 @@ export default function ComponentsProperties(className, visParentId) {
     return newTitle;
   }
 
-  function onDragStart(event, nodeType, nodeId, nodeData, title) {
+  function onDragStart(event, nodeType, nodeId, nodeData, title, classes) {
     event.dataTransfer.setData("nodeType", nodeType);
     event.dataTransfer.setData("id", nodeId);
     event.dataTransfer.setData("data", nodeData);
     event.dataTransfer.setData("title", title);
+    event.dataTransfer.setData("classes", classes);
     event.dataTransfer.effectAllowed = "move";
   }
 }
