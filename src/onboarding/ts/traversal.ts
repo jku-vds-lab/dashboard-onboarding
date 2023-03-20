@@ -15,7 +15,7 @@ export interface Group{
     visuals: string[];
 }
 
-function isGroup(object: any): object is Group {
+export function isGroup(object: any): object is Group {
     return object.type && Object.values(groupType).includes(object.type);
 }
 
@@ -132,7 +132,7 @@ export function getCurrentTraversalElementType(){
 export function findVisualInTraversal(id: string){
     let index = traversialStrategy.indexOf(id);
     if(index  == -1){
-       const groups =  traversialStrategy.find(object => isGroup(object));
+       const groups =  traversialStrategy.filter(object => isGroup(object));
        for(const group of groups){
             const indexInGroup = group.visuals.indexOf(id);
             if(indexInGroup != -1){

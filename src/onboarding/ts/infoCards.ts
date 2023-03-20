@@ -5,8 +5,8 @@ import * as disable from "./disableArea";
 import { createIntroCard } from "./introCards";
 import { createFilterInfoCard, removeFilterInfoCard } from "./filterInfoCards";
 import { createVisualInfo } from "./visualInfo";
-import { createDashboardInfoCard, removeDashboardInfoCard } from "./dashboardInfoCard";
-import { currentId, getCurrentTraversalElementType, setCurrentId, traversialStrategy } from "./traversal";
+import { createDashboardInfoCard, getNewDashboardInfo, removeDashboardInfoCard } from "./dashboardInfoCard";
+import { currentId, getCurrentTraversalElementType, isGroup, setCurrentId, traversialStrategy } from "./traversal";
 
 export async function createInfoCard(visual: any){
     disable.disableFrame();
@@ -40,13 +40,18 @@ export function removeInfoCard(){
 }
 
 export function nextInfoCard(){
-    if(currentId == traversialStrategy.length-1){
-        setCurrentId(0);
+    const currentElement = traversialStrategy[currentId];
+    if(isGroup(currentElement)){
+        
     } else {
-        setCurrentId(currentId + 1);
-    } 
-
-    getCurrentTraversalElementType();
+        if(currentId == traversialStrategy.length-1){
+            setCurrentId(0);
+        } else {
+            setCurrentId(currentId + 1);
+        } 
+    
+        getCurrentTraversalElementType();
+    }
     
     // if(global.showsDashboardInfo){
     //     global.setCurrentVisualIndex(0);

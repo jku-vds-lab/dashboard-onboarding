@@ -182,7 +182,7 @@ export function createOverlayForVisuals(visualIds: string[]){
     visualIds.forEach(function (visualId: string) {
         const visual = global.currentVisuals.find((vis: any) => vis.name === visualId);
         let style = helpers.getClickableStyle(visual.layout.y/reportDivisor, visual.layout.x/reportDivisor, visual.layout.width/reportDivisor, visual.layout.height/reportDivisor);
-        style += "border-color: green";
+        style += "border: 5px solid lightgreen;";
         createOverlay(visual.name, style);
     });
 }

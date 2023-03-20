@@ -4,7 +4,7 @@ import { createFilterInfoCard } from "./filterInfoCards";
 import { createInfoCard } from "./infoCards";
 import { removeHintCard, removeShowChangesCard } from "./showReportChanges";
 import { showVisualChanges } from "./showVisualsChanges";
-import { findVisualInTraversal, getCurrentTraversalElementType, setCurrentId } from "./traversal";
+import { createInformationCard, findVisualInTraversal, getCurrentTraversalElementType, setCurrentId } from "./traversal";
 
 export function addStylesheet(URL: string){
     const style = document.createElement('link');
@@ -36,7 +36,8 @@ export function createDiv(attributes: { id: any; style: any; classes: any; conte
             }else{
                 removeOnboardingOverlay();
                 setCurrentId(findVisualInTraversal(attributes.id));
-                getCurrentTraversalElementType();
+                // getCurrentTraversalElementType();
+                createInformationCard("visual", undefined, attributes.id);
                 // if(attributes.id === "filter"){
                 //     global.setCurrentVisualIndex(global.currentVisuals.length);
                 //     createFilterInfoCard();
