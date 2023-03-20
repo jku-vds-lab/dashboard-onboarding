@@ -24,6 +24,7 @@ export default function NodesCanvas() {
   const [nodeData, setNodeData] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
   const reactFlowWrapper = useRef(null);
+  const [selectedNodes, setSelectedNodes] = useNodesState(initialNodes);
 
   const onClick = useCallback(async (event) => {
     let container = document.getElementById("canvas-container");
@@ -174,6 +175,21 @@ export default function NodesCanvas() {
     setNodeData(node);
   };
 
+  const onSelectionContextMenu = useCallback(
+    (e, sNodes) => {
+      e.preventDefault();
+      const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
+      setPosition({
+        x: e.clientX - reactFlowBounds.left,
+        y: e.clientY - reactFlowBounds.top,
+      });
+
+      setSelectedNodes(sNodes);
+      setIsOpen(true);
+    },
+    [setSelectedNodes]
+  );
+
   const onNodeContextMenu = useCallback((e) => {
     e.preventDefault();
     const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
@@ -194,6 +210,12 @@ export default function NodesCanvas() {
     setIsOpen(false);
   };
 
+  const addGroup = () => {
+    console.log("Nodes", selectedNodes);
+    debugger;
+    //setNodes((nodes) => nodes.map((n) => (n.parentNode = "")));
+  };
+
   return (
     <div className="dndflow">
       <div className="reactflow-wrapper" ref={reactFlowWrapper}>
@@ -209,6 +231,7 @@ export default function NodesCanvas() {
           onNodeDragStop={onNodeDragStop}
           onNodeMouseEnter={onNodeMouseEnter}
           onNodeContextMenu={onNodeContextMenu}
+          onSelectionContextMenu={onSelectionContextMenu}
           snapToGrid
           fitView
         >
@@ -217,7 +240,10 @@ export default function NodesCanvas() {
             isOpen={isOpen}
             position={position}
             onMouseLeave={() => setIsOpen(false)}
-            actions={[{ label: "Delete", effect: deleteNode }]}
+            actions={[
+              { label: "Delete", effect: deleteNode },
+              { label: "Group", effect: addGroup },
+            ]}
           ></ContextMenu>
         </ReactFlow>
         <Traversal nodes={nodes} />
