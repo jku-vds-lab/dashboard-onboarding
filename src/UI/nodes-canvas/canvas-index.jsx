@@ -190,6 +190,29 @@ export default function NodesCanvas() {
     [setSelectedNodes]
   );
 
+  const xyxx = () => {
+    event.dataTransfer.setData("nodeType", nodeType);
+    event.dataTransfer.setData("id", nodeId);
+    event.dataTransfer.setData("data", nodeData);
+    event.dataTransfer.setData("title", title);
+    event.dataTransfer.effectAllowed = "move";
+  };
+  // start here
+  // group node needs to be rendered on click
+  // then it should have all the data set
+  // or does it need all this?
+  const renderGroupNode = () => {
+    return (
+      <div
+        className="dndnode node-group"
+        onDragStart={(event) => onDragStart(event, "group", "group")}
+        draggable
+      >
+        Group
+      </div>
+    );
+  };
+
   const onNodeContextMenu = useCallback((e) => {
     e.preventDefault();
     const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
