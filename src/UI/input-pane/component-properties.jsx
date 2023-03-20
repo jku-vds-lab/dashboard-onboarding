@@ -21,7 +21,6 @@ export default function ComponentsProperties(className, visParentId) {
     visName = vis.name;
 
     if (visParentId.includes("sub")) {
-      debugger;
       let result = getSubComponents(ids, titles, vis.type);
       ids = result?.ids;
       titles = result?.contents;
@@ -33,7 +32,6 @@ export default function ComponentsProperties(className, visParentId) {
 
   function createNode(id, visClassName, visTitle, visParentId, visName) {
     if (visParentId.includes("sub")) {
-      console.log("Id: ", id);
     }
     const div = document.createElement("div");
     div.id = id;
@@ -105,7 +103,7 @@ export default function ComponentsProperties(className, visParentId) {
   function onDragStart(event, nodeType, nodeId, nodeData, title) {
     event.dataTransfer.setData("nodeType", nodeType);
     event.dataTransfer.setData("id", nodeId);
-    event.dataTransfer.setData("data", nodeData);
+    event.dataTransfer.setData("data", nodeData); // data is the title and the type of the node for the story editor
     event.dataTransfer.setData("title", title);
     event.dataTransfer.effectAllowed = "move";
   }

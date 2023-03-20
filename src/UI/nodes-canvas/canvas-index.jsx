@@ -10,7 +10,7 @@ import { ContextMenu } from "./context-menu";
 
 import * as helpers from "../../onboarding/ts/helperFunctions";
 import { getVisualInfos } from "../../onboarding/ts/listOfVisuals";
-import { debug } from "util";
+import Traversal from "./traversal";
 
 const initialNodes = [];
 
@@ -41,18 +41,18 @@ export default function NodesCanvas() {
       nodeId = event.target.parentNode.getAttribute("data-id");
     }
 
-    const idParts = nodeId.split(" ");
+    const idParts = nodeId?.split(" ");
 
-    const visualData = helpers.getDataWithId(idParts[0]);
+    const visualData = helpers?.getDataWithId(idParts[0]);
     if (!visualData) {
       return;
     }
     const visualInfos = await getVisualInfos(visualData);
 
     let info;
-    if(idParts.length > 1 && idParts[1] == "Insight"){
+    if (idParts.length > 1 && idParts[1] == "Insight") {
       info = visualInfos.insightInfos.join("\r\n");
-    } else if(idParts.length > 1 && idParts[1] == "Interaction"){
+    } else if (idParts.length > 1 && idParts[1] == "Interaction") {
       info = visualInfos.interactionInfos.join("\r\n");
     } else {
       info = visualInfos.generalInfos.join("\r\n");
@@ -68,7 +68,6 @@ export default function NodesCanvas() {
 
   const onDrop = useCallback(
     (event) => {
-      debugger;
       event.preventDefault();
       const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
       const id = event.dataTransfer.getData("id");
@@ -126,7 +125,7 @@ export default function NodesCanvas() {
         if (iNode.type === "group") {
           const reactFlowBounds =
             reactFlowWrapper.current.getBoundingClientRect();
-          console.log("Reactflowbounds", reactFlowBounds);
+
           const position = reactFlowInstance.project({
             x:
               event.clientX -
@@ -147,12 +146,11 @@ export default function NodesCanvas() {
 
           setNodes((nodes) =>
             nodes.map((n) => {
-              console.log("Old Node position", n.position);
               if (n.id === node.id) {
                 n.parentNode = iNode.id;
                 // n.position = position;
               }
-              console.log("New Node position", n.position);
+
               return n;
             })
           );
@@ -222,6 +220,7 @@ export default function NodesCanvas() {
             actions={[{ label: "Delete", effect: deleteNode }]}
           ></ContextMenu>
         </ReactFlow>
+        <Traversal nodes={nodes} />
       </div>
     </div>
   );
