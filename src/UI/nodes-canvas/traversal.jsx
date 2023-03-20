@@ -49,11 +49,44 @@ class TreeNode {
 }
 
 function compare(elem1, elem2) {
-  debugger;
+  // -1: elem1 then elem2
+  // 1: elem2 then elem1
+  // 0: elem1 = elem 2
+  //sort based on x pos first.
+
+  // if x1 < x2 then first x1 then x2 (child or next in sequence)
+  // if y1 = y2 then elem 1 and elem 2 are the same, return 0, because it is optional
+  // if y1 < or > y2 then elem 1 and then elem2, because elem 2 is a child, return -1
+
+  // if x1 > x2 then first x2 then x1
+  //
+
+  // debugger;
   if (elem1.position.x < elem2.position.x) {
+    // if (elem1.position.y < elem2.position.y) {
+    //   return -1;
+    // }
+    // if (elem1.position.y > elem2.position.y) {
+    //   return -1;
+    // }
+    if (elem1.position.y == elem2.position.y) {
+      return 0;
+    }
     return -1;
   }
   if (elem1.position.x > elem2.position.x) {
+    // if (elem1.position.y < elem2.position.y) {
+    //   return 1;
+    // }
+    // if (elem1.position.y > elem2.position.y) {
+    //   return 1;
+    // }
+    if (elem1.position.y == elem2.position.y) {
+      return 0;
+    }
+    return 1;
+  }
+  if (elem1.position.x == elem2.position.x) {
     if (elem1.position.y < elem2.position.y) {
       return -1;
     }
@@ -64,16 +97,15 @@ function compare(elem1, elem2) {
       return 0;
     }
   }
-  return 1;
+  return 0;
 }
 
 function testme(props) {
   try {
     let storyNodes = props.nodes;
     console.log("Nodes initially", storyNodes);
-    debugger;
-    let newstorynodes = storyNodes.sort(compare);
-    console.log("Nodes finally", newstorynodes);
+    let newstoryNodes = storyNodes.sort(compare);
+    console.log("Nodes finally", newstoryNodes);
     debugger;
     if (storyNodes.length > 0) {
       for (let i = 0; i < storyNodes.length; i++) {
