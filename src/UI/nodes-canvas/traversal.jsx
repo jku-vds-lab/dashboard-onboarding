@@ -1,7 +1,7 @@
 class TreeNode {
   constructor(storyNode) {
     this.id = storyNode.id;
-    this.absPos = storyNode.pos;
+    this.absPos = storyNode.position;
     this.children = [];
     this.parent = null;
     this.root = null;
@@ -48,10 +48,33 @@ class TreeNode {
   }
 }
 
+function compare(elem1, elem2) {
+  debugger;
+  if (elem1.position.x < elem2.position.x) {
+    return -1;
+  }
+  if (elem1.position.x > elem2.position.x) {
+    if (elem1.position.y < elem2.position.y) {
+      return -1;
+    }
+    if (elem1.position.y > elem2.position.y) {
+      return 1;
+    }
+    if (elem1.position.y == elem2.position.y) {
+      return 0;
+    }
+  }
+  return 1;
+}
+
 function testme(props) {
   try {
-    debugger;
     let storyNodes = props.nodes;
+    console.log("Nodes initially", storyNodes);
+    debugger;
+    let newstorynodes = storyNodes.sort(compare);
+    console.log("Nodes finally", newstorynodes);
+    debugger;
     if (storyNodes.length > 0) {
       for (let i = 0; i < storyNodes.length; i++) {
         const tNode = new TreeNode(storyNodes[i]);
@@ -65,23 +88,6 @@ function testme(props) {
 }
 
 export default function Traversal(props) {
-  // props.nodes.foreach((node) => {
-  //   // TreeNode().add(node);
-  //   console.log("Node: ", node);
-  // });
-
-  // props.nodes
-  // extract the vis position
-  // possible directions: horizontal, vertical
-  // compute traversal attribute, 1 if the node is on the leftmost, if it also has an optional node then
-  // sorting from top to bottom of the nodes
-  // figuring out group nodes
-  // figuring out if they are placed adjacent
-  // figur
-
-  // what the onboarding wants:
-  // id of the visuals in an ordered array,
-
   return (
     <div
       className="btn btn-secondary btn-sm me-auto"
