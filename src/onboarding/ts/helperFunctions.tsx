@@ -630,9 +630,9 @@ export async function createComponentGraph(){
 }
 
 export async function getSettings(){
-    //if (localStorage.getItem("settings") == null){
+    if (localStorage.getItem("settings") == null){
         await createSettings();
-    //}
+    }
     global.setSettings(JSON.parse(localStorage.getItem("settings")!, reviver));
 }
 

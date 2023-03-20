@@ -92,3 +92,48 @@ export function getNewDashboardInfo(dashboard: Dashboard){
 
     return [images, infos];
 }
+
+export function saveDashboardChanges(newInfo: string[]){
+    const dashboard = global.componentGraph.dashboard;
+    const dashboardInfo = getNewDashboardInfo(dashboard);
+    const originalInfos = dashboardInfo[1];
+
+    for (let i = 0; i < newInfo.length; ++i) {
+        if(newInfo[i] == "" || newInfo[i] == null){
+            global.settings.dashboardInfo.infoStatus[i] = "deleted";
+            global.settings.dashboardInfo.changedInfos[i] = "";
+        } else if(i >=  global.settings.dashboardInfo.infoStatus.length){
+            global.settings.dashboardInfo.infoStatus.push("added");
+            global.settings.dashboardInfo.changedInfos.push(newInfo[i]);
+        } else if(newInfo[i] == originalInfos[i]){
+            global.settings.dashboardInfo.infoStatus[i] = "original";
+            global.settings.dashboardInfo.changedInfos[i] = "";
+        } else {
+            global.settings.dashboardInfo.infoStatus[i] = "changed";
+            global.settings.dashboardInfo.changedInfos[i] = newInfo[i];
+        }
+    }
+
+    if(newInfo.length < global.settings.dashboardInfo.infoStatus.length){
+        for (let i = newInfo.length; i < global.settings.dashboardInfo.infoStatus.length; ++i) {
+            global.settings.dashboardInfo.infoStatus[i] = "deleted";
+            global.settings.dashboardInfo.changedInfos[i] = "";
+        }
+    }
+}
+
+export async function resetDashboardChanges(){
+    const dashboard = global.componentGraph.dashboard;
+    const dashboardInfo = getNewDashboardInfo(dashboard);
+    const originalInfos = dashboardInfo[1];
+
+    for (let i = 0; i < global.settings.dashboardInfo.infoStatus.length; ++i) {
+        if(i < originalInfos.length){        
+            global.settings.dashboardInfo.infoStatus[i] = "original";
+            global.settings.dashboardInfo.changedInfos[i] = "";
+        } else {
+            global.settings.dashboardInfo.infoStatus.splice(i, 1);
+            global.settings.dashboardInfo.changedInfos.splice(i, 1);
+        }
+    }
+}

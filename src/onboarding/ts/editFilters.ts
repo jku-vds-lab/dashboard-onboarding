@@ -176,3 +176,44 @@ function createFilterTextfield(filterInfos: any[], index: string | number){
         textareaAttributes.parentId = "collapseFormfilterGroup";
         elements.createTextarea(textareaAttributes, false);
 }
+
+export async function saveFilterChanges(newInfo: string[]){
+    const filterInfos = await getFilterInfo();
+
+    for (let i = 0; i < newInfo.length; ++i) {
+        if(newInfo[i] == "" || newInfo[i] == null){
+            global.settings.filterVisual.filterInfosStatus[i] = "deleted";
+            global.settings.filterVisual.changedFilterInfos[i] = "";
+        } else if(i >=  global.settings.filterVisual.filterInfosStatus.length){
+            global.settings.filterVisual.filterInfosStatus.push("added");
+            global.settings.filterVisual.changedFilterInfos.push(newInfo[i]);
+        } else if(newInfo[i] == filterInfos[i]){
+            global.settings.filterVisual.filterInfosStatus[i] = "original";
+            global.settings.filterVisual.changedFilterInfos[i] = "";
+        } else {
+            global.settings.filterVisual.filterInfosStatus[i] = "changed";
+            global.settings.filterVisual.changedFilterInfos[i] = newInfo[i];
+        }
+    }
+
+    if(newInfo.length < global.settings.filterVisual.filterInfosStatus.length){
+        for (let i = newInfo.length; i < global.settings.filterVisual.filterInfosStatus.length; ++i) {
+            global.settings.filterVisual.filterInfosStatus[i] = "deleted";
+            global.settings.filterVisual.changedFilterInfos[i] = "";
+        }
+    }
+}
+
+export async function resetFilterChanges(){
+    const filterInfos = await getFilterInfo();
+
+    for (let i = 0; i < global.settings.filterVisual.filterInfosStatus.length; ++i) {
+        if(i < filterInfos.length){        
+            global.settings.filterVisual.filterInfosStatus[i] = "original";
+            global.settings.filterVisual.changedFilterInfos[i] = "";
+        } else {
+            global.settings.filterVisual.filterInfosStatus.splice(i, 1);
+            global.settings.filterVisual.changedFilterInfos.splice(i, 1);
+        }
+    }
+}
