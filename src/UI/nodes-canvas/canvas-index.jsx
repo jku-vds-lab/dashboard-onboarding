@@ -211,9 +211,31 @@ export default function NodesCanvas() {
   };
 
   const addGroup = () => {
-    console.log("Nodes", selectedNodes);
-    debugger;
-    //setNodes((nodes) => nodes.map((n) => (n.parentNode = "")));
+    try {
+      nodes.map((node) => {
+        selectedNodes.forEach((sNode) => {
+          if (node.id == sNode.id) {
+            node.parentNode = "group";
+            node.extent = "parent";
+            return node;
+          }
+        });
+
+        // if (node.type == "group") {
+        //   setSelectedNodes((selectedNodes) =>
+        //     selectedNodes.map((n) => {
+        //       n.parentNode = node.id;
+        //       n.extent = "parent";
+        //       return n;
+        //     })
+        //   );
+        // }
+      });
+      console.log("Nodes", nodes);
+      console.log("Selected Nodes", selectedNodes);
+    } catch (error) {
+      console.log("Error", error);
+    }
   };
 
   return (

@@ -10,7 +10,6 @@ class TreeNode {
 
   add(treeNode) {
     try {
-      debugger;
       if (!this.root) {
         this.root = treeNode;
         this.parent = treeNode;
@@ -32,7 +31,6 @@ class TreeNode {
     let tParent = this.parent;
     try {
       let tNode = this.root;
-      debugger;
 
       //currently this is an infinite loop
       while (tNode) {
@@ -61,7 +59,6 @@ function compare(elem1, elem2) {
   // if x1 > x2 then first x2 then x1
   //
 
-  // debugger;
   if (elem1.position.x < elem2.position.x) {
     // if (elem1.position.y < elem2.position.y) {
     //   return -1;
@@ -106,7 +103,7 @@ function testme(props) {
     console.log("Nodes initially", storyNodes);
     let newstoryNodes = storyNodes.sort(compare);
     console.log("Nodes finally", newstoryNodes);
-    debugger;
+
     if (storyNodes.length > 0) {
       for (let i = 0; i < storyNodes.length; i++) {
         const tNode = new TreeNode(storyNodes[i]);
