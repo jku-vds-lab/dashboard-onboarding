@@ -25,12 +25,22 @@ export async function createInfoCard(visual: any){
 
     const visualData = helpers.getDataOfVisual(visual);
     helpers.createCardContent(visualData?.title, "", "infoCard");
-    createInfoCardButtons("previous", "next");
+    createInfoCardButtons();
 
     await createVisualInfo(visual);
 }
 
-export function createInfoCardButtons(leftButton: string, rightButton: string){
+export function createInfoCardButtons(){
+    if(currentId === 0 && global.isGuidedTour){
+        createCardButtonsWithGroup("", "next");
+    } else if(currentId === traversialStrategy.length-1 && global.isGuidedTour){
+        createCardButtonsWithGroup("previous", "close");
+    } else {
+        createCardButtonsWithGroup("previous", "next");
+    }
+}
+
+export function createCardButtonsWithGroup(leftButton: string, rightButton: string){
     const traversalElem = traversialStrategy[currentId];
     if(isGroup(traversalElem)){
         switch(traversalElem.type){

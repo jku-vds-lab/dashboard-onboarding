@@ -19,6 +19,7 @@ export async function createFilterInfoCard(){
     }else{
         createInfoCardButtons("previous", "next");
     }
+    createInfoCardButtons();
     
     const filters = await getFilterInfos();
     createFilterList(filters, "contentText");
