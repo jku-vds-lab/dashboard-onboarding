@@ -99,6 +99,7 @@ function compare(elem1, elem2) {
 
 function testme(props) {
   try {
+    debugger;
     let storyNodes = props.nodes;
     console.log("Nodes initially", storyNodes);
     let newstoryNodes = storyNodes.sort(compare);

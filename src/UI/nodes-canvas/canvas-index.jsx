@@ -25,6 +25,7 @@ export default function NodesCanvas() {
   const [isOpen, setIsOpen] = useState(false);
   const reactFlowWrapper = useRef(null);
   const [selectedNodes, setSelectedNodes] = useNodesState(initialNodes);
+  const [groupId] = useState({ id: 0 });
 
   const onClick = useCallback(async (event) => {
     let container = document.getElementById("canvas-container");
@@ -82,7 +83,6 @@ export default function NodesCanvas() {
       const type = event.dataTransfer.getData("nodeType");
       const data = event.dataTransfer.getData("data");
       const title = event.dataTransfer.getData("title");
-      // console.log(id, type, data, title);
 
       // check if the dropped element is valid
       if (typeof type === "undefined" || !type) {
@@ -168,49 +168,98 @@ export default function NodesCanvas() {
     setIsOpen(false);
   };
 
-  // div className="dndnode node-group"
-  const addGroup = useCallback(
-    (event) => {
-      try {
-        const reactFlowBounds =
-          reactFlowWrapper.current.getBoundingClientRect();
-        const position = reactFlowInstance.project({
-          x: event.clientX - reactFlowBounds.left,
-          y: event.clientY - reactFlowBounds.top,
-        });
+  const createGroupNode = useCallback(() => {
+    let groupNode = null;
+    try {
+      let minX = 10000;
+      let minY = 10000;
+      let maxX = 0;
+      let maxY = 0;
+      let nodeWidth = 0;
+      let nodeHeight = 0;
+      selectedNodes.forEach((node) => {
+        if (node.position.x < minX) {
+          minX = node.position.x;
+        }
+        if (node.position.x > maxX) {
+          maxX = node.position.x;
+        }
+        if (node.position.y < minY) {
+          minY = node.position.y;
+        }
+        if (node.position.y > maxY) {
+          maxY = node.position.y;
+        }
+        nodeWidth = node.width;
+        nodeHeight = node.height;
+      });
+      let width = 0;
+      let height = 0;
+      let offset = 40;
+      let minHeight = 70 + nodeHeight;
+      let minWidth = nodeWidth + offset;
 
-        const newNode = {
-          id: "group1",
+      width = maxX - minX + minWidth;
+      height = maxY - minY + minHeight;
+      if (height < 0) {
+        height = -height;
+      }
+
+      const position = { x: minX - offset, y: minY - offset };
+      groupNode = {
+        id: "group" + groupId.id++,
+        type: "group",
+        position,
+        data: {
+          title: "group node",
           type: "group",
-          position,
-          data: {
-            title: "group node",
-            type: "group",
-          },
-          className: "dndnode node-group",
-        };
+        },
+        className: "dndnode node-group",
+        style: { width: width, height: height },
+        zIndex: -1,
+      };
 
-        setNodes((nds) => nds.concat(newNode));
-        debugger;
+      setNodes((nds) => nds.concat(groupNode));
+    } catch (error) {
+      console.log("Error", error);
+    }
+    return groupNode;
+  }, [groupId, selectedNodes, setNodes]);
 
-        nodes.map((node) => {
-          selectedNodes.forEach((sNode) => {
+  const addGroup = useCallback(() => {
+    try {
+      let groupNode = createGroupNode();
+
+      if (!groupNode) {
+        console.log("No group node found");
+        return;
+      }
+
+      nodes.map((node) => {
+        selectedNodes.forEach((sNode) => {
+          try {
             if (node.id == sNode.id) {
-              node.parentNode = newNode.id;
+              node.parentNode = groupNode?.id;
               node.extent = "parent";
+              node.position = {
+                x: sNode.position.x - groupNode.position.x,
+                y: sNode.position.y - groupNode.position.y,
+              };
+              node.draggable = true;
               return node;
             }
-          });
+          } catch (error) {
+            console.log("Error in selecting nodes: ", error);
+          }
         });
+      });
 
-        console.log("Nodes", nodes);
-        console.log("Selected Nodes", selectedNodes);
-      } catch (error) {
-        console.log("Error", error);
-      }
-    },
-    [nodes, reactFlowInstance, selectedNodes, setNodes]
-  );
+      console.log("Nodes", nodes);
+      console.log("Selected Nodes", selectedNodes);
+    } catch (error) {
+      console.log("Error", error);
+    }
+  }, [createGroupNode, nodes, selectedNodes]);
 
   return (
     <div className="dndflow">
