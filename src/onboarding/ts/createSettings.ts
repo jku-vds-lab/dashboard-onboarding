@@ -14,21 +14,44 @@ export async function createSettings(){
     localStorage.setItem("settings", JSON.stringify(global.settings, replacer));
 }
 
+async function updateTraversal(){
+    const traversalElements = [];
+    const oldTraversalSettings = global.settings.traversal;
+
+    for (const elem of traversialStrategy) {
+        const oldSetting = oldTraversalSettings.find(elemSetting => elemSetting.id === elem);
+        if(oldSetting){
+            traversalElements.push(oldSetting);
+        } else {
+            traversalElements.push(await getTraversalElement(elem));
+        }
+    }
+
+    global.settings.traversal = traversalElements;
+    localStorage.setItem("settings", JSON.stringify(global.settings, replacer));
+}
+
+async function getTraversalElement(elem: string){
+    const traversalElements = [];
+    if(isGroup(elem)){
+        const traversalGroupVisuals = setGroup(elem);
+        elem.visuals = await traversalGroupVisuals;
+        traversalElements.push(elem);
+    } else if(elem === "dashboard"){
+        traversalElements.push(setDashboardInfo());
+    } else if(elem === "globalFilter"){
+        traversalElements.push(await setFilterInfo());
+    } else {
+        traversalElements.push(await setVisualsInfo(elem));
+    }
+    return traversalElements;
+}
+
 async function setTraversal(){
     const traversalElements = [];
 
     for (const elem of traversialStrategy) {
-        if(isGroup(elem)){
-            const traversalGroupVisuals = setGroup(elem);
-            elem.visuals = await traversalGroupVisuals;
-            traversalElements.push(elem);
-        } else if(elem === "dashboard"){
-            traversalElements.push(setDashboardInfo());
-        } else if(elem === "globalFilter"){
-            traversalElements.push(await setFilterInfo());
-        } else {
-            traversalElements.push(await setVisualsInfo(elem));
-        }
+        traversalElements.push(await getTraversalElement(elem));
     }
 
     return traversalElements;
