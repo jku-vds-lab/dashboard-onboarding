@@ -43,8 +43,15 @@ export default function NodesCanvas() {
     }
 
     const idParts = nodeId?.split(" ");
+    let visualData = null;
+    if (!idParts) {
+      return;
+    }
 
-    const visualData = helpers?.getDataWithId(idParts[0]);
+    if (idParts.length > 0) {
+      visualData = helpers?.getDataWithId(idParts[0]);
+    }
+
     if (!visualData) {
       return;
     }
@@ -120,55 +127,6 @@ export default function NodesCanvas() {
     );
   }, []);
 
-  const onNodeDragStop = (event, node) => {
-    if (node) {
-      getIntersectingNodes(node).forEach((iNode) => {
-        if (iNode.type === "group") {
-          const reactFlowBounds =
-            reactFlowWrapper.current.getBoundingClientRect();
-
-          const position = reactFlowInstance.project({
-            x:
-              event.clientX -
-              iNode.position.x -
-              reactFlowBounds.left -
-              node.width,
-            y:
-              event.clientY -
-              iNode.position.y -
-              reactFlowBounds.top -
-              node.height,
-          });
-
-          // const position = reactFlowInstance.project({
-          //   x: event.clientX - reactFlowBounds.left,
-          //   y: event.clientY - reactFlowBounds.top,
-          // });
-
-          setNodes((nodes) =>
-            nodes.map((n) => {
-              if (n.id === node.id) {
-                n.parentNode = iNode.id;
-                // n.position = position;
-              }
-
-              return n;
-            })
-          );
-        } else {
-          setNodes((nodes) =>
-            nodes.map((n) => {
-              if (n.id === node.id) {
-                n.parentNode = "";
-              }
-              return n;
-            })
-          );
-        }
-      });
-    }
-  };
-
   const onNodeMouseEnter = (e, node) => {
     if (node.type === "group") {
     }
@@ -190,29 +148,6 @@ export default function NodesCanvas() {
     [setSelectedNodes]
   );
 
-  const xyxx = () => {
-    event.dataTransfer.setData("nodeType", nodeType);
-    event.dataTransfer.setData("id", nodeId);
-    event.dataTransfer.setData("data", nodeData);
-    event.dataTransfer.setData("title", title);
-    event.dataTransfer.effectAllowed = "move";
-  };
-  // start here
-  // group node needs to be rendered on click
-  // then it should have all the data set
-  // or does it need all this?
-  const renderGroupNode = () => {
-    return (
-      <div
-        className="dndnode node-group"
-        onDragStart={(event) => onDragStart(event, "group", "group")}
-        draggable
-      >
-        Group
-      </div>
-    );
-  };
-
   const onNodeContextMenu = useCallback((e) => {
     e.preventDefault();
     const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
@@ -233,33 +168,49 @@ export default function NodesCanvas() {
     setIsOpen(false);
   };
 
-  const addGroup = () => {
-    try {
-      nodes.map((node) => {
-        selectedNodes.forEach((sNode) => {
-          if (node.id == sNode.id) {
-            node.parentNode = "group";
-            node.extent = "parent";
-            return node;
-          }
+  // div className="dndnode node-group"
+  const addGroup = useCallback(
+    (event) => {
+      try {
+        const reactFlowBounds =
+          reactFlowWrapper.current.getBoundingClientRect();
+        const position = reactFlowInstance.project({
+          x: event.clientX - reactFlowBounds.left,
+          y: event.clientY - reactFlowBounds.top,
         });
 
-        // if (node.type == "group") {
-        //   setSelectedNodes((selectedNodes) =>
-        //     selectedNodes.map((n) => {
-        //       n.parentNode = node.id;
-        //       n.extent = "parent";
-        //       return n;
-        //     })
-        //   );
-        // }
-      });
-      console.log("Nodes", nodes);
-      console.log("Selected Nodes", selectedNodes);
-    } catch (error) {
-      console.log("Error", error);
-    }
-  };
+        const newNode = {
+          id: "group1",
+          type: "group",
+          position,
+          data: {
+            title: "group node",
+            type: "group",
+          },
+          className: "dndnode node-group",
+        };
+
+        setNodes((nds) => nds.concat(newNode));
+        debugger;
+
+        nodes.map((node) => {
+          selectedNodes.forEach((sNode) => {
+            if (node.id == sNode.id) {
+              node.parentNode = newNode.id;
+              node.extent = "parent";
+              return node;
+            }
+          });
+        });
+
+        console.log("Nodes", nodes);
+        console.log("Selected Nodes", selectedNodes);
+      } catch (error) {
+        console.log("Error", error);
+      }
+    },
+    [nodes, reactFlowInstance, selectedNodes, setNodes]
+  );
 
   return (
     <div className="dndflow">
@@ -273,7 +224,6 @@ export default function NodesCanvas() {
           onDragOver={onDragOver}
           onNodesChange={onNodesChange}
           onNodeDragStart={onNodeDragStart}
-          onNodeDragStop={onNodeDragStop}
           onNodeMouseEnter={onNodeMouseEnter}
           onNodeContextMenu={onNodeContextMenu}
           onSelectionContextMenu={onSelectionContextMenu}
