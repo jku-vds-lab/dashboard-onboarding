@@ -228,6 +228,18 @@ export default function NodesCanvas() {
 
   const addGroup = useCallback(() => {
     try {
+      let noGroup = false;
+
+      selectedNodes.forEach((sNode) => {
+        if (sNode.type == "group") {
+          noGroup = true;
+        }
+      });
+
+      if (noGroup) {
+        return;
+      }
+
       let groupNode = createGroupNode();
 
       if (!groupNode) {
