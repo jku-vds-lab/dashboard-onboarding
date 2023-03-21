@@ -3,6 +3,7 @@ import * as global from "./globalVariables";
 import { createFilterDisabledArea, removeFrame } from "./disableArea";
 import Filter from "../../componentGraph/Filter";
 import { removeElement } from "./elements";
+import { createInfoCardButtons } from "./infoCards";
 
 export async function createFilterInfoCard(){
     createFilterDisabledArea();
@@ -14,9 +15,9 @@ export async function createFilterInfoCard(){
 
     helpers.createCardContent(global.settings.filterVisual.title, global.settings.filterVisual.generalInformation, "filterInfoCard");
     if(global.isGuidedTour){
-        helpers.createCardButtons("previous", "close");
+        createInfoCardButtons("previous", "close");
     }else{
-        helpers.createCardButtons("previous", "next");
+        createInfoCardButtons("previous", "next");
     }
     
     const filters = await getFilterInfos();

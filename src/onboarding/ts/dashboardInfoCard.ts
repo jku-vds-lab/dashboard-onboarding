@@ -8,6 +8,7 @@ import infoImg from "../assets/info.png";
 import layoutImg from "../assets/layout.png";
 import dataImg from "../assets/data.png";
 import bulletpointImg from "../assets/dot.png";
+import { createInfoCardButtons } from "./infoCards";
 
 export function createDashboardInfoCard(){
     global.setShowsDashboardInfo(true);
@@ -23,9 +24,9 @@ export function createDashboardInfoCard(){
     helpers.createCardContent(title, "", "dashboardInfoCard");
     setDashboardInfos();
     if(global.isGuidedTour){
-        helpers.createCardButtons("", "next");
+        createInfoCardButtons("", "next");
     }else{
-        helpers.createCardButtons("previous", "next");
+        createInfoCardButtons("previous", "next");
     }
 }
 

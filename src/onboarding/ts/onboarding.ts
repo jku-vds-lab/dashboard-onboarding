@@ -11,14 +11,17 @@ import { createDashboardInfoCard, removeDashboardInfoCard } from "./dashboardInf
 import { reportDivisor, resize, textSize } from "./sizes";
 import { createFilterInfoCard, removeFilterInfoCard } from "./filterInfoCards";
 import { showVisualChanges } from "./showVisualsChanges";
-import { findCurrentTraversalVisual, setBasicTraversalStrategy, setCurrentId, setTestAllGroupsTraversalStrategy } from "./traversal";
+import { findCurrentTraversalVisual, setBasicTraversalStrategy, setCurrentId, setTestAllGroupsTraversalStrategy, setTestAtLeastOneGroupsTraversalStrategy, setTestOnlyOneGroupsTraversalStrategy } from "./traversal";
 
 export async function onLoadReport(){
     await helpers.getActivePage();
     await helpers.getVisuals();
     await helpers.createComponentGraph();
+    //setBasicTraversalStrategy();
+    //setTestAllGroupsTraversalStrategy();
+    //setTestAtLeastOneGroupsTraversalStrategy();
+    //setTestOnlyOneGroupsTraversalStrategy();
     await helpers.getSettings();
-    setTestAllGroupsTraversalStrategy();
     
     helpers.createEditOnboardingButtons();
     helpers.createOnboardingButtons();
@@ -166,7 +169,7 @@ export function createOnboardingOverlay(){
     });
 
     const style = helpers.getClickableStyle(-global.settings.reportOffset.top, global.reportWidth!, global.filterOpenedWidth, global.reportHeight!);
-    createOverlay("filter", style);
+    createOverlay("globalFilter", style);
 }
 
 export function createOverlayForVisuals(visualIds: string[]){

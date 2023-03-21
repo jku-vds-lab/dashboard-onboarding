@@ -4,7 +4,7 @@ import { createFilterInfoCard } from "./filterInfoCards";
 import { createInfoCard } from "./infoCards";
 import { removeHintCard, removeShowChangesCard } from "./showReportChanges";
 import { showVisualChanges } from "./showVisualsChanges";
-import { createInformationCard, findVisualInTraversal, getCurrentTraversalElementType, setCurrentId } from "./traversal";
+import { createInformationCard, createLookedAtInGroup, currentId, findVisualIndexInTraversal, getCurrentTraversalElementType, isGroup, lookedAtInGroup, setCurrentId, traversialStrategy } from "./traversal";
 
 export function addStylesheet(URL: string){
     const style = document.createElement('link');
@@ -35,9 +35,25 @@ export function createDiv(attributes: { id: any; style: any; classes: any; conte
                 showVisualChanges(global.interactionSelectedVisual);
             }else{
                 removeOnboardingOverlay();
-                setCurrentId(findVisualInTraversal(attributes.id));
+                setCurrentId(findVisualIndexInTraversal(attributes.id));
+                const currentElement = traversialStrategy[currentId];
+                if(isGroup(currentElement)){
+                    if(currentElement.id === lookedAtInGroup.groupId){
+                        lookedAtInGroup.elements.push(attributes.id);
+                    } else {
+                        lookedAtInGroup.groupId = currentElement.id;
+                        lookedAtInGroup.elements = [attributes.id];
+                    }
+                } else {
+                    lookedAtInGroup.groupId = "";
+                    lookedAtInGroup.elements = [];
+                }
                 // getCurrentTraversalElementType();
-                createInformationCard("visual", undefined, attributes.id);
+                if(attributes.id === "globalFilter"){
+                    createInformationCard("globalFilter");
+                } else {
+                    createInformationCard("visual", undefined, attributes.id);
+                }
                 // if(attributes.id === "filter"){
                 //     global.setCurrentVisualIndex(global.currentVisuals.length);
                 //     createFilterInfoCard();

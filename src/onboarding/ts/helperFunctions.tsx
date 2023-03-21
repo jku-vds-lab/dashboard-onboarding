@@ -22,7 +22,7 @@ import ComponentGraph, { reviver } from "../../componentGraph/ComponentGraph";
 import Filter from "../../componentGraph/Filter";
 import { exportData } from "../../Provenance/utils";
 import * as sizes from "./sizes";
-import { findCurrentTraversalVisual, findCurrentTraversalVisualIndex } from "./traversal";
+import { createGroupOverlay, createInformationCard, findCurrentTraversalVisual, findCurrentTraversalVisualIndex } from "./traversal";
 
 export function addContainerOffset(){
     const pageOffset = parseInt(window.getComputedStyle(document.getElementById("flexContainer")!).paddingTop);
@@ -83,7 +83,7 @@ export function createCard(id: string, style: string, classes: string){
     elements.createDiv(attributes);
 }
 
-export function createCardButtons(leftButton: string, rightButton: string){
+export function createCardButtons(leftButton: string, middleButton:string, rightButton: string){
     const divAttributes = global.createDivAttributes();
     divAttributes.id = "cardButtons";
     divAttributes.parentId = "cardContent";
@@ -156,6 +156,20 @@ export function createCardButtons(leftButton: string, rightButton: string){
                 buttonAttributes.id = "nextButton";
                 buttonAttributes.content = "Next";
                 buttonAttributes.function = nextInfoCard;
+        }
+        elements.createButton(buttonAttributes);
+    }
+
+    if(middleButton != ""){
+        const buttonAttributes = global.createButtonAttributes();
+        buttonAttributes.classes = global.darkOutlineButtonClass + " positionCenter cardButtons";
+        buttonAttributes.style = `font-size: ${sizes.textSize}rem; margin-bottom: 20px;`;
+        buttonAttributes.parentId = "cardButtons";
+        switch(middleButton){
+            case "back to group": 
+                buttonAttributes.id = "backToGroupButton";
+                buttonAttributes.content = "Back To Group Selection";
+                buttonAttributes.function = createGroupOverlay;
         }
         elements.createButton(buttonAttributes);
     }

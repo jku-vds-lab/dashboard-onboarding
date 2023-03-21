@@ -23,7 +23,7 @@ export function showReportChanges(){
 
     helpers.createCardContent(global.settings.interactionExample.title, createShowReportChangesInfo(), "showChangesCard");
 
-    helpers.createCardButtons("", "back to visual");
+    helpers.createCardButtons("", "", "back to visual");
 }
 
 function createShowReportChangesInfo(){

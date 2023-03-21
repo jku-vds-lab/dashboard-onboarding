@@ -6,7 +6,7 @@ import { createIntroCard } from "./introCards";
 import { createFilterInfoCard, removeFilterInfoCard } from "./filterInfoCards";
 import { createVisualInfo } from "./visualInfo";
 import { createDashboardInfoCard, getNewDashboardInfo, removeDashboardInfoCard } from "./dashboardInfoCard";
-import { currentId, getCurrentTraversalElementType, isGroup, setCurrentId, traversialStrategy } from "./traversal";
+import { currentId, getCurrentTraversalElementType, groupType, isGroup, lookedAtInGroup, setCurrentId, traversialStrategy } from "./traversal";
 
 export async function createInfoCard(visual: any){
     disable.disableFrame();
@@ -25,9 +25,32 @@ export async function createInfoCard(visual: any){
 
     const visualData = helpers.getDataOfVisual(visual);
     helpers.createCardContent(visualData?.title, "", "infoCard");
-    helpers.createCardButtons("previous", "next");
+    createInfoCardButtons("previous", "next");
 
     await createVisualInfo(visual);
+}
+
+export function createInfoCardButtons(leftButton: string, rightButton: string){
+    const traversalElem = traversialStrategy[currentId];
+    if(isGroup(traversalElem)){
+        switch(traversalElem.type){
+            case groupType.all:
+                if(traversalElem.visuals.every(id => lookedAtInGroup.elements.includes(id))){
+                    helpers.createCardButtons(leftButton, "", rightButton);
+                } else {
+                    helpers.createCardButtons("", "back to group", "");
+                }
+                break;
+            case groupType.atLeastOne:
+                helpers.createCardButtons(leftButton, "back to group", rightButton);
+                break;
+            case groupType.onlyOne:
+                helpers.createCardButtons(leftButton, "", rightButton);
+                break;
+        }
+    } else {
+        helpers.createCardButtons(leftButton, "", rightButton);
+    }
 }
 
 export function removeInfoCard(){
@@ -40,18 +63,16 @@ export function removeInfoCard(){
 }
 
 export function nextInfoCard(){
-    const currentElement = traversialStrategy[currentId];
-    if(isGroup(currentElement)){
-        
+    if(currentId == traversialStrategy.length-1){
+        setCurrentId(0);
     } else {
-        if(currentId == traversialStrategy.length-1){
-            setCurrentId(0);
-        } else {
-            setCurrentId(currentId + 1);
-        } 
-    
-        getCurrentTraversalElementType();
-    }
+        setCurrentId(currentId + 1);
+    } 
+
+    lookedAtInGroup.groupId = "";
+    lookedAtInGroup.elements = [];
+
+    getCurrentTraversalElementType();
     
     // if(global.showsDashboardInfo){
     //     global.setCurrentVisualIndex(0);
@@ -79,6 +100,9 @@ export function previousInfoCard(){
     } else {
         setCurrentId(currentId - 1);
     } 
+
+    lookedAtInGroup.groupId = "";
+    lookedAtInGroup.elements = [];
 
     getCurrentTraversalElementType();
 

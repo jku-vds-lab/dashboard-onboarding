@@ -8,17 +8,23 @@ import { removeIntroCard } from "./introCards";
 import { createOverlayForVisuals } from "./onboarding";
 
 export const traversialStrategy: any[] = [];
+export const lookedAtInGroup = createLookedAtInGroup();
 export let currentId=0;
 
 export interface Group{
+    id: string;
     type: groupType;
-    visuals: string[];
+    visuals: any[];
+}
+
+export interface LookedAtInGroup{
+    groupId: string;
+    elements: string[];
 }
 
 export function isGroup(object: any): object is Group {
     return object.type && Object.values(groupType).includes(object.type);
 }
-
 
 export enum groupType {
     all = "all",
@@ -28,10 +34,19 @@ export enum groupType {
 
 export function createGroup(){
     const group: Group = {
+        id: "group",
         type: groupType.all,
         visuals: []
     }
     return group;
+}
+
+export function createLookedAtInGroup(){
+    const lookedAtInGroup: LookedAtInGroup = {
+        groupId: "",
+        elements: []
+    }
+    return lookedAtInGroup;
 }
 
 export function setCurrentId(newId: number){
@@ -128,8 +143,13 @@ export function getCurrentTraversalElementType(){
     }
 }
 
+export function createGroupOverlay(){
+    const currentElement = traversialStrategy[currentId];
+    createInformationCard("group", currentElement.visuals, undefined);
+}
 
-export function findVisualInTraversal(id: string){
+
+export function findVisualIndexInTraversal(id: string){
     let index = traversialStrategy.indexOf(id);
     if(index  == -1){
        const groups =  traversialStrategy.filter(object => isGroup(object));
@@ -143,6 +163,14 @@ export function findVisualInTraversal(id: string){
        index = 0;
     }
     return index;
+}
+
+export function findTraversalVisual(id:string){
+    if(!isGroup(id) && id !== "dashboard" && id !== "globalFilter"){
+        return currentVisuals.find((vis: any) => vis.name === id);
+    }
+
+    return null;
 }
 
 export function findCurrentTraversalVisual(){
