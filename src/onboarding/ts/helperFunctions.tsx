@@ -4,7 +4,7 @@ import { getStartFunction } from "./introCards";
 import { previousInfoCard, nextInfoCard, createInfoCard } from "./infoCards";
 import { removeFrame } from "./disableArea";
 import { createGuidedTour, createDashboardExploration, createOnboardingOverlay } from "./onboarding";
-import { saveOnboardingChanges } from "./authorMode";
+//import { saveOnboardingChanges } from "./authorMode";
 import { createSettings } from "./createSettings";
 import { addVisualTextarea } from "./listOfVisuals";
 import { getInteractionText, removeInteractionCard, startInteractionExample } from "./interactionExample";
@@ -147,11 +147,11 @@ export function createCardButtons(leftButton: string, middleButton:string, right
                 buttonAttributes.content = "Back to overview";
                 buttonAttributes.function = showReportChanges;
                 break;
-            case "save":
-                buttonAttributes.id = "saveButton";
-                buttonAttributes.content = "Save";
-                buttonAttributes.function = saveOnboardingChanges;
-                break;
+            // case "save":
+            //     buttonAttributes.id = "saveButton";
+            //     buttonAttributes.content = "Save";
+            //     buttonAttributes.function = saveOnboardingChanges;
+            //     break;
             default:
                 buttonAttributes.id = "nextButton";
                 buttonAttributes.content = "Next";
@@ -442,7 +442,7 @@ export function getDataOfInteractionVisual(visual: any){
 }
 
 export function getDataOfVisual(visual: any){
-    const visualsData = global.settings.visuals;
+    const visualsData = global.settings.traversal;
     const visualData = visualsData.find(function (data) {
         return data.id == visual.name;
     });
@@ -451,7 +451,7 @@ export function getDataOfVisual(visual: any){
 }
 
 export function getDataWithId(ID: string){
-    const visuals = global.settings.visuals;
+    const visuals = global.settings.traversal;
     const visualData = visuals.find(function (visual) {
         return visual.id == ID;
     });
@@ -843,16 +843,16 @@ export async function isVisible(visual: VisualDescriptor, selectorObject: string
     }
 }
 
-export function orderSettingsVisuals(allVisuals: any[]){
-    const visDatas = global.settings.visuals;
-    global.settings.visuals = [];
-    for (const visual of allVisuals) {
-        const visData = visDatas.filter(function (element) { 
-            return element.id === visual.name;
-        });
-        global.settings.visuals.push(visData[0]);
-    }
-}
+// export function orderSettingsVisuals(allVisuals: any[]){
+//     const visDatas = global.settings.visuals;
+//     global.settings.visuals = [];
+//     for (const visual of allVisuals) {
+//         const visData = visDatas.filter(function (element) { 
+//             return element.id === visual.name;
+//         });
+//         global.settings.visuals.push(visData[0]);
+//     }
+// }
 
 export function recreateInteractionExampleButton(){
     const interactionButton = document.getElementById("interactionExample");

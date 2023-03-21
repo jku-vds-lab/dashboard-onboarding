@@ -2,12 +2,11 @@ import * as helpers from "./helperFunctions";
 import * as global from "./globalVariables";
 import { getNewDashboardInfo } from "./dashboardInfoCard";
 import { replacer } from "../../componentGraph/ComponentGraph";
+import { findTraversalVisual, Group, isGroup, traversialStrategy } from "./traversal";
 
 export async function createSettings(){
     const settings = global.createSettingsObject();
-    settings.dashboardInfo = setDashboardInfo();
-    settings.visuals = await setVisualsInfo();
-    settings.filterVisual = await setFilterInfo();
+    settings.traversal = await setTraversal();
     settings.interactionExample = setInteractionExampleInfo();
 
     global.setSettings(settings);
@@ -15,9 +14,43 @@ export async function createSettings(){
     localStorage.setItem("settings", JSON.stringify(global.settings, replacer));
 }
 
+async function setTraversal(){
+    const traversalElements = [];
+
+    for (const elem of traversialStrategy) {
+        if(isGroup(elem)){
+            const traversalGroupVisuals = setGroup(elem);
+            elem.visuals = await traversalGroupVisuals;
+            traversalElements.push(elem);
+        } else if(elem === "dashboard"){
+            traversalElements.push(setDashboardInfo());
+        } else if(elem === "globalFilter"){
+            traversalElements.push(await setFilterInfo());
+        } else {
+            traversalElements.push(await setVisualsInfo(elem));
+        }
+    }
+
+    return traversalElements;
+}
+
+async function setGroup(elem: Group){
+    const traversalVisuals = []
+    for (const vis of elem.visuals) {
+        if(vis === "dashboard"){
+            traversalVisuals.push(setDashboardInfo());
+        } else if(vis === "globalFilter"){
+            traversalVisuals.push(await setFilterInfo());
+        } else {
+            traversalVisuals.push(await setVisualsInfo(vis));
+        }
+    }
+    return traversalVisuals;
+}
 
 function setDashboardInfo(){
     const settingsDashboardInfo = global.createDashboardInfo();
+    settingsDashboardInfo.id = "dashboard";
     settingsDashboardInfo.titleStatus = "original";
     settingsDashboardInfo.changedTitle = "";
 
@@ -30,37 +63,34 @@ function setDashboardInfo(){
     return settingsDashboardInfo;
 }
 
-async function setVisualsInfo(){
-    const settingsVisuals = [] as global.SettingsVisual[];
-    for (const visual of global.currentVisuals) {
-        const settingsVisual = global.createVisual();
-        settingsVisual.id = visual.name;
-        const CGVisual = global.componentGraph.dashboard.visualizations.find(vis => vis.id === visual.name)!; 
-        settingsVisual.title = CGVisual.title.text;
-        
-        const visualInfos = await helpers.getVisualInfos(visual);
+async function setVisualsInfo(id: string){
+    const visual = findTraversalVisual(id);
+    const settingsVisual = global.createVisual();
+    settingsVisual.id = visual.name;
+    const CGVisual = global.componentGraph.dashboard.visualizations.find(vis => vis.id === visual.name)!; 
+    settingsVisual.title = CGVisual.title.text;
+    
+    const visualInfos = await helpers.getVisualInfos(visual);
 
-        for (let i = 0; i < visualInfos.generalInfos.length; ++i) {
-            settingsVisual.generalInfosStatus.push("original");
-            settingsVisual.changedGeneralInfos.push("");
-        }
-        for (let i = 0; i < visualInfos.interactionInfos.length; ++i) {
-            settingsVisual.interactionInfosStatus.push("original");
-            settingsVisual.changedInteractionInfos.push("");
-        }
-        for (let i = 0; i < visualInfos.insightInfos.length; ++i) {
-            settingsVisual.insightInfosStatus.push("original");
-            settingsVisual.changedInsightInfos.push("");
-        }
- 
-        settingsVisuals.push(settingsVisual);
+    for (let i = 0; i < visualInfos.generalInfos.length; ++i) {
+        settingsVisual.generalInfosStatus.push("original");
+        settingsVisual.changedGeneralInfos.push("");
+    }
+    for (let i = 0; i < visualInfos.interactionInfos.length; ++i) {
+        settingsVisual.interactionInfosStatus.push("original");
+        settingsVisual.changedInteractionInfos.push("");
+    }
+    for (let i = 0; i < visualInfos.insightInfos.length; ++i) {
+        settingsVisual.insightInfosStatus.push("original");
+        settingsVisual.changedInsightInfos.push("");
     }
 
-    return settingsVisuals;
+    return settingsVisual;
 }
 
 async function setFilterInfo(){
     const settingsFilterVisual = global.createFilterVisual();
+    settingsFilterVisual.id = "globalFilter";
     settingsFilterVisual.title = "Filters";
     settingsFilterVisual.generalInformation = "This page has following filters:";
 

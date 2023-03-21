@@ -65,6 +65,7 @@ export interface ReportOffset{
 }
 
 export interface DashboardInfo{ 
+    id: string;
     titleStatus: string;
     changedTitle: string;
     infoStatus: string[];
@@ -93,13 +94,12 @@ export interface Target{
 
 export interface Settings{
     reportOffset: ReportOffset;
-    dashboardInfo: DashboardInfo;
-    visuals: SettingsVisual[];
-    filterVisual: FilterVisual;
+    traversal: any[];
     interactionExample: InteractionExample;
 }
 
 export interface FilterVisual{
+    id: string;
     title: string | undefined;
     generalInformation: string | undefined;
     filterInfosStatus: string[];
@@ -126,9 +126,7 @@ export interface InteractionVisual{
 export function createSettingsObject(){
     const settings : Settings = {
         reportOffset: createReportOffset(),
-        dashboardInfo: createDashboardInfo(),
-        visuals: [] as SettingsVisual[],
-        filterVisual: createFilterVisual(),
+        traversal: [] as any[],
         interactionExample: createInteractionExample()
     }
     return settings;
@@ -146,6 +144,7 @@ export function createReportOffset(){
 
 export function createDashboardInfo(){
     const dashboardInfo: DashboardInfo = {
+        id: "",
         titleStatus: "",
         changedTitle: "",
         infoStatus: [],
@@ -170,6 +169,7 @@ export function createVisual(){
 
 export function createFilterVisual(){
     return {
+        id: "",
         title: "",
         generalInformation: "",
         filterInfosStatus: [] as string[],

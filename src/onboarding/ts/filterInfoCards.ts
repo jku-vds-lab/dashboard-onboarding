@@ -13,16 +13,18 @@ export async function createFilterInfoCard(){
 
     helpers.createCloseButton("closeButton", "closeButtonPlacementBig", "", helpers.getCloseFunction(), "filterInfoCard");
 
-    helpers.createCardContent(global.settings.filterVisual.title, global.settings.filterVisual.generalInformation, "filterInfoCard");
-    if(global.isGuidedTour){
-        createInfoCardButtons("previous", "close");
-    }else{
-        createInfoCardButtons("previous", "next");
+    const filterData = helpers.getDataWithId("globalFilter");
+    if (!filterData) {
+      return;
     }
+
+    helpers.createCardContent(filterData.title, filterData.generalInformation, "filterInfoCard");
     createInfoCardButtons();
     
     const filters = await getFilterInfos();
-    createFilterList(filters, "contentText");
+    if(filters){
+       createFilterList(filters, "contentText"); 
+    }
 }
 
 export function createFilterList(list: string | any[], parentId: string){
@@ -53,15 +55,20 @@ export function getFilterDescription(filter: Filter){
 export async function getFilterInfos(){
     const filterInfos = await helpers.getFilterInfo();
 
+    const filterData = helpers.getDataWithId("globalFilter");
+    if (!filterData) {
+      return;
+    }
+
     const newFilters = [];
-    for (let i = 0; i < global.settings.filterVisual.filterInfosStatus.length; ++i) {
-        switch(global.settings.filterVisual.filterInfosStatus[i]){
+    for (let i = 0; i < filterData.filterInfosStatus.length; ++i) {
+        switch(filterData.filterInfosStatus[i]){
             case global.infoStatus.original:
                 newFilters.push(filterInfos[i]);
                 break;
             case global.infoStatus.changed:
             case global.infoStatus.added:
-                newFilters.push(global.settings.filterVisual.changedFilterInfos[i]);
+                newFilters.push(filterData.changedFilterInfos[i]);
                 break;
             default:
                 break;

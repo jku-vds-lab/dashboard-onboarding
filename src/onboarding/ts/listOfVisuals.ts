@@ -3,22 +3,22 @@ import * as global from "./globalVariables";
 import * as elements from "./elements";
 import { mouseDownHandler } from "./draggableList";
 
-export function createListOfVisuals(){
-    global.settings.visuals.forEach(function (visual) {
-        const divAttributes = global.createDivAttributes();
-        divAttributes.id = visual.id;
-        divAttributes.classes = "draggable";
-        divAttributes.style = "padding: 5px;border: 1px solid black;border-radius: 5px";
-        divAttributes.content =`<p style="display: inline-block;width:300px;margin-bottom: -5px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;"><svg style="display: inline;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="gray" class="bi bi-list mb-1" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/></svg> ` 
-        + visual.title + `</p>`;
-        divAttributes.eventType = 'mousedown';
-        divAttributes.eventFunction = mouseDownHandler;
-        divAttributes.parentId = "visualsList";
-        elements.createDiv(divAttributes);
-        createToogleVisabilityButton(visual.id);
-        createCollapseForm(visual.id);
-    });
-}
+// export function createListOfVisuals(){
+//     global.settings.visuals.forEach(function (visual) {
+//         const divAttributes = global.createDivAttributes();
+//         divAttributes.id = visual.id;
+//         divAttributes.classes = "draggable";
+//         divAttributes.style = "padding: 5px;border: 1px solid black;border-radius: 5px";
+//         divAttributes.content =`<p style="display: inline-block;width:300px;margin-bottom: -5px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;"><svg style="display: inline;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="gray" class="bi bi-list mb-1" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/></svg> ` 
+//         + visual.title + `</p>`;
+//         divAttributes.eventType = 'mousedown';
+//         divAttributes.eventFunction = mouseDownHandler;
+//         divAttributes.parentId = "visualsList";
+//         elements.createDiv(divAttributes);
+//         createToogleVisabilityButton(visual.id);
+//         createCollapseForm(visual.id);
+//     });
+// }
 
 function createToogleVisabilityButton(visualID: any){
     const visualData = helpers.getDataWithId(visualID);
