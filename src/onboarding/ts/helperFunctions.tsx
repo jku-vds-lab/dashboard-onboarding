@@ -913,7 +913,7 @@ export function removeOnboardingOverlay(){
     global.currentVisuals.forEach(function (visual) {
         elements.removeElement(visual.name);
     });
-    elements.removeElement("filter");
+    elements.removeElement("globalFilter");
 }
 
 export function resizeEmbed(filterWidth: number){

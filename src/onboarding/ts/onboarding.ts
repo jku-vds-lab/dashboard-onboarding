@@ -11,17 +11,17 @@ import { createDashboardInfoCard, removeDashboardInfoCard } from "./dashboardInf
 import { reportDivisor, resize, textSize } from "./sizes";
 import { createFilterInfoCard, removeFilterInfoCard } from "./filterInfoCards";
 import { showVisualChanges } from "./showVisualsChanges";
-import { createExplainGroupCard, currentId, findCurrentTraversalVisual, getCurrentTraversalElementType, setBasicTraversalStrategy, setCurrentId, setTestAllGroupsTraversalStrategy, setTestAtLeastOneGroupsTraversalStrategy, setTestOnlyOneGroupsTraversalStrategy, traversalStrategy, updateTraversal } from "./traversal";
+import { createExplainGroupCard, currentId, findCurrentTraversalVisual, findVisualIndexInTraversal, getCurrentTraversalElementType, isGroup, lookedAtInGroup, removeExplainGroupCard, setBasicTraversalStrategy, setCurrentId, setTestAllGroupsTraversalStrategy, setTestAtLeastOneGroupsTraversalStrategy, setTestOnlyOneGroupsTraversalStrategy, traversalStrategy, updateLookedAt, updateTraversal } from "./traversal";
 
 export async function onLoadReport(){
     await helpers.getActivePage();
     await helpers.getVisuals();
     await helpers.createComponentGraph();
     //setBasicTraversalStrategy();
-    //setTestAllGroupsTraversalStrategy();
+    setTestAllGroupsTraversalStrategy();
     //setTestAtLeastOneGroupsTraversalStrategy();
-    // setTestOnlyOneGroupsTraversalStrategy();
-    // updateTraversal(traversalStrategy);
+    //setTestOnlyOneGroupsTraversalStrategy();
+    updateTraversal(traversalStrategy);
     await helpers.getSettings();
     
     helpers.createEditOnboardingButtons();
@@ -182,18 +182,42 @@ export function createOverlayForVisuals(visualIds: string[]){
     removeDashboardInfoCard();
     removeFilterInfoCard();
     removeInteractionCard();
+
     visualIds.forEach(function (visualId: string) {
-        const visual = global.currentVisuals.find((vis: any) => vis.name === visualId);
-        let style = helpers.getClickableStyle(visual.layout.y/reportDivisor, visual.layout.x/reportDivisor, visual.layout.width/reportDivisor, visual.layout.height/reportDivisor);
-        style += "border: 5px solid lightgreen;";
-        createOverlay(visual.name, style);
+        let style = "";
+        switch(visualId){
+            case "dashboard":
+                const attributes = global.createButtonAttributes();
+                attributes.id = "dashboardExplaination";
+                attributes.content = "Dashboard Explaination";
+                attributes.style =  `font-size: ${textSize}rem; border: 5px solid lightgreen;` + global.onboardingButtonStyle;
+                attributes.classes = "col-2 " +  global.darkOutlineButtonClass;
+                attributes.function = createDashboardInfoOnButtonClick;
+                attributes.parentId = "onboarding-header";
+                elements.createButton(attributes);
+                break;
+            case "globalFilter":
+                style = helpers.getClickableStyle(-global.settings.reportOffset.top, global.reportWidth!, global.filterOpenedWidth, global.reportHeight!);
+                style += "border: 5px solid lightgreen;";
+                createOverlay("globalFilter", style);
+                break;
+            default:
+                const visual = global.currentVisuals.find((vis: any) => vis.name === visualId);
+                style = helpers.getClickableStyle(visual.layout.y/reportDivisor, visual.layout.x/reportDivisor, visual.layout.width/reportDivisor, visual.layout.height/reportDivisor);
+                style += "border: 5px solid lightgreen;";
+                createOverlay(visual.name, style);
+                break;
+        }
     });
 }
 
 function createDashboardInfoOnButtonClick(){
     helpers.removeOnboardingOverlay();
-    setCurrentId(0);
-    createDashboardInfoCard();
+    helpers.removeContainerOffset();
+    removeExplainGroupCard();
+    setCurrentId(findVisualIndexInTraversal("dashboard"));
+    updateLookedAt("dashboard");
+    createDashboardInfoCard()
 }
 
 function createOverlay(id: string, style: string){

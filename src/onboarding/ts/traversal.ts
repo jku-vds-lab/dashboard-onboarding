@@ -262,3 +262,18 @@ export async function updateTraversal(newTraversalStrategy: any[]){
     global.settings.traversalElements = traversalElements;
     localStorage.setItem("settings", JSON.stringify(global.settings, replacer));
 }
+
+export function updateLookedAt(id: string){
+    const currentElement = global.settings.traversalStrategy[currentId];
+    if(isGroup(currentElement)){
+        if(currentElement.id === lookedAtInGroup.groupId){
+            lookedAtInGroup.elements.push(id);
+        } else {
+            lookedAtInGroup.groupId = currentElement.id;
+            lookedAtInGroup.elements = [id];
+        }
+    } else {
+        lookedAtInGroup.groupId = "";
+        lookedAtInGroup.elements = [];
+    }
+}
