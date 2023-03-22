@@ -14,11 +14,13 @@ export let introCardMargin = 0;
 export let introCardWidth = 0;
 export let interactionCardWidth = 0;
 export let interactionCardHeight = 0;
-export const interactionCardTop = 10;
+export const globalCardTop = 10;
 export let hintCardMargin = 0;
 export let hintCardWidth = 0;
 export let editCardMargin = 0;
 export let editCardWidth = 0;
+export let explainGroupCardWidth = 0;
+export let explainGroupCardHeight = 0;
 export let reportWidth:number;
 export let reportHeight:number;
 
@@ -253,6 +255,12 @@ export function setEditCardMargin(newEditCardMargin: number){
 }
 export function setEditCardWidth(newEditCardWidth: number){
     editCardWidth = newEditCardWidth;
+}
+export function setExplainGroupCardWidth(newExplainGroupCardWidth: number){
+    explainGroupCardWidth = newExplainGroupCardWidth;
+}
+export function setExplainGroupCardHeight(newExplainGroupCardHeight: number){
+    explainGroupCardHeight = newExplainGroupCardHeight;
 }
 export function setReportWidth(newReportWidth: number){
     reportWidth = newReportWidth;

@@ -11,14 +11,14 @@ import { createDashboardInfoCard, removeDashboardInfoCard } from "./dashboardInf
 import { reportDivisor, resize, textSize } from "./sizes";
 import { createFilterInfoCard, removeFilterInfoCard } from "./filterInfoCards";
 import { showVisualChanges } from "./showVisualsChanges";
-import { findCurrentTraversalVisual, setBasicTraversalStrategy, setCurrentId, setTestAllGroupsTraversalStrategy, setTestAtLeastOneGroupsTraversalStrategy, setTestOnlyOneGroupsTraversalStrategy } from "./traversal";
+import { createExplainGroupCard, currentId, findCurrentTraversalVisual, getCurrentTraversalElementType, setBasicTraversalStrategy, setCurrentId, setTestAllGroupsTraversalStrategy, setTestAtLeastOneGroupsTraversalStrategy, setTestOnlyOneGroupsTraversalStrategy } from "./traversal";
 
 export async function onLoadReport(){
     await helpers.getActivePage();
     await helpers.getVisuals();
     await helpers.createComponentGraph();
     //setBasicTraversalStrategy();
-    //setTestAllGroupsTraversalStrategy();
+    setTestAllGroupsTraversalStrategy();
     //setTestAtLeastOneGroupsTraversalStrategy();
     //setTestOnlyOneGroupsTraversalStrategy();
     await helpers.getSettings();
@@ -139,8 +139,8 @@ export function createDashboardExploration(){
 export function startGuidedTour(){
     //global.setCurrentVisualIndex(0);
     removeIntroCard();
-
-    createDashboardInfoCard();
+    setCurrentId(0);
+    getCurrentTraversalElementType();
 }
 
 export function createOnboardingOverlay(){

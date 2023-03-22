@@ -1,11 +1,14 @@
 import { createDashboardInfoCard, removeDashboardInfoCard } from "./dashboardInfoCard";
 import { removeFrame } from "./disableArea";
+import { removeElement } from "./elements";
 import { createFilterInfoCard, removeFilterInfoCard } from "./filterInfoCards";
 import { currentVisuals } from "./globalVariables";
 import { removeOnboardingOverlay } from "./helperFunctions";
 import { createInfoCard, removeInfoCard } from "./infoCards";
 import { removeIntroCard } from "./introCards";
 import { createOverlayForVisuals } from "./onboarding";
+import * as helpers from "./helperFunctions";
+import * as global from "./globalVariables";
 
 export const traversialStrategy: any[] = [];
 export const lookedAtInGroup = createLookedAtInGroup();
@@ -121,6 +124,7 @@ export function createInformationCard(type: string, visuals?: any[], visualId?:s
             createFilterInfoCard();
             break;
         case "group":
+            createExplainGroupCard();
             createOverlayForVisuals(visuals!);
             break;
         case "visual":
@@ -191,4 +195,35 @@ export function findCurrentTraversalVisualIndex(){
     }
 
     return 0;
+}
+
+export function removeExplainGroupCard(){
+    removeElement("explainGroupCard");
+}
+
+export function createExplainGroupCard(){
+    const style = `overflow: auto;position:fixed;top:10px;left:50%;margin-left:` + -(global.explainGroupCardWidth/2) + `px;width:`+ global.explainGroupCardWidth + `px;height:` + global.explainGroupCardHeight + `px;pointer-events:auto;border-radius:10px;background-color:lightsteelblue;z-index: 99 !important;`;
+    helpers.createCard("explainGroupCard", style, "");
+    helpers.addContainerOffset(global.explainGroupCardHeight);
+    helpers.createCloseButton("closeButton", "closeButtonPlacementBig", "", helpers.removeOnboarding, "explainGroupCard");
+    helpers.createCardContent("", createExplainGroupText(), "explainGroupCard");
+}
+
+function createExplainGroupText(){
+    const currentElement = traversialStrategy[currentId];
+    let explaination = "Please click on one of the highlighted visualisations to get its explaination.";
+
+    switch(currentElement.type){
+        case groupType.all:
+            explaination += " You can look at the visualisations in any order but you will have to look at all of them before you can continue.";
+            break;
+        case groupType.atLeastOne:
+            explaination += " You can look at one visualisation or multiple and then continue.";
+            break;
+        case groupType.onlyOne:
+            explaination += " You can look at one of the viualisation and then continue.";
+            break;
+    }
+
+    return explaination;
 }

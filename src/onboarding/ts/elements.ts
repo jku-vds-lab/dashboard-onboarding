@@ -4,7 +4,7 @@ import { createFilterInfoCard } from "./filterInfoCards";
 import { createInfoCard } from "./infoCards";
 import { removeHintCard, removeShowChangesCard } from "./showReportChanges";
 import { showVisualChanges } from "./showVisualsChanges";
-import { createInformationCard, createLookedAtInGroup, currentId, findVisualIndexInTraversal, getCurrentTraversalElementType, isGroup, lookedAtInGroup, setCurrentId, traversialStrategy } from "./traversal";
+import { createInformationCard, createLookedAtInGroup, currentId, findVisualIndexInTraversal, getCurrentTraversalElementType, isGroup, lookedAtInGroup, removeExplainGroupCard, setCurrentId, traversialStrategy } from "./traversal";
 
 export function addStylesheet(URL: string){
     const style = document.createElement('link');
@@ -35,6 +35,8 @@ export function createDiv(attributes: { id: any; style: any; classes: any; conte
                 showVisualChanges(global.interactionSelectedVisual);
             }else{
                 removeOnboardingOverlay();
+                removeContainerOffset();
+                removeExplainGroupCard();
                 setCurrentId(findVisualIndexInTraversal(attributes.id));
                 const currentElement = traversialStrategy[currentId];
                 if(isGroup(currentElement)){

@@ -24,21 +24,21 @@ import { exportData } from "../../Provenance/utils";
 import * as sizes from "./sizes";
 import { createGroupOverlay, createInformationCard, findCurrentTraversalVisual, findCurrentTraversalVisualIndex } from "./traversal";
 
-export function addContainerOffset(){
+export function addContainerOffset(cardHeight: number){
     const pageOffset = parseInt(window.getComputedStyle(document.getElementById("flexContainer")!).paddingTop);
     const buttonHeaderHeight = document.getElementById("onboarding-header")!.clientHeight;
     const reportOffsetTop = parseInt(window.getComputedStyle(document.getElementById("reportContainer")!).paddingTop);
 
     const header = document.getElementById("onboarding-header");
     if(header){
-        const headerOffset = global.interactionCardHeight - pageOffset + global.interactionCardTop;
+        const headerOffset = cardHeight - pageOffset + global.globalCardTop;
         header.style.marginTop = headerOffset + "px";
     }
 
     const onboarding = document.getElementById("onboarding");
     if(onboarding){
         global.setOnboardingOffset(pageOffset + buttonHeaderHeight + reportOffsetTop);
-        const top = global.interactionCardTop + global.interactionCardHeight + buttonHeaderHeight + reportOffsetTop;
+        const top = global.globalCardTop + cardHeight + buttonHeaderHeight + reportOffsetTop;
         onboarding.style.top = top + "px";
     }
 
