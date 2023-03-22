@@ -11,7 +11,7 @@ import { createDashboardInfoCard, removeDashboardInfoCard } from "./dashboardInf
 import { reportDivisor, resize, textSize } from "./sizes";
 import { createFilterInfoCard, removeFilterInfoCard } from "./filterInfoCards";
 import { showVisualChanges } from "./showVisualsChanges";
-import { createExplainGroupCard, currentId, findCurrentTraversalVisual, getCurrentTraversalElementType, setBasicTraversalStrategy, setCurrentId, setTestAllGroupsTraversalStrategy, setTestAtLeastOneGroupsTraversalStrategy, setTestOnlyOneGroupsTraversalStrategy } from "./traversal";
+import { createExplainGroupCard, currentId, findCurrentTraversalVisual, getCurrentTraversalElementType, setBasicTraversalStrategy, setCurrentId, setTestAllGroupsTraversalStrategy, setTestAtLeastOneGroupsTraversalStrategy, setTestOnlyOneGroupsTraversalStrategy, traversalStrategy, updateTraversal } from "./traversal";
 
 export async function onLoadReport(){
     await helpers.getActivePage();
@@ -20,7 +20,8 @@ export async function onLoadReport(){
     //setBasicTraversalStrategy();
     //setTestAllGroupsTraversalStrategy();
     //setTestAtLeastOneGroupsTraversalStrategy();
-    //setTestOnlyOneGroupsTraversalStrategy();
+    // setTestOnlyOneGroupsTraversalStrategy();
+    // updateTraversal(traversalStrategy);
     await helpers.getSettings();
     
     helpers.createEditOnboardingButtons();
@@ -181,7 +182,6 @@ export function createOverlayForVisuals(visualIds: string[]){
     removeDashboardInfoCard();
     removeFilterInfoCard();
     removeInteractionCard();
-
     visualIds.forEach(function (visualId: string) {
         const visual = global.currentVisuals.find((vis: any) => vis.name === visualId);
         let style = helpers.getClickableStyle(visual.layout.y/reportDivisor, visual.layout.x/reportDivisor, visual.layout.width/reportDivisor, visual.layout.height/reportDivisor);

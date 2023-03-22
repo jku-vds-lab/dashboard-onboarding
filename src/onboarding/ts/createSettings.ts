@@ -15,24 +15,7 @@ export async function createSettings(){
     localStorage.setItem("settings", JSON.stringify(global.settings, replacer));
 }
 
-// async function updateTraversal(){
-//     const traversalElements = [];
-//     const oldTraversalSettings = global.settings.traversal;
-
-//     for (const elem of traversalStrategy) {
-//         const oldSetting = oldTraversalSettings.find(elemSetting => elemSetting.id === elem);
-//         if(oldSetting){
-//             traversalElements.push(oldSetting);
-//         } else {
-//             traversalElements.push(await getTraversalElement(elem));
-//         }
-//     }
-
-//     global.settings.traversal = traversalElements;
-//     localStorage.setItem("settings", JSON.stringify(global.settings, replacer));
-// }
-
-async function getTraversalElement(elem: string){
+export async function getTraversalElement(elem: string){
     let traversalElement;
     if(isGroup(elem)){
         const traversalGroupVisuals = await setGroup(elem);

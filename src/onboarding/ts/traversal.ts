@@ -9,8 +9,10 @@ import { removeIntroCard } from "./introCards";
 import { createOverlayForVisuals } from "./onboarding";
 import * as helpers from "./helperFunctions";
 import * as global from "./globalVariables";
+import { replacer } from "../../componentGraph/ComponentGraph";
+import { getTraversalElement } from "./createSettings";
 
-export const traversalStrategy: any[] = [];
+export let traversalStrategy: any[] = [];
 export const lookedAtInGroup = createLookedAtInGroup();
 export let currentId=0;
 
@@ -54,6 +56,9 @@ export function createLookedAtInGroup(){
 
 export function setCurrentId(newId: number){
     currentId = newId;
+}
+export function setTraversalStrategy(newTraversalStrategy: any[]){
+    traversalStrategy = newTraversalStrategy;
 }
 
 export function setBasicTraversalStrategy(){
@@ -226,4 +231,34 @@ function createExplainGroupText(){
     }
 
     return explaination;
+}
+
+export async function updateTraversal(newTraversalStrategy: any[]){
+    const traversalElements = [];
+    const oldTraversalSettings = global.settings.traversalElements;
+
+    for (const elem of newTraversalStrategy) {
+        if(isGroup(elem)){
+            for(const groupElem of elem.visuals){
+                const oldSetting = oldTraversalSettings.find(elemSetting => elemSetting.id === elem);
+                if(oldSetting){
+                    traversalElements.push(oldSetting);
+                } else {
+                    traversalElements.push(await getTraversalElement(groupElem));
+                }
+            }
+        }else{
+            const oldSetting = oldTraversalSettings.find(elemSetting => elemSetting.id === elem);
+            if(oldSetting){
+                traversalElements.push(oldSetting);
+            } else {
+                traversalElements.push(await getTraversalElement(elem));
+            }
+        }
+    }
+
+    setTraversalStrategy(newTraversalStrategy);
+    global.settings.traversalStrategy = newTraversalStrategy;
+    global.settings.traversalElements = traversalElements;
+    localStorage.setItem("settings", JSON.stringify(global.settings, replacer));
 }
