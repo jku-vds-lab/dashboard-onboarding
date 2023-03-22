@@ -10,7 +10,7 @@ import { createOverlayForVisuals } from "./onboarding";
 import * as helpers from "./helperFunctions";
 import * as global from "./globalVariables";
 
-export const traversialStrategy: any[] = [];
+export const traversalStrategy: any[] = [];
 export const lookedAtInGroup = createLookedAtInGroup();
 export let currentId=0;
 
@@ -57,55 +57,55 @@ export function setCurrentId(newId: number){
 }
 
 export function setBasicTraversalStrategy(){
-    traversialStrategy.push("dashboard");
+    traversalStrategy.push("dashboard");
     for(const vis of currentVisuals){
-        traversialStrategy.push(vis.name);
+        traversalStrategy.push(vis.name);
     }
-    traversialStrategy.push("globalFilter");
+    traversalStrategy.push("globalFilter");
 }
 
 export function setTestAllGroupsTraversalStrategy(){
-    traversialStrategy.push("dashboard");
-    traversialStrategy.push(currentVisuals[0].name);
-    traversialStrategy.push(currentVisuals[1].name);
+    traversalStrategy.push("dashboard");
+    traversalStrategy.push(currentVisuals[0].name);
+    traversalStrategy.push(currentVisuals[1].name);
     const group = createGroup();
     group.visuals.push(currentVisuals[2].name);
     group.visuals.push(currentVisuals[3].name);
     group.visuals.push(currentVisuals[4].name);
-    traversialStrategy.push(group);
-    traversialStrategy.push(currentVisuals[5].name);
-    traversialStrategy.push(currentVisuals[6].name);
-    traversialStrategy.push("globalFilter");
+    traversalStrategy.push(group);
+    traversalStrategy.push(currentVisuals[5].name);
+    traversalStrategy.push(currentVisuals[6].name);
+    traversalStrategy.push("globalFilter");
 }
 
 export function setTestAtLeastOneGroupsTraversalStrategy(){
-    traversialStrategy.push("dashboard");
-    traversialStrategy.push(currentVisuals[0].name);
-    traversialStrategy.push(currentVisuals[1].name);
+    traversalStrategy.push("dashboard");
+    traversalStrategy.push(currentVisuals[0].name);
+    traversalStrategy.push(currentVisuals[1].name);
     const group = createGroup();
     group.type = groupType.atLeastOne;
     group.visuals.push(currentVisuals[2].name);
     group.visuals.push(currentVisuals[3].name);
     group.visuals.push(currentVisuals[4].name);
-    traversialStrategy.push(group);
-    traversialStrategy.push(currentVisuals[5].name);
-    traversialStrategy.push(currentVisuals[6].name);
-    traversialStrategy.push("globalFilter");
+    traversalStrategy.push(group);
+    traversalStrategy.push(currentVisuals[5].name);
+    traversalStrategy.push(currentVisuals[6].name);
+    traversalStrategy.push("globalFilter");
 }
 
 export function setTestOnlyOneGroupsTraversalStrategy(){
-    traversialStrategy.push("dashboard");
-    traversialStrategy.push(currentVisuals[0].name);
-    traversialStrategy.push(currentVisuals[1].name);
+    traversalStrategy.push("dashboard");
+    traversalStrategy.push(currentVisuals[0].name);
+    traversalStrategy.push(currentVisuals[1].name);
     const group = createGroup();
     group.type = groupType.onlyOne;
     group.visuals.push(currentVisuals[2].name);
     group.visuals.push(currentVisuals[3].name);
     group.visuals.push(currentVisuals[4].name);
-    traversialStrategy.push(group);
-    traversialStrategy.push(currentVisuals[5].name);
-    traversialStrategy.push(currentVisuals[6].name);
-    traversialStrategy.push("globalFilter");
+    traversalStrategy.push(group);
+    traversalStrategy.push(currentVisuals[5].name);
+    traversalStrategy.push(currentVisuals[6].name);
+    traversalStrategy.push("globalFilter");
 }
 
 export function createInformationCard(type: string, visuals?: any[], visualId?:string){
@@ -134,7 +134,7 @@ export function createInformationCard(type: string, visuals?: any[], visualId?:s
 }
 
 export function getCurrentTraversalElementType(){
-    const currentElement = traversialStrategy[currentId];
+    const currentElement = global.settings.traversalStrategy[currentId];
 
     if(isGroup(currentElement)){
         createInformationCard("group", currentElement.visuals, undefined);
@@ -148,19 +148,19 @@ export function getCurrentTraversalElementType(){
 }
 
 export function createGroupOverlay(){
-    const currentElement = traversialStrategy[currentId];
+    const currentElement = global.settings.traversalStrategy[currentId];
     createInformationCard("group", currentElement.visuals, undefined);
 }
 
 
 export function findVisualIndexInTraversal(id: string){
-    let index = traversialStrategy.indexOf(id);
+    let index = global.settings.traversalStrategy.indexOf(id);
     if(index  == -1){
-       const groups =  traversialStrategy.filter(object => isGroup(object));
+       const groups =  global.settings.traversalStrategy.filter(object => isGroup(object));
        for(const group of groups){
             const indexInGroup = group.visuals.indexOf(id);
             if(indexInGroup != -1){
-                index = traversialStrategy.indexOf(group);
+                index = global.settings.traversalStrategy.indexOf(group);
                 return index;
             }
        }
@@ -178,7 +178,7 @@ export function findTraversalVisual(id:string){
 }
 
 export function findCurrentTraversalVisual(){
-    const traversalElem = traversialStrategy[currentId];
+    const traversalElem = global.settings.traversalStrategy[currentId];
     
     if(!isGroup(traversalElem) && traversalElem !== "dashboard" && traversalElem !== "globalFilter"){
         return currentVisuals.find((vis: any) => vis.name === traversalElem);
@@ -188,7 +188,7 @@ export function findCurrentTraversalVisual(){
 }
 
 export function findCurrentTraversalVisualIndex(){
-    const traversalElem = traversialStrategy[currentId];
+    const traversalElem = global.settings.traversalStrategy[currentId];
     
     if(!isGroup(traversalElem) && traversalElem !== "dashboard" && traversalElem !== "globalFilter"){
         return currentVisuals.findIndex((vis: any) => vis.name === traversalElem);
@@ -210,7 +210,7 @@ export function createExplainGroupCard(){
 }
 
 function createExplainGroupText(){
-    const currentElement = traversialStrategy[currentId];
+    const currentElement = traversalStrategy[currentId];
     let explaination = "Please click on one of the highlighted visualisations to get its explaination.";
 
     switch(currentElement.type){

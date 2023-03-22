@@ -2,11 +2,12 @@ import * as helpers from "./helperFunctions";
 import * as global from "./globalVariables";
 import { getNewDashboardInfo } from "./dashboardInfoCard";
 import { replacer } from "../../componentGraph/ComponentGraph";
-import { findTraversalVisual, Group, isGroup, traversialStrategy } from "./traversal";
+import { findTraversalVisual, Group, isGroup, setBasicTraversalStrategy, traversalStrategy } from "./traversal";
 
 export async function createSettings(){
     const settings = global.createSettingsObject();
-    settings.traversal = await setTraversal();
+    settings.traversalStrategy = setTraversalStrategy();
+    settings.traversalElements = await setTraversalElements();
     settings.interactionExample = setInteractionExampleInfo();
 
     global.setSettings(settings);
@@ -14,47 +15,56 @@ export async function createSettings(){
     localStorage.setItem("settings", JSON.stringify(global.settings, replacer));
 }
 
-async function updateTraversal(){
-    const traversalElements = [];
-    const oldTraversalSettings = global.settings.traversal;
+// async function updateTraversal(){
+//     const traversalElements = [];
+//     const oldTraversalSettings = global.settings.traversal;
 
-    for (const elem of traversialStrategy) {
-        const oldSetting = oldTraversalSettings.find(elemSetting => elemSetting.id === elem);
-        if(oldSetting){
-            traversalElements.push(oldSetting);
-        } else {
-            traversalElements.push(await getTraversalElement(elem));
-        }
-    }
+//     for (const elem of traversalStrategy) {
+//         const oldSetting = oldTraversalSettings.find(elemSetting => elemSetting.id === elem);
+//         if(oldSetting){
+//             traversalElements.push(oldSetting);
+//         } else {
+//             traversalElements.push(await getTraversalElement(elem));
+//         }
+//     }
 
-    global.settings.traversal = traversalElements;
-    localStorage.setItem("settings", JSON.stringify(global.settings, replacer));
-}
+//     global.settings.traversal = traversalElements;
+//     localStorage.setItem("settings", JSON.stringify(global.settings, replacer));
+// }
 
 async function getTraversalElement(elem: string){
-    const traversalElements = [];
+    let traversalElement;
     if(isGroup(elem)){
-        const traversalGroupVisuals = setGroup(elem);
-        elem.visuals = await traversalGroupVisuals;
-        traversalElements.push(elem);
+        const traversalGroupVisuals = await setGroup(elem);
+        elem.visuals = traversalGroupVisuals;
+        traversalElement = elem;
     } else if(elem === "dashboard"){
-        traversalElements.push(setDashboardInfo());
+        traversalElement = setDashboardInfo();
     } else if(elem === "globalFilter"){
-        traversalElements.push(await setFilterInfo());
+        traversalElement = await setFilterInfo();
     } else {
-        traversalElements.push(await setVisualsInfo(elem));
+        traversalElement = await setVisualsInfo(elem);
     }
-    return traversalElements;
+    return traversalElement;
 }
 
-async function setTraversal(){
+async function setTraversalElements(){
     const traversalElements = [];
 
-    for (const elem of traversialStrategy) {
+    for (const elem of traversalStrategy) {
         traversalElements.push(await getTraversalElement(elem));
     }
 
     return traversalElements;
+}
+
+function setTraversalStrategy(){
+    traversalStrategy.push("dashboard");
+    for(const vis of global.currentVisuals){
+        traversalStrategy.push(vis.name);
+    }
+    traversalStrategy.push("globalFilter");
+    return traversalStrategy;
 }
 
 async function setGroup(elem: Group){

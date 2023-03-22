@@ -6,7 +6,7 @@ import { createIntroCard } from "./introCards";
 import { createFilterInfoCard, removeFilterInfoCard } from "./filterInfoCards";
 import { createVisualInfo } from "./visualInfo";
 import { createDashboardInfoCard, getNewDashboardInfo, removeDashboardInfoCard } from "./dashboardInfoCard";
-import { currentId, getCurrentTraversalElementType, groupType, isGroup, lookedAtInGroup, setCurrentId, traversialStrategy } from "./traversal";
+import { currentId, getCurrentTraversalElementType, groupType, isGroup, lookedAtInGroup, setCurrentId, traversalStrategy } from "./traversal";
 
 export async function createInfoCard(visual: any){
     disable.disableFrame();
@@ -33,7 +33,7 @@ export async function createInfoCard(visual: any){
 export function createInfoCardButtons(){
     if(currentId === 0 && global.isGuidedTour){
         createCardButtonsWithGroup("", "next");
-    } else if(currentId === traversialStrategy.length-1 && global.isGuidedTour){
+    } else if(currentId === global.settings.traversalStrategy.length-1 && global.isGuidedTour){
         createCardButtonsWithGroup("previous", "close");
     } else {
         createCardButtonsWithGroup("previous", "next");
@@ -41,7 +41,7 @@ export function createInfoCardButtons(){
 }
 
 export function createCardButtonsWithGroup(leftButton: string, rightButton: string){
-    const traversalElem = traversialStrategy[currentId];
+    const traversalElem = global.settings.traversalStrategy[currentId];
     if(isGroup(traversalElem)){
         switch(traversalElem.type){
             case groupType.all:
@@ -73,7 +73,7 @@ export function removeInfoCard(){
 }
 
 export function nextInfoCard(){
-    if(currentId == traversialStrategy.length-1){
+    if(currentId == global.settings.traversalStrategy.length-1){
         setCurrentId(0);
     } else {
         setCurrentId(currentId + 1);
@@ -106,7 +106,7 @@ export function nextInfoCard(){
 
 export function previousInfoCard(){
     if(currentId == 0){
-        setCurrentId(traversialStrategy.length-1);
+        setCurrentId(global.settings.traversalStrategy.length-1);
     } else {
         setCurrentId(currentId - 1);
     } 

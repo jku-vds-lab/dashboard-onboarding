@@ -96,7 +96,8 @@ export interface Target{
 
 export interface Settings{
     reportOffset: ReportOffset;
-    traversal: any[];
+    traversalElements: any[];
+    traversalStrategy: any[];
     interactionExample: InteractionExample;
 }
 
@@ -128,7 +129,8 @@ export interface InteractionVisual{
 export function createSettingsObject(){
     const settings : Settings = {
         reportOffset: createReportOffset(),
-        traversal: [] as any[],
+        traversalElements: [] as any[],
+        traversalStrategy: [] as any[],
         interactionExample: createInteractionExample()
     }
     return settings;

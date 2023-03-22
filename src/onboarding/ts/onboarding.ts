@@ -18,7 +18,7 @@ export async function onLoadReport(){
     await helpers.getVisuals();
     await helpers.createComponentGraph();
     //setBasicTraversalStrategy();
-    setTestAllGroupsTraversalStrategy();
+    //setTestAllGroupsTraversalStrategy();
     //setTestAtLeastOneGroupsTraversalStrategy();
     //setTestOnlyOneGroupsTraversalStrategy();
     await helpers.getSettings();

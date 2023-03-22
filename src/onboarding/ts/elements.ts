@@ -4,7 +4,7 @@ import { createFilterInfoCard } from "./filterInfoCards";
 import { createInfoCard } from "./infoCards";
 import { removeHintCard, removeShowChangesCard } from "./showReportChanges";
 import { showVisualChanges } from "./showVisualsChanges";
-import { createInformationCard, createLookedAtInGroup, currentId, findVisualIndexInTraversal, getCurrentTraversalElementType, isGroup, lookedAtInGroup, removeExplainGroupCard, setCurrentId, traversialStrategy } from "./traversal";
+import { createInformationCard, createLookedAtInGroup, currentId, findVisualIndexInTraversal, getCurrentTraversalElementType, isGroup, lookedAtInGroup, removeExplainGroupCard, setCurrentId, traversalStrategy } from "./traversal";
 
 export function addStylesheet(URL: string){
     const style = document.createElement('link');
@@ -38,7 +38,7 @@ export function createDiv(attributes: { id: any; style: any; classes: any; conte
                 removeContainerOffset();
                 removeExplainGroupCard();
                 setCurrentId(findVisualIndexInTraversal(attributes.id));
-                const currentElement = traversialStrategy[currentId];
+                const currentElement = global.settings.traversalStrategy[currentId];
                 if(isGroup(currentElement)){
                     if(currentElement.id === lookedAtInGroup.groupId){
                         lookedAtInGroup.elements.push(attributes.id);

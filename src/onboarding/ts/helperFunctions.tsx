@@ -442,7 +442,7 @@ export function getDataOfInteractionVisual(visual: any){
 }
 
 export function getDataOfVisual(visual: any){
-    const visualsData = global.settings.traversal;
+    const visualsData = global.settings.traversalElements;
     const visualData = visualsData.find(function (data) {
         return data.id == visual.name;
     });
@@ -451,11 +451,10 @@ export function getDataOfVisual(visual: any){
 }
 
 export function getDataWithId(ID: string){
-    const visuals = global.settings.traversal;
+    const visuals = global.settings.traversalElements;
     const visualData = visuals.find(function (visual) {
         return visual.id == ID;
     });
-
     return visualData;
 }
 
