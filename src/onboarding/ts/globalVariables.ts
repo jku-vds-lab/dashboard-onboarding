@@ -1,5 +1,6 @@
 import { Report, Page } from "powerbi-client";
 import ComponentGraph from "../../componentGraph/ComponentGraph";
+import { TraversalElement } from "./traversal";
 
 export const footerHeight = 37;
 export const filterClosedWidth = 33;
@@ -96,8 +97,7 @@ export interface Target{
 
 export interface Settings{
     reportOffset: ReportOffset;
-    traversalElements: any[];
-    traversalStrategy: any[];
+    traversalStrategy: TraversalElement[];
     interactionExample: InteractionExample;
 }
 
@@ -129,8 +129,7 @@ export interface InteractionVisual{
 export function createSettingsObject(){
     const settings : Settings = {
         reportOffset: createReportOffset(),
-        traversalElements: [] as any[],
-        traversalStrategy: [] as any[],
+        traversalStrategy: [] as TraversalElement[],
         interactionExample: createInteractionExample()
     }
     return settings;

@@ -17,12 +17,13 @@ export async function onLoadReport(){
     await helpers.getActivePage();
     await helpers.getVisuals();
     await helpers.createComponentGraph();
-    //setBasicTraversalStrategy();
-    setTestAllGroupsTraversalStrategy();
+    //await setBasicTraversalStrategy();
     //setTestAtLeastOneGroupsTraversalStrategy();
     //setTestOnlyOneGroupsTraversalStrategy();
-    updateTraversal(traversalStrategy);
     await helpers.getSettings();
+    await setTestAllGroupsTraversalStrategy();
+    console.log(traversalStrategy)
+    await updateTraversal(traversalStrategy);
     
     helpers.createEditOnboardingButtons();
     helpers.createOnboardingButtons();
@@ -173,7 +174,7 @@ export function createOnboardingOverlay(){
     createOverlay("globalFilter", style);
 }
 
-export function createOverlayForVisuals(visualIds: string[]){
+export function createOverlayForVisuals(visuals: any[]){
     global.setHasOverlay(true);
     global.setInteractionMode(false);
     removeFrame();
@@ -183,9 +184,9 @@ export function createOverlayForVisuals(visualIds: string[]){
     removeFilterInfoCard();
     removeInteractionCard();
 
-    visualIds.forEach(function (visualId: string) {
+    visuals.forEach(function (visualInfo: any) {
         let style = "";
-        switch(visualId){
+        switch(visualInfo.id){
             case "dashboard":
                 const attributes = global.createButtonAttributes();
                 attributes.id = "dashboardExplaination";
@@ -202,7 +203,7 @@ export function createOverlayForVisuals(visualIds: string[]){
                 createOverlay("globalFilter", style);
                 break;
             default:
-                const visual = global.currentVisuals.find((vis: any) => vis.name === visualId);
+                const visual = global.currentVisuals.find((vis: any) => vis.name === visualInfo.id);
                 style = helpers.getClickableStyle(visual.layout.y/reportDivisor, visual.layout.x/reportDivisor, visual.layout.width/reportDivisor, visual.layout.height/reportDivisor);
                 style += "border: 5px solid lightgreen;";
                 createOverlay(visual.name, style);

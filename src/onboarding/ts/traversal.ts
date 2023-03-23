@@ -12,9 +12,14 @@ import * as global from "./globalVariables";
 import { replacer } from "../../componentGraph/ComponentGraph";
 import { getTraversalElement } from "./createSettings";
 
-export let traversalStrategy: any[] = [];
+export let traversalStrategy: TraversalElement[] = [];
 export const lookedAtInGroup = createLookedAtInGroup();
 export let currentId=0;
+
+export interface TraversalElement{
+    element: any;
+    count: number;
+}
 
 export interface Group{
     id: string;
@@ -35,6 +40,14 @@ export enum groupType {
     all = "all",
     atLeastOne = "atLeastOne",
     onlyOne = "onlyOne"
+}
+
+export function createTraversalElement(){
+    const elem: TraversalElement = {
+        element: null,
+        count: 1
+    }
+    return elem;
 }
 
 export function createGroup(){
@@ -61,56 +74,110 @@ export function setTraversalStrategy(newTraversalStrategy: any[]){
     traversalStrategy = newTraversalStrategy;
 }
 
-export function setBasicTraversalStrategy(){
-    traversalStrategy.push("dashboard");
-    for(const vis of currentVisuals){
-        traversalStrategy.push(vis.name);
+export async function setBasicTraversalStrategy(){
+    const traversalElem1 = createTraversalElement();
+    traversalElem1.element = await getTraversalElement("dashboard");
+    traversalStrategy.push(traversalElem1);
+    for(const vis of global.currentVisuals){
+        const traversalElem = createTraversalElement();
+        traversalElem.element = await getTraversalElement(vis.name);
+        traversalStrategy.push(traversalElem);
     }
-    traversalStrategy.push("globalFilter");
+    const traversalElem2 = createTraversalElement();
+    traversalElem2.element = await getTraversalElement("globalFilter");
+    traversalStrategy.push(traversalElem2);
 }
 
-export function setTestAllGroupsTraversalStrategy(){
-    traversalStrategy.push("dashboard");
-    traversalStrategy.push(currentVisuals[0].name);
-    traversalStrategy.push(currentVisuals[1].name);
+export async function setTestAllGroupsTraversalStrategy(){
+    const traversalElem1 = createTraversalElement();
+    traversalElem1.element = await getTraversalElement("dashboard");
+    traversalStrategy.push(traversalElem1);
+    const traversalElem2 = createTraversalElement();
+    traversalElem2.element = await getTraversalElement(currentVisuals[0].name);
+    traversalStrategy.push(traversalElem2);
+    const traversalElem3 = createTraversalElement();
+    traversalElem3.element = await getTraversalElement(currentVisuals[1].name);
+    traversalStrategy.push(traversalElem3);
     const group = createGroup();
-    group.visuals.push(currentVisuals[2].name);
-    group.visuals.push(currentVisuals[3].name);
-    group.visuals.push(currentVisuals[4].name);
-    traversalStrategy.push(group);
-    traversalStrategy.push(currentVisuals[5].name);
-    traversalStrategy.push(currentVisuals[6].name);
-    traversalStrategy.push("globalFilter");
+    const traversalElemv1 = createTraversalElement();
+    traversalElemv1.element = await getTraversalElement(currentVisuals[2].name);
+    group.visuals.push(traversalElemv1);
+    const traversalElemv2 = createTraversalElement();
+    traversalElemv2.element = await getTraversalElement(currentVisuals[3].name);
+    group.visuals.push(traversalElemv2);
+    const traversalElemv3 = createTraversalElement();
+    traversalElemv3.element = await getTraversalElement(currentVisuals[4].name);
+    group.visuals.push(traversalElemv3);
+    const traversalElem4 = createTraversalElement();
+    traversalElem4.element = group;
+    traversalStrategy.push(traversalElem4);
+    const traversalElem5 = createTraversalElement();
+    traversalElem5.element = await getTraversalElement(currentVisuals[5].name);
+    traversalStrategy.push(traversalElem5);
+    const traversalElem6 = createTraversalElement();
+    traversalElem6.element = await getTraversalElement(currentVisuals[6].name);
+    traversalStrategy.push(traversalElem6);
+    const traversalElem7 = createTraversalElement();
+    traversalElem7.element = await getTraversalElement("globalFilter");
+    traversalStrategy.push(traversalElem7);
 }
 
-export function setTestAtLeastOneGroupsTraversalStrategy(){
-    traversalStrategy.push("dashboard");
-    traversalStrategy.push(currentVisuals[0].name);
-    traversalStrategy.push(currentVisuals[1].name);
+export async function setTestAtLeastOneGroupsTraversalStrategy(){
+    const traversalElem1 = createTraversalElement();
+    traversalElem1.element = await getTraversalElement("dashboard");
+    traversalStrategy.push(traversalElem1);
+    const traversalElem2 = createTraversalElement();
+    traversalElem2.element = await getTraversalElement(currentVisuals[0].name);
+    traversalStrategy.push(traversalElem2);
+    const traversalElem3 = createTraversalElement();
+    traversalElem3.element = await getTraversalElement(currentVisuals[1].name);
+    traversalStrategy.push(traversalElem3);
     const group = createGroup();
     group.type = groupType.atLeastOne;
-    group.visuals.push(currentVisuals[2].name);
-    group.visuals.push(currentVisuals[3].name);
-    group.visuals.push(currentVisuals[4].name);
-    traversalStrategy.push(group);
-    traversalStrategy.push(currentVisuals[5].name);
-    traversalStrategy.push(currentVisuals[6].name);
-    traversalStrategy.push("globalFilter");
+    group.visuals.push(await getTraversalElement(currentVisuals[2].name));
+    group.visuals.push(await getTraversalElement(currentVisuals[3].name));
+    group.visuals.push(await getTraversalElement(currentVisuals[4].name));
+    const traversalElem4 = createTraversalElement();
+    traversalElem4.element = group;
+    traversalStrategy.push(traversalElem4);
+    const traversalElem5 = createTraversalElement();
+    traversalElem5.element = await getTraversalElement(currentVisuals[5].name);
+    traversalStrategy.push(traversalElem5);
+    const traversalElem6 = createTraversalElement();
+    traversalElem6.element = await getTraversalElement(currentVisuals[6].name);
+    traversalStrategy.push(traversalElem6);
+    const traversalElem7 = createTraversalElement();
+    traversalElem7.element = await getTraversalElement("globalFilter");
+    traversalStrategy.push(traversalElem7);
 }
 
-export function setTestOnlyOneGroupsTraversalStrategy(){
-    traversalStrategy.push("dashboard");
-    traversalStrategy.push(currentVisuals[0].name);
-    traversalStrategy.push(currentVisuals[1].name);
+export async function setTestOnlyOneGroupsTraversalStrategy(){
+    const traversalElem1 = createTraversalElement();
+    traversalElem1.element = await getTraversalElement("dashboard");
+    traversalStrategy.push(traversalElem1);
+    const traversalElem2 = createTraversalElement();
+    traversalElem2.element = await getTraversalElement(currentVisuals[0].name);
+    traversalStrategy.push(traversalElem2);
+    const traversalElem3 = createTraversalElement();
+    traversalElem3.element = await getTraversalElement(currentVisuals[1].name);
+    traversalStrategy.push(traversalElem3);
     const group = createGroup();
     group.type = groupType.onlyOne;
-    group.visuals.push(currentVisuals[2].name);
-    group.visuals.push(currentVisuals[3].name);
-    group.visuals.push(currentVisuals[4].name);
-    traversalStrategy.push(group);
-    traversalStrategy.push(currentVisuals[5].name);
-    traversalStrategy.push(currentVisuals[6].name);
-    traversalStrategy.push("globalFilter");
+    group.visuals.push(await getTraversalElement(currentVisuals[2].name));
+    group.visuals.push(await getTraversalElement(currentVisuals[3].name));
+    group.visuals.push(await getTraversalElement(currentVisuals[4].name));
+    const traversalElem4 = createTraversalElement();
+    traversalElem4.element = group;
+    traversalStrategy.push(traversalElem4);
+    const traversalElem5 = createTraversalElement();
+    traversalElem5.element = await getTraversalElement(currentVisuals[5].name);
+    traversalStrategy.push(traversalElem5);
+    const traversalElem6 = createTraversalElement();
+    traversalElem6.element = await getTraversalElement(currentVisuals[6].name);
+    traversalStrategy.push(traversalElem6);
+    const traversalElem7 = createTraversalElement();
+    traversalElem7.element = await getTraversalElement("globalFilter");
+    traversalStrategy.push(traversalElem7);
 }
 
 export function createInformationCard(type: string, visuals?: any[], visualId?:string){
@@ -139,33 +206,33 @@ export function createInformationCard(type: string, visuals?: any[], visualId?:s
 }
 
 export function getCurrentTraversalElementType(){
-    const currentElement = global.settings.traversalStrategy[currentId];
+    const currentElement = global.settings.traversalStrategy[currentId].element;
 
     if(isGroup(currentElement)){
         createInformationCard("group", currentElement.visuals, undefined);
-    } else if(currentElement === "dashboard"){
+    } else if(currentElement.id === "dashboard"){
         createInformationCard("dashboard");
-    } else if(currentElement === "globalFilter"){
+    } else if(currentElement.id === "globalFilter"){
         createInformationCard("globalFilter");
     } else {
-        createInformationCard("visual", undefined, currentElement);
+        createInformationCard("visual", undefined, currentElement.id);
     }
 }
 
 export function createGroupOverlay(){
-    const currentElement = global.settings.traversalStrategy[currentId];
+    const currentElement = global.settings.traversalStrategy[currentId].element;
     createInformationCard("group", currentElement.visuals, undefined);
 }
 
 
 export function findVisualIndexInTraversal(id: string){
-    let index = global.settings.traversalStrategy.indexOf(id);
+    let index = global.settings.traversalStrategy.map(visualInfo => visualInfo.element.id).indexOf(id);
     if(index  == -1){
-       const groups =  global.settings.traversalStrategy.filter(object => isGroup(object));
+       const groups =  global.settings.traversalStrategy.map(visualInfo => visualInfo.element).filter(object => isGroup(object));
        for(const group of groups){
-            const indexInGroup = group.visuals.indexOf(id);
+            const indexInGroup = group.visuals.map((visualInfo: TraversalElement) => visualInfo.element.id).indexOf(id);
             if(indexInGroup != -1){
-                index = global.settings.traversalStrategy.indexOf(group);
+                index = global.settings.traversalStrategy.map(visualInfo => visualInfo.element.id).indexOf(group.id);
                 return index;
             }
        }
@@ -183,20 +250,20 @@ export function findTraversalVisual(id:string){
 }
 
 export function findCurrentTraversalVisual(){
-    const traversalElem = global.settings.traversalStrategy[currentId];
+    const traversalElem = global.settings.traversalStrategy[currentId].element;
     
-    if(!isGroup(traversalElem) && traversalElem !== "dashboard" && traversalElem !== "globalFilter"){
-        return currentVisuals.find((vis: any) => vis.name === traversalElem);
+    if(!isGroup(traversalElem) && traversalElem.id !== "dashboard" && traversalElem.id !== "globalFilter"){
+        return currentVisuals.find((vis: any) => vis.name === traversalElem.id);
     }
 
     return null;
 }
 
 export function findCurrentTraversalVisualIndex(){
-    const traversalElem = global.settings.traversalStrategy[currentId];
+    const traversalElem = global.settings.traversalStrategy[currentId].element;
     
-    if(!isGroup(traversalElem) && traversalElem !== "dashboard" && traversalElem !== "globalFilter"){
-        return currentVisuals.findIndex((vis: any) => vis.name === traversalElem);
+    if(!isGroup(traversalElem) && traversalElem.id !== "dashboard" && traversalElem.id !== "globalFilter"){
+        return currentVisuals.findIndex((vis: any) => vis.name === traversalElem.id);
     }
 
     return 0;
@@ -215,7 +282,7 @@ export function createExplainGroupCard(){
 }
 
 function createExplainGroupText(){
-    const currentElement = traversalStrategy[currentId];
+    const currentElement = traversalStrategy[currentId].element;
     let explaination = "Please click on one of the highlighted visualisations to get its explaination.";
 
     switch(currentElement.type){
@@ -233,38 +300,53 @@ function createExplainGroupText(){
     return explaination;
 }
 
-export async function updateTraversal(newTraversalStrategy: any[]){
-    const traversalElements = [];
-    const oldTraversalSettings = global.settings.traversalElements;
+export async function updateTraversal(newTraversalStrategy: TraversalElement[]){
+    const traversal: TraversalElement[] = [];
+    const oldTraversalStrategy = global.settings.traversalStrategy;
+    setTraversalStrategy([]);
+    global.settings.traversalStrategy = [];
+    localStorage.setItem("settings", JSON.stringify(global.settings, replacer));
 
     for (const elem of newTraversalStrategy) {
-        if(isGroup(elem)){
-            for(const groupElem of elem.visuals){
-                const oldSetting = oldTraversalSettings.find(elemSetting => elemSetting.id === elem);
-                if(oldSetting){
-                    traversalElements.push(oldSetting);
-                } else {
-                    traversalElements.push(await getTraversalElement(groupElem));
+        if(isGroup(elem.element)){
+            const oldGroup = oldTraversalStrategy.find(elemSetting => elemSetting.element.id === elem.element.id);
+            if(oldGroup){
+                const newVisuals = [];
+                for(const groupElem of elem.element.visuals){
+                    const oldSetting = oldGroup?.element.visuals.find((elemSetting: TraversalElement) => elemSetting.element.id === groupElem.element.id);
+                    if(oldSetting){
+                        newVisuals.push(oldSetting);
+                    } else {
+                        newVisuals.push(await getTraversalElement(groupElem.element.id));
+                    }
                 }
+                elem.element.visuals = newVisuals;
+                traversal.push(elem);
+            } else {
+                const traversalElem = createTraversalElement();
+                traversalElem.element = await getTraversalElement(elem.element);
+                traversal.push(traversalElem);
             }
         }else{
-            const oldSetting = oldTraversalSettings.find(elemSetting => elemSetting.id === elem);
+            const oldSetting = oldTraversalStrategy.find(elemSetting => elemSetting.element.id === elem.element.id);
             if(oldSetting){
-                traversalElements.push(oldSetting);
+                traversal.push(oldSetting);
             } else {
-                traversalElements.push(await getTraversalElement(elem));
+                const traversalElem = createTraversalElement();
+                    traversalElem.element = await getTraversalElement(elem.element.id);
+                    traversal.push(traversalElem);
             }
         }
     }
 
-    setTraversalStrategy(newTraversalStrategy);
-    global.settings.traversalStrategy = newTraversalStrategy;
-    global.settings.traversalElements = traversalElements;
+    setTraversalStrategy(traversal);
+    global.settings.traversalStrategy = traversal;
+    console.log(global.settings)
     localStorage.setItem("settings", JSON.stringify(global.settings, replacer));
 }
 
 export function updateLookedAt(id: string){
-    const currentElement = global.settings.traversalStrategy[currentId];
+    const currentElement = global.settings.traversalStrategy[currentId].element;
     if(isGroup(currentElement)){
         if(currentElement.id === lookedAtInGroup.groupId){
             lookedAtInGroup.elements.push(id);

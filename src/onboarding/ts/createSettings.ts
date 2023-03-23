@@ -2,20 +2,19 @@ import * as helpers from "./helperFunctions";
 import * as global from "./globalVariables";
 import { getNewDashboardInfo } from "./dashboardInfoCard";
 import { replacer } from "../../componentGraph/ComponentGraph";
-import { findTraversalVisual, Group, isGroup, setBasicTraversalStrategy, traversalStrategy } from "./traversal";
+import { createTraversalElement, findTraversalVisual, Group, isGroup, setBasicTraversalStrategy, traversalStrategy } from "./traversal";
 
 export async function createSettings(){
     const settings = global.createSettingsObject();
-    settings.traversalStrategy = setTraversalStrategy();
-    settings.traversalElements = await setTraversalElements();
+    settings.traversalStrategy = await setTraversalStrategy();
     settings.interactionExample = setInteractionExampleInfo();
 
     global.setSettings(settings);
-
+console.log(global.settings)
     localStorage.setItem("settings", JSON.stringify(global.settings, replacer));
 }
 
-export async function getTraversalElement(elem: string){
+export async function getTraversalElement(elem: any){
     let traversalElement;
     if(isGroup(elem)){
         const traversalGroupVisuals = await setGroup(elem);
@@ -31,34 +30,36 @@ export async function getTraversalElement(elem: string){
     return traversalElement;
 }
 
-async function setTraversalElements(){
-    const traversalElements = [];
-
-    for (const elem of traversalStrategy) {
-        traversalElements.push(await getTraversalElement(elem));
-    }
-
-    return traversalElements;
-}
-
-function setTraversalStrategy(){
-    traversalStrategy.push("dashboard");
+async function setTraversalStrategy(){
+    const traversalElem1 = createTraversalElement();
+    traversalElem1.element = await getTraversalElement("dashboard");
+    traversalStrategy.push(traversalElem1);
     for(const vis of global.currentVisuals){
-        traversalStrategy.push(vis.name);
+        const traversalElem = createTraversalElement();
+        traversalElem.element = await getTraversalElement(vis.name);
+        traversalStrategy.push(traversalElem);
     }
-    traversalStrategy.push("globalFilter");
+    const traversalElem2 = createTraversalElement();
+    traversalElem2.element = await getTraversalElement("globalFilter");
+    traversalStrategy.push(traversalElem2);
     return traversalStrategy;
 }
 
 async function setGroup(elem: Group){
     const traversalVisuals = []
     for (const vis of elem.visuals) {
-        if(vis === "dashboard"){
-            traversalVisuals.push(setDashboardInfo());
-        } else if(vis === "globalFilter"){
-            traversalVisuals.push(await setFilterInfo());
+        if(vis.element.id === "dashboard"){
+            const traversalElem = createTraversalElement();
+            traversalElem.element =setDashboardInfo();
+            traversalVisuals.push(traversalElem);
+        } else if(vis.element.id === "globalFilter"){
+            const traversalElem = createTraversalElement();
+            traversalElem.element = await setFilterInfo();
+            traversalVisuals.push(traversalElem);
         } else {
-            traversalVisuals.push(await setVisualsInfo(vis));
+            const traversalElem = createTraversalElement();
+            traversalElem.element = await setVisualsInfo(vis.element.id)
+            traversalVisuals.push(traversalElem);
         }
     }
     return traversalVisuals;

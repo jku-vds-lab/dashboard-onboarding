@@ -442,20 +442,20 @@ export function getDataOfInteractionVisual(visual: any){
 }
 
 export function getDataOfVisual(visual: any){
-    const visualsData = global.settings.traversalElements;
+    const visualsData = global.settings.traversalStrategy;
     const visualData = visualsData.find(function (data) {
-        return data.id == visual.name;
+        return data.element.id == visual.name;
     });
 
-    return visualData;
+    return visualData?.element;
 }
 
 export function getDataWithId(ID: string){
-    const visuals = global.settings.traversalElements;
+    const visuals = global.settings.traversalStrategy;
     const visualData = visuals.find(function (visual) {
-        return visual.id == ID;
+        return visual.element.id == ID;
     });
-    return visualData;
+    return visualData?.element;
 }
 
 function getDisabledStyle(top: number, left: number, width: number, height: number){

@@ -41,11 +41,11 @@ export function createInfoCardButtons(){
 }
 
 export function createCardButtonsWithGroup(leftButton: string, rightButton: string){
-    const traversalElem = global.settings.traversalStrategy[currentId];
+    const traversalElem = global.settings.traversalStrategy[currentId].element;
     if(isGroup(traversalElem)){
         switch(traversalElem.type){
             case groupType.all:
-                if(traversalElem.visuals.every(id => lookedAtInGroup.elements.includes(id))){
+                if(traversalElem.visuals.every(vis => lookedAtInGroup.elements.includes(vis.element.id))){
                     helpers.createCardButtons(leftButton, "", rightButton);
                 } else {
                     helpers.createCardButtons("", "back to group", "");
