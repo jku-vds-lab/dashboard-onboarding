@@ -8,7 +8,7 @@ import { createVisualInfo } from "./visualInfo";
 import { createDashboardInfoCard, getNewDashboardInfo, removeDashboardInfoCard } from "./dashboardInfoCard";
 import { currentId, getCurrentTraversalElementType, groupType, isGroup, lookedAtInGroup, setCurrentId, traversalStrategy } from "./traversal";
 
-export async function createInfoCard(visual: any){
+export async function createInfoCard(visual: any, count: number){
     disable.disableFrame();
     disable.createDisabledArea(visual);
 
@@ -23,11 +23,11 @@ export async function createInfoCard(visual: any){
         helpers.createCloseButton("closeButton", "closeButtonPlacementBig", "", helpers.getCloseFunction(), "infoCard");
     }
 
-    const visualData = helpers.getDataOfVisual(visual);
+    const visualData = helpers.getDataOfVisual(visual, count);
     helpers.createCardContent(visualData?.title, "", "infoCard");
     createInfoCardButtons();
 
-    await createVisualInfo(visual);
+    await createVisualInfo(visual, count);
 }
 
 export function createInfoCardButtons(){
@@ -139,9 +139,9 @@ export function previousInfoCard(){
     // }   
 }
 
-export async function getVisualInfo(idParts: string[]){
+export async function getVisualInfo(idParts: string[], count: number){
     const info = [];
-    const visualData = helpers.getDataWithId(idParts[0]);
+    const visualData = helpers.getDataWithId(idParts[0], count);
     if (!visualData) {
       return;
     }
@@ -196,8 +196,8 @@ export async function getVisualInfo(idParts: string[]){
     return info;
 }
 
-export async function saveVisualChanges(newInfo: string[], idParts: string[]){
-    const visualData = helpers.getDataWithId(idParts[0]);
+export async function saveVisualChanges(newInfo: string[], idParts: string[], count: number){
+    const visualData = helpers.getDataWithId(idParts[0], count);
     if (!visualData) {
       return;
     }
@@ -298,8 +298,8 @@ async function getOriginalVisualInfos(idParts: string[]){
     return info;
   }
 
-export async function resetVisualChanges(idParts: string[]){
-    const visualData = helpers.getDataWithId(idParts[0]);
+export async function resetVisualChanges(idParts: string[],count: number){
+    const visualData = helpers.getDataWithId(idParts[0], count);
     if (!visualData) {
       return;
     }

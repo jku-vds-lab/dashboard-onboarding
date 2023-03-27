@@ -11,19 +11,26 @@ import { createDashboardInfoCard, removeDashboardInfoCard } from "./dashboardInf
 import { reportDivisor, resize, textSize } from "./sizes";
 import { createFilterInfoCard, removeFilterInfoCard } from "./filterInfoCards";
 import { showVisualChanges } from "./showVisualsChanges";
-import { createExplainGroupCard, currentId, findCurrentTraversalVisual, findVisualIndexInTraversal, getCurrentTraversalElementType, isGroup, lookedAtInGroup, removeExplainGroupCard, setBasicTraversalStrategy, setCurrentId, setTestAllGroupsTraversalStrategy, setTestAtLeastOneGroupsTraversalStrategy, setTestOnlyOneGroupsTraversalStrategy, traversalStrategy, updateLookedAt, updateTraversal } from "./traversal";
+import { createExplainGroupCard, currentId, findCurrentTraversalCount, findCurrentTraversalVisual, findTraversalVisual, findVisualIndexInTraversal, getCurrentTraversalElementType, isGroup, lookedAtInGroup, removeExplainGroupCard, setBasicTraversalStrategy, setCurrentId, setTestAllGroupsTraversalStrategy, setTestAtLeastOneGroupsTraversalStrategy, setTestOnlyOneGroupsTraversalStrategy, traversalStrategy, updateLookedAt, updateTraversal } from "./traversal";
+import { replacer } from "../../componentGraph/ComponentGraph";
 
 export async function onLoadReport(){
     await helpers.getActivePage();
     await helpers.getVisuals();
     await helpers.createComponentGraph();
-    //await setBasicTraversalStrategy();
-    //setTestAtLeastOneGroupsTraversalStrategy();
-    //setTestOnlyOneGroupsTraversalStrategy();
     await helpers.getSettings();
-    await setTestAllGroupsTraversalStrategy();
-    console.log(traversalStrategy)
-    await updateTraversal(traversalStrategy);
+
+    const trav = await setTestAllGroupsTraversalStrategy();
+    console.log(trav)
+    await updateTraversal(trav);
+
+    // const trav = await setTestOnlyOneGroupsTraversalStrategy();
+    // console.log(trav)
+    // await updateTraversal(trav);
+
+    // const trav = await setTestAtLeastOneGroupsTraversalStrategy();
+    // console.log(trav)
+    // await updateTraversal(trav);
     
     helpers.createEditOnboardingButtons();
     helpers.createOnboardingButtons();
@@ -67,9 +74,9 @@ export async function reloadOnboardingAt(){
     if(document.getElementById("introCard")){
         await startOnboardingAt("intro");
     } else if(document.getElementById("dashboardInfoCard")){
-        await startOnboardingAt("dashboard");
+        await startOnboardingAt("dashboard", findCurrentTraversalCount());
     } else if(document.getElementById("filterInfoCard")){
-        await startOnboardingAt("globalFilter");
+        await startOnboardingAt("globalFilter", findCurrentTraversalCount());
     } else if(document.getElementById("interactionCard")){
         await startOnboardingAt("interaction");
     } else if(document.getElementById("showChangesCard")){
@@ -77,16 +84,16 @@ export async function reloadOnboardingAt(){
     } else if(document.getElementById("showVisualChangesCard")){
         await startOnboardingAt("visualChanged", global.interactionSelectedVisual);
     } else if(document.getElementById("infoCard")){
-        const visual = findCurrentTraversalVisual();
-        if(visual){
-            await startOnboardingAt("visual", visual);
+        const traversalElement = findCurrentTraversalVisual();
+        if(traversalElement){
+            await startOnboardingAt("visual", traversalElement[0], traversalElement[1]);
         }
     } else if(global.hasOverlay && !global.interactionMode){
         await startOnboardingAt("explorationOverlay");
     }
 }
 
-export async function startOnboardingAt(type: string, visual?: any){
+export async function startOnboardingAt(type: string, visual?: any, count?: number){
     helpers.reloadOnboarding();
 
     switch(type){
@@ -94,10 +101,10 @@ export async function startOnboardingAt(type: string, visual?: any){
             createIntroCard();
             break;
         case "dashboard":
-            createDashboardInfoCard();
+            createDashboardInfoCard(count!);
             break;
         case "globalFilter":
-            await createFilterInfoCard();
+            await createFilterInfoCard(count!);
             break;
         case "interaction":
             await startInteractionExample();
@@ -110,7 +117,7 @@ export async function startOnboardingAt(type: string, visual?: any){
             await showVisualChanges(visual);
             break;
         case "visual":
-            await createInfoCard(visual);
+            await createInfoCard(visual, count!);
             break;
         case "explorationOverlay":
             createOnboardingOverlay()
@@ -153,7 +160,7 @@ export function createOnboardingOverlay(){
     attributes.content = "Dashboard Explaination";
     attributes.style =  `font-size: ${textSize}rem; ` + global.onboardingButtonStyle;
     attributes.classes = "col-2 " +  global.darkOutlineButtonClass;
-    attributes.function = createDashboardInfoOnButtonClick;
+    attributes.function = ( ) => { return createDashboardInfoOnButtonClick(1) };
     attributes.parentId = "onboarding-header";
     elements.createButton(attributes);
 
@@ -167,11 +174,11 @@ export function createOnboardingOverlay(){
 
     global.currentVisuals.forEach(function (visual: any) {
         const style = helpers.getClickableStyle(visual.layout.y/reportDivisor, visual.layout.x/reportDivisor, visual.layout.width/reportDivisor, visual.layout.height/reportDivisor);
-        createOverlay(visual.name, style);
+        createOverlay(visual.name, style, 1);
     });
 
     const style = helpers.getClickableStyle(-global.settings.reportOffset.top, global.reportWidth!, global.filterOpenedWidth, global.reportHeight!);
-    createOverlay("globalFilter", style);
+    createOverlay("globalFilter", style, 1);
 }
 
 export function createOverlayForVisuals(visuals: any[]){
@@ -186,44 +193,46 @@ export function createOverlayForVisuals(visuals: any[]){
 
     visuals.forEach(function (visualInfo: any) {
         let style = "";
-        switch(visualInfo.id){
+        switch(visualInfo.element.id){
             case "dashboard":
                 const attributes = global.createButtonAttributes();
                 attributes.id = "dashboardExplaination";
+                attributes.count = visualInfo.count;
                 attributes.content = "Dashboard Explaination";
                 attributes.style =  `font-size: ${textSize}rem; border: 5px solid lightgreen;` + global.onboardingButtonStyle;
                 attributes.classes = "col-2 " +  global.darkOutlineButtonClass;
-                attributes.function = createDashboardInfoOnButtonClick;
+                attributes.function = ( ) => { return createDashboardInfoOnButtonClick(visualInfo.count) };
                 attributes.parentId = "onboarding-header";
                 elements.createButton(attributes);
                 break;
             case "globalFilter":
                 style = helpers.getClickableStyle(-global.settings.reportOffset.top, global.reportWidth!, global.filterOpenedWidth, global.reportHeight!);
                 style += "border: 5px solid lightgreen;";
-                createOverlay("globalFilter", style);
+                createOverlay("globalFilter", style, visualInfo.count);
                 break;
             default:
-                const visual = global.currentVisuals.find((vis: any) => vis.name === visualInfo.id);
+                const visual = global.currentVisuals.find((vis: any) => vis.name === visualInfo.element.id);
                 style = helpers.getClickableStyle(visual.layout.y/reportDivisor, visual.layout.x/reportDivisor, visual.layout.width/reportDivisor, visual.layout.height/reportDivisor);
                 style += "border: 5px solid lightgreen;";
-                createOverlay(visual.name, style);
+                createOverlay(visual.name, style, visualInfo.count);
                 break;
         }
     });
 }
 
-function createDashboardInfoOnButtonClick(){
+function createDashboardInfoOnButtonClick(count: number){
     helpers.removeOnboardingOverlay();
     helpers.removeContainerOffset();
     removeExplainGroupCard();
-    setCurrentId(findVisualIndexInTraversal("dashboard"));
+    setCurrentId(findVisualIndexInTraversal("dashboard", count));
     updateLookedAt("dashboard");
-    createDashboardInfoCard()
+    createDashboardInfoCard(1);
 }
 
-function createOverlay(id: string, style: string){
+function createOverlay(id: string, style: string, count: number,){
     const attributes = global.createDivAttributes();
     attributes.id = id;
+    attributes.count = count;
     attributes.style = style;
     attributes.clickable = true;
     attributes.parentId = "onboarding";

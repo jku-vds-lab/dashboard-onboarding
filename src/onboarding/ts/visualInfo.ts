@@ -5,17 +5,17 @@ import * as info from "./visualInfo";
 import bulletpointImg from "../assets/dot.png";
 import { divisor } from "./sizes";
 
-export async function createVisualInfo(visual: any){
+export async function createVisualInfo(visual: any, count: number){
     const visualInfos = await helpers.getVisualInfos(visual);
 
     document.getElementById("contentText")!.innerHTML = "";
-    info.createTabsWithContent(visual, visualInfos);
+    info.createTabsWithContent(visual, count, visualInfos);
 }
 
-export function createTabsWithContent(visual: any, visualInfos: { generalImages: any; generalInfos: any; interactionImages: any; interactionInfos: any; insightImages: any; insightInfos: any;}){
+export function createTabsWithContent(visual: any, count: number, visualInfos: { generalImages: any; generalInfos: any; interactionImages: any; interactionInfos: any; insightImages: any; insightInfos: any;}){
     let hasInsightInfo = false;
     let hasInteractionInfo = false;
-    const visualData = helpers.getDataOfVisual(visual);
+    const visualData = helpers.getDataOfVisual(visual, count);
     if(!visualData){
         return;
     }

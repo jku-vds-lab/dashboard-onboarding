@@ -12,9 +12,9 @@ import { findCurrentTraversalVisual } from "./traversal";
 export function startInteractionExample(){
     global.setInteractionMode(true);
     infoCard.removeInfoCard();
-    const visual = findCurrentTraversalVisual();
-        if(visual){
-            createInteractionCard(visual);
+    const traversalElem = findCurrentTraversalVisual();
+        if(traversalElem){
+            createInteractionCard(traversalElem[0]);
         }
 }
 

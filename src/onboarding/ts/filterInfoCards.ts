@@ -5,7 +5,7 @@ import Filter from "../../componentGraph/Filter";
 import { removeElement } from "./elements";
 import { createInfoCardButtons } from "./infoCards";
 
-export async function createFilterInfoCard(){
+export async function createFilterInfoCard(count: number){
     createFilterDisabledArea();
   
     const style = helpers.getCardStyle(global.infoCardMargin, global.reportWidth! - global.infoCardMargin - global.infoCardWidth, global.infoCardWidth, "");
@@ -13,7 +13,7 @@ export async function createFilterInfoCard(){
 
     helpers.createCloseButton("closeButton", "closeButtonPlacementBig", "", helpers.getCloseFunction(), "filterInfoCard");
 
-    const filterData = helpers.getDataWithId("globalFilter");
+    const filterData = helpers.getDataWithId("globalFilter", count);
     if (!filterData) {
       return;
     }
@@ -21,7 +21,7 @@ export async function createFilterInfoCard(){
     helpers.createCardContent(filterData.title, filterData.generalInformation, "filterInfoCard");
     createInfoCardButtons();
     
-    const filters = await getFilterInfos();
+    const filters = await getFilterInfos(count);
     if(filters){
        createFilterList(filters, "contentText"); 
     }
@@ -52,10 +52,10 @@ export function getFilterDescription(filter: Filter){
     return filter.attribute + ": " + filterText;
 }
 
-export async function getFilterInfos(){
+export async function getFilterInfos(count: number){
     const filterInfos = await helpers.getFilterInfo();
 
-    const filterData = helpers.getDataWithId("globalFilter");
+    const filterData = helpers.getDataWithId("globalFilter", count);
     if (!filterData) {
       return;
     }

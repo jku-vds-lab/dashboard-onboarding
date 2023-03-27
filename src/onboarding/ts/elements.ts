@@ -4,7 +4,7 @@ import { createFilterInfoCard } from "./filterInfoCards";
 import { createInfoCard } from "./infoCards";
 import { removeHintCard, removeShowChangesCard } from "./showReportChanges";
 import { showVisualChanges } from "./showVisualsChanges";
-import { createInformationCard, createLookedAtInGroup, currentId, findVisualIndexInTraversal, getCurrentTraversalElementType, isGroup, lookedAtInGroup, removeExplainGroupCard, setCurrentId, traversalStrategy, updateLookedAt } from "./traversal";
+import { createInformationCard, createLookedAtInGroup, currentId, findCurrentTraversalCount, findVisualIndexInTraversal, getCurrentTraversalElementType, isGroup, lookedAtInGroup, removeExplainGroupCard, setCurrentId, traversalStrategy, updateLookedAt } from "./traversal";
 
 export function addStylesheet(URL: string){
     const style = document.createElement('link');
@@ -14,7 +14,7 @@ export function addStylesheet(URL: string){
     document.head.appendChild(style)
 }
 
-export function createDiv(attributes: { id: any; style: any; classes: any; content: any; role: any; label: any; clickable: any; selectedTargets?: any; eventType: any; eventFunction: any; parentId: any; }){
+export function createDiv(attributes: { id: any; count: number, style: any; classes: any; content: any; role: any; label: any; clickable: any; selectedTargets?: any; eventType: any; eventFunction: any; parentId: any; }){
     const div = document.createElement('div');
     div.id = attributes.id;
     div.style.cssText = attributes.style;
@@ -37,21 +37,23 @@ export function createDiv(attributes: { id: any; style: any; classes: any; conte
                 removeOnboardingOverlay();
                 removeContainerOffset();
                 removeExplainGroupCard();
-                setCurrentId(findVisualIndexInTraversal(attributes.id));
-                updateLookedAt(attributes.id);
-                // getCurrentTraversalElementType();
-                if(attributes.id === "globalFilter"){
-                    createInformationCard("globalFilter");
-                } else {
-                    createInformationCard("visual", undefined, attributes.id);
+                setCurrentId(findVisualIndexInTraversal(attributes.id, attributes.count));
+                const currentElem = global.settings.traversalStrategy[currentId].element;
+                if(isGroup(currentElem)){
+                    updateLookedAt(attributes.id);
+                    const elemInGroup = currentElem.visuals.find(vis => vis.element.id === attributes.id);
+                    if(attributes.id === "globalFilter"){
+                        createInformationCard("globalFilter", elemInGroup.count);
+                    } else {
+                        createInformationCard("visual", elemInGroup.count, undefined, attributes.id);
+                    }
+                } else{
+                    if(attributes.id === "globalFilter"){
+                        createInformationCard("globalFilter", 1);
+                    } else {
+                        createInformationCard("visual", 1, undefined, attributes.id);
+                    }
                 }
-                // if(attributes.id === "filter"){
-                //     global.setCurrentVisualIndex(global.currentVisuals.length);
-                //     createFilterInfoCard();
-                // }else{
-                //     global.setCurrentVisualIndex(getVisualIndex(attributes.id));
-                //     createInfoCard(global.currentVisuals[global.currentVisualIndex]);
-                // }  
             }
         }  
     }
@@ -59,7 +61,7 @@ export function createDiv(attributes: { id: any; style: any; classes: any; conte
     document.getElementById(attributes.parentId)?.appendChild(div);
 }
 
-export function createButton(attributes: { id: any; content: any; style: any; classes: any; function: any; parentId: any; }){
+export function createButton(attributes: { id: any; count: number, content: any; style: any; classes: any; function: any; parentId: any; }){
     const button = document.createElement('button');
     button.id = attributes.id;
     button.type = "button";

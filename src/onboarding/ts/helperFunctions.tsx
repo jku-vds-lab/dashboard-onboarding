@@ -6,7 +6,7 @@ import { removeFrame } from "./disableArea";
 import { createGuidedTour, createDashboardExploration, createOnboardingOverlay } from "./onboarding";
 //import { saveOnboardingChanges } from "./authorMode";
 import { createSettings } from "./createSettings";
-import { addVisualTextarea } from "./listOfVisuals";
+// import { addVisualTextarea } from "./listOfVisuals";
 import { getInteractionText, removeInteractionCard, startInteractionExample } from "./interactionExample";
 import { removeHintCard, removeShowChangesCard, showReportChanges } from "./showReportChanges";
 import { getCardInfo, getSlicerInfo } from "./basicVisualContent";
@@ -22,7 +22,7 @@ import ComponentGraph, { reviver } from "../../componentGraph/ComponentGraph";
 import Filter from "../../componentGraph/Filter";
 import { exportData } from "../../Provenance/utils";
 import * as sizes from "./sizes";
-import { createGroupOverlay, createInformationCard, findCurrentTraversalVisual, findCurrentTraversalVisualIndex } from "./traversal";
+import { createGroupOverlay, createInformationCard, findCurrentTraversalVisual, findCurrentTraversalVisualIndex, isGroup } from "./traversal";
 
 export function addContainerOffset(cardHeight: number){
     const pageOffset = parseInt(window.getComputedStyle(document.getElementById("flexContainer")!).paddingTop);
@@ -53,9 +53,9 @@ function backToVisual(){
     removeInteractionCard();
     removeShowChangesCard();
     removeHintCard();
-    const visual = findCurrentTraversalVisual();
-        if(visual){
-            createInfoCard(visual);
+    const traversalElement = findCurrentTraversalVisual();
+        if(traversalElement){
+            createInfoCard(traversalElement[0], traversalElement[1]);
         }
 }
 
@@ -266,39 +266,39 @@ export function createEnableButton(parentId: string){
     elements.createButton(attributes);
 }
 
-export function createInfoForm(infoType: string, visualID: string, Infos: string | any[]){
-    const infoTitle = firstLetterToUpperCase(infoType);
+// export function createInfoForm(infoType: string, visualID: string, Infos: string | any[]){
+//     const infoTitle = firstLetterToUpperCase(infoType);
 
-    const labelAttributes = global.createLabelAttributes();
-    labelAttributes.id = infoType + "InfosLabel" + visualID;
-    labelAttributes.for = infoType + "InfosTextarea" + visualID;
-    labelAttributes.style = "display: block;margin-left: 10px;";
-    labelAttributes.content = infoTitle + " Information:";
-    labelAttributes.parentId = "collapseForm" + visualID;
-    elements.createLabel(labelAttributes);
+//     const labelAttributes = global.createLabelAttributes();
+//     labelAttributes.id = infoType + "InfosLabel" + visualID;
+//     labelAttributes.for = infoType + "InfosTextarea" + visualID;
+//     labelAttributes.style = "display: block;margin-left: 10px;";
+//     labelAttributes.content = infoTitle + " Information:";
+//     labelAttributes.parentId = "collapseForm" + visualID;
+//     elements.createLabel(labelAttributes);
 
-    for (let i = 0; i < Infos.length; ++i) {
-        const Info = Infos[i].replaceAll("<br>", '\r\n');
-        const textareaAttributes = global.createTextareaAttributes();
-        textareaAttributes.id = i + infoType+ "InfosTextarea" + visualID;
-        textareaAttributes.class = infoType+ "Infos" + visualID;
-        textareaAttributes.value = Info;
-        textareaAttributes.style = "display: block;width: 95%;margin-bottom: 5px;margin-left: 10px;background-color: lightsteelblue;";
-        textareaAttributes.parentId = "collapseForm" + visualID;
-        elements.createTextarea(textareaAttributes, false);
-    }
+//     for (let i = 0; i < Infos.length; ++i) {
+//         const Info = Infos[i].replaceAll("<br>", '\r\n');
+//         const textareaAttributes = global.createTextareaAttributes();
+//         textareaAttributes.id = i + infoType+ "InfosTextarea" + visualID;
+//         textareaAttributes.class = infoType+ "Infos" + visualID;
+//         textareaAttributes.value = Info;
+//         textareaAttributes.style = "display: block;width: 95%;margin-bottom: 5px;margin-left: 10px;background-color: lightsteelblue;";
+//         textareaAttributes.parentId = "collapseForm" + visualID;
+//         elements.createTextarea(textareaAttributes, false);
+//     }
 
-    const addButtonAttributes = global.createButtonAttributes();
-    addButtonAttributes.id = "add"+ infoTitle + "Info" + visualID;
-    addButtonAttributes.content = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/></svg> Add`;
-    addButtonAttributes.style =  "margin: auto;display: block;";
-    addButtonAttributes.classes = global.darkOutlineButtonClass;
-    addButtonAttributes.function = function(){
-        addVisualTextarea(infoType, visualID);
-    };
-    addButtonAttributes.parentId = "collapseForm" + visualID;
-    elements.createButton(addButtonAttributes);
-}
+//     const addButtonAttributes = global.createButtonAttributes();
+//     addButtonAttributes.id = "add"+ infoTitle + "Info" + visualID;
+//     addButtonAttributes.content = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/></svg> Add`;
+//     addButtonAttributes.style =  "margin: auto;display: block;";
+//     addButtonAttributes.classes = global.darkOutlineButtonClass;
+//     addButtonAttributes.function = function(){
+//         addVisualTextarea(infoType, visualID);
+//     };
+//     addButtonAttributes.parentId = "collapseForm" + visualID;
+//     elements.createButton(addButtonAttributes);
+// }
 
 export async function createInteractionExampleButton(parentId: string, visual: any){
     if(!await getVisualData(visual)){
@@ -441,21 +441,42 @@ export function getDataOfInteractionVisual(visual: any){
     return visualData;
 }
 
-export function getDataOfVisual(visual: any){
-    const visualsData = global.settings.traversalStrategy;
-    const visualData = visualsData.find(function (data) {
-        return data.element.id == visual.name;
-    });
-
-    return visualData?.element;
+export function getDataOfVisual(visual: any, count: number){
+    const traversalElements = global.settings.traversalStrategy;
+    let foundVisual;
+    for(const elem of traversalElements){
+        if(isGroup(elem.element)){
+            for(const groupElem of elem.element.visuals){
+                if(groupElem.element.id === visual.name && groupElem.count == count){
+                    foundVisual = groupElem;
+                }
+            }
+        } else {
+            if(elem.element.id === visual.name && elem.count == count){
+                foundVisual = elem;
+            }
+        }
+    }
+    return foundVisual?.element;
 }
 
-export function getDataWithId(ID: string){
-    const visuals = global.settings.traversalStrategy;
-    const visualData = visuals.find(function (visual) {
-        return visual.element.id == ID;
-    });
-    return visualData?.element;
+export function getDataWithId(ID: string, count: number){
+    const traversalElements = global.settings.traversalStrategy;
+    let foundVisual;
+    for(const elem of traversalElements){
+        if(isGroup(elem.element)){
+            for(const groupElem of elem.element.visuals){
+                if(groupElem.element.id === ID && groupElem.count == count){
+                    foundVisual = groupElem;
+                }
+            }
+        } else {
+            if(elem.element.id === ID && elem.count == count){
+                foundVisual = elem;
+            }
+        }
+    }
+    return foundVisual?.element;
 }
 
 function getDisabledStyle(top: number, left: number, width: number, height: number){

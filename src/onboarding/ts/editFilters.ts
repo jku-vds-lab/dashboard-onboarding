@@ -177,10 +177,10 @@ function addFilterTextarea(){
 //         elements.createTextarea(textareaAttributes, false);
 // }
 
-export async function saveFilterChanges(newInfo: string[]){
+export async function saveFilterChanges(newInfo: string[], count:number){
     const filterInfos = await getFilterInfo();
 
-    const filterData = getDataWithId("globalFilter");
+    const filterData = getDataWithId("globalFilter", count);
     if (!filterData) {
       return;
     }
@@ -209,10 +209,10 @@ export async function saveFilterChanges(newInfo: string[]){
     }
 }
 
-export async function resetFilterChanges(){
+export async function resetFilterChanges(count: number){
     const filterInfos = await getFilterInfo();
 
-    const filterData = getDataWithId("globalFilter");
+    const filterData = getDataWithId("globalFilter", count);
     if (!filterData) {
       return;
     }

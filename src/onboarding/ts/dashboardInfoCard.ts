@@ -11,7 +11,7 @@ import bulletpointImg from "../assets/dot.png";
 import { createInfoCardButtons } from "./infoCards";
 import { currentId } from "./traversal";
 
-export function createDashboardInfoCard(){
+export function createDashboardInfoCard(count: number){
     global.setShowsDashboardInfo(true);
     disableAll();
     
@@ -21,16 +21,16 @@ export function createDashboardInfoCard(){
     helpers.createCloseButton("closeButton", "closeButtonPlacementBig", "", helpers.getCloseFunction(), "dashboardInfoCard");
 
     const dashboard = global.componentGraph.dashboard;
-    const title = setDashboardTitle(dashboard);
+    const title = setDashboardTitle(dashboard, count);
     helpers.createCardContent(title, "", "dashboardInfoCard");
-    setDashboardInfos();
+    setDashboardInfos(count);
     createInfoCardButtons();
 }
 
-function setDashboardTitle(dashboard: Dashboard){
+function setDashboardTitle(dashboard: Dashboard, count:number){
     const title = dashboard.title.text;
 
-    const dashboardData = helpers.getDataWithId("dashboard");
+    const dashboardData = helpers.getDataWithId("dashboard", count);
     if (!dashboardData) {
       return;
     }
@@ -51,21 +51,21 @@ function setDashboardTitle(dashboard: Dashboard){
     return newTitle;
 }
 
-function setDashboardInfos(){
-    const dashboardInfos = getDashboardInfos();
+function setDashboardInfos(count: number){
+    const dashboardInfos = getDashboardInfos(count);
     
     if(dashboardInfos){
         createInfoList(dashboardInfos[0], dashboardInfos[1], "contentText");
     }
 }
 
-export function getDashboardInfos(){
+export function getDashboardInfos(count: number){
     const dashboard = global.componentGraph.dashboard;
     const dashboardInfo = getNewDashboardInfo(dashboard);
     const images = dashboardInfo[0];
     const infos = dashboardInfo[1];
 
-    const dashboardData = helpers.getDataWithId("dashboard");
+    const dashboardData = helpers.getDataWithId("dashboard", count);
     if (!dashboardData) {
       return;
     }
@@ -103,12 +103,12 @@ export function getNewDashboardInfo(dashboard: Dashboard){
     return [images, infos];
 }
 
-export function saveDashboardChanges(newInfo: string[]){
+export function saveDashboardChanges(newInfo: string[], count: number){
     const dashboard = global.componentGraph.dashboard;
     const dashboardInfo = getNewDashboardInfo(dashboard);
     const originalInfos = dashboardInfo[1];
 
-    const dashboardData = helpers.getDataWithId("dashboard");
+    const dashboardData = helpers.getDataWithId("dashboard", count);
     if (!dashboardData) {
       return;
     }
@@ -137,12 +137,12 @@ export function saveDashboardChanges(newInfo: string[]){
     }
 }
 
-export async function resetDashboardChanges(){
+export async function resetDashboardChanges(count: number){
     const dashboard = global.componentGraph.dashboard;
     const dashboardInfo = getNewDashboardInfo(dashboard);
     const originalInfos = dashboardInfo[1];
 
-    const dashboardData = helpers.getDataWithId("dashboard");
+    const dashboardData = helpers.getDataWithId("dashboard", count);
     if (!dashboardData) {
       return;
     }

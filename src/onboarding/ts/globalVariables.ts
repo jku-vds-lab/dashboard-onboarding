@@ -350,6 +350,7 @@ export function setDraggingStarted(newDraggingStarted: boolean){
 export function createDivAttributes(){
     return { 
         id: "",
+        count: 0,
         style: "",
         classes: "",
         content: "",
@@ -366,6 +367,7 @@ export function createDivAttributes(){
 export function createButtonAttributes(){
     return { 
         id: "",
+        count: 0,
         content: "",
         style: "",
         classes:  "",
