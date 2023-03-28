@@ -43,20 +43,24 @@ export function createInfoCardButtons(){
 export function createCardButtonsWithGroup(leftButton: string, rightButton: string){
     const traversalElem = global.settings.traversalStrategy[currentId].element;
     if(isGroup(traversalElem)){
-        switch(traversalElem.type){
-            case groupType.all:
-                if(traversalElem.visuals.every(vis => lookedAtInGroup.elements.includes(vis.element.id))){
+        if(global.explorationMode){
+            helpers.createCardButtons(leftButton, "back to group", rightButton);
+        } else {
+            switch(traversalElem.type){
+                case groupType.all:
+                    if(traversalElem.visuals.every(vis => lookedAtInGroup.elements.includes(vis.element.id))){
+                        helpers.createCardButtons(leftButton, "", rightButton);
+                    } else {
+                        helpers.createCardButtons("", "back to group", "");
+                    }
+                    break;
+                case groupType.atLeastOne:
+                    helpers.createCardButtons(leftButton, "back to group", rightButton);
+                    break;
+                case groupType.onlyOne:
                     helpers.createCardButtons(leftButton, "", rightButton);
-                } else {
-                    helpers.createCardButtons("", "back to group", "");
-                }
-                break;
-            case groupType.atLeastOne:
-                helpers.createCardButtons(leftButton, "back to group", rightButton);
-                break;
-            case groupType.onlyOne:
-                helpers.createCardButtons(leftButton, "", rightButton);
-                break;
+                    break;
+            }
         }
     } else {
         helpers.createCardButtons(leftButton, "", rightButton);

@@ -247,7 +247,6 @@ export function createGroupOverlay(){
 
 
 export function findVisualIndexInTraversal(id: string, count: number){
-    debugger;
     const elem = global.settings.traversalStrategy.find(vis => vis.element.id === id  && vis.count === count);
     let index = global.settings.traversalStrategy.indexOf(elem!);
     if(index  == -1){
@@ -260,7 +259,7 @@ export function findVisualIndexInTraversal(id: string, count: number){
                 return groupIndex;
             }
        }
-       index = 0;
+       index = -1;
     }
     return index;
 }
@@ -305,7 +304,7 @@ export function createExplainGroupCard(){
     const style = `overflow: auto;position:fixed;top:10px;left:50%;margin-left:` + -(global.explainGroupCardWidth/2) + `px;width:`+ global.explainGroupCardWidth + `px;height:` + global.explainGroupCardHeight + `px;pointer-events:auto;border-radius:10px;background-color:lightsteelblue;z-index: 99 !important;`;
     helpers.createCard("explainGroupCard", style, "");
     helpers.addContainerOffset(global.explainGroupCardHeight);
-    helpers.createCloseButton("closeButton", "closeButtonPlacementBig", "", helpers.removeOnboarding, "explainGroupCard");
+    helpers.createCloseButton("closeButton", "closeButtonPlacementBig", "", helpers.getCloseFunction(), "explainGroupCard");
     helpers.createCardContent("", createExplainGroupText(), "explainGroupCard");
 }
 
