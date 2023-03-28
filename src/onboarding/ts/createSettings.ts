@@ -10,7 +10,6 @@ export async function createSettings(){
     settings.interactionExample = setInteractionExampleInfo();
 
     global.setSettings(settings);
-console.log(global.settings)
     localStorage.setItem("settings", JSON.stringify(global.settings, replacer));
 }
 
@@ -46,23 +45,27 @@ async function setTraversalStrategy(){
 }
 
 async function setGroup(elem: Group){
-    const traversalVisuals = []
-    for (const vis of elem.visuals) {
-        if(vis.element.id === "dashboard"){
-            const traversalElem = createTraversalElement();
-            traversalElem.element =setDashboardInfo();
-            traversalVisuals.push(traversalElem);
-        } else if(vis.element.id === "globalFilter"){
-            const traversalElem = createTraversalElement();
-            traversalElem.element = await setFilterInfo();
-            traversalVisuals.push(traversalElem);
-        } else {
-            const traversalElem = createTraversalElement();
-            traversalElem.element = await setVisualsInfo(vis.element.id)
-            traversalVisuals.push(traversalElem);
+    const traversal = []
+    for (const trav of elem.visuals) {
+        const visuals = [];
+        for (const vis of trav) {
+            if(vis.element.id === "dashboard"){
+                const traversalElem = createTraversalElement();
+                traversalElem.element =setDashboardInfo();
+                visuals.push(traversalElem);
+            } else if(vis.element.id === "globalFilter"){
+                const traversalElem = createTraversalElement();
+                traversalElem.element = await setFilterInfo();
+                visuals.push(traversalElem);
+            } else {
+                const traversalElem = createTraversalElement();
+                traversalElem.element = await setVisualsInfo(vis.element.id)
+                visuals.push(traversalElem);
+            }
         }
+        traversal.push(visuals);
     }
-    return traversalVisuals;
+    return traversal;
 }
 
 function setDashboardInfo(){

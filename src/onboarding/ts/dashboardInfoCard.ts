@@ -24,7 +24,7 @@ export function createDashboardInfoCard(count: number){
     const title = setDashboardTitle(dashboard, count);
     helpers.createCardContent(title, "", "dashboardInfoCard");
     setDashboardInfos(count);
-    createInfoCardButtons();
+    createInfoCardButtons("dashboard", count);
 }
 
 function setDashboardTitle(dashboard: Dashboard, count:number){

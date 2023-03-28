@@ -11,7 +11,7 @@ import { createDashboardInfoCard, removeDashboardInfoCard } from "./dashboardInf
 import { reportDivisor, resize, textSize } from "./sizes";
 import { createFilterInfoCard, removeFilterInfoCard } from "./filterInfoCards";
 import { showVisualChanges } from "./showVisualsChanges";
-import { createExplainGroupCard, currentId, findCurrentTraversalCount, findCurrentTraversalVisual, findTraversalVisual, findVisualIndexInTraversal, getCurrentTraversalElementType, isGroup, lookedAtInGroup, removeExplainGroupCard, setBasicTraversalStrategy, setCurrentId, setTestAllGroupsTraversalStrategy, setTestAtLeastOneGroupsTraversalStrategy, setTestOnlyOneGroupsTraversalStrategy, TraversalElement, traversalStrategy, updateLookedAt, updateTraversal } from "./traversal";
+import { createExplainGroupCard, currentId, findCurrentTraversalCount, findCurrentTraversalVisual, findTraversalVisual, findVisualIndexInTraversal, getCurrentTraversalElementType, isGroup, lookedAtInGroup, removeExplainGroupCard, setBasicTraversalStrategy, setCurrentId, setTestAllGroupsTraversalStrategy, TraversalElement, traversalStrategy, updateLookedAt, updateTraversal } from "./traversal";
 import { replacer } from "../../componentGraph/ComponentGraph";
 
 export async function onLoadReport(){
@@ -21,16 +21,7 @@ export async function onLoadReport(){
     await helpers.getSettings();
 
     const trav = await setTestAllGroupsTraversalStrategy();
-    console.log(trav)
     await updateTraversal(trav);
-
-    // const trav = await setTestOnlyOneGroupsTraversalStrategy();
-    // console.log(trav)
-    // await updateTraversal(trav);
-
-    // const trav = await setTestAtLeastOneGroupsTraversalStrategy();
-    // console.log(trav)
-    // await updateTraversal(trav);
     
     helpers.createEditOnboardingButtons();
     helpers.createOnboardingButtons();
