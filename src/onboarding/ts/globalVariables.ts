@@ -350,6 +350,7 @@ export function setDraggingStarted(newDraggingStarted: boolean){
 export function createDivAttributes(){
     return { 
         id: "",
+        categories: [""],
         count: 0,
         style: "",
         classes: "",

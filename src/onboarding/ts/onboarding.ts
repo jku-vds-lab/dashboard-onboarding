@@ -11,7 +11,7 @@ import { createDashboardInfoCard, removeDashboardInfoCard } from "./dashboardInf
 import { reportDivisor, resize, textSize } from "./sizes";
 import { createFilterInfoCard, removeFilterInfoCard } from "./filterInfoCards";
 import { showVisualChanges } from "./showVisualsChanges";
-import { createExplainGroupCard, currentId, findCurrentTraversalCount, findCurrentTraversalVisual, findTraversalVisual, findVisualIndexInTraversal, getCurrentTraversalElementType, isGroup, lookedAtInGroup, removeExplainGroupCard, setBasicTraversalStrategy, setCurrentId, setTestAllGroupsTraversalStrategy, TraversalElement, traversalStrategy, updateLookedAt, updateTraversal } from "./traversal";
+import { createExplainGroupCard, createLookedAtIds, currentId, findCurrentTraversalCount, findCurrentTraversalVisual, findTraversalVisual, findVisualIndexInTraversal, getCurrentTraversalElementType, getStandartCategories, isGroup, lookedAtInGroup, removeExplainGroupCard, setBasicTraversalStrategy, setCurrentId, setTestAllGroupsTraversalStrategy, TraversalElement, traversalStrategy, updateLookedAt, updateTraversal } from "./traversal";
 import { replacer } from "../../componentGraph/ComponentGraph";
 
 export async function onLoadReport(){
@@ -108,7 +108,7 @@ export async function startOnboardingAt(type: string, visual?: any, count?: numb
             await showVisualChanges(visual);
             break;
         case "visual":
-            await createInfoCard(visual, count!);
+            await createInfoCard(visual, count!, getStandartCategories(visual.type));
             break;
         case "explorationOverlay":
             createOnboardingOverlay()
@@ -169,7 +169,7 @@ export function createOnboardingOverlay(){
     global.currentVisuals.forEach(function (visual: any) {
         if(findVisualIndexInTraversal(visual.name, 1) !== -1){
             const style = helpers.getClickableStyle(visual.layout.y/reportDivisor, visual.layout.x/reportDivisor, visual.layout.width/reportDivisor, visual.layout.height/reportDivisor);
-            createOverlay(visual.name, style, 1);
+            createOverlay(visual.name, style, 1, getStandartCategories(visual.type));
         }
     });
 
@@ -212,7 +212,7 @@ export function createOverlayForVisuals(visuals: TraversalElement[]){
                 const visual = global.currentVisuals.find((vis: any) => vis.name === visualInfo.element.id);
                 style = helpers.getClickableStyle(visual.layout.y/reportDivisor, visual.layout.x/reportDivisor, visual.layout.width/reportDivisor, visual.layout.height/reportDivisor);
                 style += "border: 5px solid lightgreen;";
-                createOverlay(visual.name, style, visualInfo.count);
+                createOverlay(visual.name, style, visualInfo.count, visualInfo.categories);
                 break;
         }
     });
@@ -223,13 +223,17 @@ function createDashboardInfoOnButtonClick(count: number){
     helpers.removeContainerOffset();
     removeExplainGroupCard();
     setCurrentId(findVisualIndexInTraversal("dashboard", count));
-    updateLookedAt("dashboard");
+    const lookedAt = createLookedAtIds("dashboard", [], 1);
+    updateLookedAt(lookedAt);
     createDashboardInfoCard(1);
 }
 
-function createOverlay(id: string, style: string, count: number,){
+function createOverlay(id: string, style: string, count: number, categories?: string[]){
     const attributes = global.createDivAttributes();
     attributes.id = id;
+    if(categories){
+        attributes.categories = categories;
+    }
     attributes.count = count;
     attributes.style = style;
     attributes.clickable = true;

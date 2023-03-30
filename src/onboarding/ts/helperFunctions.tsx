@@ -55,7 +55,7 @@ function backToVisual(){
     removeHintCard();
     const traversalElement = findCurrentTraversalVisual();
         if(traversalElement){
-            createInfoCard(traversalElement[0], traversalElement[1]);
+            createInfoCard(traversalElement[0], traversalElement[2], traversalElement[1]);
         }
 }
 
@@ -116,6 +116,11 @@ export function createCardButtons(id: string, leftButton: string, middleButton:s
                 buttonAttributes.content = "Previous in Group";
                 buttonAttributes.function = previousInGroup;
                 break;
+            case "back to group": 
+                buttonAttributes.id = "backToGroupButton";
+                buttonAttributes.content = "Select new Group";
+                buttonAttributes.function = createGroupOverlay;
+                break;
             default: 
                 buttonAttributes.id = "previousButton";
                 buttonAttributes.content = "Previous";
@@ -165,7 +170,7 @@ export function createCardButtons(id: string, leftButton: string, middleButton:s
             //     break;
             case "back to group": 
                 buttonAttributes.id = "backToGroupButton";
-                buttonAttributes.content = "Back To Group Selection";
+                buttonAttributes.content = "Select new Group";
                 buttonAttributes.function = createGroupOverlay;
                 break;
             default:
@@ -184,7 +189,7 @@ export function createCardButtons(id: string, leftButton: string, middleButton:s
         switch(middleButton){
             case "back to group": 
                 buttonAttributes.id = "backToGroupButton";
-                buttonAttributes.content = "Back To Group Selection";
+                buttonAttributes.content = "Select new Group";
                 buttonAttributes.function = createGroupOverlay;
                 break;
             case "previousInGroup":

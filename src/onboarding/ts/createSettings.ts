@@ -30,15 +30,15 @@ export async function getTraversalElement(elem: any){
 }
 
 async function setTraversalStrategy(){
-    const traversalElem1 = createTraversalElement();
+    const traversalElem1 = createTraversalElement("dashboard");
     traversalElem1.element = await getTraversalElement("dashboard");
     traversalStrategy.push(traversalElem1);
     for(const vis of global.currentVisuals){
-        const traversalElem = createTraversalElement();
+        const traversalElem = createTraversalElement(vis.type);
         traversalElem.element = await getTraversalElement(vis.name);
         traversalStrategy.push(traversalElem);
     }
-    const traversalElem2 = createTraversalElement();
+    const traversalElem2 = createTraversalElement("globalFilter");
     traversalElem2.element = await getTraversalElement("globalFilter");
     traversalStrategy.push(traversalElem2);
     return traversalStrategy;
@@ -50,15 +50,15 @@ async function setGroup(elem: Group){
         const visuals = [];
         for (const vis of trav) {
             if(vis.element.id === "dashboard"){
-                const traversalElem = createTraversalElement();
-                traversalElem.element =setDashboardInfo();
+                const traversalElem = createTraversalElement("dashboard");
+                traversalElem.element = setDashboardInfo();
                 visuals.push(traversalElem);
             } else if(vis.element.id === "globalFilter"){
-                const traversalElem = createTraversalElement();
+                const traversalElem = createTraversalElement("globalFilter");
                 traversalElem.element = await setFilterInfo();
                 visuals.push(traversalElem);
             } else {
-                const traversalElem = createTraversalElement();
+                const traversalElem = createTraversalElement("");
                 traversalElem.element = await setVisualsInfo(vis.element.id)
                 visuals.push(traversalElem);
             }
