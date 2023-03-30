@@ -288,8 +288,16 @@ export function findTraversalVisual(id:string){
 
 export function findCurrentTraversalVisual(){
     const traversalElem = global.settings.traversalStrategy[currentId].element;
+
+    if(isGroup(traversalElem)){
+        const trav = traversalElem.visuals[traversalInGroupIndex];
+        const visInGroup = trav[visualInGroupIndex];
+        if(traversalElem.id !== "dashboard" && traversalElem.id !== "globalFilter"){
+            return [currentVisuals.find((vis: any) => vis.name === visInGroup.element.id), visInGroup.categories, visInGroup.count];
+        }
+    }
     
-    if(!isGroup(traversalElem) && traversalElem.id !== "dashboard" && traversalElem.id !== "globalFilter"){
+    if(traversalElem.id !== "dashboard" && traversalElem.id !== "globalFilter"){
         return [currentVisuals.find((vis: any) => vis.name === traversalElem.id), traversalElem.categories, traversalElem.count];
     }
 
