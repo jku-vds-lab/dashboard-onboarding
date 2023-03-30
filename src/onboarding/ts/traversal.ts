@@ -146,6 +146,11 @@ export async function setTestAllGroupsTraversalStrategy(){
     traversalElemv12.element = await getTraversalElement(currentVisuals[1].name);
     traversalElemv12.categories = ["insight"];
     groupTrav1.push(traversalElemv12);
+    const traversalElemv11ia2 = createTraversalElement(currentVisuals[0].type);
+    traversalElemv11ia2.element = await getTraversalElement(currentVisuals[0].name);
+    traversalElemv11ia2.categories = ["insight"];
+    traversalElemv11ia2.count = 2;
+    groupTrav1.push(traversalElemv11ia2);
     const traversalElemv12i = createTraversalElement(currentVisuals[1].type);
     traversalElemv12i.element = await getTraversalElement(currentVisuals[1].name);
     traversalElemv12i.categories = ["interaction"];
@@ -172,6 +177,11 @@ export async function setTestAllGroupsTraversalStrategy(){
     traversalElem4.element = group;
     trav.push(traversalElem4);
 
+    const traversalElem6g2 = createTraversalElement(currentVisuals[6].type);
+    traversalElem6g2.element = await getTraversalElement(currentVisuals[6].name);
+    traversalElem6g2.categories = ["general"];
+    traversalElem6g2.count = 2;
+    trav.push(traversalElem6g2);
     const traversalElemv23 = createTraversalElement(currentVisuals[5].type);
     traversalElemv23.element = await getTraversalElement(currentVisuals[5].name);
     traversalElemv23.categories = ["general"];
@@ -188,6 +198,26 @@ export async function setTestAllGroupsTraversalStrategy(){
     traversalElem6.element = await getTraversalElement(currentVisuals[6].name);
     traversalElem6.categories = ["interaction"];
     trav.push(traversalElem6);
+
+    const group2 = createGroup();
+
+    const groupTrav22 = []
+    const traversalElemv212 = createTraversalElement(currentVisuals[3].type);
+    traversalElemv212.element = await getTraversalElement(currentVisuals[3].name);
+    traversalElemv212.count = 2;
+    traversalElemv212.categories = ["insight"];
+    groupTrav22.push(traversalElemv212);
+    const traversalElemv222 = createTraversalElement(currentVisuals[4].type);
+    traversalElemv222.element = await getTraversalElement(currentVisuals[4].name);
+    traversalElemv222.categories = ["interaction"];
+    traversalElemv222.count = 2;
+    groupTrav22.push(traversalElemv222);
+    group2.visuals.push(groupTrav22);
+
+    const traversalElem42 = createTraversalElement("group");
+    traversalElem42.element = group2;
+    traversalElem42.count = 2;
+    trav.push(traversalElem42);
     const traversalElem7 = createTraversalElement("globalFilter");
     traversalElem7.element = await getTraversalElement("globalFilter");
     trav.push(traversalElem7);
