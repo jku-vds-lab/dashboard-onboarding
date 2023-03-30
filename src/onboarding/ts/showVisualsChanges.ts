@@ -24,7 +24,7 @@ export async function showVisualChanges(selectedVisual: any) {
         }
 
         helpers.createCardContent(global.settings.interactionExample.title, "", "showVisualChangesCard");
-        helpers.createCardButtons("back to visual", "back to overview");
+        helpers.createCardButtons("cardButtons", "back to visual", "", "back to overview");
         
         await createShowVisualChangesInfo(selectedVisual);
     } else {

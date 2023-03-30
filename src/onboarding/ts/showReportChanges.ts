@@ -17,13 +17,13 @@ export function showReportChanges(){
     const style = `overflow: auto;position:fixed;top:10px;left:50%;margin-left:` + -(global.interactionCardWidth/2) + `px;width:`+ global.interactionCardWidth + `px;height:` + global.interactionCardHeight + `px;pointer-events:auto;border-radius:10px;background-color:lightsteelblue;z-index: 99 !important;`;
     helpers.createCard("showChangesCard", style, "");
 
-    helpers.addContainerOffset();
+    helpers.addContainerOffset(global.interactionCardHeight);
 
     helpers.createCloseButton("closeButton", "closeButtonPlacementBig", "", helpers.removeOnboarding, "showChangesCard");
 
     helpers.createCardContent(global.settings.interactionExample.title, createShowReportChangesInfo(), "showChangesCard");
 
-    helpers.createCardButtons("", "back to visual");
+    helpers.createCardButtons("cardButtons", "", "", "back to visual");
 }
 
 function createShowReportChangesInfo(){

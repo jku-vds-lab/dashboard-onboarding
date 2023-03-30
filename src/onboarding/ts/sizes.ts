@@ -11,6 +11,8 @@ export const hintCardMarginOriginal = 5;
 export const hintCardWidthOriginal = 200;
 export const editCardMarginOriginal = 0;
 export const editCardWidthOriginal = 500;
+export const explainGroupCardWidthOriginal = 500;
+export const explainGroupCardHeightOriginal = 150;
 export const textSizeOriginal = 1;
 export const headlineSizeOriginal = 2.5;
 export const filterOpenedWidthOriginal = 250;
@@ -46,6 +48,8 @@ export function setSizeVariables(){
     global.setHintCardWidth(hintCardWidthOriginal/divisor);
     global.setEditCardMargin(editCardMarginOriginal/divisor);
     global.setEditCardWidth(editCardWidthOriginal/divisor);
+    global.setExplainGroupCardWidth(explainGroupCardWidthOriginal/divisor);
+    global.setExplainGroupCardHeight(explainGroupCardHeightOriginal/divisor);
     textSize = textSizeOriginal/divisor;
     headlineSize = headlineSizeOriginal/divisor;
 }

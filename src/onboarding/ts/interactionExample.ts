@@ -12,9 +12,9 @@ import { findCurrentTraversalVisual } from "./traversal";
 export function startInteractionExample(){
     global.setInteractionMode(true);
     infoCard.removeInfoCard();
-    const visual = findCurrentTraversalVisual();
-        if(visual){
-            createInteractionCard(visual);
+    const traversalElem = findCurrentTraversalVisual();
+        if(traversalElem){
+            createInteractionCard(traversalElem[0]);
         }
 }
 
@@ -33,7 +33,7 @@ export async function createInteractionCard(visual: any){
         helpers.createCloseButton("closeButton", "closeButtonPlacementBig", "", helpers.getCloseFunction(), "interactionCard");
     }
     helpers.createCardContent(global.settings.interactionExample.title, "", "interactionCard");
-    helpers.createCardButtons("", "back to visual");
+    helpers.createCardButtons("cardButtons", "", "", "back to visual");
 
     await createInteractionInfo(visual);
 }

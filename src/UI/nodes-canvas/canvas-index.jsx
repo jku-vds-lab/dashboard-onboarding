@@ -8,13 +8,11 @@ import GroupNode from "./nodeTypes/groupNode";
 
 import { ContextMenu } from "./context-menu";
 
-import * as helpers from "../../onboarding/ts/helperFunctions";
-import { getVisualInfos } from "../../onboarding/ts/listOfVisuals";
-import { debug } from "util";
 import { currentVisuals } from "../../onboarding/ts/globalVariables"
 import { startOnboardingAt } from "../../onboarding/ts/onboarding";
 import { getDashboardInfos } from "../../onboarding/ts/dashboardInfoCard";
 import { getFilterInfos } from "../../onboarding/ts/filterInfoCards";
+import { getVisualInfo } from "../../onboarding/ts/infoCards";
 
 const initialNodes = [];
 
@@ -46,57 +44,8 @@ export default function NodesCanvas() {
     }
 
     const idParts = nodeId.split(" ");
-
-    let info = await showExplanation(idParts);
-    info = info.replaceAll("<br>", "\r\n");
-    document.getElementById("textBox").value = info;
-
-    await showInOutputView(idParts[0]);
+    await refreshEditorInfo(idParts);
   }, []);
-
-  async function showInOutputView(nodeId){
-    switch(nodeId){
-      case "dashboard":
-        await startOnboardingAt("dashboard");
-        break;
-      case "globalFilter":
-        await startOnboardingAt("globalFilter");
-        break;
-      default:
-        await startOnboardingAt("visual", currentVisuals.find(vis => vis.name = nodeId));
-        break;
-    }
-  }
-
-  async function showExplanation(idParts){
-    let info;
-    switch(idParts[0]){
-      case "dashboard":
-        info = await getDashboardInfos();
-        info = info[1].join("\r\n");
-        break;
-      case "globalFilter":
-        info = await getFilterInfos();
-        info = info.join("\r\n");
-        break;
-      default:
-        const visualData = helpers.getDataWithId(idParts[0]);
-        if (!visualData) {
-          return;
-        }
-        const visualInfos = await getVisualInfos(visualData);
-
-        if(idParts.length > 1 && idParts[1] == "Insight"){
-          info = visualInfos.insightInfos.join("\r\n");
-        } else if(idParts.length > 1 && idParts[1] == "Interaction"){
-          info = visualInfos.interactionInfos.join("\r\n");
-        } else {
-          info = visualInfos.generalInfos.join("\r\n");
-        }
-        break;
-    }
-    return info;
-  }
 
   const onDragOver = useCallback((event) => {
     event.preventDefault();
@@ -262,4 +211,44 @@ export default function NodesCanvas() {
       </div>
     </div>
   );
+}
+
+export async function showInOutputView(nodeId){
+  switch(nodeId){
+    case "dashboard":
+      await startOnboardingAt("dashboard");
+      break;
+    case "globalFilter":
+      await startOnboardingAt("globalFilter");
+      break;
+    default:
+      await startOnboardingAt("visual", currentVisuals.find(vis => vis.name === nodeId));
+      break;
+  }
+}
+
+export async function showExplanation(idParts){
+  let info = [];
+  switch(idParts[0]){
+    case "dashboard":
+      info = await getDashboardInfos();
+      info = info[1];
+      break;
+    case "globalFilter":
+      info = await getFilterInfos();
+      break;
+    default:
+      info = await getVisualInfo(idParts);
+      break;
+  }
+  return info;
+}
+
+export async function refreshEditorInfo(idParts){
+  let info = await showExplanation(idParts);
+  info = info.join("\n\n");
+  info = info.replaceAll("<br>", "\r\n");
+  document.getElementById("textBox").value = info;
+
+  await showInOutputView(idParts[0]);
 }

@@ -11,14 +11,17 @@ import { createDashboardInfoCard, removeDashboardInfoCard } from "./dashboardInf
 import { reportDivisor, resize, textSize } from "./sizes";
 import { createFilterInfoCard, removeFilterInfoCard } from "./filterInfoCards";
 import { showVisualChanges } from "./showVisualsChanges";
-import { findCurrentTraversalVisual, setBasicTraversalStrategy, setCurrentId, setTestAllGroupsTraversalStrategy } from "./traversal";
+import { createExplainGroupCard, createLookedAtIds, currentId, findCurrentTraversalCount, findCurrentTraversalVisual, findTraversalVisual, findVisualIndexInTraversal, getCurrentTraversalElementType, getStandartCategories, isGroup, lookedAtInGroup, removeExplainGroupCard, setBasicTraversalStrategy, setCurrentId, setTestAllGroupsTraversalStrategy, TraversalElement, traversalStrategy, updateLookedAt, updateTraversal } from "./traversal";
+import { replacer } from "../../componentGraph/ComponentGraph";
 
 export async function onLoadReport(){
     await helpers.getActivePage();
     await helpers.getVisuals();
     await helpers.createComponentGraph();
     await helpers.getSettings();
-    setTestAllGroupsTraversalStrategy();
+
+    const trav = await setTestAllGroupsTraversalStrategy();
+    await updateTraversal(trav);
     
     helpers.createEditOnboardingButtons();
     helpers.createOnboardingButtons();
@@ -62,9 +65,9 @@ export async function reloadOnboardingAt(){
     if(document.getElementById("introCard")){
         await startOnboardingAt("intro");
     } else if(document.getElementById("dashboardInfoCard")){
-        await startOnboardingAt("dashboard");
+        await startOnboardingAt("dashboard", findCurrentTraversalCount());
     } else if(document.getElementById("filterInfoCard")){
-        await startOnboardingAt("globalFilter");
+        await startOnboardingAt("globalFilter", findCurrentTraversalCount());
     } else if(document.getElementById("interactionCard")){
         await startOnboardingAt("interaction");
     } else if(document.getElementById("showChangesCard")){
@@ -72,16 +75,16 @@ export async function reloadOnboardingAt(){
     } else if(document.getElementById("showVisualChangesCard")){
         await startOnboardingAt("visualChanged", global.interactionSelectedVisual);
     } else if(document.getElementById("infoCard")){
-        const visual = findCurrentTraversalVisual();
-        if(visual){
-            await startOnboardingAt("visual", visual);
+        const traversalElement = findCurrentTraversalVisual();
+        if(traversalElement){
+            await startOnboardingAt("visual", traversalElement[0], traversalElement[1]);
         }
     } else if(global.hasOverlay && !global.interactionMode){
         await startOnboardingAt("explorationOverlay");
     }
 }
 
-export async function startOnboardingAt(type: string, visual?: any){
+export async function startOnboardingAt(type: string, visual?: any, count?: number){
     helpers.reloadOnboarding();
 
     switch(type){
@@ -89,10 +92,10 @@ export async function startOnboardingAt(type: string, visual?: any){
             createIntroCard();
             break;
         case "dashboard":
-            createDashboardInfoCard();
+            createDashboardInfoCard(count!);
             break;
         case "globalFilter":
-            await createFilterInfoCard();
+            await createFilterInfoCard(count!);
             break;
         case "interaction":
             await startInteractionExample();
@@ -105,7 +108,7 @@ export async function startOnboardingAt(type: string, visual?: any){
             await showVisualChanges(visual);
             break;
         case "visual":
-            await createInfoCard(visual);
+            await createInfoCard(visual, count!, getStandartCategories(visual.type));
             break;
         case "explorationOverlay":
             createOnboardingOverlay()
@@ -136,40 +139,47 @@ export function createDashboardExploration(){
 export function startGuidedTour(){
     //global.setCurrentVisualIndex(0);
     removeIntroCard();
-
-    createDashboardInfoCard();
+    setCurrentId(0);
+    getCurrentTraversalElementType();
 }
 
 export function createOnboardingOverlay(){
-    global.setHasOverlay(true);
-
-    const attributes = global.createButtonAttributes();
-    attributes.id = "dashboardExplaination";
-    attributes.content = "Dashboard Explaination";
-    attributes.style =  `font-size: ${textSize}rem; ` + global.onboardingButtonStyle;
-    attributes.classes = "col-2 " +  global.darkOutlineButtonClass;
-    attributes.function = createDashboardInfoOnButtonClick;
-    attributes.parentId = "onboarding-header";
-    elements.createButton(attributes);
-
-    global.setInteractionMode(false);
+    helpers.removeOnboardingOverlay();
+    removeExplainGroupCard();
     removeFrame();
     removeIntroCard();
     removeInfoCard();
     removeDashboardInfoCard();
     removeFilterInfoCard();
     removeInteractionCard();
+    global.setHasOverlay(true);
+    global.setInteractionMode(false);
+
+    if(findVisualIndexInTraversal("dashboard", 1) !== -1){
+        const attributes = global.createButtonAttributes();
+        attributes.id = "dashboardExplaination";
+        attributes.content = "Dashboard Explaination";
+        attributes.style =  `font-size: ${textSize}rem; ` + global.onboardingButtonStyle;
+        attributes.classes = "col-2 " +  global.darkOutlineButtonClass;
+        attributes.function = ( ) => { return createDashboardInfoOnButtonClick(1) };
+        attributes.parentId = "onboarding-header";
+        elements.createButton(attributes);
+    }
 
     global.currentVisuals.forEach(function (visual: any) {
-        const style = helpers.getClickableStyle(visual.layout.y/reportDivisor, visual.layout.x/reportDivisor, visual.layout.width/reportDivisor, visual.layout.height/reportDivisor);
-        createOverlay(visual.name, style);
+        if(findVisualIndexInTraversal(visual.name, 1) !== -1){
+            const style = helpers.getClickableStyle(visual.layout.y/reportDivisor, visual.layout.x/reportDivisor, visual.layout.width/reportDivisor, visual.layout.height/reportDivisor);
+            createOverlay(visual.name, style, 1, getStandartCategories(visual.type));
+        }
     });
 
-    const style = helpers.getClickableStyle(-global.settings.reportOffset.top, global.reportWidth!, global.filterOpenedWidth, global.reportHeight!);
-    createOverlay("filter", style);
+    if(findVisualIndexInTraversal("globalFilter", 1) !== -1){
+        const style = helpers.getClickableStyle(-global.settings.reportOffset.top, global.reportWidth!, global.filterOpenedWidth, global.reportHeight!);
+        createOverlay("globalFilter", style, 1);
+    }
 }
 
-export function createOverlayForVisuals(visualIds: string[]){
+export function createOverlayForVisuals(visuals: TraversalElement[]){
     global.setHasOverlay(true);
     global.setInteractionMode(false);
     removeFrame();
@@ -179,23 +189,52 @@ export function createOverlayForVisuals(visualIds: string[]){
     removeFilterInfoCard();
     removeInteractionCard();
 
-    visualIds.forEach(function (visualId: string) {
-        const visual = global.currentVisuals.find((vis: any) => vis.name === visualId);
-        let style = helpers.getClickableStyle(visual.layout.y/reportDivisor, visual.layout.x/reportDivisor, visual.layout.width/reportDivisor, visual.layout.height/reportDivisor);
-        style += "border-color: green";
-        createOverlay(visual.name, style);
+    visuals.forEach(function (visualInfo: TraversalElement) {
+        let style = "";
+        switch(visualInfo.element.id){
+            case "dashboard":
+                const attributes = global.createButtonAttributes();
+                attributes.id = "dashboardExplaination";
+                attributes.count = visualInfo.count;
+                attributes.content = "Dashboard Explaination";
+                attributes.style =  `font-size: ${textSize}rem; border: 5px solid lightgreen;` + global.onboardingButtonStyle;
+                attributes.classes = "col-2 " +  global.darkOutlineButtonClass;
+                attributes.function = ( ) => { return createDashboardInfoOnButtonClick(visualInfo.count) };
+                attributes.parentId = "onboarding-header";
+                elements.createButton(attributes);
+                break;
+            case "globalFilter":
+                style = helpers.getClickableStyle(-global.settings.reportOffset.top, global.reportWidth!, global.filterOpenedWidth, global.reportHeight!);
+                style += "border: 5px solid lightgreen;";
+                createOverlay("globalFilter", style, visualInfo.count);
+                break;
+            default:
+                const visual = global.currentVisuals.find((vis: any) => vis.name === visualInfo.element.id);
+                style = helpers.getClickableStyle(visual.layout.y/reportDivisor, visual.layout.x/reportDivisor, visual.layout.width/reportDivisor, visual.layout.height/reportDivisor);
+                style += "border: 5px solid lightgreen;";
+                createOverlay(visual.name, style, visualInfo.count, visualInfo.categories);
+                break;
+        }
     });
 }
 
-function createDashboardInfoOnButtonClick(){
+function createDashboardInfoOnButtonClick(count: number){
     helpers.removeOnboardingOverlay();
-    setCurrentId(0);
-    createDashboardInfoCard();
+    helpers.removeContainerOffset();
+    removeExplainGroupCard();
+    setCurrentId(findVisualIndexInTraversal("dashboard", count));
+    const lookedAt = createLookedAtIds("dashboard", [], 1);
+    updateLookedAt(lookedAt);
+    createDashboardInfoCard(1);
 }
 
-function createOverlay(id: string, style: string){
+function createOverlay(id: string, style: string, count: number, categories?: string[]){
     const attributes = global.createDivAttributes();
     attributes.id = id;
+    if(categories){
+        attributes.categories = categories;
+    }
+    attributes.count = count;
     attributes.style = style;
     attributes.clickable = true;
     attributes.parentId = "onboarding";

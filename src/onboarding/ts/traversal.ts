@@ -1,24 +1,49 @@
 import { createDashboardInfoCard, removeDashboardInfoCard } from "./dashboardInfoCard";
 import { removeFrame } from "./disableArea";
+import { removeElement } from "./elements";
 import { createFilterInfoCard, removeFilterInfoCard } from "./filterInfoCards";
 import { currentVisuals } from "./globalVariables";
 import { removeOnboardingOverlay } from "./helperFunctions";
 import { createInfoCard, removeInfoCard } from "./infoCards";
 import { removeIntroCard } from "./introCards";
 import { createOverlayForVisuals } from "./onboarding";
+import * as helpers from "./helperFunctions";
+import * as global from "./globalVariables";
+import { replacer } from "../../componentGraph/ComponentGraph";
+import { getTraversalElement } from "./createSettings";
 
-export const traversialStrategy: any[] = [];
+export let traversalStrategy: TraversalElement[] = [];
+export const lookedAtInGroup = createLookedAtInGroup();
 export let currentId=0;
+export let traversalInGroupIndex = 0;
+export let visualInGroupIndex = 0;
+
+export interface TraversalElement{
+    element: any;
+    categories: string[];
+    count: number;
+}
 
 export interface Group{
+    id: string;
     type: groupType;
-    visuals: string[];
+    visuals: any[];
 }
 
-function isGroup(object: any): object is Group {
+export interface LookedAtInGroup{
+    groupId: string;
+    elements: LookedAtIds[];
+}
+
+export interface LookedAtIds{
+    id: string;
+    categories: string[];
+    count: number;
+}
+
+export function isGroup(object: any): object is Group {
     return object.type && Object.values(groupType).includes(object.type);
 }
-
 
 export enum groupType {
     all = "all",
@@ -26,141 +51,379 @@ export enum groupType {
     onlyOne = "onlyOne"
 }
 
+export function createTraversalElement(type: string){
+    const elem: TraversalElement = {
+        element: null,
+        categories: [],
+        count: 1
+    }
+    elem.categories = getStandartCategories(type);
+    return elem;
+}
+
 export function createGroup(){
     const group: Group = {
+        id: "group",
         type: groupType.all,
         visuals: []
     }
     return group;
 }
 
+export function createLookedAtInGroup(){
+    const lookedAtInGroup: LookedAtInGroup = {
+        groupId: "",
+        elements: []
+    }
+    return lookedAtInGroup;
+}
+
+export function createLookedAtIds(newId: string, newCategories: string[], newCount: number){
+    const lookedAtIds: LookedAtIds = {
+        id: newId,
+        categories: newCategories,
+        count: newCount
+    }
+    return lookedAtIds;
+}
+
 export function setCurrentId(newId: number){
     currentId = newId;
 }
+export function setTraversalInGroupIndex(newTraversalInGroupIndex: number){
+    traversalInGroupIndex = newTraversalInGroupIndex;
+}
+export function setVisualInGroupIndex(newVisualInGroupIndex: number){
+    visualInGroupIndex = newVisualInGroupIndex;
+}
+export function setTraversalStrategy(newTraversalStrategy: any[]){
+    traversalStrategy = newTraversalStrategy;
+}
 
-export function setBasicTraversalStrategy(){
-    traversialStrategy.push("dashboard");
-    for(const vis of currentVisuals){
-        traversialStrategy.push(vis.name);
+export async function setBasicTraversalStrategy(){
+    const trav = [];
+    const traversalElem1 = createTraversalElement("dashboard");
+    traversalElem1.element = await getTraversalElement("dashboard");
+    trav.push(traversalElem1);
+    for(const vis of global.currentVisuals){
+        const traversalElem = createTraversalElement(vis.type);
+        traversalElem.element = await getTraversalElement(vis.name);
+        trav.push(traversalElem);
     }
-    traversialStrategy.push("globalFilter");
+    const traversalElem2 = createTraversalElement("globalFilter");
+    traversalElem2.element = await getTraversalElement("globalFilter");
+    trav.push(traversalElem2);
+    return trav;
 }
 
-export function setTestAllGroupsTraversalStrategy(){
-    traversialStrategy.push("dashboard");
-    traversialStrategy.push(currentVisuals[0].name);
-    traversialStrategy.push(currentVisuals[1].name);
+export async function setTestAllGroupsTraversalStrategy(){
+    const trav = [];
+    const traversalElem1 = createTraversalElement("dashboard");
+    traversalElem1.element = await getTraversalElement("dashboard");
+    trav.push(traversalElem1);
+
+    const traversalElem6g = createTraversalElement(currentVisuals[6].type);
+    traversalElem6g.element = await getTraversalElement(currentVisuals[6].name);
+    traversalElem6g.categories = ["general"];
+    trav.push(traversalElem6g);
+
     const group = createGroup();
-    group.visuals.push(currentVisuals[2].name);
-    group.visuals.push(currentVisuals[3].name);
-    group.visuals.push(currentVisuals[4].name);
-    traversialStrategy.push(group);
-    traversialStrategy.push(currentVisuals[5].name);
-    traversialStrategy.push(currentVisuals[6].name);
-    traversialStrategy.push("globalFilter");
+
+    const groupTrav1 = []
+    const traversalElemv11 = createTraversalElement(currentVisuals[0].type);
+    traversalElemv11.element = await getTraversalElement(currentVisuals[0].name);
+    traversalElemv11.categories = ["general"];
+    groupTrav1.push(traversalElemv11);
+    const traversalElemv11ia = createTraversalElement(currentVisuals[0].type);
+    traversalElemv11ia.element = await getTraversalElement(currentVisuals[0].name);
+    traversalElemv11ia.categories = ["insight"];
+    groupTrav1.push(traversalElemv11ia);
+    const traversalElemv11i = createTraversalElement(currentVisuals[1].type);
+    traversalElemv11i.element = await getTraversalElement(currentVisuals[1].name);
+    traversalElemv11i.categories = ["general"];
+    groupTrav1.push(traversalElemv11i);
+    const traversalElemv12 = createTraversalElement(currentVisuals[1].type);
+    traversalElemv12.element = await getTraversalElement(currentVisuals[1].name);
+    traversalElemv12.categories = ["insight"];
+    groupTrav1.push(traversalElemv12);
+    const traversalElemv12i = createTraversalElement(currentVisuals[1].type);
+    traversalElemv12i.element = await getTraversalElement(currentVisuals[1].name);
+    traversalElemv12i.categories = ["interaction"];
+    groupTrav1.push(traversalElemv12i);
+    const traversalElemv13 = createTraversalElement(currentVisuals[2].type);
+    traversalElemv13.element = await getTraversalElement(currentVisuals[2].name);
+    traversalElemv13.categories = ["general"];
+    groupTrav1.push(traversalElemv13);
+    group.visuals.push(groupTrav1);
+    group.type = groupType.all;
+
+    const groupTrav2 = []
+    const traversalElemv21 = createTraversalElement(currentVisuals[3].type);
+    traversalElemv21.element = await getTraversalElement(currentVisuals[3].name);
+    traversalElemv21.categories = ["insight"];
+    groupTrav2.push(traversalElemv21);
+    const traversalElemv22 = createTraversalElement(currentVisuals[4].type);
+    traversalElemv22.element = await getTraversalElement(currentVisuals[4].name);
+    traversalElemv22.categories = ["interaction"];
+    groupTrav2.push(traversalElemv22);
+    group.visuals.push(groupTrav2);
+
+    const traversalElem4 = createTraversalElement("group");
+    traversalElem4.element = group;
+    trav.push(traversalElem4);
+
+    const traversalElemv23 = createTraversalElement(currentVisuals[5].type);
+    traversalElemv23.element = await getTraversalElement(currentVisuals[5].name);
+    traversalElemv23.categories = ["general"];
+    trav.push(traversalElemv23);
+    const traversalElemv23i = createTraversalElement(currentVisuals[5].type);
+    traversalElemv23i.element = await getTraversalElement(currentVisuals[5].name);
+    traversalElemv23i.categories = ["interaction"];
+    trav.push(traversalElemv23i);
+    const traversalElemv13i = createTraversalElement(currentVisuals[2].type);
+    traversalElemv13i.element = await getTraversalElement(currentVisuals[2].name);
+    traversalElemv13i.categories = ["interaction"];
+    trav.push(traversalElemv13i);
+    const traversalElem6 = createTraversalElement(currentVisuals[6].type);
+    traversalElem6.element = await getTraversalElement(currentVisuals[6].name);
+    traversalElem6.categories = ["interaction"];
+    trav.push(traversalElem6);
+    const traversalElem7 = createTraversalElement("globalFilter");
+    traversalElem7.element = await getTraversalElement("globalFilter");
+    trav.push(traversalElem7);
+    return trav;
 }
 
-export function setTestAtLeastOneGroupsTraversalStrategy(){
-    traversialStrategy.push("dashboard");
-    traversialStrategy.push(currentVisuals[0].name);
-    traversialStrategy.push(currentVisuals[1].name);
-    const group = createGroup();
-    group.type = groupType.atLeastOne;
-    group.visuals.push(currentVisuals[2].name);
-    group.visuals.push(currentVisuals[3].name);
-    group.visuals.push(currentVisuals[4].name);
-    traversialStrategy.push(group);
-    traversialStrategy.push(currentVisuals[5].name);
-    traversialStrategy.push(currentVisuals[6].name);
-    traversialStrategy.push("globalFilter");
-}
-
-export function setTestOnlyOneGroupsTraversalStrategy(){
-    traversialStrategy.push("dashboard");
-    traversialStrategy.push(currentVisuals[0].name);
-    traversialStrategy.push(currentVisuals[1].name);
-    const group = createGroup();
-    group.type = groupType.onlyOne;
-    group.visuals.push(currentVisuals[2].name);
-    group.visuals.push(currentVisuals[3].name);
-    group.visuals.push(currentVisuals[4].name);
-    traversialStrategy.push(group);
-    traversialStrategy.push(currentVisuals[5].name);
-    traversialStrategy.push(currentVisuals[6].name);
-    traversialStrategy.push("globalFilter");
-}
-
-export function createInformationCard(type: string, visuals?: any[], visualId?:string){
+export function createInformationCard(type: string, count: number, visuals?: any[], visualId?:string, categories?: string[]){
     removeFrame();
     removeIntroCard();
     removeInfoCard();
     removeDashboardInfoCard();
     removeFilterInfoCard();
     removeOnboardingOverlay();
-
     switch(type){
         case "dashboard":
-            createDashboardInfoCard();
+            createDashboardInfoCard(count);
             break;
         case "globalFilter":
-            createFilterInfoCard();
+            createFilterInfoCard(count);
             break;
         case "group":
+            createExplainGroupCard();
             createOverlayForVisuals(visuals!);
             break;
         case "visual":
-            createInfoCard(currentVisuals.find(vis => vis.name === visualId));
+            createInfoCard(currentVisuals.find(vis => vis.name === visualId), count, categories!);
             break;
     }
 }
 
 export function getCurrentTraversalElementType(){
-    const currentElement = traversialStrategy[currentId];
+    const currentElement = global.settings.traversalStrategy[currentId];
 
-    if(isGroup(currentElement)){
-        createInformationCard("group", currentElement.visuals, undefined);
-    } else if(currentElement === "dashboard"){
-        createInformationCard("dashboard");
-    } else if(currentElement === "globalFilter"){
-        createInformationCard("globalFilter");
+    if(isGroup(currentElement.element)){
+        const firstVisuals: TraversalElement[] = [];
+        currentElement.element.visuals.forEach(trav => firstVisuals.push(trav[0]));
+        createInformationCard("group", currentElement.count, firstVisuals);
+    } else if(currentElement.element.id === "dashboard"){
+        createInformationCard("dashboard", currentElement.count);
+    } else if(currentElement.element.id === "globalFilter"){
+        createInformationCard("globalFilter", currentElement.count);
     } else {
-        createInformationCard("visual", undefined, currentElement);
+        createInformationCard("visual", currentElement.count, undefined, currentElement.element.id, currentElement.categories);
     }
 }
 
+export function createGroupOverlay(){
+    const currentElement = global.settings.traversalStrategy[currentId];
+    const firstVisuals: TraversalElement[] = [];
+    currentElement.element.visuals.forEach((trav: TraversalElement) => firstVisuals.push(trav[0]));
+    createInformationCard("group", currentElement.count, firstVisuals, undefined);
+}
 
-export function findVisualInTraversal(id: string){
-    let index = traversialStrategy.indexOf(id);
+
+export function findVisualIndexInTraversal(id: string, count: number){
+    const elem = global.settings.traversalStrategy.find(vis => vis.element.id === id  && vis.count === count);
+    let index = global.settings.traversalStrategy.indexOf(elem!);
     if(index  == -1){
-       const groups =  traversialStrategy.find(object => isGroup(object));
+       const groups =  global.settings.traversalStrategy.filter(object => isGroup(object.element));
        for(const group of groups){
-            const indexInGroup = group.visuals.indexOf(id);
-            if(indexInGroup != -1){
-                index = traversialStrategy.indexOf(group);
-                return index;
+            for(const groupTraversal of group.element.visuals){
+                const elemInGroup = groupTraversal.find((visInGroup: TraversalElement) => visInGroup.element.id === id  && visInGroup.count === count);
+                if(elemInGroup){
+                    const groupElem = global.settings.traversalStrategy.find(vis => vis.element.id === group.element.id  && vis.count === group.count);
+                    const groupIndex = global.settings.traversalStrategy.indexOf(groupElem!);
+                    return groupIndex;
+                }
             }
        }
-       index = 0;
+       index = -1;
     }
     return index;
 }
 
-export function findCurrentTraversalVisual(){
-    const traversalElem = traversialStrategy[currentId];
-    
-    if(!isGroup(traversalElem) && traversalElem !== "dashboard" && traversalElem !== "globalFilter"){
-        return currentVisuals.find((vis: any) => vis.name === traversalElem);
+export function findElementInTraversal(traversal: TraversalElement[], id: string, categories: string[], count: number){
+    const foundElem = traversal.find(vis => vis.element.id === id  && vis.categories.every(category => categories.includes(category)) && vis.count === count);
+    if(!foundElem){
+       const groups = traversal.filter(object => isGroup(object.element));
+       for(const group of groups){
+            for(const groupTraversal of group.element.visuals){
+                const elemInGroup = groupTraversal.find((visInGroup: TraversalElement) => visInGroup.element.id === id && visInGroup.categories.every(category => categories.includes(category)) && visInGroup.count === count);
+                if(elemInGroup){
+                    return elemInGroup;
+                }
+            }
+        }
+    }
+    return foundElem;
+}
+
+export function findTraversalVisual(id:string){
+    if(!isGroup(id) && id !== "dashboard" && id !== "globalFilter"){
+        return currentVisuals.find((vis: any) => vis.name === id);
     }
 
     return null;
 }
 
-export function findCurrentTraversalVisualIndex(){
-    const traversalElem = traversialStrategy[currentId];
+export function findCurrentTraversalVisual(){
+    const traversalElem = global.settings.traversalStrategy[currentId].element;
     
-    if(!isGroup(traversalElem) && traversalElem !== "dashboard" && traversalElem !== "globalFilter"){
-        return currentVisuals.findIndex((vis: any) => vis.name === traversalElem);
+    if(!isGroup(traversalElem) && traversalElem.id !== "dashboard" && traversalElem.id !== "globalFilter"){
+        return [currentVisuals.find((vis: any) => vis.name === traversalElem.id), traversalElem.categories, traversalElem.count];
+    }
+
+    return null;
+}
+
+export function findCurrentTraversalCount(){
+    return global.settings.traversalStrategy[currentId].count;
+}
+
+export function findCurrentTraversalVisualIndex(){
+    const traversalElem = global.settings.traversalStrategy[currentId].element;
+    
+    if(!isGroup(traversalElem) && traversalElem.id !== "dashboard" && traversalElem.id !== "globalFilter"){
+        return currentVisuals.findIndex((vis: any) => vis.name === traversalElem.id);
     }
 
     return 0;
+}
+
+export function removeExplainGroupCard(){
+    removeElement("explainGroupCard");
+}
+
+export function createExplainGroupCard(){
+    const style = `overflow: auto;position:fixed;top:10px;left:50%;margin-left:` + -(global.explainGroupCardWidth/2) + `px;width:`+ global.explainGroupCardWidth + `px;height:` + global.explainGroupCardHeight + `px;pointer-events:auto;border-radius:10px;background-color:lightsteelblue;z-index: 99 !important;`;
+    helpers.createCard("explainGroupCard", style, "");
+    helpers.addContainerOffset(global.explainGroupCardHeight);
+    helpers.createCloseButton("closeButton", "closeButtonPlacementBig", "", helpers.getCloseFunction(), "explainGroupCard");
+    helpers.createCardContent("", createExplainGroupText(), "explainGroupCard");
+}
+
+function createExplainGroupText(){
+    const currentElement = traversalStrategy[currentId].element;
+    let explaination = "Please click on one of the highlighted visualisations to get its explaination.";
+
+    switch(currentElement.type){
+        case groupType.all:
+            explaination += " You can look at the visualisations in any order but you will have to look at all of them before you can continue.";
+            break;
+        case groupType.atLeastOne:
+            explaination += " You can look at one visualisation or multiple and then continue.";
+            break;
+        case groupType.onlyOne:
+            explaination += " You can look at one of the viualisation and then continue.";
+            break;
+    }
+
+    return explaination;
+}
+
+export async function updateTraversal(newTraversalStrategy: TraversalElement[]){
+    const traversal: TraversalElement[] = [];
+    const oldTraversalStrategy = global.settings.traversalStrategy;
+    setTraversalStrategy([]);
+    global.settings.traversalStrategy = [];
+    localStorage.setItem("settings", JSON.stringify(global.settings, replacer));
+
+    for (const elem of newTraversalStrategy) {
+        if(isGroup(elem.element)){
+            const oldGroup = oldTraversalStrategy.find(elemSetting => elemSetting.element.id === elem.element.id  && elemSetting.categories.every(category => elem.categories.includes(category)) && elemSetting.count === elem.count);
+            if(oldGroup){
+                const newTraversals = [];
+                for(const groupTraversal of elem.element.visuals){
+                    const newVisuals = [];
+                    for(const groupElem of groupTraversal){
+                        const oldSetting = findElementInTraversal(oldTraversalStrategy, groupElem.element.id, groupElem.categories, groupElem.count);
+                        if(oldSetting){
+                            newVisuals.push(oldSetting);
+                        } else {
+                            const traversalElem = createTraversalElement("");
+                            traversalElem.element = await getTraversalElement(groupElem.element.id);
+                            traversalElem.count = groupElem.count;
+                            traversalElem.categories = groupElem.categories;
+                            newVisuals.push(traversalElem);
+                        }
+                    }
+                    newTraversals.push(newVisuals);
+                }
+                elem.element.visuals = newTraversals;
+                traversal.push(elem);
+            } else {
+                const traversalElem = createTraversalElement("");
+                traversalElem.element = await getTraversalElement(elem.element);
+                traversalElem.count = elem.count;
+                traversalElem.categories = elem.categories;
+                traversal.push(traversalElem);
+            }
+        }else{
+            const oldSetting = oldTraversalStrategy.find(elemSetting => elemSetting.element.id === elem.element.id && elemSetting.categories.every(category => elem.categories.includes(category)) && elemSetting.count === elem.count);
+            if(oldSetting){
+                traversal.push(oldSetting);
+            } else {
+                const traversalElem = createTraversalElement("");
+                    traversalElem.element = await getTraversalElement(elem.element.id);
+                    traversalElem.count = elem.count;
+                    traversalElem.categories = elem.categories;
+                    traversal.push(traversalElem);
+            }
+        }
+    }
+
+    setTraversalStrategy(traversal);
+    global.settings.traversalStrategy = traversal;
+    localStorage.setItem("settings", JSON.stringify(global.settings, replacer));
+}
+
+export function updateLookedAt(lookedAt: LookedAtIds){
+    const currentElement = global.settings.traversalStrategy[currentId].element;
+    if(isGroup(currentElement)){
+        if(currentElement.id === lookedAtInGroup.groupId){
+            lookedAtInGroup.elements.push(lookedAt);
+        } else {
+            lookedAtInGroup.groupId = currentElement.id;
+            lookedAtInGroup.elements = [lookedAt];
+        }
+    } else {
+        lookedAtInGroup.groupId = "";
+        lookedAtInGroup.elements = [];
+    }
+}
+
+export function getStandartCategories(type: string){
+    let categories: string[];
+    switch(type){
+        case "card":
+            categories = ["general", "insight"];
+            break;
+        case "slicer":
+            categories = ["general", "interaction"];
+            break;
+        default:
+            categories = ["general", "interaction", "insight"];
+            break;
+    }
+    return categories;
 }
