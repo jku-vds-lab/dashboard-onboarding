@@ -55,7 +55,7 @@ export default function ComponentsProperties(className, visParentId) {
     let ids = [];
     let titles = [];
     switch (type) {
-      case "card":
+      case "card": case "multiRowCard":
         ids.push(oldId[0] + " Insight");
         titles.push(oldTitle[0] + " Insight");
         break;
@@ -85,7 +85,7 @@ export default function ComponentsProperties(className, visParentId) {
   function createNodeTitle(title, index = "") {
     let newTitle = title;
     switch (title) {
-      case "card":
+      case "card": case "multiRowCard":
         newTitle = "KPI";
         break;
       case "slicer":

@@ -619,7 +619,7 @@ export async function getInteractionExampleChangesText(visual: any){
     const type = getTypeName(visual);
 
     switch(type){
-        case 'Card':
+        case 'Card': case "Multi Row Card":
             visualChangeInfo += `The displayed data is now "DataValue".`;
             break;
         case 'Line Clustered Column Combo Chart':
@@ -823,9 +823,8 @@ export function getVisualIndex(name: string){
 export async function getVisualInfos(visual: any){
     const type = getTypeName(visual);
     let visualInfos = {generalImages:[] as any[],generalInfos:[] as string[],interactionImages:[] as any[],interactionInfos:[] as string[],insightImages:[] as any[],insightInfos:[] as string[]};
-
     switch(type){
-        case 'Card':
+        case 'Card': case "Multi Row Card":
             visualInfos = await getCardInfo(visual);
             break;
         case 'Line Clustered Column Combo Chart':
@@ -843,14 +842,12 @@ export async function getVisualInfos(visual: any){
         default:
             break;
     }
-
     const CGVisual = global.componentGraph.dashboard.visualizations.find(vis => vis.id === visual.name);
     const insights = CGVisual?.insight?.insights!;
     for(const insight of insights){
         visualInfos.insightImages.push(lightbulbImg);
         visualInfos.insightInfos.push(insight);
     }
-
     return visualInfos;
 }
 

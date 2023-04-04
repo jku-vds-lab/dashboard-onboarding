@@ -68,7 +68,7 @@ export async function getVisualDescription(visual: VisualDescriptor): Promise<st
 let description = ""
 	const VisualType = visual.type
 	switch(VisualType){
-		case 'card':
+		case 'card': case "multiRowCard":
 			description = "This element is a card. Cards display the most important facts of a report."
 			break;
 		case 'slicer':
@@ -98,7 +98,7 @@ export async function getVisualTask(visual: VisualDescriptor): Promise<string>  
 	let task = ""
 		const VisualType = visual.type
 		switch(VisualType){
-			case 'card':
+			case 'card': case "multiRowCard":
 				task = "summarize"
 				break;
 			case 'slicer':
@@ -224,7 +224,7 @@ export function getVisualMark(visual: VisualDescriptor): string {
 	let mark = ""
 		const VisualType = visual.type
 		switch(VisualType){
-			case 'card':
+			case 'card': case "multiRowCard":
 				mark = "Value"
 				break;
 			case 'slicer':
@@ -271,7 +271,7 @@ export async function getVisualInsight(visual: VisualDescriptor): Promise<Array<
 	const insights = new Array<string>();
 	const VisualType = visual.type
 		switch(VisualType){
-			case 'card':
+			case 'card': case "multiRowCard":
 				const dataName = await getFieldMeasure(visual, "Values");
     			const dataValue = await helper.getSpecificDataInfo(visual, dataName);
 				insights[0] = "You can see that the value of " + dataName + " is " + dataValue + ".";

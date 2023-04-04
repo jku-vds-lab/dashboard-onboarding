@@ -11,7 +11,7 @@ export async function createVisualInfo(visual: any, count: number, categories: s
 }
 
 export async function createTabsWithContent(visual: any, count: number, categories: string[]){
-    const visualInfos = await helpers.getVisualInfos(visual);   
+    const visualInfos = await helpers.getVisualInfos(visual);  
     const visualData = helpers.getDataOfVisual(visual, count);
     if(!visualData){
         return;

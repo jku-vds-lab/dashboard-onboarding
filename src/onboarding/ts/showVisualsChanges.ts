@@ -58,9 +58,8 @@ export async function getShowVisualChangesText(visual: any){
     let visualChangeInfo = "You can see that this visual was filtered by " + allTargetsString + ".<br>";
 
     const type = helpers.getTypeName(visual);
-
     switch(type){
-        case 'Card':
+        case 'Card': case "Multi Row Card":
             visualChangeInfo += await getCardChanges(visual);
             break;
         case 'Line Clustered Column Combo Chart':

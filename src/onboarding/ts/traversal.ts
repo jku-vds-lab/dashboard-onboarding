@@ -453,7 +453,7 @@ export function updateLookedAt(lookedAt: LookedAtIds){
 export function getStandartCategories(type: string){
     let categories: string[];
     switch(type){
-        case "card":
+        case "card": case "multiRowCard":
             categories = ["general", "insight"];
             break;
         case "slicer":
