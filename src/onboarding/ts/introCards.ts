@@ -14,7 +14,7 @@ export function createIntroCard(){
 
     helpers.createCardContent(getIntroTitle(), getIntroText(), "introCard");
 
-    helpers.createCardButtons("skip", "", "start");
+    helpers.createCardButtons("cardButtons", "skip", "", "start");
 }
 
 export function removeIntroCard(){

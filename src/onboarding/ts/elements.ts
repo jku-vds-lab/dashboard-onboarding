@@ -4,7 +4,7 @@ import { createFilterInfoCard } from "./filterInfoCards";
 import { createInfoCard } from "./infoCards";
 import { removeHintCard, removeShowChangesCard } from "./showReportChanges";
 import { showVisualChanges } from "./showVisualsChanges";
-import { createInformationCard, createLookedAtInGroup, currentId, findCurrentTraversalCount, findVisualIndexInTraversal, getCurrentTraversalElementType, isGroup, lookedAtInGroup, removeExplainGroupCard, setCurrentId, traversalStrategy, updateLookedAt } from "./traversal";
+import { createInformationCard, createLookedAtIds, createLookedAtInGroup, currentId, findCurrentTraversalCount, findElementInTraversal, findVisualIndexInTraversal, getCurrentTraversalElementType, isGroup, lookedAtInGroup, removeExplainGroupCard, setCurrentId, traversalStrategy, updateLookedAt } from "./traversal";
 
 export function addStylesheet(URL: string){
     const style = document.createElement('link');
@@ -14,7 +14,7 @@ export function addStylesheet(URL: string){
     document.head.appendChild(style)
 }
 
-export function createDiv(attributes: { id: any; count: number, style: any; classes: any; content: any; role: any; label: any; clickable: any; selectedTargets?: any; eventType: any; eventFunction: any; parentId: any; }){
+export function createDiv(attributes: { id: any; categories: string[], count: number, style: any; classes: any; content: any; role: any; label: any; clickable: any; selectedTargets?: any; eventType: any; eventFunction: any; parentId: any; }){
     const div = document.createElement('div');
     div.id = attributes.id;
     div.style.cssText = attributes.style;
@@ -40,18 +40,23 @@ export function createDiv(attributes: { id: any; count: number, style: any; clas
                 setCurrentId(findVisualIndexInTraversal(attributes.id, attributes.count));
                 const currentElem = global.settings.traversalStrategy[currentId].element;
                 if(isGroup(currentElem)){
-                    updateLookedAt(attributes.id);
-                    const elemInGroup = currentElem.visuals.find(vis => vis.element.id === attributes.id);
+                    const lookedAt = createLookedAtIds(attributes.id, attributes.categories, attributes.count);
+                    updateLookedAt(lookedAt);
+                    const elemInGroup = findElementInTraversal(global.settings.traversalStrategy, attributes.id, attributes.categories, attributes.count);
                     if(attributes.id === "globalFilter"){
                         createInformationCard("globalFilter", elemInGroup.count);
                     } else {
-                        createInformationCard("visual", elemInGroup.count, undefined, attributes.id);
+                        if(global.explorationMode){
+                            createInformationCard("visual", elemInGroup.count, undefined, elemInGroup.element.id, attributes.categories);
+                        } else {
+                            createInformationCard("visual", elemInGroup.count, undefined, elemInGroup.element.id, elemInGroup.categories);
+                        }
                     }
                 } else{
                     if(attributes.id === "globalFilter"){
                         createInformationCard("globalFilter", 1);
                     } else {
-                        createInformationCard("visual", 1, undefined, attributes.id);
+                        createInformationCard("visual", 1, undefined, attributes.id, attributes.categories);
                     }
                 }
             }

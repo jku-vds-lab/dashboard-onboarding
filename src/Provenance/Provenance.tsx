@@ -45,6 +45,8 @@ interface IAppProvenance {
 const stack: Array<string> = ["none", "none"];
 const prevState: Array<string> = ["none"];
 const lastKnownLabel: Array<string> = ['none'];
+const initialFilters: string = JSON.stringify(getComponentGraph().dashboard.global_filter)
+const prevGlobalFilters: Array<string> = [initialFilters]
 
 /**
  * DESCRIPTION
@@ -116,19 +118,27 @@ export function setupProvenance(defaultState: IAppState): IAppProvenance {
     const { newState, label, updateProv, eventType, bookmark, graph } = await onDashboardClick();
     // if the stack contains two events rendered, it means user randonly clicks on the dashboard and there is no need to save these states.
     let usedLabel: string = label
-    //console.log("event ", eventType)
+
     hideButtons();
     const stateAsString: string = JSON.stringify(newState, replacer)
     const oneNotRendered: boolean = stack[0] !== "rendered" || stack[1] !== "rendered"
     const dataChanged: boolean = (eventType == "rendered" && stack[0] != 'dataSelected' && stateAsString !== prevState[0])
     const renderedAfterSelection: boolean = (eventType == "rendered" && stack[0] == 'dataSelected')
+    const gf: string = JSON.stringify(getComponentGraph().dashboard.global_filter)
     if(label != 'null' && label != 'none'){
       lastKnownLabel[0] = label
     }
     else{
       if(dataChanged){
         //('dataChanged ', eventType, stack)
-        usedLabel = 'Reset Selection'
+        usedLabel = 'Data Changed'
+        // await new Promise(r => setTimeout(r, 2000));
+        // console.log(gf, prevGlobalFilters[0])
+        // if (gf !== prevGlobalFilters[0]){
+        //   usedLabel = 'Changed global filter'
+        //   console.log('Global filters as string', gf)
+          
+        // }
       } else {
       usedLabel = lastKnownLabel[0]
       }
@@ -136,7 +146,7 @@ export function setupProvenance(defaultState: IAppState): IAppProvenance {
     //console.log("stack before ", stack)
     if (updateProv && (dataChanged || renderedAfterSelection) && stack[0] != '_appliedBookmark' && eventType !== 'loaded') {
       //console.log('STATE LABEL::: ' + usedLabel)
-
+      prevGlobalFilters[0] = gf
       provenance.apply(
         {
           apply: () =>

@@ -6,9 +6,10 @@ import { createIntroCard } from "./introCards";
 import { createFilterInfoCard, removeFilterInfoCard } from "./filterInfoCards";
 import { createVisualInfo } from "./visualInfo";
 import { createDashboardInfoCard, getNewDashboardInfo, removeDashboardInfoCard } from "./dashboardInfoCard";
-import { currentId, getCurrentTraversalElementType, groupType, isGroup, lookedAtInGroup, setCurrentId, traversalStrategy } from "./traversal";
+import { createGroupOverlay, createInformationCard, createLookedAtIds, currentId, getCurrentTraversalElementType, groupType, isGroup, lookedAtInGroup, setCurrentId, setTraversalInGroupIndex, setVisualInGroupIndex, TraversalElement, traversalInGroupIndex, traversalStrategy, updateLookedAt, visualInGroupIndex } from "./traversal";
+import { textSize } from "./sizes";
 
-export async function createInfoCard(visual: any, count: number){
+export async function createInfoCard(visual: any, count: number, categories: string[]){
     disable.disableFrame();
     disable.createDisabledArea(visual);
 
@@ -25,41 +26,82 @@ export async function createInfoCard(visual: any, count: number){
 
     const visualData = helpers.getDataOfVisual(visual, count);
     helpers.createCardContent(visualData?.title, "", "infoCard");
-    createInfoCardButtons();
-
-    await createVisualInfo(visual, count);
+    createInfoCardButtons(visual.name, categories, count);
+    await createVisualInfo(visual, count, categories);
 }
 
-export function createInfoCardButtons(){
+export function createInfoCardButtons(id: string, categories: string[], count: number){
     if(currentId === 0 && global.isGuidedTour){
-        createCardButtonsWithGroup("", "next");
+        createCardButtonsWithGroup(id, categories, count, "", "next");
     } else if(currentId === global.settings.traversalStrategy.length-1 && global.isGuidedTour){
-        createCardButtonsWithGroup("previous", "close");
+        createCardButtonsWithGroup(id, categories, count, "previous", "close");
     } else {
-        createCardButtonsWithGroup("previous", "next");
+        createCardButtonsWithGroup(id, categories, count, "previous", "next");
     }
 }
 
-export function createCardButtonsWithGroup(leftButton: string, rightButton: string){
+export function createCardButtonsWithGroup(id: string, categories: string[], count: number, leftButton: string, rightButton: string){
     const traversalElem = global.settings.traversalStrategy[currentId].element;
     if(isGroup(traversalElem)){
-        switch(traversalElem.type){
-            case groupType.all:
-                if(traversalElem.visuals.every(vis => lookedAtInGroup.elements.includes(vis.element.id))){
-                    helpers.createCardButtons(leftButton, "", rightButton);
-                } else {
-                    helpers.createCardButtons("", "back to group", "");
+        let index = 0;
+        let travLength = 0;
+        for(let i=0; i < traversalElem.visuals.length; i++){   
+            const elemInGroup = traversalElem.visuals[i].find((visInGroup: TraversalElement) => visInGroup.element.id === id && visInGroup.categories.every(category => categories.includes(category)) && visInGroup.count === count);
+            if(elemInGroup){
+                index = traversalElem.visuals[i].indexOf(elemInGroup!);
+                travLength = traversalElem.visuals[i].length -1;
+                setVisualInGroupIndex(index);
+                setTraversalInGroupIndex(i);
+            }
+        }
+
+        if(index === 0){
+            if(global.explorationMode){
+                helpers.createCardButtons("cardButtons", leftButton, "", rightButton);
+                helpers.createCardButtons("groupButtons", "back to group", "", "nextInGroup");
+            } else {
+                helpers.createCardButtons("cardButtons", "", "", "nextInGroup");
+            }
+        } else if(index === travLength){
+            if(global.explorationMode){
+                helpers.createCardButtons("cardButtons", leftButton, "", rightButton);
+                helpers.createCardButtons("groupButtons", "previousInGroup", "", "back to group");
+            } else {
+                switch(traversalElem.type){
+                    case groupType.all:
+                        let traversed = 0;
+                        for(const trav of traversalElem.visuals){ 
+                            if(trav.every((vis: TraversalElement) => lookedAtInGroup.elements.find(elem => elem.id === vis.element.id && elem.categories.every(category => vis.categories.includes(category)) && elem.count === vis.count))){
+                                traversed ++;
+                            }
+                        }
+                        if(traversed === traversalElem.visuals.length){
+                            helpers.createCardButtons("cardButtons", leftButton, "", rightButton);
+                            helpers.createCardButtons("groupButtons", "", "previousInGroup", "");
+                        } else {
+                            helpers.createCardButtons("groupButtons", "previousInGroup", "", "back to group");
+                        }
+                        break;
+                    case groupType.atLeastOne:
+                        helpers.createCardButtons("cardButtons", leftButton, "", rightButton);
+                        helpers.createCardButtons("groupButtons", "previousInGroup", "", "back to group");
+                        break;
+                    case groupType.onlyOne:
+                        helpers.createCardButtons("cardButtons", leftButton, "", rightButton);
+                        helpers.createCardButtons("groupButtons", "", "previousInGroup", "");
+                        break;
                 }
-                break;
-            case groupType.atLeastOne:
-                helpers.createCardButtons(leftButton, "back to group", rightButton);
-                break;
-            case groupType.onlyOne:
-                helpers.createCardButtons(leftButton, "", rightButton);
-                break;
+            }
+        } else {
+            if(global.explorationMode){
+                helpers.createCardButtons("cardButtons", leftButton, "", rightButton);
+                helpers.createCardButtons("groupButtons", "previousInGroup", "back to group", "nextInGroup");
+            } else {
+                helpers.createCardButtons("groupButtons", "previousInGroup", "", "nextInGroup");
+            }
         }
     } else {
-        helpers.createCardButtons(leftButton, "", rightButton);
+        helpers.createCardButtons("cardButtons", leftButton, "", rightButton);
     }
 }
 
@@ -137,6 +179,46 @@ export function previousInfoCard(){
     //     removeInfoCard();
     //     createInfoCard(global.currentVisuals[global.currentVisualIndex]);
     // }   
+}
+
+export function nextInGroup(){
+    const currentElement = global.settings.traversalStrategy[currentId].element;
+
+    setVisualInGroupIndex(visualInGroupIndex + 1);
+
+    const traversal = currentElement.visuals[traversalInGroupIndex];
+    const visual = traversal[visualInGroupIndex];
+
+    const lookedAt = createLookedAtIds(visual.element.id, visual.categories, visual.count);
+    updateLookedAt(lookedAt);
+
+    if(currentElement.id === "dashboard"){
+        createInformationCard("dashboard", visual.count);
+    } else if(currentElement.id === "globalFilter"){
+        createInformationCard("globalFilter", visual.count);
+    } else {
+        createInformationCard("visual", visual.count, undefined, visual.element.id, visual.categories);
+    }
+}
+
+export function previousInGroup(){
+    const currentElement = global.settings.traversalStrategy[currentId].element;
+
+    setVisualInGroupIndex(visualInGroupIndex - 1);
+
+    const traversal = currentElement.visuals[traversalInGroupIndex];
+    const visual = traversal[visualInGroupIndex];
+
+    const lookedAt = createLookedAtIds(visual.element.id, visual.categories, visual.count);
+    updateLookedAt(lookedAt);
+
+    if(currentElement.id === "dashboard"){
+        createInformationCard("dashboard", visual.count);
+    } else if(currentElement.id === "globalFilter"){
+        createInformationCard("globalFilter", visual.count);
+    } else {
+        createInformationCard("visual", visual.count, undefined, visual.element.id, visual.categories);
+    }
 }
 
 export async function getVisualInfo(idParts: string[], count: number){

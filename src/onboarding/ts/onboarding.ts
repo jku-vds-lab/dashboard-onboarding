@@ -11,7 +11,7 @@ import { createDashboardInfoCard, removeDashboardInfoCard } from "./dashboardInf
 import { reportDivisor, resize, textSize } from "./sizes";
 import { createFilterInfoCard, removeFilterInfoCard } from "./filterInfoCards";
 import { showVisualChanges } from "./showVisualsChanges";
-import { createExplainGroupCard, currentId, findCurrentTraversalCount, findCurrentTraversalVisual, findTraversalVisual, findVisualIndexInTraversal, getCurrentTraversalElementType, isGroup, lookedAtInGroup, removeExplainGroupCard, setBasicTraversalStrategy, setCurrentId, setTestAllGroupsTraversalStrategy, setTestAtLeastOneGroupsTraversalStrategy, setTestOnlyOneGroupsTraversalStrategy, traversalStrategy, updateLookedAt, updateTraversal } from "./traversal";
+import { createExplainGroupCard, createLookedAtIds, currentId, findCurrentTraversalCount, findCurrentTraversalVisual, findTraversalVisual, findVisualIndexInTraversal, getCurrentTraversalElementType, getStandartCategories, isGroup, lookedAtInGroup, removeExplainGroupCard, setBasicTraversalStrategy, setCurrentId, setTestAllGroupsTraversalStrategy, TraversalElement, traversalStrategy, updateLookedAt, updateTraversal } from "./traversal";
 import { replacer } from "../../componentGraph/ComponentGraph";
 
 export async function onLoadReport(){
@@ -117,7 +117,7 @@ export async function startOnboardingAt(type: string, visual?: any, count?: numb
             await showVisualChanges(visual);
             break;
         case "visual":
-            await createInfoCard(visual, count!);
+            await createInfoCard(visual, count!, getStandartCategories(visual.type));
             break;
         case "explorationOverlay":
             createOnboardingOverlay()
@@ -153,35 +153,42 @@ export function startGuidedTour(){
 }
 
 export function createOnboardingOverlay(){
-    global.setHasOverlay(true);
-
-    const attributes = global.createButtonAttributes();
-    attributes.id = "dashboardExplaination";
-    attributes.content = "Dashboard Explaination";
-    attributes.style =  `font-size: ${textSize}rem; ` + global.onboardingButtonStyle;
-    attributes.classes = "col-2 " +  global.darkOutlineButtonClass;
-    attributes.function = ( ) => { return createDashboardInfoOnButtonClick(1) };
-    attributes.parentId = "onboarding-header";
-    elements.createButton(attributes);
-
-    global.setInteractionMode(false);
+    helpers.removeOnboardingOverlay();
+    removeExplainGroupCard();
     removeFrame();
     removeIntroCard();
     removeInfoCard();
     removeDashboardInfoCard();
     removeFilterInfoCard();
     removeInteractionCard();
+    global.setHasOverlay(true);
+    global.setInteractionMode(false);
+
+    if(findVisualIndexInTraversal("dashboard", 1) !== -1){
+        const attributes = global.createButtonAttributes();
+        attributes.id = "dashboardExplaination";
+        attributes.content = "Dashboard Explaination";
+        attributes.style =  `font-size: ${textSize}rem; ` + global.onboardingButtonStyle;
+        attributes.classes = "col-2 " +  global.darkOutlineButtonClass;
+        attributes.function = ( ) => { return createDashboardInfoOnButtonClick(1) };
+        attributes.parentId = "onboarding-header";
+        elements.createButton(attributes);
+    }
 
     global.currentVisuals.forEach(function (visual: any) {
-        const style = helpers.getClickableStyle(visual.layout.y/reportDivisor, visual.layout.x/reportDivisor, visual.layout.width/reportDivisor, visual.layout.height/reportDivisor);
-        createOverlay(visual.name, style, 1);
+        if(findVisualIndexInTraversal(visual.name, 1) !== -1){
+            const style = helpers.getClickableStyle(visual.layout.y/reportDivisor, visual.layout.x/reportDivisor, visual.layout.width/reportDivisor, visual.layout.height/reportDivisor);
+            createOverlay(visual.name, style, 1, getStandartCategories(visual.type));
+        }
     });
 
-    const style = helpers.getClickableStyle(-global.settings.reportOffset.top, global.reportWidth!, global.filterOpenedWidth, global.reportHeight!);
-    createOverlay("globalFilter", style, 1);
+    if(findVisualIndexInTraversal("globalFilter", 1) !== -1){
+        const style = helpers.getClickableStyle(-global.settings.reportOffset.top, global.reportWidth!, global.filterOpenedWidth, global.reportHeight!);
+        createOverlay("globalFilter", style, 1);
+    }
 }
 
-export function createOverlayForVisuals(visuals: any[]){
+export function createOverlayForVisuals(visuals: TraversalElement[]){
     global.setHasOverlay(true);
     global.setInteractionMode(false);
     removeFrame();
@@ -191,7 +198,7 @@ export function createOverlayForVisuals(visuals: any[]){
     removeFilterInfoCard();
     removeInteractionCard();
 
-    visuals.forEach(function (visualInfo: any) {
+    visuals.forEach(function (visualInfo: TraversalElement) {
         let style = "";
         switch(visualInfo.element.id){
             case "dashboard":
@@ -214,7 +221,7 @@ export function createOverlayForVisuals(visuals: any[]){
                 const visual = global.currentVisuals.find((vis: any) => vis.name === visualInfo.element.id);
                 style = helpers.getClickableStyle(visual.layout.y/reportDivisor, visual.layout.x/reportDivisor, visual.layout.width/reportDivisor, visual.layout.height/reportDivisor);
                 style += "border: 5px solid lightgreen;";
-                createOverlay(visual.name, style, visualInfo.count);
+                createOverlay(visual.name, style, visualInfo.count, visualInfo.categories);
                 break;
         }
     });
@@ -225,13 +232,17 @@ function createDashboardInfoOnButtonClick(count: number){
     helpers.removeContainerOffset();
     removeExplainGroupCard();
     setCurrentId(findVisualIndexInTraversal("dashboard", count));
-    updateLookedAt("dashboard");
+    const lookedAt = createLookedAtIds("dashboard", [], 1);
+    updateLookedAt(lookedAt);
     createDashboardInfoCard(1);
 }
 
-function createOverlay(id: string, style: string, count: number,){
+function createOverlay(id: string, style: string, count: number, categories?: string[]){
     const attributes = global.createDivAttributes();
     attributes.id = id;
+    if(categories){
+        attributes.categories = categories;
+    }
     attributes.count = count;
     attributes.style = style;
     attributes.clickable = true;

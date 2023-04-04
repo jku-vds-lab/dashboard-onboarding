@@ -33,7 +33,7 @@ export async function createInteractionCard(visual: any){
         helpers.createCloseButton("closeButton", "closeButtonPlacementBig", "", helpers.getCloseFunction(), "interactionCard");
     }
     helpers.createCardContent(global.settings.interactionExample.title, "", "interactionCard");
-    helpers.createCardButtons("", "", "back to visual");
+    helpers.createCardButtons("cardButtons", "", "", "back to visual");
 
     await createInteractionInfo(visual);
 }

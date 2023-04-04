@@ -1,7 +1,7 @@
 import * as global from "./globalVariables";
 import * as elements from "./elements";
 import { getStartFunction } from "./introCards";
-import { previousInfoCard, nextInfoCard, createInfoCard } from "./infoCards";
+import { previousInfoCard, nextInfoCard, createInfoCard, nextInGroup, previousInGroup } from "./infoCards";
 import { removeFrame } from "./disableArea";
 import { createGuidedTour, createDashboardExploration, createOnboardingOverlay } from "./onboarding";
 //import { saveOnboardingChanges } from "./authorMode";
@@ -55,7 +55,7 @@ function backToVisual(){
     removeHintCard();
     const traversalElement = findCurrentTraversalVisual();
         if(traversalElement){
-            createInfoCard(traversalElement[0], traversalElement[1]);
+            createInfoCard(traversalElement[0], traversalElement[2], traversalElement[1]);
         }
 }
 
@@ -83,17 +83,18 @@ export function createCard(id: string, style: string, classes: string){
     elements.createDiv(attributes);
 }
 
-export function createCardButtons(leftButton: string, middleButton:string, rightButton: string){
+export function createCardButtons(id: string, leftButton: string, middleButton:string, rightButton: string){
     const divAttributes = global.createDivAttributes();
-    divAttributes.id = "cardButtons";
+    divAttributes.id = id;
     divAttributes.parentId = "cardContent";
+    divAttributes.style = "height: 50px; clear: both;"
     elements.createDiv(divAttributes);
 
     if(leftButton != ""){
         const buttonAttributes = global.createButtonAttributes();
         buttonAttributes.classes = global.darkOutlineButtonClass + " positionLeft cardButtons";
         buttonAttributes.style = `font-size: ${sizes.textSize}rem; margin-bottom: 20px;`;
-        buttonAttributes.parentId = "cardButtons";
+        buttonAttributes.parentId = id;
         switch(leftButton){
             case "skip":
                 buttonAttributes.id = "skipButton";
@@ -110,6 +111,16 @@ export function createCardButtons(leftButton: string, middleButton:string, right
                 buttonAttributes.content = "Cancel";
                 buttonAttributes.function = removeOnboarding;
                 break;
+            case "previousInGroup":
+                buttonAttributes.id = "previousInGroupButton";
+                buttonAttributes.content = "Previous in Group";
+                buttonAttributes.function = previousInGroup;
+                break;
+            case "back to group": 
+                buttonAttributes.id = "backToGroupButton";
+                buttonAttributes.content = "Select new Group";
+                buttonAttributes.function = createGroupOverlay;
+                break;
             default: 
                 buttonAttributes.id = "previousButton";
                 buttonAttributes.content = "Previous";
@@ -122,7 +133,7 @@ export function createCardButtons(leftButton: string, middleButton:string, right
         const buttonAttributes = global.createButtonAttributes();
         buttonAttributes.classes = global.darkOutlineButtonClass + " positionRight cardButtons";
         buttonAttributes.style = `font-size: ${sizes.textSize}rem; margin-bottom: 20px;`;
-        buttonAttributes.parentId = "cardButtons";
+        buttonAttributes.parentId = id;
         if(leftButton == ""){
             buttonAttributes.style += "margin-bottom: 20px;"
         }
@@ -147,11 +158,21 @@ export function createCardButtons(leftButton: string, middleButton:string, right
                 buttonAttributes.content = "Back to overview";
                 buttonAttributes.function = showReportChanges;
                 break;
+            case "nextInGroup":
+                buttonAttributes.id = "nextInGroupButton";
+                buttonAttributes.content = "Next in Group";
+                buttonAttributes.function = nextInGroup;
+                break;
             // case "save":
             //     buttonAttributes.id = "saveButton";
             //     buttonAttributes.content = "Save";
             //     buttonAttributes.function = saveOnboardingChanges;
             //     break;
+            case "back to group": 
+                buttonAttributes.id = "backToGroupButton";
+                buttonAttributes.content = "Select new Group";
+                buttonAttributes.function = createGroupOverlay;
+                break;
             default:
                 buttonAttributes.id = "nextButton";
                 buttonAttributes.content = "Next";
@@ -164,12 +185,18 @@ export function createCardButtons(leftButton: string, middleButton:string, right
         const buttonAttributes = global.createButtonAttributes();
         buttonAttributes.classes = global.darkOutlineButtonClass + " positionCenter cardButtons";
         buttonAttributes.style = `font-size: ${sizes.textSize}rem; margin-bottom: 20px;`;
-        buttonAttributes.parentId = "cardButtons";
+        buttonAttributes.parentId = id;
         switch(middleButton){
             case "back to group": 
                 buttonAttributes.id = "backToGroupButton";
-                buttonAttributes.content = "Back To Group Selection";
+                buttonAttributes.content = "Select new Group";
                 buttonAttributes.function = createGroupOverlay;
+                break;
+            case "previousInGroup":
+                buttonAttributes.id = "previousInGroupButton";
+                buttonAttributes.content = "Previous in Group";
+                buttonAttributes.function = previousInGroup;
+                break;
         }
         elements.createButton(buttonAttributes);
     }
@@ -446,9 +473,11 @@ export function getDataOfVisual(visual: any, count: number){
     let foundVisual;
     for(const elem of traversalElements){
         if(isGroup(elem.element)){
-            for(const groupElem of elem.element.visuals){
-                if(groupElem.element.id === visual.name && groupElem.count == count){
-                    foundVisual = groupElem;
+            for(const groupTraversals of elem.element.visuals){
+                for(const groupElem of groupTraversals){
+                    if(groupElem.element.id === visual.name && groupElem.count == count){
+                        foundVisual = groupElem;
+                    }
                 }
             }
         } else {
@@ -465,9 +494,11 @@ export function getDataWithId(ID: string, count: number){
     let foundVisual;
     for(const elem of traversalElements){
         if(isGroup(elem.element)){
-            for(const groupElem of elem.element.visuals){
-                if(groupElem.element.id === ID && groupElem.count == count){
-                    foundVisual = groupElem;
+            for(const groupTraversals of elem.element.visuals){
+                for(const groupElem of groupTraversals){
+                    if(groupElem.element.id === ID && groupElem.count == count){
+                        foundVisual = groupElem;
+                    }
                 }
             }
         } else {

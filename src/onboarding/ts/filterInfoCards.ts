@@ -19,7 +19,7 @@ export async function createFilterInfoCard(count: number){
     }
 
     helpers.createCardContent(filterData.title, filterData.generalInformation, "filterInfoCard");
-    createInfoCardButtons();
+    createInfoCardButtons("globalFilter", [], count);
     
     const filters = await getFilterInfos(count);
     if(filters){
