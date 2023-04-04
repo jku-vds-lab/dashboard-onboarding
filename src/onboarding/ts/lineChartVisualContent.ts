@@ -14,9 +14,21 @@ import interactImg from "../assets/interact.png";
 
 export async function getLineChartInfo(visual: any) {
     const CGVisual = global.componentGraph.dashboard.visualizations.find(vis => vis.id === visual.name); 
-    const axis = CGVisual?.encoding.xAxes[0].attribute;
-    const legend = CGVisual?.encoding.legends[0].attribute;
-    const dataName = CGVisual?.encoding.yAxes[0].attribute;
+    const axisValue = CGVisual?.encoding.xAxes[0];
+    let axis;
+    if(axisValue){
+        axis =  axisValue.attribute;
+    }
+    const legendValue = CGVisual?.encoding.legends[0];
+    let legend;
+    if(legendValue){
+        legend =  legendValue.attribute;
+    }
+    const dataValue = CGVisual?.encoding.yAxes[0];
+    let dataName;
+    if(dataValue){
+        dataName = dataValue.attribute;
+    }
 
     const generalImages = [];
     const generalInfos = [];
@@ -60,19 +72,19 @@ export async function getLineChartInfo(visual: any) {
     interactionImages.push(elemClickImg);
     interactionInfos.push(interactionInfo);
 
-    if(CGVisual?.encoding.xAxes[0].isVisible){
+    if(axisValue && axisValue.isVisible){
         generalImages.push(xAxisImg);
         generalInfos.push("The X-axis displayes the values of the " + axis + ".");
         interactionImages.push(axisClickImg);
         interactionInfos.push("When clicking on one of the x-axis-labels you can filter the report by " + axis + ".");
     }
 
-    if(CGVisual?.encoding.yAxes[0].isVisible){
+    if(dataValue && dataValue.isVisible){
         generalImages.push(yAxisImg);
         generalInfos.push("The Y-axis displayes the values of the " + dataName + ".");
     }
 
-    if(CGVisual?.encoding.legends[0].isVisible){
+    if(legendValue && legendValue.isVisible){
         generalImages.push(legendImg);
         generalInfos.push("The legend displayes the values of the " + legend + " and its corresponding color.");
         interactionImages.push(legendClickImg);

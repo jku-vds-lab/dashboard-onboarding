@@ -664,9 +664,9 @@ export async function createComponentGraph(){
 }
 
 export async function getSettings(){
-    if (localStorage.getItem("settings") == null){
+    //if (localStorage.getItem("settings") == null){
         await createSettings();
-    }
+    //}
     global.setSettings(JSON.parse(localStorage.getItem("settings")!, reviver));
 }
 
@@ -905,7 +905,7 @@ export function removeContainerOffset(){
 
 function removeDesignVisuals(){
     const visuals = global.currentVisuals.filter(function (visual) {
-        return visual.type !== "shape" && visual.type !== "basicShape";
+        return visual.type !== "shape" && visual.type !== "basicShape" && visual.type !== "textbox";
     });
     global.setVisuals(visuals);
 }
