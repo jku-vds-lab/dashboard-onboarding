@@ -344,6 +344,10 @@ export async function getFieldColumn(visual: VisualDescriptor, fieldName: string
 export async function getSpecificDataPoint(visualData: Map<string, string>[], legendName: string, selectedLegendValue: string, dataName: string, axisName:string, selectedAxisValue:string){
 	const axisData = visualData.filter(dataMap => dataMap.get(axisName) === selectedAxisValue);
 
+	if(legendName === ""){
+		return axisData[0].get(dataName);
+	}
+
 	switch(axisData.length){
 		case 0:
 			return "0";
@@ -392,6 +396,23 @@ export async function getHighestValue(visualData: Map<string, string>[], dataNam
 	let max = Number.MIN_SAFE_INTEGER;
 	let highestCategory = "";
 	let highestAxis = "";
+
+	if(legendName === ""){
+		const sums = [];
+		for (const axisValue of axisValues) {
+			const axisData = visualData.filter(dataMap => dataMap.get(axisName) === axisValue);
+			const data = axisData[0].get(dataName);
+			if(data){
+				sums.push(parseInt(data));
+			}
+		}
+		const max = Math.max(...sums);
+		const position = sums.indexOf(max);
+		if(axisValues[position]){
+			highestAxis = axisValues[position];
+		}
+		return [max, highestAxis];
+	}
 
 	for (const legendValue of legendValues) {
 		const legendData = visualData.filter(dataMap => dataMap.get(legendName) === legendValue);
@@ -512,7 +533,12 @@ export async function getDefaultInsights(visual: any, insights: string[]){
 	const highestCategory = await getHighestCategory(visualData, dataName, legendValues, legend);
 	const highestValue = await getHighestValue(visualData, dataName, legendValues, legend, axes[0], axisValues);
 
-	insights[0] = "A value of " + value + " " + dataName + " was measured for " + axisValues[middelOfYValues] + " and " + legendValues[middelOfLegendValues] + ".";
-	insights[1] = "On average " + highestCategory + " has higher values than any other category.";
-	insights[2] = "The highest value of " + highestValue[0] + " " + dataName + " was measured for " + highestValue[1] + " and " + highestValue[2] + ".";
+	if(legend === ""){
+		insights[0] = "A value of " + value + " " + dataName + " was measured for " + axisValues[middelOfYValues] + ".";
+		insights[1] = "The highest value of " + highestValue[0] + " " + dataName + " was measured for " + highestValue[1] + ".";
+	} else {
+		insights[0] = "A value of " + value + " " + dataName + " was measured for " + axisValues[middelOfYValues] + " and " + legendValues[middelOfLegendValues] + ".";
+		insights[1] = "On average " + highestCategory + " has higher values than any other category.";
+		insights[2] = "The highest value of " + highestValue[0] + " " + dataName + " was measured for " + highestValue[1] + " and " + highestValue[2] + ".";
+	}
 }

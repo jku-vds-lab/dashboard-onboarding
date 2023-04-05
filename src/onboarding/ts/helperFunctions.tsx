@@ -744,7 +744,7 @@ export function getVisualCardPos(visual: any, cardWidth: number, offset: number)
         pos: ""
     };
 
-    if (rightDistance > leftDistance) {
+    if (rightDistance > leftDistance || leftDistance < global.infoCardWidth) {
         position.x = offset + rightX;
         position.pos = "right";
     }else{

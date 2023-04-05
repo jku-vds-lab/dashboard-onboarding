@@ -103,18 +103,22 @@ export async function getLineChartInfo(visual: any) {
 export async function getLineChartInteractionExample(visual: any) {
     const CGVisual = global.componentGraph.dashboard.visualizations.find(vis => vis.id === visual.name); 
     const axis = CGVisual?.encoding.xAxes[0].attribute;
-    const legend = CGVisual?.encoding.legends[0].attribute;
+    const legend = CGVisual?.encoding.legends[0];
+    let legendAttribute = "";
+    if(legend){
+        legendAttribute = legend.attribute!;
+    }
     const axisValues = await helpers.getSpecificDataInfo(visual, axis!);
-    const legendValues = await helpers.getSpecificDataInfo(visual, legend!);
+    const legendValues = await helpers.getSpecificDataInfo(visual, legendAttribute!);
    
     const middelOfAxisValues = Math.floor(axisValues.length/2);
 
     let interactionInfo = "Please click on the " + CGVisual?.mark;
-    if(axisValues && legendValues){
+    if(axisValues && legendValues && axisValues.length !== 0 && legendValues.length !== 0){
         interactionInfo += " representing " + legendValues[0] + " at the area of " + axisValues[middelOfAxisValues] + ".";
-    } else if(axisValues){
+    } else if(axisValues && axisValues.length !== 0){
         interactionInfo += " at the area of " + axisValues[middelOfAxisValues] + ".";
-    } else if(legendValues){
+    } else if(legendValues && legendValues.length !== 0){
         interactionInfo += " representing " + legendValues[0] +".";
     } else {
         interactionInfo += ".";
