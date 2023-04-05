@@ -15,6 +15,7 @@ import Traversal from "./traversal";
 const initialNodes = [];
 
 const nodeTypes = { simple: SimpleNode, group: GroupNode };
+// const nodeTypes = { simple: SimpleNode };
 
 export default function NodesCanvas() {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
@@ -167,6 +168,24 @@ export default function NodesCanvas() {
     }
     setIsOpen(false);
   };
+  const getLabelInfo = useCallback(
+    (traverse) => {
+      console.log(traverse);
+      setNodes((nds) =>
+        nds.map((node) => {
+          if (node.type === "group") {
+            node.data = {
+              ...node.data,
+              traverse: traverse,
+            };
+          }
+
+          return node;
+        })
+      );
+    },
+    [setNodes]
+  );
 
   const createGroupNode = useCallback(() => {
     let groupNode = null;
@@ -212,7 +231,9 @@ export default function NodesCanvas() {
         position,
         data: {
           title: "group node",
+          callback: getLabelInfo,
           type: "group",
+          traverse: "all", //getLabelInfo();
         },
         className: "dndnode node-group",
         style: { width: width, height: height },
@@ -224,7 +245,7 @@ export default function NodesCanvas() {
       console.log("Error", error);
     }
     return groupNode;
-  }, [groupId, selectedNodes, setNodes]);
+  }, [getLabelInfo, groupId.id, selectedNodes, setNodes]);
 
   const addGroup = useCallback(() => {
     try {

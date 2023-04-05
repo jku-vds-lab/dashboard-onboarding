@@ -25,12 +25,12 @@ export default function StoryPane() {
           </div>
           <textarea id="textBox" className="form-control" rows="4" />
         </div>
-        <div
+        {/* <div
           className="btn btn-secondary btn-sm me-auto"
           onClick={saveAnnotationChanges}
         >
           Save changes
-        </div>
+        </div> */}
       </div>
     </div>
   );

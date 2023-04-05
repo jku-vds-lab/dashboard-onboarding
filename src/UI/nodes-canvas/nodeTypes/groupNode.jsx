@@ -1,15 +1,26 @@
-import { Position } from "reactflow";
-import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Dropdown from "react-bootstrap/Dropdown";
-import DropdownButton from "react-bootstrap/DropdownButton";
+import { useNodeId } from "reactflow";
 import icon from "../icon-1.svg";
 
-const GroupNode = ({ data }) => {
-  function updateLabel(e) {
-    e.target.closest(".dropdown").nextElementSibling.innerText =
-      e.target.innerText;
+export default function GroupNode(data) {
+  const nodeId = useNodeId();
+
+  function updateLabel(event) {
+    console.log(data);
+    event.target.closest(".dropdown").nextElementSibling.innerText =
+      event.target.innerText;
+
+    data.data.callback(event.target.innerText);
+    console.log("Node Id", nodeId);
+    console.log(event.target.innerText); // this should be assigned to data.traverse
   }
-  function updateGroup(e) {}
+  function updateGroup(e) {
+    try {
+      console.log("Group update is called");
+    } catch (error) {
+      console.log(error);
+    }
+  }
   return (
     <div className={`node node-group`} onClick={updateGroup}>
       <div className={`header`}>
@@ -40,6 +51,4 @@ const GroupNode = ({ data }) => {
       </div>
     </div>
   );
-};
-
-export default GroupNode;
+}

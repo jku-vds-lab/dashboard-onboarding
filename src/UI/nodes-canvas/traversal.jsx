@@ -60,24 +60,12 @@ function compare(elem1, elem2) {
   //
 
   if (elem1.position.x < elem2.position.x) {
-    // if (elem1.position.y < elem2.position.y) {
-    //   return -1;
-    // }
-    // if (elem1.position.y > elem2.position.y) {
-    //   return -1;
-    // }
     if (elem1.position.y == elem2.position.y) {
       return 0;
     }
     return -1;
   }
   if (elem1.position.x > elem2.position.x) {
-    // if (elem1.position.y < elem2.position.y) {
-    //   return 1;
-    // }
-    // if (elem1.position.y > elem2.position.y) {
-    //   return 1;
-    // }
     if (elem1.position.y == elem2.position.y) {
       return 0;
     }
@@ -104,7 +92,6 @@ function testme(props) {
     console.log("Nodes initially", storyNodes);
     let newstoryNodes = storyNodes.sort(compare);
     console.log("Nodes finally", newstoryNodes);
-
     if (storyNodes.length > 0) {
       for (let i = 0; i < storyNodes.length; i++) {
         const tNode = new TreeNode(storyNodes[i]);
