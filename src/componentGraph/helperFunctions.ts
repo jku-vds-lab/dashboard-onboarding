@@ -80,6 +80,9 @@ let description = ""
 		case 'clusteredBarChart':
 			description = "This element is a clusterd bar chart."
 			break;
+		case 'clusteredColumnChart':
+			description = "This element is a clustered column chart."
+			break;
 		case 'lineClusteredColumnComboChart':
 			description = "This element is a line clustered column combo chart. It can combine lines and bars in one chart."
 			break;
@@ -108,6 +111,7 @@ export async function getVisualTask(visual: VisualDescriptor): Promise<string>  
 				task = "show trends"
 				break;
 			case 'clusteredBarChart':
+			case 'clusteredColumnChart':
 				task = "show part-to-whole relationship, lookup values and find trends"
 				break;
 			case 'lineClusteredColumnComboChart':
@@ -234,6 +238,7 @@ export function getVisualMark(visual: VisualDescriptor): string {
 				mark = "Line"
 				break;
 			case 'clusteredBarChart':
+			case 'clusteredColumnChart':
 				mark = "Bar"
 				break;
 			case 'lineClusteredColumnComboChart':
@@ -253,7 +258,7 @@ Get visual channel of the visualization
 export async function getVisualChannel(visual: VisualDescriptor): Promise<Array<string> > {
 	const visual_channel = []
 		const VisualType = visual.type
-		if (VisualType === 'lineChart' || VisualType === 'clusteredBarChart' || VisualType === 'lineClusteredColumnComboChart') {
+		if (VisualType === 'lineChart' || VisualType === 'clusteredBarChart' || VisualType === 'clusteredColumnChart' || VisualType === 'lineClusteredColumnComboChart') {
 			visual_channel.push('position')
 			const encoding = await getVisualAttributeMapper(visual)
 			if (Object.values(encoding).includes("Legend") || Object.values(encoding).includes("Column y-axis")) {
@@ -282,9 +287,8 @@ export async function getVisualInsight(visual: VisualDescriptor): Promise<Array<
 				await getLineClusteredColumnComboChartInsights(visual, insights);
 				break;
 			case 'lineChart':
-				await getDefaultInsights(visual, insights);
-				break;
 			case 'clusteredBarChart':
+			case 'clusteredColumnChart':
 				await getDefaultInsights(visual, insights);
 				break;
 			default:

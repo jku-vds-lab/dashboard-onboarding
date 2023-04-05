@@ -92,6 +92,7 @@ export default function ComponentsProperties(className, visParentId) {
         newTitle = "Filter";
         break;
       case "lineClusteredColumnComboChart":
+      case 'clusteredColumnChart':
         newTitle = "Column Chart";
         break;
       case "clusteredBarChart":

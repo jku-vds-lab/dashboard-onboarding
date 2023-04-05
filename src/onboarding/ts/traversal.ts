@@ -317,8 +317,7 @@ export function findTraversalVisual(id:string){
 }
 
 export function findCurrentTraversalVisual(){
-    const traversalElem = global.settings.traversalStrategy[currentId].element;
-
+    const traversalElem = global.settings.traversalStrategy[currentId];
     if(isGroup(traversalElem)){
         const trav = traversalElem.visuals[traversalInGroupIndex];
         const visInGroup = trav[visualInGroupIndex];
@@ -327,8 +326,8 @@ export function findCurrentTraversalVisual(){
         }
     }
     
-    if(traversalElem.id !== "dashboard" && traversalElem.id !== "globalFilter"){
-        return [currentVisuals.find((vis: any) => vis.name === traversalElem.id), traversalElem.categories, traversalElem.count];
+    if(traversalElem.element.id !== "dashboard" && traversalElem.element.id !== "globalFilter"){
+        return [currentVisuals.find((vis: any) => vis.name === traversalElem.element.id), traversalElem.categories, traversalElem.count];
     }
 
     return null;

@@ -4,7 +4,7 @@ import * as global from "./globalVariables";
 import * as disable from "./disableArea";
 import * as elements from "./elements";
 import { getSlicerInteractionExample } from "./basicVisualContent";
-import { getBarChartInteractionExample } from "./barChartVisualContent";
+import { getBarChartInteractionExample, getColumnChartInteractionExample } from "./barChartVisualContent";
 import { getLineChartInteractionExample } from "./lineChartVisualContent";
 import { getLineClusteredColumnComboChartInteractionExample } from "./complexVisualContent";
 import { findCurrentTraversalVisual } from "./traversal";
@@ -75,6 +75,9 @@ export async function getInteractionText(visual: any){
             break;
         case 'Clustered Bar Chart':
             interactionInfo = await getBarChartInteractionExample(visual);
+            break;
+        case 'Clustered Column Chart':
+            interactionInfo = await getColumnChartInteractionExample(visual);
             break;
         case 'Slicer':
             interactionInfo = await getSlicerInteractionExample(visual);

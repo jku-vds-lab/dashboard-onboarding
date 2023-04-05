@@ -12,7 +12,7 @@ import { removeHintCard, removeShowChangesCard, showReportChanges } from "./show
 import { getCardInfo, getSlicerInfo } from "./basicVisualContent";
 import { getLineClusteredColumnComboChartInfo } from "./complexVisualContent";
 import { getLineChartInfo } from "./lineChartVisualContent";
-import { getClusteredBarChartInfo } from "./barChartVisualContent";
+import { getClusteredBarChartInfo, getClusteredColumnChartInfo } from "./barChartVisualContent";
 import { getFilterDescription } from "./filterInfoCards";
 import { IFilterColumnTarget, IFilterMeasureTarget } from "powerbi-models";
 import 'powerbi-report-authoring';
@@ -54,9 +54,9 @@ function backToVisual(){
     removeShowChangesCard();
     removeHintCard();
     const traversalElement = findCurrentTraversalVisual();
-        if(traversalElement){
-            createInfoCard(traversalElement[0], traversalElement[2], traversalElement[1]);
-        }
+    if(traversalElement){
+        createInfoCard(traversalElement[0], traversalElement[2], traversalElement[1]);
+    }
 }
 
 export function createBasicCardContent(description: string, parentId: string){
@@ -625,6 +625,7 @@ export async function getInteractionExampleChangesText(visual: any){
         case 'Line Clustered Column Combo Chart':
         case 'Line Chart':
         case 'Clustered Bar Chart':
+        case 'clusteredColumnChart':
             visualChangeInfo += `The highlighted data includes "AllHighlitedData".`;
             visualChangeInfo += "<br>You can also change the report filters by selecting a new element of this visual.";
             break;
@@ -835,6 +836,9 @@ export async function getVisualInfos(visual: any){
             break;
         case 'Clustered Bar Chart':
             visualInfos = await getClusteredBarChartInfo(visual);
+            break;
+        case "Clustered Column Chart":
+            visualInfos = await getClusteredColumnChartInfo(visual);
             break;
         case 'Slicer':
             visualInfos = await getSlicerInfo(visual);

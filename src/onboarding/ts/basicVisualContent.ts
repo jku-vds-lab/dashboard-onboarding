@@ -97,7 +97,11 @@ export async function getSlicerInteractionExample(visual: any) {
 
 export async function getChartChanges(visual: any, isVertical: boolean) {
     const CGVisual = global.componentGraph.dashboard.visualizations.find(vis => vis.id === visual.name); 
-    const legend = CGVisual?.encoding.legends[0].attribute!;
+    const legend = CGVisual?.encoding.legends[0];
+    let legendAttribute = "";
+    if(legend){
+        legendAttribute = legend.attribute!;
+    }
     let axis = "";
     let dataName = "";
 
@@ -109,10 +113,10 @@ export async function getChartChanges(visual: any, isVertical: boolean) {
         dataName = CGVisual?.encoding.yAxes[0].attribute!;
     }
     const axisValues = await helpers.getSpecificDataInfo(visual, axis);
-    const legendValues = await helpers.getSpecificDataInfo(visual, legend);
+    const legendValues = await helpers.getSpecificDataInfo(visual, legendAttribute);
 
     const additionalFilters = global.selectedTargets.filter(function (selectedData: global.Target) {
-        return selectedData.target.column != axis && selectedData.target.column != legend;
+        return selectedData.target.column != axis && selectedData.target.column != legendAttribute;
     });
 
     let visualInteractionInfo = helpers.getGeneralInteractionInfo(additionalFilters, dataName);
@@ -120,11 +124,11 @@ export async function getChartChanges(visual: any, isVertical: boolean) {
     if(axisValues && legendValues){
         visualInteractionInfo += helpers.getTargetInteractionFilter(axis);
         visualInteractionInfo += " and ";
-        visualInteractionInfo += helpers.getTargetInteractionFilter(legend);
+        visualInteractionInfo += helpers.getTargetInteractionFilter(legendAttribute);
     } else if(axisValues){
         visualInteractionInfo += helpers.getTargetInteractionFilter(axis);
     } else if(legendValues){
-        visualInteractionInfo += helpers.getTargetInteractionFilter(legend);
+        visualInteractionInfo += helpers.getTargetInteractionFilter(legendAttribute);
     }
     visualInteractionInfo += ".";
 

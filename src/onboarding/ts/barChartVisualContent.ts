@@ -13,6 +13,22 @@ import filterImg from "../assets/filter.png";
 import interactImg from "../assets/interact.png";
 
 export async function getClusteredBarChartInfo(visual: any) {
+    const CGVisual = global.componentGraph.dashboard.visualizations.find(vis => vis.id === visual.name); 
+    const axis = CGVisual?.encoding.yAxes[0].attribute!;
+    const dataName = CGVisual?.encoding.xAxes[0].attribute!;
+
+    return await getClusteredBarandColumnChartInfo(visual, axis, dataName, false);
+}
+
+export async function getClusteredColumnChartInfo(visual: any) {
+    const CGVisual = global.componentGraph.dashboard.visualizations.find(vis => vis.id === visual.name); 
+    const axis = CGVisual?.encoding.xAxes[0].attribute!;
+    const dataName = CGVisual?.encoding.yAxes[0].attribute!;
+
+    return await getClusteredBarandColumnChartInfo(visual, axis, dataName, true);
+}
+
+export async function getClusteredBarandColumnChartInfo(visual: any, axis: string, dataName: string, xAxisHasCategory: boolean) {
     const generalImages = [];
     const generalInfos = [];
     const interactionImages = [];
@@ -21,9 +37,7 @@ export async function getClusteredBarChartInfo(visual: any) {
     const insightInfos: string[] =[];
 
     const CGVisual = global.componentGraph.dashboard.visualizations.find(vis => vis.id === visual.name); 
-    const axis = CGVisual?.encoding.yAxes[0].attribute;
     const legend = CGVisual?.encoding.legends[0].attribute;
-    const dataName = CGVisual?.encoding.xAxes[0].attribute;
 
     generalImages.push(infoImg);
     generalInfos.push(CGVisual?.description!);
@@ -35,7 +49,7 @@ export async function getClusteredBarChartInfo(visual: any) {
 
     let barInfo = "";
     if(axis){
-        barInfo += "The " + CGVisual?.mark + "s are separated vertically by "+ axis + ".<br>";
+        barInfo += "The " + CGVisual?.mark + "s are separated by "+ axis + ".<br>";
     }
     if(legend){
         barInfo += "Each " + axis + " has more than one " + CGVisual?.mark + ". This " + CGVisual?.mark + "s represent the " + legend + " and are distinguishable by their color.";
@@ -60,16 +74,30 @@ export async function getClusteredBarChartInfo(visual: any) {
     interactionImages.push(elemClickImg);
     interactionInfos.push(interactionInfo);
    
-    if(CGVisual?.encoding.yAxes[0].isVisible){
-        generalImages.push(yAxisImg);
-        generalInfos.push("The Y-axis displayes the values of the " + axis + ".");
-        interactionImages.push(axisClickImg);
-        interactionInfos.push("When clicking on one of the y-axis-labels you can filter the report by " + axis + ".");
+    if(xAxisHasCategory){
+        if(CGVisual?.encoding.xAxes[0].isVisible){
+            generalImages.push(xAxisImg);
+            generalInfos.push("The X-axis displayes the values of the " + axis + ".");
+            interactionImages.push(axisClickImg);
+            interactionInfos.push("When clicking on one of the x-axis-labels you can filter the report by " + axis + ".");
+        }
+        if(CGVisual?.encoding.yAxes[0].isVisible){
+            generalImages.push(yAxisImg);
+            generalInfos.push("The Y-axis displayes the values of the " + dataName + ".");
+        }
+    } else {
+        if(CGVisual?.encoding.yAxes[0].isVisible){
+            generalImages.push(yAxisImg);
+            generalInfos.push("The Y-axis displayes the values of the " + axis + ".");
+            interactionImages.push(axisClickImg);
+            interactionInfos.push("When clicking on one of the y-axis-labels you can filter the report by " + axis + ".");
+        }
+        if(CGVisual?.encoding.xAxes[0].isVisible){
+            generalImages.push(xAxisImg);
+            generalInfos.push("The X-axis displayes the values of the " + dataName + ".");
+        }
     }
-    if(CGVisual?.encoding.xAxes[0].isVisible){
-        generalImages.push(xAxisImg);
-        generalInfos.push("The X-axis displayes the values of the " + dataName + ".");
-    }
+
     if(CGVisual?.encoding.legends[0].isVisible){
         generalImages.push(legendImg);
         generalInfos.push("The legend displayes the values of the " + legend + " and its corresponding color.");
@@ -88,9 +116,23 @@ export async function getClusteredBarChartInfo(visual: any) {
 
 export async function getBarChartInteractionExample(visual: any) {
     const CGVisual = global.componentGraph.dashboard.visualizations.find(vis => vis.id === visual.name); 
-    const axis = CGVisual?.encoding.yAxes[0].attribute;
+    const axis = CGVisual?.encoding.yAxes[0].attribute!;
+    const dataName = CGVisual?.encoding.xAxes[0].attribute!;
+
+    return await getBarAndColumnChartInteractionExample(visual, axis, dataName);
+}
+
+export async function getColumnChartInteractionExample(visual: any) {
+    const CGVisual = global.componentGraph.dashboard.visualizations.find(vis => vis.id === visual.name); 
+    const axis = CGVisual?.encoding.xAxes[0].attribute!;
+    const dataName = CGVisual?.encoding.yAxes[0].attribute!;
+
+    return await getBarAndColumnChartInteractionExample(visual, axis, dataName);
+}
+
+export async function getBarAndColumnChartInteractionExample(visual: any, axis: string, dataName: string) {
+    const CGVisual = global.componentGraph.dashboard.visualizations.find(vis => vis.id === visual.name); 
     const legend = CGVisual?.encoding.legends[0].attribute;
-    const dataName = CGVisual?.encoding.xAxes[0].attribute;
     const axisValues = await helpers.getSpecificDataInfo(visual, axis!);
     const legendValues = await helpers.getSpecificDataInfo(visual, legend!);
 

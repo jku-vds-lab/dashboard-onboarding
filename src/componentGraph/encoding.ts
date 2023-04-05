@@ -65,6 +65,7 @@ class Encoding {
             break;
           case 'lineChart':
           case 'lineClusteredColumnComboChart':
+          case 'clusteredColumnChart':
             visibility[0] = await isVisible(visual, "categoryAxis");
             visibility[1] = await isVisible(visual, "valueAxis");
             visibility[2] = await isVisible(visual, "legend");

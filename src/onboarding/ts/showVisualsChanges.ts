@@ -67,6 +67,7 @@ export async function getShowVisualChangesText(visual: any){
             visualChangeInfo += displayCanFilterInfo();
             break;
         case 'Line Chart':
+        case 'Clustered Column Chart':
             visualChangeInfo += await getChartChanges(visual, true);
             visualChangeInfo += displayCanFilterInfo();
             break;
