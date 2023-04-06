@@ -53,7 +53,7 @@ export async function getCardChanges(visual: any) {
 
 export async function getSlicerInfo(visual: any) {
     const CGVisual = global.componentGraph.dashboard.visualizations.find(vis => vis.id === visual.name);
-    const filterName = CGVisual?.encoding.values[0]!;
+    const filterName = CGVisual?.encoding.values[0];
 
     const generalImages = [];
     const generalInfos = [];
@@ -65,8 +65,10 @@ export async function getSlicerInfo(visual: any) {
     generalImages.push(infoImg);
     generalInfos.push(CGVisual?.description!);
 
-    generalImages.push(dataImg);
-    generalInfos.push("With this one you can filter by " + filterName.attribute + ". The purpose of this chart is to " + CGVisual?.task + ".");
+    if(filterName){
+        generalImages.push(dataImg);
+        generalInfos.push("With this one you can filter by " + filterName.attribute + ". The purpose of this chart is to " + CGVisual?.task + ".");
+    }
 
     const filterText = helpers.getLocalFilterText(CGVisual);
     if(filterText !== ""){
@@ -77,8 +79,10 @@ export async function getSlicerInfo(visual: any) {
     interactionImages.push(interactImg);
     interactionInfos.push(CGVisual?.interactions.description!);
 
-    interactionImages.push(elemClickImg);
-    interactionInfos.push("With clicking on a " + CGVisual?.mark + " you can filter the report by " + filterName.attribute + ".");
+    if(filterName){
+        interactionImages.push(elemClickImg);
+        interactionInfos.push("With clicking on a " + CGVisual?.mark + " you can filter the report by " + filterName.attribute + ".");
+    }
 
     return {generalImages, generalInfos, interactionImages, interactionInfos, insightImages, insightInfos};
 }

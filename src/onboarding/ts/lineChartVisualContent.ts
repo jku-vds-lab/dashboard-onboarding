@@ -103,13 +103,9 @@ export async function getLineChartInfo(visual: any) {
 export async function getLineChartInteractionExample(visual: any) {
     const CGVisual = global.componentGraph.dashboard.visualizations.find(vis => vis.id === visual.name); 
     const axis = CGVisual?.encoding.xAxes[0].attribute;
-    const legend = CGVisual?.encoding.legends[0];
-    let legendAttribute = "";
-    if(legend){
-        legendAttribute = legend.attribute!;
-    }
+    const legend = CGVisual?.encoding.legends[0]? CGVisual?.encoding.legends[0]?.attribute: "";
     const axisValues = await helpers.getSpecificDataInfo(visual, axis!);
-    const legendValues = await helpers.getSpecificDataInfo(visual, legendAttribute!);
+    const legendValues = await helpers.getSpecificDataInfo(visual, legend!);
    
     const middelOfAxisValues = Math.floor(axisValues.length/2);
 
