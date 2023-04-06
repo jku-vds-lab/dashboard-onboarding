@@ -127,7 +127,7 @@ class Onboarding extends React.Component<AppProps, AppState> {
 
             // Triggers when a content is successfully embedded in UI
             report.on("rendered", async function () {
-                onboarding.onReloadReport();
+                await onboarding.onReloadReport();
             });
 
             // Clear any other dataSelected handler events
@@ -135,7 +135,7 @@ class Onboarding extends React.Component<AppProps, AppState> {
 
             // Triggers when a content is successfully embedded in UI
             report.on("dataSelected", async function (event: { detail: { dataPoints: any[]; }; }) {
-                onboarding.onDataSelected(event);
+                await onboarding.onDataSelected(event);
             });
 
             // Clear any other error handler event

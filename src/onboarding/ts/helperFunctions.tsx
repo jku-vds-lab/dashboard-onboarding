@@ -12,7 +12,7 @@ import { removeHintCard, removeShowChangesCard, showReportChanges } from "./show
 import { getCardInfo, getSlicerInfo } from "./basicVisualContent";
 import { getLineClusteredColumnComboChartInfo } from "./complexVisualContent";
 import { getLineChartInfo } from "./lineChartVisualContent";
-import { getClusteredBarChartInfo } from "./barChartVisualContent";
+import { getClusteredBarChartInfo, getClusteredColumnChartInfo } from "./barChartVisualContent";
 import { getFilterDescription } from "./filterInfoCards";
 import { IFilterColumnTarget, IFilterMeasureTarget } from "powerbi-models";
 import 'powerbi-report-authoring';
@@ -54,9 +54,9 @@ function backToVisual(){
     removeShowChangesCard();
     removeHintCard();
     const traversalElement = findCurrentTraversalVisual();
-        if(traversalElement){
-            createInfoCard(traversalElement[0], traversalElement[2], traversalElement[1]);
-        }
+    if(traversalElement){
+        createInfoCard(traversalElement[0], traversalElement[2], traversalElement[1]);
+    }
 }
 
 export function createBasicCardContent(description: string, parentId: string){
@@ -619,12 +619,13 @@ export async function getInteractionExampleChangesText(visual: any){
     const type = getTypeName(visual);
 
     switch(type){
-        case 'Card':
+        case 'Card': case "Multi Row Card":
             visualChangeInfo += `The displayed data is now "DataValue".`;
             break;
         case 'Line Clustered Column Combo Chart':
         case 'Line Chart':
         case 'Clustered Bar Chart':
+        case 'clusteredColumnChart':
             visualChangeInfo += `The highlighted data includes "AllHighlitedData".`;
             visualChangeInfo += "<br>You can also change the report filters by selecting a new element of this visual.";
             break;
@@ -695,9 +696,9 @@ export async function createComponentGraph(){
 }
 
 export async function getSettings(){
-    if (localStorage.getItem("settings") == null){
+    //if (localStorage.getItem("settings") == null){
         await createSettings();
-    }
+    //}
     global.setSettings(JSON.parse(localStorage.getItem("settings")!, reviver));
 }
 
@@ -743,7 +744,7 @@ export function getVisualCardPos(visual: any, cardWidth: number, offset: number)
         pos: ""
     };
 
-    if (rightDistance > leftDistance) {
+    if (rightDistance > leftDistance || leftDistance < global.infoCardWidth) {
         position.x = offset + rightX;
         position.pos = "right";
     }else{
@@ -823,9 +824,8 @@ export function getVisualIndex(name: string){
 export async function getVisualInfos(visual: any){
     const type = getTypeName(visual);
     let visualInfos = {generalImages:[] as any[],generalInfos:[] as string[],interactionImages:[] as any[],interactionInfos:[] as string[],insightImages:[] as any[],insightInfos:[] as string[]};
-
     switch(type){
-        case 'Card':
+        case 'Card': case "Multi Row Card":
             visualInfos = await getCardInfo(visual);
             break;
         case 'Line Clustered Column Combo Chart':
@@ -837,20 +837,21 @@ export async function getVisualInfos(visual: any){
         case 'Clustered Bar Chart':
             visualInfos = await getClusteredBarChartInfo(visual);
             break;
+        case "Clustered Column Chart":
+            visualInfos = await getClusteredColumnChartInfo(visual);
+            break;
         case 'Slicer':
             visualInfos = await getSlicerInfo(visual);
             break;
         default:
             break;
     }
-
     const CGVisual = global.componentGraph.dashboard.visualizations.find(vis => vis.id === visual.name);
     const insights = CGVisual?.insight?.insights!;
     for(const insight of insights){
         visualInfos.insightImages.push(lightbulbImg);
         visualInfos.insightInfos.push(insight);
     }
-
     return visualInfos;
 }
 
@@ -936,7 +937,7 @@ export function removeContainerOffset(){
 
 function removeDesignVisuals(){
     const visuals = global.currentVisuals.filter(function (visual) {
-        return visual.type !== "shape" && visual.type !== "basicShape";
+        return visual.type !== "shape" && visual.type !== "basicShape" && visual.type !== "textbox";
     });
     global.setVisuals(visuals);
 }

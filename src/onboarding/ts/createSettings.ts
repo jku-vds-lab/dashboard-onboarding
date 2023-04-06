@@ -134,7 +134,7 @@ function setInteractionExampleInfo(){
         const type = helpers.getTypeName(visual);
         const CGVisual = global.componentGraph.dashboard.visualizations.find(vis => vis.id === visual.name)!;
         switch(type){
-            case 'Card':
+            case 'Card': case "Multi Row Card":
                 const settingsInteractableVisualCard = global.createInteractableVisualCard();
                 settingsInteractableVisualCard.id = visual.name; 
                 settingsInteractableVisualCard.title = CGVisual.title.text;

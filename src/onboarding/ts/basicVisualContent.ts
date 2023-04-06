@@ -8,8 +8,7 @@ import interactImg from "../assets/interact.png";
 
 export async function getCardInfo(visual: any) {
     const CGVisual = global.componentGraph.dashboard.visualizations.find(vis => vis.id === visual.name); 
-    const dataName = CGVisual?.encoding.values[0].attribute!;
-    const dataValue = await helpers.getSpecificDataInfo(visual, dataName);
+    const dataNames = CGVisual?.encoding.values!;
 
     const generalImages = [];
     const generalInfos = [];
@@ -21,8 +20,14 @@ export async function getCardInfo(visual: any) {
     generalImages.push(infoImg);
     generalInfos.push(CGVisual?.description!);
 
+    let dataText = "";
+    for(const dataName of dataNames){
+        const dataValue = await helpers.getSpecificDataInfo(visual, dataName.attribute);
+        dataText += " It shows the current value of "+ dataName.attribute + ", which is " + dataValue[0] + ".";
+    }
+
     generalImages.push(dataImg);
-    generalInfos.push("This card shows the current value of "+ dataName + ", which is " + dataValue[0] + ". The purpose of this chart is to " + CGVisual?.task + ".");
+    generalInfos.push("The purpose of this chart is to " + CGVisual?.task + "." + dataText);
 
     const filterText = helpers.getLocalFilterText(CGVisual);
     if(filterText !== ""){
@@ -35,10 +40,13 @@ export async function getCardInfo(visual: any) {
 
 export async function getCardChanges(visual: any) {
     const CGVisual = global.componentGraph.dashboard.visualizations.find(vis => vis.id === visual.name); 
-    const dataName = CGVisual?.encoding.values[0].attribute!;
-    const dataValue = await helpers.getSpecificDataInfo(visual, dataName);
+    const dataNames = CGVisual?.encoding.values!;
 
-    const visualInteractionInfo = "The displayed data is now " + dataValue[0] + ".";
+    let visualInteractionInfo = "";
+    for(const dataName of dataNames){
+        const dataValue = await helpers.getSpecificDataInfo(visual, dataName.attribute);
+        visualInteractionInfo += "The displayed data of "+ dataName.attribute + " is now " + dataValue[0] + ". ";
+    }
     
     return visualInteractionInfo;
 }
@@ -89,7 +97,11 @@ export async function getSlicerInteractionExample(visual: any) {
 
 export async function getChartChanges(visual: any, isVertical: boolean) {
     const CGVisual = global.componentGraph.dashboard.visualizations.find(vis => vis.id === visual.name); 
-    const legend = CGVisual?.encoding.legends[0].attribute!;
+    const legend = CGVisual?.encoding.legends[0];
+    let legendAttribute = "";
+    if(legend){
+        legendAttribute = legend.attribute!;
+    }
     let axis = "";
     let dataName = "";
 
@@ -101,10 +113,10 @@ export async function getChartChanges(visual: any, isVertical: boolean) {
         dataName = CGVisual?.encoding.yAxes[0].attribute!;
     }
     const axisValues = await helpers.getSpecificDataInfo(visual, axis);
-    const legendValues = await helpers.getSpecificDataInfo(visual, legend);
+    const legendValues = await helpers.getSpecificDataInfo(visual, legendAttribute);
 
     const additionalFilters = global.selectedTargets.filter(function (selectedData: global.Target) {
-        return selectedData.target.column != axis && selectedData.target.column != legend;
+        return selectedData.target.column != axis && selectedData.target.column != legendAttribute;
     });
 
     let visualInteractionInfo = helpers.getGeneralInteractionInfo(additionalFilters, dataName);
@@ -112,11 +124,11 @@ export async function getChartChanges(visual: any, isVertical: boolean) {
     if(axisValues && legendValues){
         visualInteractionInfo += helpers.getTargetInteractionFilter(axis);
         visualInteractionInfo += " and ";
-        visualInteractionInfo += helpers.getTargetInteractionFilter(legend);
+        visualInteractionInfo += helpers.getTargetInteractionFilter(legendAttribute);
     } else if(axisValues){
         visualInteractionInfo += helpers.getTargetInteractionFilter(axis);
     } else if(legendValues){
-        visualInteractionInfo += helpers.getTargetInteractionFilter(legend);
+        visualInteractionInfo += helpers.getTargetInteractionFilter(legendAttribute);
     }
     visualInteractionInfo += ".";
 

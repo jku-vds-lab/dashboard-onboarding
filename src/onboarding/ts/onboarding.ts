@@ -17,12 +17,21 @@ import { replacer } from "../../componentGraph/ComponentGraph";
 export async function onLoadReport(){
     await helpers.getActivePage();
     await helpers.getVisuals();
+    for(const vis of global.allVisuals){
+        const caps = await vis.getCapabilities();
+        console.log(vis.type, caps)
+        for(const cap of caps.dataRoles){
+            console.log(cap.name, await vis.getDataFields(cap.name));
+        }
+    }
     await helpers.createComponentGraph();
+    console.log(global.componentGraph)
     await helpers.getSettings();
 
-    const trav = await setTestAllGroupsTraversalStrategy();
-    await updateTraversal(trav);
-    
+    // const trav = await setTestAllGroupsTraversalStrategy();
+    // console.log(trav)
+    // await updateTraversal(trav);
+
     helpers.createEditOnboardingButtons();
     helpers.createOnboardingButtons();
 

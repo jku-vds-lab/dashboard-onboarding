@@ -68,7 +68,7 @@ export async function getVisualDescription(visual: VisualDescriptor): Promise<st
 let description = ""
 	const VisualType = visual.type
 	switch(VisualType){
-		case 'card':
+		case 'card': case "multiRowCard":
 			description = "This element is a card. Cards display the most important facts of a report."
 			break;
 		case 'slicer':
@@ -79,6 +79,9 @@ let description = ""
 			break;
 		case 'clusteredBarChart':
 			description = "This element is a clusterd bar chart."
+			break;
+		case 'clusteredColumnChart':
+			description = "This element is a clustered column chart."
 			break;
 		case 'lineClusteredColumnComboChart':
 			description = "This element is a line clustered column combo chart. It can combine lines and bars in one chart."
@@ -98,7 +101,7 @@ export async function getVisualTask(visual: VisualDescriptor): Promise<string>  
 	let task = ""
 		const VisualType = visual.type
 		switch(VisualType){
-			case 'card':
+			case 'card': case "multiRowCard":
 				task = "summarize"
 				break;
 			case 'slicer':
@@ -108,6 +111,7 @@ export async function getVisualTask(visual: VisualDescriptor): Promise<string>  
 				task = "show trends"
 				break;
 			case 'clusteredBarChart':
+			case 'clusteredColumnChart':
 				task = "show part-to-whole relationship, lookup values and find trends"
 				break;
 			case 'lineClusteredColumnComboChart':
@@ -224,7 +228,7 @@ export function getVisualMark(visual: VisualDescriptor): string {
 	let mark = ""
 		const VisualType = visual.type
 		switch(VisualType){
-			case 'card':
+			case 'card': case "multiRowCard":
 				mark = "Value"
 				break;
 			case 'slicer':
@@ -234,6 +238,7 @@ export function getVisualMark(visual: VisualDescriptor): string {
 				mark = "Line"
 				break;
 			case 'clusteredBarChart':
+			case 'clusteredColumnChart':
 				mark = "Bar"
 				break;
 			case 'lineClusteredColumnComboChart':
@@ -253,7 +258,7 @@ Get visual channel of the visualization
 export async function getVisualChannel(visual: VisualDescriptor): Promise<Array<string> > {
 	const visual_channel = []
 		const VisualType = visual.type
-		if (VisualType === 'lineChart' || VisualType === 'clusteredBarChart' || VisualType === 'lineClusteredColumnComboChart') {
+		if (VisualType === 'lineChart' || VisualType === 'clusteredBarChart' || VisualType === 'clusteredColumnChart' || VisualType === 'lineClusteredColumnComboChart') {
 			visual_channel.push('position')
 			const encoding = await getVisualAttributeMapper(visual)
 			if (Object.values(encoding).includes("Legend") || Object.values(encoding).includes("Column y-axis")) {
@@ -271,7 +276,7 @@ export async function getVisualInsight(visual: VisualDescriptor): Promise<Array<
 	const insights = new Array<string>();
 	const VisualType = visual.type
 		switch(VisualType){
-			case 'card':
+			case 'card': case "multiRowCard":
 				const dataName = await getFieldMeasure(visual, "Values");
     			const dataValue = await helper.getSpecificDataInfo(visual, dataName);
 				insights[0] = "You can see that the value of " + dataName + " is " + dataValue + ".";
@@ -282,9 +287,8 @@ export async function getVisualInsight(visual: VisualDescriptor): Promise<Array<
 				await getLineClusteredColumnComboChartInsights(visual, insights);
 				break;
 			case 'lineChart':
-				await getDefaultInsights(visual, insights);
-				break;
 			case 'clusteredBarChart':
+			case 'clusteredColumnChart':
 				await getDefaultInsights(visual, insights);
 				break;
 			default:
@@ -340,6 +344,10 @@ export async function getFieldColumn(visual: VisualDescriptor, fieldName: string
 export async function getSpecificDataPoint(visualData: Map<string, string>[], legendName: string, selectedLegendValue: string, dataName: string, axisName:string, selectedAxisValue:string){
 	const axisData = visualData.filter(dataMap => dataMap.get(axisName) === selectedAxisValue);
 
+	if(legendName === ""){
+		return axisData[0].get(dataName);
+	}
+
 	switch(axisData.length){
 		case 0:
 			return "0";
@@ -388,6 +396,23 @@ export async function getHighestValue(visualData: Map<string, string>[], dataNam
 	let max = Number.MIN_SAFE_INTEGER;
 	let highestCategory = "";
 	let highestAxis = "";
+
+	if(legendName === ""){
+		const sums = [];
+		for (const axisValue of axisValues) {
+			const axisData = visualData.filter(dataMap => dataMap.get(axisName) === axisValue);
+			const data = axisData[0].get(dataName);
+			if(data){
+				sums.push(parseInt(data));
+			}
+		}
+		const max = Math.max(...sums);
+		const position = sums.indexOf(max);
+		if(axisValues[position]){
+			highestAxis = axisValues[position];
+		}
+		return [max, highestAxis];
+	}
 
 	for (const legendValue of legendValues) {
 		const legendData = visualData.filter(dataMap => dataMap.get(legendName) === legendValue);
@@ -508,7 +533,12 @@ export async function getDefaultInsights(visual: any, insights: string[]){
 	const highestCategory = await getHighestCategory(visualData, dataName, legendValues, legend);
 	const highestValue = await getHighestValue(visualData, dataName, legendValues, legend, axes[0], axisValues);
 
-	insights[0] = "A value of " + value + " " + dataName + " was measured for " + axisValues[middelOfYValues] + " and " + legendValues[middelOfLegendValues] + ".";
-	insights[1] = "On average " + highestCategory + " has higher values than any other category.";
-	insights[2] = "The highest value of " + highestValue[0] + " " + dataName + " was measured for " + highestValue[1] + " and " + highestValue[2] + ".";
+	if(legend === ""){
+		insights[0] = "A value of " + value + " " + dataName + " was measured for " + axisValues[middelOfYValues] + ".";
+		insights[1] = "The highest value of " + highestValue[0] + " " + dataName + " was measured for " + highestValue[1] + ".";
+	} else {
+		insights[0] = "A value of " + value + " " + dataName + " was measured for " + axisValues[middelOfYValues] + " and " + legendValues[middelOfLegendValues] + ".";
+		insights[1] = "On average " + highestCategory + " has higher values than any other category.";
+		insights[2] = "The highest value of " + highestValue[0] + " " + dataName + " was measured for " + highestValue[1] + " and " + highestValue[2] + ".";
+	}
 }

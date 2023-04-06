@@ -14,9 +14,21 @@ import interactImg from "../assets/interact.png";
 
 export async function getLineChartInfo(visual: any) {
     const CGVisual = global.componentGraph.dashboard.visualizations.find(vis => vis.id === visual.name); 
-    const axis = CGVisual?.encoding.xAxes[0].attribute;
-    const legend = CGVisual?.encoding.legends[0].attribute;
-    const dataName = CGVisual?.encoding.yAxes[0].attribute;
+    const axisValue = CGVisual?.encoding.xAxes[0];
+    let axis;
+    if(axisValue){
+        axis =  axisValue.attribute;
+    }
+    const legendValue = CGVisual?.encoding.legends[0];
+    let legend;
+    if(legendValue){
+        legend =  legendValue.attribute;
+    }
+    const dataValue = CGVisual?.encoding.yAxes[0];
+    let dataName;
+    if(dataValue){
+        dataName = dataValue.attribute;
+    }
 
     const generalImages = [];
     const generalInfos = [];
@@ -60,19 +72,19 @@ export async function getLineChartInfo(visual: any) {
     interactionImages.push(elemClickImg);
     interactionInfos.push(interactionInfo);
 
-    if(CGVisual?.encoding.xAxes[0].isVisible){
+    if(axisValue && axisValue.isVisible){
         generalImages.push(xAxisImg);
         generalInfos.push("The X-axis displayes the values of the " + axis + ".");
         interactionImages.push(axisClickImg);
         interactionInfos.push("When clicking on one of the x-axis-labels you can filter the report by " + axis + ".");
     }
 
-    if(CGVisual?.encoding.yAxes[0].isVisible){
+    if(dataValue && dataValue.isVisible){
         generalImages.push(yAxisImg);
         generalInfos.push("The Y-axis displayes the values of the " + dataName + ".");
     }
 
-    if(CGVisual?.encoding.legends[0].isVisible){
+    if(legendValue && legendValue.isVisible){
         generalImages.push(legendImg);
         generalInfos.push("The legend displayes the values of the " + legend + " and its corresponding color.");
         interactionImages.push(legendClickImg);
@@ -91,18 +103,22 @@ export async function getLineChartInfo(visual: any) {
 export async function getLineChartInteractionExample(visual: any) {
     const CGVisual = global.componentGraph.dashboard.visualizations.find(vis => vis.id === visual.name); 
     const axis = CGVisual?.encoding.xAxes[0].attribute;
-    const legend = CGVisual?.encoding.legends[0].attribute;
+    const legend = CGVisual?.encoding.legends[0];
+    let legendAttribute = "";
+    if(legend){
+        legendAttribute = legend.attribute!;
+    }
     const axisValues = await helpers.getSpecificDataInfo(visual, axis!);
-    const legendValues = await helpers.getSpecificDataInfo(visual, legend!);
+    const legendValues = await helpers.getSpecificDataInfo(visual, legendAttribute!);
    
     const middelOfAxisValues = Math.floor(axisValues.length/2);
 
     let interactionInfo = "Please click on the " + CGVisual?.mark;
-    if(axisValues && legendValues){
+    if(axisValues && legendValues && axisValues.length !== 0 && legendValues.length !== 0){
         interactionInfo += " representing " + legendValues[0] + " at the area of " + axisValues[middelOfAxisValues] + ".";
-    } else if(axisValues){
+    } else if(axisValues && axisValues.length !== 0){
         interactionInfo += " at the area of " + axisValues[middelOfAxisValues] + ".";
-    } else if(legendValues){
+    } else if(legendValues && legendValues.length !== 0){
         interactionInfo += " representing " + legendValues[0] +".";
     } else {
         interactionInfo += ".";
