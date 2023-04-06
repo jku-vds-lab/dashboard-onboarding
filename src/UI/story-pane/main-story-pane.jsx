@@ -5,7 +5,7 @@ import NodesCanvas from "../nodes-canvas/canvas-index";
 import "../assets/css/dashboard.scss";
 import * as global from "../../onboarding/ts/globalVariables";
 import { replacer } from "../../componentGraph/ComponentGraph";
-import { saveFilterChanges, resetFilterChanges } from "../../onboarding/ts/editFilters";
+import { saveFilterChanges, resetFilterChanges } from "../../onboarding/ts/filterInfoCards";
 import { saveDashboardChanges, resetDashboardChanges } from "../../onboarding/ts/dashboardInfoCard";
 import { saveVisualChanges, resetVisualChanges } from "../../onboarding/ts/infoCards";
 import { showInOutputView, showExplanation } from "../nodes-canvas/canvas-index";

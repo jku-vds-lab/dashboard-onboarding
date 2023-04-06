@@ -82,3 +82,55 @@ export function removeFilterInfoCard(){
     removeElement("disabledLeft");
     removeFrame();
 }
+
+
+export async function saveFilterChanges(newInfo: string[], count:number){
+    const filterInfos = await helpers.getFilterInfo();
+
+    const filterData = helpers.getDataWithId("globalFilter", count);
+    if (!filterData) {
+      return;
+    }
+
+    for (let i = 0; i < newInfo.length; ++i) {
+        if(newInfo[i] == "" || newInfo[i] == null){
+            filterData.filterInfosStatus[i] = "deleted";
+            filterData.changedFilterInfos[i] = "";
+        } else if(i >= filterData.filterInfosStatus.length){
+            filterData.filterInfosStatus.push("added");
+            filterData.changedFilterInfos.push(newInfo[i]);
+        } else if(newInfo[i] == filterInfos[i]){
+            filterData.filterInfosStatus[i] = "original";
+            filterData.changedFilterInfos[i] = "";
+        } else {
+            filterData.filterInfosStatus[i] = "changed";
+            filterData.changedFilterInfos[i] = newInfo[i];
+        }
+    }
+
+    if(newInfo.length < filterData.filterInfosStatus.length){
+        for (let i = newInfo.length; i <    filterData.filterInfosStatus.length; ++i) {
+            filterData.filterInfosStatus[i] = "deleted";
+            filterData.changedFilterInfos[i] = "";
+        }
+    }
+}
+
+export async function resetFilterChanges(count: number){
+    const filterInfos = await helpers.getFilterInfo();
+
+    const filterData = helpers.getDataWithId("globalFilter", count);
+    if (!filterData) {
+      return;
+    }
+
+    for (let i = 0; i < filterData.filterInfosStatus.length; ++i) {
+        if(i < filterInfos.length){        
+            filterData.filterInfosStatus[i] = "original";
+            filterData.changedFilterInfos[i] = "";
+        } else {
+            filterData.filterInfosStatus.splice(i, 1);
+            filterData.changedFilterInfos.splice(i, 1);
+        }
+    }
+}
