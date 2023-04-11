@@ -16,40 +16,72 @@ class TraversalOrder {
       rank: 0,
       probability: 0,
       position: { x: 0, y: 0 },
-      parentGroup: null,
-      parentGroupCategory: null,
+      pGrpCnt: 0,
+      pGrp: null,
+      pGrpCat: null,
+    };
+    this.groupNode = {
+      id: "",
+      type: "",
+      position: {},
+      data: {},
+      elementCount: 0,
     };
   }
 
-  setGroupNodes(storyNodes) {
+  setGroupNodesAndElementsCount(storyNodes) {
     this.groupNodes = storyNodes.filter((sNode) => sNode.type == "group");
+    this.groupNodes.forEach((gNode) => {
+      this.groupElementsCount.push({ id: gNode.id, count: 0 });
+    });
+    this.simpleNodes.forEach((sNode) => {
+      if (sNode.pGrp) {
+        this.groupElementsCount.map((gElem) => {
+          if (gElem.id == sNode.pGrp.id) {
+            gElem.count++;
+          }
+        });
+      }
+    });
   }
 
-  setSimpleNodes(simpleStoryNode, groupNode) {
+  setSimpleNodes(simpleStoryNode, groupStoryNode) {
     this.simpleNode = {
       ...simpleStoryNode,
       rank: 0,
       probability: 0,
-      parentGroup: groupNode,
-      parentGroupCategory: groupNode?.data?.traverse,
+      pGrpCnt: 0,
+      pGrp: groupStoryNode,
+      pGrpCat: groupStoryNode?.data?.traverse,
     };
 
     this.simpleNodes.push(this.simpleNode);
   }
 
-  setGroupElementsCount() {
-    this.groupNodes.forEach((gNode) => {
-      this.groupElementsCount.push({ id: gNode.id, count: 0 });
+  setGroupCount() {
+    this.simpleNodes.map((sNode) => {
+      if (sNode.pGrp) {
+        let elem = this.groupElementsCount.find(
+          (gElem) => gElem.id == sNode.pGrp.id
+        );
+        sNode.pGrpCnt = elem.count;
+      }
     });
+    console.log("Simple Nodes", this.simpleNodes);
   }
 
   setProbability() {
+    this.simpleNodes.forEach((sNode) => {
+      if (sNode.parentGroup) {
+        this.groupElementsCount.filter;
+      }
+    });
+
     // for each node, check if it is a group node
     // if yes, what is the group element count
     // based on that, what is the group category
     // based on that, assign probability
     // next level of complication will be the position
-    debugger;
     console.log(this.simpleNodes);
   }
 
@@ -59,30 +91,28 @@ class TraversalOrder {
     try {
       let storyNodes = props.nodes;
       let simpleStoryNodes = [];
+      let groupStoryNodes = [];
 
       if (storyNodes.length > 0) {
-        this.setGroupNodes(storyNodes);
-
-        this.setGroupElementsCount();
-
         simpleStoryNodes = storyNodes.filter((sNode) => sNode.type == "simple");
+        groupStoryNodes = storyNodes.filter((sNode) => sNode.type == "group");
 
-        for (let i = 0; i < simpleStoryNodes.length; i++) {
-          let parentId = simpleStoryNodes[i].parentNode;
-          let groupNode = null;
+        simpleStoryNodes.forEach((sNode) => {
+          let parentId = sNode.parentNode;
+          let groupStoryNode = null;
 
           if (parentId?.includes("group")) {
-            groupNode = this.groupNodes.find((gNode) => gNode.id == parentId);
-
-            this.groupElementsCount.map((gElemCount) => {
-              if (gElemCount.id == groupNode.id) {
-                gElemCount.count++;
-              }
-            });
+            groupStoryNode = groupStoryNodes.find(
+              (gNode) => gNode.id == parentId
+            );
           }
-          this.setSimpleNodes(simpleStoryNodes[i], groupNode);
-        }
+
+          this.setSimpleNodes(sNode, groupStoryNode);
+        });
       }
+
+      this.setGroupNodesAndElementsCount(storyNodes);
+      this.setGroupCount();
     } catch (error) {
       console.log("Error: ", error);
     }
