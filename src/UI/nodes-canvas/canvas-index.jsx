@@ -12,6 +12,8 @@ import * as helpers from "../../onboarding/ts/helperFunctions";
 import { getVisualInfos } from "../../onboarding/ts/listOfVisuals";
 import Traversal from "./traversal";
 
+import { useUpdateNodeInternals } from "reactflow";
+
 const initialNodes = [];
 
 const nodeTypes = { simple: SimpleNode, group: GroupNode };
@@ -110,23 +112,31 @@ export default function NodesCanvas() {
     [reactFlowInstance, setNodes]
   );
 
-  const onNodeDragStart = useCallback((event, node) => {
-    const intersections = getIntersectingNodes(node).map((n) => n.id);
+  const onNodeDragStart = useCallback(
+    (event, node) => {
+      const intersections = getIntersectingNodes(node).map((n) => n.id);
 
-    getIntersectingNodes(node).forEach((iNode) => {
-      if (iNode.type === "group") {
-        node.parentNode = "node-3";
-      }
-    });
+      // getIntersectingNodes(node).forEach((iNode) => {
+      //   if (iNode.type === "group") {
+      //     node.parentNode = "node-3";
+      //   }
+      // });
 
-    //check if the node is dropped to the group
-    setNodes((nodes) =>
-      nodes.map((n) => ({
-        ...n,
-        className: intersections.includes(n.id) ? "highlight" : "",
-      }))
-    );
-  }, []);
+      //check if the node is dropped to the group
+      setNodes((nodes) =>
+        nodes.map((n) => ({
+          ...n,
+          className: intersections.includes(n.id) ? "highlight" : "",
+        }))
+      );
+    },
+    [getIntersectingNodes, setNodes]
+  );
+  const onNodeDragStop = (event, node) => {
+    if (node.type == "group") {
+      console.log("yes it was a group");
+    }
+  };
 
   const onNodeMouseEnter = (e, node) => {
     if (node.type === "group") {
@@ -307,6 +317,7 @@ export default function NodesCanvas() {
           onDragOver={onDragOver}
           onNodesChange={onNodesChange}
           onNodeDragStart={onNodeDragStart}
+          onNodeDragStop={onNodeDragStop}
           onNodeMouseEnter={onNodeMouseEnter}
           onNodeContextMenu={onNodeContextMenu}
           onSelectionContextMenu={onSelectionContextMenu}

@@ -3,6 +3,9 @@ class TraversalOrder {
   groupNodes = [];
   groupElementsCount = [];
   simpleNode = {};
+  grpCat1 = "All";
+  grpCat2 = "At least one";
+  grpCat3 = "Only one";
 
   constructor() {
     this.simpleNodes = [];
@@ -58,7 +61,7 @@ class TraversalOrder {
     this.simpleNodes.push(this.simpleNode);
   }
 
-  setGroupCount() {
+  setGrpCnt() {
     this.simpleNodes.map((sNode) => {
       if (sNode.pGrp) {
         let elem = this.groupElementsCount.find(
@@ -67,25 +70,57 @@ class TraversalOrder {
         sNode.pGrpCnt = elem.count;
       }
     });
-    console.log("Simple Nodes", this.simpleNodes);
   }
 
-  setProbability() {
+  setProb() {
     this.simpleNodes.forEach((sNode) => {
-      if (sNode.parentGroup) {
-        this.groupElementsCount.filter;
+      if (sNode.pGrp) {
+        if (sNode.pGrpCat == this.grpCat1) {
+          sNode.probability = 1;
+        } else {
+          sNode.probability = 1 / sNode.pGrpCnt;
+        }
       }
     });
-
-    // for each node, check if it is a group node
-    // if yes, what is the group element count
-    // based on that, what is the group category
-    // based on that, assign probability
     // next level of complication will be the position
-    console.log(this.simpleNodes);
   }
 
-  setRank() {}
+  setRank() {
+    // sort simple nodes by y- position
+    // if they are of the same y-position, check if they are in the same group, assign rank based on x position
+    //
+    try {
+      this.simpleNodes = this.simpleNodes.sort(this.compare);
+      console.log(this.simpleNodes);
+    } catch (error) {
+      console.log("Error", error);
+    }
+  }
+
+  compare(elem1, elem2) {
+    // -1: elem1 then elem2
+    // 1: elem2 then elem1
+    // 0: elem1 = elem 2
+    // simpleNodes with parents have positionm absolute, while others don't
+    try {
+      let yPos1 = elem1.positionAbsolute
+        ? elem1.positionAbsolute.y
+        : elem1.position.y;
+      let yPos2 = elem2.positionAbsolute
+        ? elem2.positionAbsolute.y
+        : elem2.position.y;
+      if (yPos1 < yPos2) {
+        return -1;
+      } else if (yPos1 > yPos2) {
+        return 1;
+      } else {
+        return 0;
+      }
+    } catch (error) {
+      console.log("Error", error);
+    }
+    return 0;
+  }
 
   onClick(props) {
     try {
@@ -112,99 +147,14 @@ class TraversalOrder {
       }
 
       this.setGroupNodesAndElementsCount(storyNodes);
-      this.setGroupCount();
+      this.setGrpCnt();
+      this.setProb();
+      this.setRank();
     } catch (error) {
       console.log("Error: ", error);
     }
   }
-
-  compare(elem1, elem2) {
-    // -1: elem1 then elem2
-    // 1: elem2 then elem1
-    // 0: elem1 = elem 2
-    //sort based on x pos first.
-
-    // if x1 < x2 then first x1 then x2 (child or next in sequence)
-    // if y1 = y2 then elem 1 and elem 2 are the same, return 0, because it is optional
-    // if y1 < or > y2 then elem 1 and then elem2, because elem 2 is a child, return -1
-
-    // if x1 > x2 then first x2 then x1
-    //
-
-    if (elem1.position.x < elem2.position.x) {
-      if (elem1.position.y == elem2.position.y) {
-        return 0;
-      }
-      return -1;
-    }
-    if (elem1.position.x > elem2.position.x) {
-      if (elem1.position.y == elem2.position.y) {
-        return 0;
-      }
-      return 1;
-    }
-    if (elem1.position.x == elem2.position.x) {
-      if (elem1.position.y < elem2.position.y) {
-        return -1;
-      }
-      if (elem1.position.y > elem2.position.y) {
-        return 1;
-      }
-      if (elem1.position.y == elem2.position.y) {
-        return 0;
-      }
-    }
-    return 0;
-  }
 }
-
-// function testme(props) {
-//   try {
-//     let storyNodes = props.nodes;
-//     let groupElementsCount = [];
-
-//     if (storyNodes.length > 0) {
-//       let groupNodes = storyNodes.filter((sNode) => sNode.type == "group");
-
-//       groupNodes.forEach((gNode) => {
-//         groupElementsCount.push({ id: gNode.id, count: 0 });
-//       });
-//       let simpleNodes = storyNodes.filter((sNode) => sNode.type == "simple");
-
-//       for (let i = 0; i < simpleNodes.length; i++) {
-//         let parentId = simpleNodes[i].parentNode;
-//         let groupNode = null;
-
-//         if (parentId?.includes("group")) {
-//           groupNode = groupNodes.find((gNode) => gNode.id == parentId);
-
-//           groupElementsCount.map((gElemCount) => {
-//             if (gElemCount.id == groupNode.id) {
-//               gElemCount.count++;
-//             }
-//           });
-//         }
-//         const aNode = new StoryNode(simpleNodes[i], groupNode);
-//         console.log(aNode);
-//       }
-
-//       // send the group elements count to the class
-//       // calculate initial probability
-//       // calculate initial rank
-//     }
-
-//     // start here
-//     // setInitialProbability
-
-//     console.log("GroupElementsCount", groupElementsCount);
-
-//     // let newstoryNodes = storyNodes.sort(compare);
-//     // console.log("Nodes finally", newstoryNodes);
-//   } catch (error) {
-//     debugger;
-//     console.log("Error: ", error);
-//   }
-// }
 
 export default function Traversal(props) {
   let sNode = new TraversalOrder();
