@@ -168,12 +168,13 @@ export default function NodesCanvas() {
     }
     setIsOpen(false);
   };
+
   const getLabelInfo = useCallback(
-    (traverse) => {
+    (traverse, id) => {
       console.log(traverse);
       setNodes((nds) =>
         nds.map((node) => {
-          if (node.type === "group") {
+          if (node.id === id) {
             node.data = {
               ...node.data,
               traverse: traverse,

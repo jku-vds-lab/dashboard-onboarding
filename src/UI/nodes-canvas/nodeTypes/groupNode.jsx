@@ -2,17 +2,15 @@ import Dropdown from "react-bootstrap/Dropdown";
 import { useNodeId } from "reactflow";
 import icon from "../icon-1.svg";
 
-export default function GroupNode(data) {
+export default function GroupNode(groupData) {
   const nodeId = useNodeId();
 
   function updateLabel(event) {
-    console.log(data);
+    console.log(groupData);
     event.target.closest(".dropdown").nextElementSibling.innerText =
       event.target.innerText;
 
-    data.data.callback(event.target.innerText);
-    console.log("Node Id", nodeId);
-    console.log(event.target.innerText); // this should be assigned to data.traverse
+    groupData.data.callback(event.target.innerText, groupData.id);
   }
   function updateGroup(e) {
     try {
