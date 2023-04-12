@@ -1,3 +1,4 @@
+import { createTraversalOfNodes } from "../../onboarding/ts/traversal";
 class TraversalOrder {
   simpleNodes = [];
   groupNodes = [];
@@ -152,7 +153,7 @@ class TraversalOrder {
     });
   }
 
-  onClick(props) {
+  async onClick(props) {
     try {
       let storyNodes = props.nodes;
       let simpleStoryNodes = [];
@@ -180,6 +181,7 @@ class TraversalOrder {
       this.setGrpCnt();
       this.setProb();
       this.setRank();
+      await createTraversalOfNodes(this.simpleNodes);
     } catch (error) {
       console.log("Error: ", error);
     }
