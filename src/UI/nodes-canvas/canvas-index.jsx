@@ -139,6 +139,8 @@ export default function NodesCanvas() {
   }
 
   const onNodeDragStop = (event, node) => {
+    console.log("Node pos", node.position);
+
     if (node.type == "group") {
       nodes.forEach((sNode) => {
         if (sNode.parentNode == node.id) {
