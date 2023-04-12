@@ -2,8 +2,11 @@ $bg-dark: rgb(32,32,32);
 $bg-dark-1: rgb(83,83,83);
 $default-handle-color: rgb(158, 159, 160);
 $dashboard-color: rgb(233, 78, 127);
-$line-chart-color: rgb(22,88,108);
-$bar-chart-color: rgb(8,52,108);
+$line-chart-color: rgb(27,158,119);
+$bar-chart-color: rgb(217,95,2);
+$kpi-color: rgb(117,112,179);
+$filter-color: rgb(231,41,138);
+$column-color: rgb(102,166,30);
 $color-white: #f1f1f1;
 
 .empty{
@@ -20,32 +23,41 @@ $color-white: #f1f1f1;
 
 .box-node, .simple-node {
   background-color: #595959;
-  width: 100px;
-  height: 30px;
+  width: 80px;
+
   border-radius: 4px;
   box-shadow: 0 0 4px #1a1717;
 
 
   .header {
-    padding: 5px 0;
+    padding: 3px 0;
     width: 100%;
     border-radius: 4px 4px 0 0;
 
     .title {
       color: #ffffff;
-      font-size: 12px;
-      padding-left: 8px;
+      font-size: 8px;
+      text-align: center;
       margin: 0;
     }
   }
   &.dashboard{
     background-color: #{$dashboard-color};
   }
-  &.bar-chart{
+  &.Bar{
     background-color: #{$bar-chart-color};
   }
-  &.line-chart{
+  &.Line{
     background-color: #{$line-chart-color};
+  }
+  &.KPI{
+    background-color: #{$kpi-color};
+  }
+  &.Filter{
+    background-color: #{$filter-color};
+  }
+  &.Column{
+    background-color: #{$column-color};
   }
 }
 
@@ -61,7 +73,8 @@ $color-white: #f1f1f1;
   padding:10px;
   .header{
     display: flex;
-    align-items: center;
+    align-content: left;
+
 
     .n-button{
       background-color: #{$bg-dark-1};
@@ -74,8 +87,8 @@ $color-white: #f1f1f1;
       margin-right: auto;
 
       .icon{
-        width:15px;
-        height:15px;
+        width:10px;
+        height:10px;
         opacity: 0.8;
       }
     }
@@ -87,7 +100,7 @@ $color-white: #f1f1f1;
 
       .dropdown-item{
         color: #{$color-white};
-        font-size: 12px;
+        font-size: 10px;
         padding: 0.2rem 1rem;
         &:hover{
           background-color: rgba(255,255,255,0.2);
@@ -134,15 +147,25 @@ $color-white: #f1f1f1;
   height: 40px;
   border-radius: 4px;
   box-shadow: 0 0 4px #1a1717;
+  font-size: small;
 
   &.dashboard{
     background-color: #{$dashboard-color};
   }
-  &.bar-chart{
+  &.Bar{
     background-color: #{$bar-chart-color};
   }
-  &.line-chart{
+  &.Line{
     background-color: #{$line-chart-color};
+  }
+  &.KPI{
+    background-color: #{$kpi-color};
+  }
+  &.Filter{
+    background-color: #{$filter-color};
+  }
+  &.Column{
+    background-color: #{$column-color};
   }
 }
 
