@@ -4,14 +4,18 @@ import * as global from "./globalVariables";
 import * as disable from "./disableArea";
 import * as elements from "./elements";
 import { getSlicerInteractionExample } from "./basicVisualContent";
-import { getBarChartInteractionExample } from "./barChartVisualContent";
+import { getBarChartInteractionExample, getColumnChartInteractionExample } from "./barChartVisualContent";
 import { getLineChartInteractionExample } from "./lineChartVisualContent";
 import { getLineClusteredColumnComboChartInteractionExample } from "./complexVisualContent";
+import { findCurrentTraversalVisual } from "./traversal";
 
 export function startInteractionExample(){
     global.setInteractionMode(true);
     infoCard.removeInfoCard();
-    createInteractionCard(global.currentVisuals[global.currentVisualIndex]);
+    const traversalElem = findCurrentTraversalVisual();
+        if(traversalElem){
+            createInteractionCard(traversalElem[0]);
+        }
 }
 
 export async function createInteractionCard(visual: any){
@@ -29,7 +33,7 @@ export async function createInteractionCard(visual: any){
         helpers.createCloseButton("closeButton", "closeButtonPlacementBig", "", helpers.getCloseFunction(), "interactionCard");
     }
     helpers.createCardContent(global.settings.interactionExample.title, "", "interactionCard");
-    helpers.createCardButtons("", "back to visual");
+    helpers.createCardButtons("cardButtons", "", "", "back to visual");
 
     await createInteractionInfo(visual);
 }
@@ -71,6 +75,9 @@ export async function getInteractionText(visual: any){
             break;
         case 'Clustered Bar Chart':
             interactionInfo = await getBarChartInteractionExample(visual);
+            break;
+        case 'Clustered Column Chart':
+            interactionInfo = await getColumnChartInteractionExample(visual);
             break;
         case 'Slicer':
             interactionInfo = await getSlicerInteractionExample(visual);

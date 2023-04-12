@@ -55,7 +55,7 @@ class Onboarding extends React.Component<AppProps, AppState> {
 
     // React function
     async componentDidMount(): Promise<void> {
-
+        console.log('Main did mount')
         window.addEventListener('resize', onboarding.reloadOnboarding)
 
         if (this.state.reportRef !== null) {
@@ -74,10 +74,11 @@ class Onboarding extends React.Component<AppProps, AppState> {
     }
 
     renderMyReport(): Report {
-
+        console.log('Render Report')
         let report: any | Report = null;
 
         if (this.state.error.length) {
+            console.log('if error')
             // Cleaning the report container contents and rendering the error message in multiple lines
             reportContainer.textContent = "";
             this.state.error.forEach(line => {
@@ -86,7 +87,7 @@ class Onboarding extends React.Component<AppProps, AppState> {
             });
             console.log('Error', this.state.error);
         } else if (this.state.accessToken !== "" && this.state.embedUrl !== "") { // comment this condition
-
+            console.log('else if')
             const embedConfiguration: IEmbedConfiguration = {
                 type: "report",
                 tokenType: models.TokenType.Aad,
@@ -117,6 +118,7 @@ class Onboarding extends React.Component<AppProps, AppState> {
             // Triggers when a content schema is successfully loaded
            report.on("loaded", async function () {
                 onboarding.onLoadReport();
+                console.log('Provectories report')
                 provectories(report);
             });
 
@@ -125,7 +127,7 @@ class Onboarding extends React.Component<AppProps, AppState> {
 
             // Triggers when a content is successfully embedded in UI
             report.on("rendered", async function () {
-                onboarding.onReloadReport();
+                await onboarding.onReloadReport();
             });
 
             // Clear any other dataSelected handler events
@@ -133,7 +135,7 @@ class Onboarding extends React.Component<AppProps, AppState> {
 
             // Triggers when a content is successfully embedded in UI
             report.on("dataSelected", async function (event: { detail: { dataPoints: any[]; }; }) {
-                onboarding.onDataSelected(event);
+                await onboarding.onDataSelected(event);
             });
 
             // Clear any other error handler event

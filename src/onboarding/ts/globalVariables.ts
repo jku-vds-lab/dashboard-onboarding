@@ -1,5 +1,6 @@
 import { Report, Page } from "powerbi-client";
 import ComponentGraph from "../../componentGraph/ComponentGraph";
+import { TraversalElement } from "./traversal";
 
 export const footerHeight = 37;
 export const filterClosedWidth = 33;
@@ -14,11 +15,13 @@ export let introCardMargin = 0;
 export let introCardWidth = 0;
 export let interactionCardWidth = 0;
 export let interactionCardHeight = 0;
-export const interactionCardTop = 10;
+export const globalCardTop = 10;
 export let hintCardMargin = 0;
 export let hintCardWidth = 0;
 export let editCardMargin = 0;
 export let editCardWidth = 0;
+export let explainGroupCardWidth = 0;
+export let explainGroupCardHeight = 0;
 export let reportWidth: number;
 export let reportHeight: number;
 
@@ -65,6 +68,7 @@ export interface ReportOffset {
 }
 
 export interface DashboardInfo {
+  id: string;
   titleStatus: string;
   changedTitle: string;
   infoStatus: string[];
@@ -93,13 +97,12 @@ export interface Target {
 
 export interface Settings {
   reportOffset: ReportOffset;
-  dashboardInfo: DashboardInfo;
-  visuals: SettingsVisual[];
-  filterVisual: FilterVisual;
+  traversalStrategy: TraversalElement[];
   interactionExample: InteractionExample;
 }
 
 export interface FilterVisual {
+  id: string;
   title: string | undefined;
   generalInformation: string | undefined;
   filterInfosStatus: string[];
@@ -126,9 +129,7 @@ export interface InteractionVisual {
 export function createSettingsObject() {
   const settings: Settings = {
     reportOffset: createReportOffset(),
-    dashboardInfo: createDashboardInfo(),
-    visuals: [] as SettingsVisual[],
-    filterVisual: createFilterVisual(),
+    traversalStrategy: [] as TraversalElement[],
     interactionExample: createInteractionExample(),
   };
   return settings;
@@ -146,6 +147,7 @@ export function createReportOffset() {
 
 export function createDashboardInfo() {
   const dashboardInfo: DashboardInfo = {
+    id: "",
     titleStatus: "",
     changedTitle: "",
     infoStatus: [],
@@ -170,6 +172,7 @@ export function createVisual() {
 
 export function createFilterVisual() {
   return {
+    id: "",
     title: "",
     generalInformation: "",
     filterInfosStatus: [] as string[],
@@ -253,6 +256,12 @@ export function setEditCardMargin(newEditCardMargin: number) {
 }
 export function setEditCardWidth(newEditCardWidth: number) {
   editCardWidth = newEditCardWidth;
+}
+export function setExplainGroupCardWidth(newExplainGroupCardWidth: number) {
+  explainGroupCardWidth = newExplainGroupCardWidth;
+}
+export function setExplainGroupCardHeight(newExplainGroupCardHeight: number) {
+  explainGroupCardHeight = newExplainGroupCardHeight;
 }
 export function setReportWidth(newReportWidth: number) {
   reportWidth = newReportWidth;
@@ -343,6 +352,8 @@ export function setDraggingStarted(newDraggingStarted: boolean) {
 export function createDivAttributes() {
   return {
     id: "",
+    categories: [""],
+    count: 0,
     style: "",
     classes: "",
     content: "",
@@ -359,6 +370,7 @@ export function createDivAttributes() {
 export function createButtonAttributes() {
   return {
     id: "",
+    count: 0,
     content: "",
     style: "",
     classes: "",

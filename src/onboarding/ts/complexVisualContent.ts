@@ -15,7 +15,7 @@ import interactImg from "../assets/interact.png";
 
 export async function getLineClusteredColumnComboChartInfo(visual: any) {
     const CGVisual = global.componentGraph.dashboard.visualizations.find(vis => vis.id === visual.name); 
-    const axis = CGVisual?.encoding.xAxes[0].attribute;
+    const axis = CGVisual?.encoding.xAxes[0]? CGVisual?.encoding.xAxes[0].attribute: null;
     const data = CGVisual?.encoding.yAxes;
     const columnData = data?.filter(yAxis => yAxis.type === "Column y-axis")!;
     const lineData = data?.filter(yAxis => yAxis.type === "Line y-axis")!;

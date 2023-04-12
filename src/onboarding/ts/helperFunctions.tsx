@@ -1,18 +1,18 @@
 import * as global from "./globalVariables";
 import * as elements from "./elements";
 import { getStartFunction } from "./introCards";
-import { previousInfoCard, nextInfoCard, createInfoCard } from "./infoCards";
+import { previousInfoCard, nextInfoCard, createInfoCard, nextInGroup, previousInGroup } from "./infoCards";
 import { removeFrame } from "./disableArea";
 import { createGuidedTour, createDashboardExploration, createOnboardingOverlay } from "./onboarding";
-import { saveOnboardingChanges } from "./authorMode";
+//import { saveOnboardingChanges } from "./authorMode";
 import { createSettings } from "./createSettings";
-import { addVisualTextarea } from "./listOfVisuals";
+// import { addVisualTextarea } from "./listOfVisuals";
 import { getInteractionText, removeInteractionCard, startInteractionExample } from "./interactionExample";
 import { removeHintCard, removeShowChangesCard, showReportChanges } from "./showReportChanges";
 import { getCardInfo, getSlicerInfo } from "./basicVisualContent";
 import { getLineClusteredColumnComboChartInfo } from "./complexVisualContent";
 import { getLineChartInfo } from "./lineChartVisualContent";
-import { getClusteredBarChartInfo } from "./barChartVisualContent";
+import { getClusteredBarChartInfo, getClusteredColumnChartInfo } from "./barChartVisualContent";
 import { getFilterDescription } from "./filterInfoCards";
 import { IFilterColumnTarget, IFilterMeasureTarget } from "powerbi-models";
 import 'powerbi-report-authoring';
@@ -22,22 +22,23 @@ import ComponentGraph, { reviver } from "../../componentGraph/ComponentGraph";
 import Filter from "../../componentGraph/Filter";
 import { exportData } from "../../Provenance/utils";
 import * as sizes from "./sizes";
+import { createGroupOverlay, createInformationCard, findCurrentTraversalVisual, findCurrentTraversalVisualIndex, isGroup } from "./traversal";
 
-export function addContainerOffset(){
+export function addContainerOffset(cardHeight: number){
     const pageOffset = parseInt(window.getComputedStyle(document.getElementById("flexContainer")!).paddingTop);
     const buttonHeaderHeight = document.getElementById("onboarding-header")!.clientHeight;
     const reportOffsetTop = parseInt(window.getComputedStyle(document.getElementById("reportContainer")!).paddingTop);
 
     const header = document.getElementById("onboarding-header");
     if(header){
-        const headerOffset = global.interactionCardHeight - pageOffset + global.interactionCardTop;
+        const headerOffset = cardHeight - pageOffset + global.globalCardTop;
         header.style.marginTop = headerOffset + "px";
     }
 
     const onboarding = document.getElementById("onboarding");
     if(onboarding){
         global.setOnboardingOffset(pageOffset + buttonHeaderHeight + reportOffsetTop);
-        const top = global.interactionCardTop + global.interactionCardHeight + buttonHeaderHeight + reportOffsetTop;
+        const top = global.globalCardTop + cardHeight + buttonHeaderHeight + reportOffsetTop;
         onboarding.style.top = top + "px";
     }
 
@@ -52,7 +53,10 @@ function backToVisual(){
     removeInteractionCard();
     removeShowChangesCard();
     removeHintCard();
-    createInfoCard(global.currentVisuals[global.currentVisualIndex]);
+    const traversalElement = findCurrentTraversalVisual();
+    if(traversalElement){
+        createInfoCard(traversalElement[0], traversalElement[2], traversalElement[1]);
+    }
 }
 
 export function createBasicCardContent(description: string, parentId: string){
@@ -79,17 +83,18 @@ export function createCard(id: string, style: string, classes: string){
     elements.createDiv(attributes);
 }
 
-export function createCardButtons(leftButton: string, rightButton: string){
+export function createCardButtons(id: string, leftButton: string, middleButton:string, rightButton: string){
     const divAttributes = global.createDivAttributes();
-    divAttributes.id = "cardButtons";
+    divAttributes.id = id;
     divAttributes.parentId = "cardContent";
+    divAttributes.style = "height: 50px; clear: both;"
     elements.createDiv(divAttributes);
 
     if(leftButton != ""){
         const buttonAttributes = global.createButtonAttributes();
         buttonAttributes.classes = global.darkOutlineButtonClass + " positionLeft cardButtons";
         buttonAttributes.style = `font-size: ${sizes.textSize}rem; margin-bottom: 20px;`;
-        buttonAttributes.parentId = "cardButtons";
+        buttonAttributes.parentId = id;
         switch(leftButton){
             case "skip":
                 buttonAttributes.id = "skipButton";
@@ -106,6 +111,16 @@ export function createCardButtons(leftButton: string, rightButton: string){
                 buttonAttributes.content = "Cancel";
                 buttonAttributes.function = removeOnboarding;
                 break;
+            case "previousInGroup":
+                buttonAttributes.id = "previousInGroupButton";
+                buttonAttributes.content = "Previous";
+                buttonAttributes.function = previousInGroup;
+                break;
+            case "back to group": 
+                buttonAttributes.id = "backToGroupButton";
+                buttonAttributes.content = "Previous";
+                buttonAttributes.function = createGroupOverlay;
+                break;
             default: 
                 buttonAttributes.id = "previousButton";
                 buttonAttributes.content = "Previous";
@@ -118,7 +133,7 @@ export function createCardButtons(leftButton: string, rightButton: string){
         const buttonAttributes = global.createButtonAttributes();
         buttonAttributes.classes = global.darkOutlineButtonClass + " positionRight cardButtons";
         buttonAttributes.style = `font-size: ${sizes.textSize}rem; margin-bottom: 20px;`;
-        buttonAttributes.parentId = "cardButtons";
+        buttonAttributes.parentId = id;
         if(leftButton == ""){
             buttonAttributes.style += "margin-bottom: 20px;"
         }
@@ -143,10 +158,20 @@ export function createCardButtons(leftButton: string, rightButton: string){
                 buttonAttributes.content = "Back to overview";
                 buttonAttributes.function = showReportChanges;
                 break;
-            case "save":
-                buttonAttributes.id = "saveButton";
-                buttonAttributes.content = "Save";
-                buttonAttributes.function = saveOnboardingChanges;
+            case "nextInGroup":
+                buttonAttributes.id = "nextInGroupButton";
+                buttonAttributes.content = "Next";
+                buttonAttributes.function = nextInGroup;
+                break;
+            // case "save":
+            //     buttonAttributes.id = "saveButton";
+            //     buttonAttributes.content = "Save";
+            //     buttonAttributes.function = saveOnboardingChanges;
+            //     break;
+            case "back to group": 
+                buttonAttributes.id = "backToGroupButton";
+                buttonAttributes.content = "Next";
+                buttonAttributes.function = createGroupOverlay;
                 break;
             default:
                 buttonAttributes.id = "nextButton";
@@ -248,39 +273,39 @@ export function createEnableButton(parentId: string){
     elements.createButton(attributes);
 }
 
-export function createInfoForm(infoType: string, visualID: string, Infos: string | any[]){
-    const infoTitle = firstLetterToUpperCase(infoType);
+// export function createInfoForm(infoType: string, visualID: string, Infos: string | any[]){
+//     const infoTitle = firstLetterToUpperCase(infoType);
 
-    const labelAttributes = global.createLabelAttributes();
-    labelAttributes.id = infoType + "InfosLabel" + visualID;
-    labelAttributes.for = infoType + "InfosTextarea" + visualID;
-    labelAttributes.style = "display: block;margin-left: 10px;";
-    labelAttributes.content = infoTitle + " Information:";
-    labelAttributes.parentId = "collapseForm" + visualID;
-    elements.createLabel(labelAttributes);
+//     const labelAttributes = global.createLabelAttributes();
+//     labelAttributes.id = infoType + "InfosLabel" + visualID;
+//     labelAttributes.for = infoType + "InfosTextarea" + visualID;
+//     labelAttributes.style = "display: block;margin-left: 10px;";
+//     labelAttributes.content = infoTitle + " Information:";
+//     labelAttributes.parentId = "collapseForm" + visualID;
+//     elements.createLabel(labelAttributes);
 
-    for (let i = 0; i < Infos.length; ++i) {
-        const Info = Infos[i].replaceAll("<br>", '\r\n');
-        const textareaAttributes = global.createTextareaAttributes();
-        textareaAttributes.id = i + infoType+ "InfosTextarea" + visualID;
-        textareaAttributes.class = infoType+ "Infos" + visualID;
-        textareaAttributes.value = Info;
-        textareaAttributes.style = "display: block;width: 95%;margin-bottom: 5px;margin-left: 10px;background-color: lightsteelblue;";
-        textareaAttributes.parentId = "collapseForm" + visualID;
-        elements.createTextarea(textareaAttributes, false);
-    }
+//     for (let i = 0; i < Infos.length; ++i) {
+//         const Info = Infos[i].replaceAll("<br>", '\r\n');
+//         const textareaAttributes = global.createTextareaAttributes();
+//         textareaAttributes.id = i + infoType+ "InfosTextarea" + visualID;
+//         textareaAttributes.class = infoType+ "Infos" + visualID;
+//         textareaAttributes.value = Info;
+//         textareaAttributes.style = "display: block;width: 95%;margin-bottom: 5px;margin-left: 10px;background-color: lightsteelblue;";
+//         textareaAttributes.parentId = "collapseForm" + visualID;
+//         elements.createTextarea(textareaAttributes, false);
+//     }
 
-    const addButtonAttributes = global.createButtonAttributes();
-    addButtonAttributes.id = "add"+ infoTitle + "Info" + visualID;
-    addButtonAttributes.content = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/></svg> Add`;
-    addButtonAttributes.style =  "margin: auto;display: block;";
-    addButtonAttributes.classes = global.darkOutlineButtonClass;
-    addButtonAttributes.function = function(){
-        addVisualTextarea(infoType, visualID);
-    };
-    addButtonAttributes.parentId = "collapseForm" + visualID;
-    elements.createButton(addButtonAttributes);
-}
+//     const addButtonAttributes = global.createButtonAttributes();
+//     addButtonAttributes.id = "add"+ infoTitle + "Info" + visualID;
+//     addButtonAttributes.content = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/></svg> Add`;
+//     addButtonAttributes.style =  "margin: auto;display: block;";
+//     addButtonAttributes.classes = global.darkOutlineButtonClass;
+//     addButtonAttributes.function = function(){
+//         addVisualTextarea(infoType, visualID);
+//     };
+//     addButtonAttributes.parentId = "collapseForm" + visualID;
+//     elements.createButton(addButtonAttributes);
+// }
 
 export async function createInteractionExampleButton(parentId: string, visual: any){
     if(!await getVisualData(visual)){
@@ -423,22 +448,46 @@ export function getDataOfInteractionVisual(visual: any){
     return visualData;
 }
 
-export function getDataOfVisual(visual: any){
-    const visualsData = global.settings.visuals;
-    const visualData = visualsData.find(function (data) {
-        return data.id == visual.name;
-    });
-
-    return visualData;
+export function getDataOfVisual(visual: any, count: number){
+    const traversalElements = global.settings.traversalStrategy;
+    let foundVisual;
+    for(const elem of traversalElements){
+        if(isGroup(elem.element)){
+            for(const groupTraversals of elem.element.visuals){
+                for(const groupElem of groupTraversals){
+                    if(groupElem.element.id === visual.name && groupElem.count == count){
+                        foundVisual = groupElem;
+                    }
+                }
+            }
+        } else {
+            if(elem.element.id === visual.name && elem.count == count){
+                foundVisual = elem;
+            }
+        }
+    }
+    return foundVisual?.element;
 }
 
-export function getDataWithId(ID: string){
-    const visuals = global.settings.visuals;
-    const visualData = visuals.find(function (visual) {
-        return visual.id == ID;
-    });
-
-    return visualData;
+export function getDataWithId(ID: string, count: number){
+    const traversalElements = global.settings.traversalStrategy;
+    let foundVisual;
+    for(const elem of traversalElements){
+        if(isGroup(elem.element)){
+            for(const groupTraversals of elem.element.visuals){
+                for(const groupElem of groupTraversals){
+                    if(groupElem.element.id === ID && groupElem.count == count){
+                        foundVisual = groupElem;
+                    }
+                }
+            }
+        } else {
+            if(elem.element.id === ID && elem.count == count){
+                foundVisual = elem;
+            }
+        }
+    }
+    return foundVisual?.element;
 }
 
 function getDisabledStyle(top: number, left: number, width: number, height: number){
@@ -550,12 +599,13 @@ export async function getInteractionExampleChangesText(visual: any){
     const type = getTypeName(visual);
 
     switch(type){
-        case 'Card':
+        case 'Card': case "Multi Row Card":
             visualChangeInfo += `The displayed data is now "DataValue".`;
             break;
         case 'Line Clustered Column Combo Chart':
         case 'Line Chart':
         case 'Clustered Bar Chart':
+        case 'clusteredColumnChart':
             visualChangeInfo += `The highlighted data includes "AllHighlitedData".`;
             visualChangeInfo += "<br>You can also change the report filters by selecting a new element of this visual.";
             break;
@@ -605,10 +655,12 @@ export function getNextVisual(){
         return visual.type !== "slicer"
     });
 
-    if(global.currentVisualIndex >= visuals.length - 1){
+    const index = findCurrentTraversalVisualIndex();
+
+    if(index >= visuals.length - 1){
         nextVisual = visuals[0]; 
     }else{
-       nextVisual = visuals[global.currentVisualIndex + 1]; 
+       nextVisual = visuals[index + 1]; 
     }
     return nextVisual;
 }
@@ -624,9 +676,9 @@ export async function createComponentGraph(){
 }
 
 export async function getSettings(){
-    if (localStorage.getItem("settings") == null){
+    //if (localStorage.getItem("settings") == null){
         await createSettings();
-    }
+    //}
     global.setSettings(JSON.parse(localStorage.getItem("settings")!, reviver));
 }
 
@@ -672,7 +724,7 @@ export function getVisualCardPos(visual: any, cardWidth: number, offset: number)
         pos: ""
     };
 
-    if (rightDistance > leftDistance) {
+    if (rightDistance > leftDistance || leftDistance < global.infoCardWidth) {
         position.x = offset + rightX;
         position.pos = "right";
     }else{
@@ -752,9 +804,8 @@ export function getVisualIndex(name: string){
 export async function getVisualInfos(visual: any){
     const type = getTypeName(visual);
     let visualInfos = {generalImages:[] as any[],generalInfos:[] as string[],interactionImages:[] as any[],interactionInfos:[] as string[],insightImages:[] as any[],insightInfos:[] as string[]};
-
     switch(type){
-        case 'Card':
+        case 'Card': case "Multi Row Card":
             visualInfos = await getCardInfo(visual);
             break;
         case 'Line Clustered Column Combo Chart':
@@ -766,20 +817,21 @@ export async function getVisualInfos(visual: any){
         case 'Clustered Bar Chart':
             visualInfos = await getClusteredBarChartInfo(visual);
             break;
+        case "Clustered Column Chart":
+            visualInfos = await getClusteredColumnChartInfo(visual);
+            break;
         case 'Slicer':
             visualInfos = await getSlicerInfo(visual);
             break;
         default:
             break;
     }
-
     const CGVisual = global.componentGraph.dashboard.visualizations.find(vis => vis.id === visual.name);
     const insights = CGVisual?.insight?.insights!;
     for(const insight of insights){
         visualInfos.insightImages.push(lightbulbImg);
         visualInfos.insightInfos.push(insight);
     }
-
     return visualInfos;
 }
 
@@ -823,16 +875,16 @@ export async function isVisible(visual: VisualDescriptor, selectorObject: string
     }
 }
 
-export function orderSettingsVisuals(allVisuals: any[]){
-    const visDatas = global.settings.visuals;
-    global.settings.visuals = [];
-    for (const visual of allVisuals) {
-        const visData = visDatas.filter(function (element) { 
-            return element.id === visual.name;
-        });
-        global.settings.visuals.push(visData[0]);
-    }
-}
+// export function orderSettingsVisuals(allVisuals: any[]){
+//     const visDatas = global.settings.visuals;
+//     global.settings.visuals = [];
+//     for (const visual of allVisuals) {
+//         const visData = visDatas.filter(function (element) { 
+//             return element.id === visual.name;
+//         });
+//         global.settings.visuals.push(visData[0]);
+//     }
+// }
 
 export function recreateInteractionExampleButton(){
     const interactionButton = document.getElementById("interactionExample");
@@ -865,7 +917,7 @@ export function removeContainerOffset(){
 
 function removeDesignVisuals(){
     const visuals = global.currentVisuals.filter(function (visual) {
-        return visual.type !== "shape" && visual.type !== "basicShape";
+        return visual.type !== "shape" && visual.type !== "basicShape" && visual.type !== "textbox";
     });
     global.setVisuals(visuals);
 }
@@ -894,7 +946,7 @@ export function removeOnboardingOverlay(){
     global.currentVisuals.forEach(function (visual) {
         elements.removeElement(visual.name);
     });
-    elements.removeElement("filter");
+    elements.removeElement("globalFilter");
 }
 
 export function resizeEmbed(filterWidth: number){
