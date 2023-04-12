@@ -500,9 +500,7 @@ export async function createTraversalOfGroupNodes(groupNode: any) {
       const traversalElem = await getTraversalElem(sNode);
       group.visuals.push([traversalElem]);
     }
-  } catch (error) {
-    debugger;
-  }
+  } catch (error) {}
 
   return group;
 }
@@ -524,9 +522,7 @@ export async function getTraversalElem(sNode: any) {
     traversalElem = createTraversalElement(sNode.data.type);
     traversalElem.element = await getTraversalElement(nodeId);
     traversalElem.categories = [nodeCat];
-  } catch (error) {
-    debugger;
-  }
+  } catch (error) {}
 
   return traversalElem;
 }
@@ -536,7 +532,6 @@ export async function createTraversalOfNodes(
   groupNodes: any[]
 ) {
   try {
-    debugger;
     const trav: TraversalElement[] = [];
     let groupNode = null;
     for (const sNode of simpleNodes) {
@@ -559,11 +554,9 @@ export async function createTraversalOfNodes(
         trav.push(await getTraversalElem(sNode));
       }
     }
-    debugger;
     console.log("Trav", trav);
     await updateTraversal(trav);
   } catch (error) {
-    debugger;
     console.log("Error", error);
   }
 }
