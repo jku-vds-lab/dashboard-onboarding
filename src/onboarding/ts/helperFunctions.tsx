@@ -113,12 +113,12 @@ export function createCardButtons(id: string, leftButton: string, middleButton:s
                 break;
             case "previousInGroup":
                 buttonAttributes.id = "previousInGroupButton";
-                buttonAttributes.content = "Previous in Group";
+                buttonAttributes.content = "Previous";
                 buttonAttributes.function = previousInGroup;
                 break;
             case "back to group": 
                 buttonAttributes.id = "backToGroupButton";
-                buttonAttributes.content = "Select new Group";
+                buttonAttributes.content = "Previous";
                 buttonAttributes.function = createGroupOverlay;
                 break;
             default: 
@@ -160,7 +160,7 @@ export function createCardButtons(id: string, leftButton: string, middleButton:s
                 break;
             case "nextInGroup":
                 buttonAttributes.id = "nextInGroupButton";
-                buttonAttributes.content = "Next in Group";
+                buttonAttributes.content = "Next";
                 buttonAttributes.function = nextInGroup;
                 break;
             // case "save":
@@ -170,33 +170,13 @@ export function createCardButtons(id: string, leftButton: string, middleButton:s
             //     break;
             case "back to group": 
                 buttonAttributes.id = "backToGroupButton";
-                buttonAttributes.content = "Select new Group";
+                buttonAttributes.content = "Next";
                 buttonAttributes.function = createGroupOverlay;
                 break;
             default:
                 buttonAttributes.id = "nextButton";
                 buttonAttributes.content = "Next";
                 buttonAttributes.function = nextInfoCard;
-        }
-        elements.createButton(buttonAttributes);
-    }
-
-    if(middleButton != ""){
-        const buttonAttributes = global.createButtonAttributes();
-        buttonAttributes.classes = global.darkOutlineButtonClass + " positionCenter cardButtons";
-        buttonAttributes.style = `font-size: ${sizes.textSize}rem; margin-bottom: 20px;`;
-        buttonAttributes.parentId = id;
-        switch(middleButton){
-            case "back to group": 
-                buttonAttributes.id = "backToGroupButton";
-                buttonAttributes.content = "Select new Group";
-                buttonAttributes.function = createGroupOverlay;
-                break;
-            case "previousInGroup":
-                buttonAttributes.id = "previousInGroupButton";
-                buttonAttributes.content = "Previous in Group";
-                buttonAttributes.function = previousInGroup;
-                break;
         }
         elements.createButton(buttonAttributes);
     }

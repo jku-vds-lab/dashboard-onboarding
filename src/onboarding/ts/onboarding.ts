@@ -28,9 +28,9 @@ export async function onLoadReport(){
     console.log(global.componentGraph)
     await helpers.getSettings();
 
-    // const trav = await setTestAllGroupsTraversalStrategy();
-    // console.log(trav)
-    // await updateTraversal(trav);
+    const trav = await setTestAllGroupsTraversalStrategy();
+    console.log(trav)
+    await updateTraversal(trav);
 
     helpers.createEditOnboardingButtons();
     helpers.createOnboardingButtons();

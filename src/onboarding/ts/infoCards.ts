@@ -56,49 +56,29 @@ export function createCardButtonsWithGroup(id: string, categories: string[], cou
         }
 
         if(index === 0){
-            if(global.explorationMode){
-                helpers.createCardButtons("cardButtons", leftButton, "", rightButton);
-                helpers.createCardButtons("groupButtons", "back to group", "", "nextInGroup");
-            } else {
-                helpers.createCardButtons("cardButtons", "", "", "nextInGroup");
-            }
+            helpers.createCardButtons("cardButtons", leftButton, "", "nextInGroup");
         } else if(index === travLength){
             if(global.explorationMode){
-                helpers.createCardButtons("cardButtons", leftButton, "", rightButton);
                 helpers.createCardButtons("groupButtons", "previousInGroup", "", "back to group");
             } else {
-                switch(traversalElem.type){
-                    case groupType.all:
-                        let traversed = 0;
-                        for(const trav of traversalElem.visuals){ 
-                            if(trav.every((vis: TraversalElement) => lookedAtInGroup.elements.find(elem => elem.id === vis.element.id && elem.categories.every(category => vis.categories.includes(category)) && elem.count === vis.count))){
-                                traversed ++;
-                            }
+                if(traversalElem.type === groupType.onlyOne){
+                    helpers.createCardButtons("cardButtons", "previousInGroup", "", rightButton);
+                }else{
+                    let traversed = 0;
+                    for(const trav of traversalElem.visuals){ 
+                        if(trav.every((vis: TraversalElement) => lookedAtInGroup.elements.find(elem => elem.id === vis.element.id && elem.categories.every(category => vis.categories.includes(category)) && elem.count === vis.count))){
+                            traversed ++;
                         }
-                        if(traversed === traversalElem.visuals.length){
-                            helpers.createCardButtons("cardButtons", leftButton, "", rightButton);
-                            helpers.createCardButtons("groupButtons", "", "previousInGroup", "");
-                        } else {
-                            helpers.createCardButtons("groupButtons", "previousInGroup", "", "back to group");
-                        }
-                        break;
-                    case groupType.atLeastOne:
-                        helpers.createCardButtons("cardButtons", leftButton, "", rightButton);
+                    }
+                    if(traversed === traversalElem.visuals.length){
+                        helpers.createCardButtons("cardButtons", "previousInGroup", "", rightButton);
+                    } else {
                         helpers.createCardButtons("groupButtons", "previousInGroup", "", "back to group");
-                        break;
-                    case groupType.onlyOne:
-                        helpers.createCardButtons("cardButtons", leftButton, "", rightButton);
-                        helpers.createCardButtons("groupButtons", "", "previousInGroup", "");
-                        break;
+                    }
                 }
             }
         } else {
-            if(global.explorationMode){
-                helpers.createCardButtons("cardButtons", leftButton, "", rightButton);
-                helpers.createCardButtons("groupButtons", "previousInGroup", "back to group", "nextInGroup");
-            } else {
-                helpers.createCardButtons("groupButtons", "previousInGroup", "", "nextInGroup");
-            }
+            helpers.createCardButtons("groupButtons", "previousInGroup", "", "nextInGroup");
         }
     } else {
         helpers.createCardButtons("cardButtons", leftButton, "", rightButton);
@@ -125,25 +105,6 @@ export function nextInfoCard(){
     lookedAtInGroup.elements = [];
 
     getCurrentTraversalElementType();
-    
-    // if(global.showsDashboardInfo){
-    //     global.setCurrentVisualIndex(0);
-    //     removeDashboardInfoCard();
-    //     createInfoCard(global.currentVisuals[global.currentVisualIndex]);
-    // } else if(global.currentVisualIndex == global.currentVisuals.length -1) {
-    //     global.setCurrentVisualIndex(global.currentVisualIndex + 1);
-    //     removeInfoCard();
-    //     createFilterInfoCard();
-    // } else{
-    //     removeFilterInfoCard();
-    //     removeInfoCard();
-    //     if(!global.isGuidedTour && global.currentVisualIndex == global.currentVisuals.length){
-    //         createDashboardInfoCard();
-    //     }else{
-    //         global.setCurrentVisualIndex(global.currentVisualIndex + 1);
-    //         createInfoCard(global.currentVisuals[global.currentVisualIndex]);
-    //     }
-    // }
 }
 
 export function previousInfoCard(){
@@ -156,29 +117,7 @@ export function previousInfoCard(){
     lookedAtInGroup.groupId = "";
     lookedAtInGroup.elements = [];
 
-    getCurrentTraversalElementType();
-
-    // if(global.showsDashboardInfo){
-    //     if(global.isGuidedTour){
-    //         removeDashboardInfoCard();
-    //         createIntroCard();
-    //     } else {
-    //         global.setCurrentVisualIndex(global.currentVisuals.length);
-    //         removeDashboardInfoCard();
-    //         createFilterInfoCard();
-    //     }
-    // } else if(global.currentVisualIndex == 0){
-    //     removeInfoCard();
-    //     createDashboardInfoCard();
-    // }else{
-    //     removeFilterInfoCard();
-    //     if(global.isGuidedTour && global.currentVisualIndex == global.currentVisuals.length){
-    //         disable.disableFilter();
-    //     }
-    //     global.setCurrentVisualIndex(global.currentVisualIndex - 1);
-    //     removeInfoCard();
-    //     createInfoCard(global.currentVisuals[global.currentVisualIndex]);
-    // }   
+    getCurrentTraversalElementType(); 
 }
 
 export function nextInGroup(){

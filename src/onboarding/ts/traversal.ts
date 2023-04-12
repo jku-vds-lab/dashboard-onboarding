@@ -267,7 +267,16 @@ export function getCurrentTraversalElementType(){
 export function createGroupOverlay(){
     const currentElement = global.settings.traversalStrategy[currentId];
     const firstVisuals: TraversalElement[] = [];
-    currentElement.element.visuals.forEach((trav: TraversalElement) => firstVisuals.push(trav[0]));
+    const notTraversed: TraversalElement[] = [];
+    for(const trav of currentElement.element.visuals){ 
+        if(!trav.every((vis: TraversalElement) => lookedAtInGroup.elements.find(elem => elem.id === vis.element.id && elem.categories.every(category => vis.categories.includes(category)) && elem.count === vis.count))){
+            notTraversed.push(trav);
+        }
+    }
+    notTraversed.forEach((trav: TraversalElement) => firstVisuals.push(trav[0]));
+    if(currentElement.element.type === groupType.atLeastOne){
+        firstVisuals.push(global.settings.traversalStrategy[currentId +1]);
+    }
     createInformationCard("group", currentElement.count, firstVisuals, undefined);
 }
 

@@ -51,15 +51,21 @@ async function setGroup(elem: Group){
         for (const vis of trav) {
             if(vis.element.id === "dashboard"){
                 const traversalElem = createTraversalElement("dashboard");
+                traversalElem.count = vis.count;
+                traversalElem.categories = vis.categories;
                 traversalElem.element = setDashboardInfo();
                 visuals.push(traversalElem);
             } else if(vis.element.id === "globalFilter"){
                 const traversalElem = createTraversalElement("globalFilter");
+                traversalElem.count = vis.count;
+                traversalElem.categories = vis.categories;
                 traversalElem.element = await setFilterInfo();
                 visuals.push(traversalElem);
             } else {
                 const traversalElem = createTraversalElement("");
-                traversalElem.element = await setVisualsInfo(vis.element.id)
+                traversalElem.count = vis.count;
+                traversalElem.categories = vis.categories;
+                traversalElem.element = await setVisualsInfo(vis.element.id);
                 visuals.push(traversalElem);
             }
         }
