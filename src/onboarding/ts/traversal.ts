@@ -496,8 +496,17 @@ export async function createTraversalOfNodes(nodes: any[]) {
   try {
     const trav: TraversalElement[] = [];
     for (const node of nodes) {
+      const idParts: string[] = node.id.split(" ");
+      let nodeId: string = node.id;
+      let nodeCat: string = "general";
+      if (idParts.length > 1) {
+        nodeId = idParts[0];
+        nodeCat = idParts[1].toLowerCase();
+      }
       const traversalElem1 = createTraversalElement(node.data.type);
-      traversalElem1.element = await getTraversalElement(node.id);
+      traversalElem1.element = await getTraversalElement(nodeId);
+      traversalElem1.categories = [nodeCat];
+
       trav.push(traversalElem1);
     }
     await updateTraversal(trav);
