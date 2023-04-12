@@ -132,9 +132,21 @@ export default function NodesCanvas() {
     },
     [getIntersectingNodes, setNodes]
   );
+
+  function UpdateNodeButton(nodeId) {
+    const updateNodeInternals = useUpdateNodeInternals();
+    updateNodeInternals(nodeId);
+  }
+
   const onNodeDragStop = (event, node) => {
     if (node.type == "group") {
-      console.log("yes it was a group");
+      nodes.forEach((sNode) => {
+        if (sNode.parentNode == node.id) {
+          // UpdateNodeButton(sNode.id);
+          // here we need to update the node position
+          console.log(sNode.positionAbsolute); // --> this is not getting updated
+        }
+      });
     }
   };
 

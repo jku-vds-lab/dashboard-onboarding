@@ -90,6 +90,9 @@ class TraversalOrder {
     //
     try {
       this.simpleNodes = this.simpleNodes.sort(this.compare);
+      this.simpleNodes.forEach((sNode, index) => {
+        sNode.rank = index + 1;
+      });
       console.log(this.simpleNodes);
     } catch (error) {
       console.log("Error", error);
