@@ -49,9 +49,9 @@ export function isGroup(object: any): object is Group {
 }
 
 export enum groupType {
-  all = "all",
-  atLeastOne = "atLeastOne",
-  onlyOne = "onlyOne",
+  all = "All",
+  atLeastOne = "At least one",
+  onlyOne = "Only one",
 }
 
 export function createTraversalElement(type: string) {
@@ -492,25 +492,78 @@ function createExplainGroupText() {
   return explaination;
 }
 
-export async function createTraversalOfNodes(nodes: any[]) {
+export async function createTraversalOfGroupNodes(groupNode: any) {
+  const group = createGroup();
   try {
-    const trav: TraversalElement[] = [];
-    for (const node of nodes) {
-      const idParts: string[] = node.id.split(" ");
-      let nodeId: string = node.id;
-      let nodeCat: string = "general";
-      if (idParts.length > 1) {
-        nodeId = idParts[0];
-        nodeCat = idParts[1].toLowerCase();
-      }
-      const traversalElem1 = createTraversalElement(node.data.type);
-      traversalElem1.element = await getTraversalElement(nodeId);
-      traversalElem1.categories = [nodeCat];
-
-      trav.push(traversalElem1);
+    group.type = groupNode.type;
+    for (const sNode of groupNode.nodes) {
+      const traversalElem = await getTraversalElem(sNode);
+      group.visuals.push([traversalElem]);
     }
+  } catch (error) {
+    debugger;
+  }
+
+  return group;
+}
+
+export async function getTraversalElem(sNode: any) {
+  let traversalElem: TraversalElement = {
+    element: "",
+    categories: [],
+    count: 0,
+  };
+  try {
+    const idParts: string[] = sNode.id.split(" ");
+    let nodeId: string = sNode.id;
+    let nodeCat: string = "general";
+    if (idParts.length > 1) {
+      nodeId = idParts[0];
+      nodeCat = idParts[1].toLowerCase();
+    }
+    traversalElem = createTraversalElement(sNode.data.type);
+    traversalElem.element = await getTraversalElement(nodeId);
+    traversalElem.categories = [nodeCat];
+  } catch (error) {
+    debugger;
+  }
+
+  return traversalElem;
+}
+
+export async function createTraversalOfNodes(
+  simpleNodes: any[],
+  groupNodes: any[]
+) {
+  try {
+    debugger;
+    const trav: TraversalElement[] = [];
+    let groupNode = null;
+    for (const sNode of simpleNodes) {
+      if (groupNode) {
+        if (sNode.pGrp?.id == groupNode.id) {
+        } else if (sNode.pGrp) {
+          groupNode = groupNodes.find((gNode) => gNode.id == sNode.pGrp.id);
+          const travElem = createTraversalElement("group");
+          travElem.element = await createTraversalOfGroupNodes(groupNode);
+          trav.push(travElem);
+        } else {
+          trav.push(await getTraversalElem(sNode));
+        }
+      } else if (sNode.pGrp) {
+        groupNode = groupNodes.find((gNode) => gNode.id == sNode.pGrp.id);
+        const travElem = createTraversalElement("group");
+        travElem.element = await createTraversalOfGroupNodes(groupNode);
+        trav.push(travElem);
+      } else {
+        trav.push(await getTraversalElem(sNode));
+      }
+    }
+    debugger;
+    console.log("Trav", trav);
     await updateTraversal(trav);
   } catch (error) {
+    debugger;
     console.log("Error", error);
   }
 }

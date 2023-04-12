@@ -1,12 +1,10 @@
 import { createTraversalOfNodes } from "../../onboarding/ts/traversal";
+import { groupType } from "../../onboarding/ts/traversal";
 class TraversalOrder {
   simpleNodes = [];
   groupNodes = [];
   groupElementsCount = [];
   simpleNode = {};
-  grpCat1 = "All";
-  grpCat2 = "At least one";
-  grpCat3 = "Only one";
 
   constructor() {
     this.simpleNodes = [];
@@ -36,13 +34,20 @@ class TraversalOrder {
   setGroupNodesAndElementsCount(storyNodes) {
     this.groupNodes = storyNodes.filter((sNode) => sNode.type == "group");
     this.groupNodes.forEach((gNode) => {
-      this.groupElementsCount.push({ id: gNode.id, count: 0 });
+      this.groupElementsCount.push({
+        id: gNode.id,
+        count: 0,
+        type: "",
+        nodes: [],
+      });
     });
     this.simpleNodes.forEach((sNode) => {
       if (sNode.pGrp) {
         this.groupElementsCount.map((gElem) => {
           if (gElem.id == sNode.pGrp.id) {
             gElem.count++;
+            gElem.type = sNode.pGrpCat;
+            gElem.nodes.push(sNode);
           }
         });
       }
@@ -76,7 +81,7 @@ class TraversalOrder {
   setProb() {
     this.simpleNodes.forEach((sNode) => {
       if (sNode.pGrp) {
-        if (sNode.pGrpCat == this.grpCat1) {
+        if (sNode.pGrpCat == groupType.all) {
           sNode.probability = 1;
         } else {
           sNode.probability = 1 / sNode.pGrpCnt;
@@ -129,7 +134,7 @@ class TraversalOrder {
   updateRank() {
     this.simpleNodes.forEach((sNode) => {
       if (sNode.pGrp) {
-        if (sNode.pGrpCat == this.grpCat1) {
+        if (sNode.pGrpCat == groupType.all) {
           sNode.probability = 1;
         } else {
           sNode.probability = 1 / sNode.pGrpCnt;
@@ -144,7 +149,7 @@ class TraversalOrder {
     // old nodes can simply be discarded
     this.simpleNodes.forEach((sNode) => {
       if (sNode.pGrp) {
-        if (sNode.pGrpCat == this.grpCat1) {
+        if (sNode.pGrpCat == groupType.all) {
           sNode.probability = 1;
         } else {
           sNode.probability = 1 / sNode.pGrpCnt;
@@ -181,7 +186,7 @@ class TraversalOrder {
       this.setGrpCnt();
       this.setProb();
       this.setRank();
-      await createTraversalOfNodes(this.simpleNodes);
+      await createTraversalOfNodes(this.simpleNodes, this.groupElementsCount);
     } catch (error) {
       console.log("Error: ", error);
     }
