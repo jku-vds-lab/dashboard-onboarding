@@ -55,33 +55,39 @@ export function createCardButtonsWithGroup(id: string, categories: string[], cou
             }
         }
 
-        if(index === 0){
+        if(index === travLength && index === 0){
+            createCardButtonsForLastGroupElement("", rightButton, traversalElem);
+        }else if(index === travLength){
+            createCardButtonsForLastGroupElement("previousInGroup", rightButton, traversalElem);
+        } else if(index === 0){
             helpers.createCardButtons("cardButtons", leftButton, "", "nextInGroup");
-        } else if(index === travLength){
-            if(global.explorationMode){
-                helpers.createCardButtons("groupButtons", "previousInGroup", "", "back to group");
-            } else {
-                if(traversalElem.type === groupType.onlyOne){
-                    helpers.createCardButtons("cardButtons", "previousInGroup", "", rightButton);
-                }else{
-                    let traversed = 0;
-                    for(const trav of traversalElem.visuals){ 
-                        if(trav.every((vis: TraversalElement) => lookedAtInGroup.elements.find(elem => elem.id === vis.element.id && elem.categories.every(category => vis.categories.includes(category)) && elem.count === vis.count))){
-                            traversed ++;
-                        }
-                    }
-                    if(traversed === traversalElem.visuals.length){
-                        helpers.createCardButtons("cardButtons", "previousInGroup", "", rightButton);
-                    } else {
-                        helpers.createCardButtons("groupButtons", "previousInGroup", "", "back to group");
-                    }
-                }
-            }
         } else {
-            helpers.createCardButtons("groupButtons", "previousInGroup", "", "nextInGroup");
+            helpers.createCardButtons("cardButtons", "previousInGroup", "", "nextInGroup");
         }
     } else {
         helpers.createCardButtons("cardButtons", leftButton, "", rightButton);
+    }
+}
+
+function createCardButtonsForLastGroupElement(leftButton: string, rightButton: string, traversalElem: any){
+    if(global.explorationMode){
+        helpers.createCardButtons("cardButtons", leftButton, "", "back to group");
+    } else {
+        if(traversalElem.type === groupType.onlyOne){
+            helpers.createCardButtons("cardButtons", leftButton, "", rightButton);
+        }else{
+            let traversed = 0;
+            for(const trav of traversalElem.visuals){ 
+                if(trav.every((vis: TraversalElement) => lookedAtInGroup.elements.find(elem => elem.id === vis.element.id && elem.categories.every(category => vis.categories.includes(category)) && elem.count === vis.count))){
+                    traversed ++;
+                }
+            }
+            if(traversed === traversalElem.visuals.length){
+                helpers.createCardButtons("cardButtons", leftButton, "", rightButton);
+            } else {
+                helpers.createCardButtons("cardButtons", leftButton, "", "back to group");
+            }
+        }
     }
 }
 
