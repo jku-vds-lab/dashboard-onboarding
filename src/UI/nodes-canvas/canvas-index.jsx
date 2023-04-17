@@ -11,7 +11,7 @@ import { ContextMenu } from "./context-menu";
 import * as helpers from "../../onboarding/ts/helperFunctions";
 import Traversal from "./traversal";
 
-import { getVisualInfos } from "../../onboarding/ts/helperFunctions";
+import { getVisualInfoInEditor } from "../../onboarding/ts/infoCards";
 
 import { useUpdateNodeInternals } from "reactflow";
 
@@ -37,6 +37,22 @@ export default function NodesCanvas() {
       ? container.classList.remove("show")
       : container.classList.add("show");
 
+    const idParts = getNodeIDs(event);
+    if (!idParts) {
+      return;
+    }
+
+    if (idParts.length > 0) {
+      getVisualInfoInEditor(idParts, 1);
+    }
+  }, []);
+
+  const onDragOver = useCallback((event) => {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = "move";
+  }, []);
+
+  function getNodeIDs(event){
     let nodeId;
     if (event.target.classList.contains("title")) {
       nodeId =
@@ -47,37 +63,11 @@ export default function NodesCanvas() {
       nodeId = event.target.parentNode.getAttribute("data-id");
     }
 
+    document.getElementById("textBox").setAttribute("nodeId", nodeId);
+
     const idParts = nodeId?.split(" ");
-    let visualData = null;
-    if (!idParts) {
-      return;
-    }
-
-    if (idParts.length > 0) {
-      visualData = helpers?.getDataWithId(idParts[0]);
-    }
-
-    if (!visualData) {
-      return;
-    }
-    const visualInfos = await getVisualInfos(visualData);
-
-    let info;
-    if (idParts.length > 1 && idParts[1] == "Insight") {
-      info = visualInfos.insightInfos.join("\r\n");
-    } else if (idParts.length > 1 && idParts[1] == "Interaction") {
-      info = visualInfos.interactionInfos.join("\r\n");
-    } else {
-      info = visualInfos.generalInfos.join("\r\n");
-    }
-    info = info.replaceAll("<br>", "\r\n");
-    document.getElementById("textBox").value = info;
-  }, []);
-
-  const onDragOver = useCallback((event) => {
-    event.preventDefault();
-    event.dataTransfer.dropEffect = "move";
-  }, []);
+    return idParts;
+  }
 
   const onDrop = useCallback(
     (event) => {

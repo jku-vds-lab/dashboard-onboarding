@@ -166,61 +166,85 @@ export function previousInGroup(){
     }
 }
 
-export async function getVisualInfo(idParts: string[], count: number){
-    const info = [];
-    const visualData = helpers.getDataWithId(idParts[0], count);
-    if (!visualData) {
-      return;
-    }
-    const visual = global.allVisuals.find(function (visual) {
-        return visual.name == visualData.id;
-    });
-    const visualInfos = await helpers.getVisualInfos(visual);
+export async function getVisualInfoInEditor(idParts: string[], count: number){
+    let infos = [];
 
-    if(idParts.length > 1 && idParts[1] == "Insight"){
-      for (let i = 0; i < visualData.insightInfosStatus.length; ++i) {
-        switch(visualData.insightInfosStatus[i]){
-             case global.infoStatus.original:
-                 info.push(visualInfos.insightInfos[i]);
-                 break;
-             case global.infoStatus.changed:
-             case global.infoStatus.added:
-                 info.push(visualData.changedInsightInfos[i]);
-                 break;
-             default:
-                 break;
-        }
-      }
-    } else if(idParts.length > 1 && idParts[1] == "Interaction"){
-      for (let i = 0; i < visualData.interactionInfosStatus.length; ++i) {
-        switch(visualData.interactionInfosStatus[i]){
-             case global.infoStatus.original:
-                 info.push(visualInfos.interactionInfos[i]);
-                 break;
-             case global.infoStatus.changed:
-             case global.infoStatus.added:
-                 info.push(visualData.changedInteractionInfos[i]);
-                 break;
-             default:
-                 break;
-        }
-      }
-    } else {
-      for (let i = 0; i < visualData.generalInfosStatus.length; ++i) {
-        switch(visualData.generalInfosStatus[i]){
-             case global.infoStatus.original:
-                 info.push(visualInfos.generalInfos[i]);
-                 break;
-             case global.infoStatus.changed:
-             case global.infoStatus.added:
-                 info.push(visualData.changedGeneralInfos[i]);
-                 break;
-             default:
-                 break;
-        }
-      }
+    let editedElem = null;
+    if(idParts.length > 1){
+        editedElem =  global.editedTexts.find(edited => edited.idParts[0] === idParts[0] && edited.idParts[1] === idParts[1]);
+    }else{
+        editedElem = global.editedTexts.find(edited => edited.idParts[0] === idParts[0]);
     }
-    return info;
+
+    if(editedElem){
+        infos = editedElem.newInfos;
+    } else{
+        const visualData = helpers.getDataWithId(idParts[0], count);
+        const visual = global.allVisuals.find(function (visual) {
+            return visual.name == idParts[0];
+        });
+        const visualInfos = await helpers.getVisualInfos(visual);
+        
+        if (!visualData) {
+            if (idParts.length > 1 && idParts[1] == "Insight") {
+                infos = visualInfos.insightInfos;
+            } else if (idParts.length > 1 && idParts[1] == "Interaction") {
+                infos = visualInfos.interactionInfos;
+            } else {
+                infos = visualInfos.generalInfos;
+            }
+        } else{
+            if(idParts.length > 1 && idParts[1] == "Insight"){
+                for (let i = 0; i < visualData.insightInfosStatus.length; ++i) {
+                  switch(visualData.insightInfosStatus[i]){
+                       case global.infoStatus.original:
+                            infos.push(visualInfos.insightInfos[i]);
+                           break;
+                       case global.infoStatus.changed:
+                       case global.infoStatus.added:
+                            infos.push(visualData.changedInsightInfos[i]);
+                           break;
+                       default:
+                           break;
+                  }
+                }
+            } else if(idParts.length > 1 && idParts[1] == "Interaction"){
+                for (let i = 0; i < visualData.interactionInfosStatus.length; ++i) {
+                    switch(visualData.interactionInfosStatus[i]){
+                        case global.infoStatus.original:
+                            infos.push(visualInfos.interactionInfos[i]);
+                            break;
+                        case global.infoStatus.changed:
+                        case global.infoStatus.added:
+                            infos.push(visualData.changedInteractionInfos[i]);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            } else {
+                for (let i = 0; i < visualData.generalInfosStatus.length; ++i) {
+                    switch(visualData.generalInfosStatus[i]){
+                        case global.infoStatus.original:
+                            infos.push(visualInfos.generalInfos[i]);
+                            break;
+                        case global.infoStatus.changed:
+                        case global.infoStatus.added:
+                            infos.push(visualData.changedGeneralInfos[i]);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+        }
+    
+    }
+
+    let info = infos.join("\r\n");
+    info = info.replaceAll("<br>", " \n");
+    const textBox = document.getElementById("textBox")! as HTMLTextAreaElement; 
+    textBox.value = info;
 }
 
 export async function saveVisualChanges(newInfo: string[], idParts: string[], count: number){

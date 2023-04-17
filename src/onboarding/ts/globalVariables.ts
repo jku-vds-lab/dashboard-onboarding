@@ -53,11 +53,19 @@ export let posY: number | null = 0;
 export let placeholderElement: any;
 export let draggingStarted: boolean | null = false;
 
+export const editedTexts: editedText[] = [];
+
 export enum infoStatus {
   original = "original",
   changed = "changed",
   added = "added",
   deleted = "deleted",
+}
+
+export interface editedText {
+  newInfos: string[];
+  idParts: string[];
+  count: number;
 }
 
 export interface ReportOffset {

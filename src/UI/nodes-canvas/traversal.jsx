@@ -1,5 +1,9 @@
+import { editedTexts } from "../../onboarding/ts/globalVariables";
 import { createTraversalOfNodes } from "../../onboarding/ts/traversal";
 import { groupType } from "../../onboarding/ts/traversal";
+import { saveVisualChanges } from "../../onboarding/ts/infoCards";
+import * as global from "../../onboarding/ts/globalVariables";
+
 class TraversalOrder {
   simpleNodes = [];
   groupNodes = [];
@@ -187,6 +191,9 @@ class TraversalOrder {
       this.setProb();
       this.setRank();
       await createTraversalOfNodes(this.simpleNodes, this.groupElementsCount);
+      for(const edited of editedTexts){
+        await saveVisualChanges(edited.newInfos, edited.idParts, edited.count);
+      }
     } catch (error) {
       console.log("Error: ", error);
     }

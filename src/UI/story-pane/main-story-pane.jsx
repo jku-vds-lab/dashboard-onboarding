@@ -3,10 +3,27 @@ import { FaPencilAlt } from "react-icons/fa";
 import { ReactFlowProvider } from "reactflow";
 import NodesCanvas from "../nodes-canvas/canvas-index";
 import "../assets/css/dashboard.scss";
+import { editedTexts } from "../../onboarding/ts/globalVariables";
 
 export default function StoryPane() {
   const saveAnnotationChanges = (e) => {
-    e.preventDefault();
+    const nodeId = e.target.getAttribute("nodeId");
+    const currentIdParts = nodeId?.split(" ");
+    const info = e.target.value.replaceAll(" \n", "<br>");
+    const currentNewInfos = info.split("\n");
+
+    let editedElem = null;
+    if(currentIdParts.length > 1){
+      editedElem = editedTexts.find(edited => edited.idParts[0] === currentIdParts[0] && edited.idParts[1] === currentIdParts[1]);
+    }else{
+      editedElem = editedTexts.find(edited => edited.idParts[0] === currentIdParts[0]);
+    }
+
+    if(editedElem){
+      editedElem.newInfos = currentNewInfos;
+    } else {
+      editedTexts.push({newInfos: currentNewInfos, idParts: currentIdParts, count: 1});
+    }
   };
 
   return (
@@ -23,14 +40,8 @@ export default function StoryPane() {
               <FaPencilAlt />
             </span>
           </div>
-          <textarea id="textBox" className="form-control" rows="4" />
+          <textarea id="textBox" className="form-control" rows="4" onChange={saveAnnotationChanges} />
         </div>
-        {/* <div
-          className="btn btn-secondary btn-sm me-auto"
-          onClick={saveAnnotationChanges}
-        >
-          Save changes
-        </div> */}
       </div>
     </div>
   );
