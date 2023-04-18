@@ -10,6 +10,7 @@ import dataImg from "../assets/data.png";
 import bulletpointImg from "../assets/dot.png";
 import { createInfoCardButtons } from "./infoCards";
 import { currentId } from "./traversal";
+import { replacer } from "../../componentGraph/ComponentGraph";
 
 export function createDashboardInfoCard(count: number){
     global.setShowsDashboardInfo(true);
@@ -108,8 +109,11 @@ export function saveDashboardChanges(newInfo: string[], count: number){
     const dashboardInfo = getNewDashboardInfo(dashboard);
     const originalInfos = dashboardInfo[1];
 
-    const dashboardData = helpers.getDataWithId("dashboard",[], count);
+    const dashboardData = helpers.getDataWithId("dashboard", [], count);
     if (!dashboardData) {
+        const editedElem = global.editedTexts.find(editedElem => editedElem.idParts[0] === "dashboard" && editedElem.count === count);
+        const index = global.editedTexts.indexOf(editedElem!);
+        global.editedTexts.splice(index, 1);
       return;
     }
 
@@ -135,12 +139,23 @@ export function saveDashboardChanges(newInfo: string[], count: number){
             dashboardData.changedInfos[i] = "";
         }
     }
+    
+    localStorage.setItem("settings", JSON.stringify(global.settings, replacer));
 }
 
 export async function resetDashboardChanges(count: number){
     const dashboard = global.componentGraph.dashboard;
     const dashboardInfo = getNewDashboardInfo(dashboard);
     const originalInfos = dashboardInfo[1];
+
+    let info = originalInfos.join("\r\n");
+    info = info.replaceAll("<br>", " \n");
+    const textBox = document.getElementById("textBox")! as HTMLTextAreaElement; 
+    textBox.value = info;
+
+    const editedElem = global.editedTexts.find(editedElem => editedElem.idParts[0] === "dashboard" && editedElem.count === count);
+    const index = global.editedTexts.indexOf(editedElem!);
+    global.editedTexts.splice(index, 1);
 
     const dashboardData = helpers.getDataWithId("dashboard", [], count);
     if (!dashboardData) {
@@ -156,4 +171,6 @@ export async function resetDashboardChanges(count: number){
             dashboardData.changedInfos.splice(i, 1);
         }
     }
+
+    localStorage.setItem("settings", JSON.stringify(global.settings, replacer));
 }

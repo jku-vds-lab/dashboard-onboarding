@@ -4,6 +4,7 @@ import { createFilterDisabledArea, removeFrame } from "./disableArea";
 import Filter from "../../componentGraph/Filter";
 import { removeElement } from "./elements";
 import { createInfoCardButtons } from "./infoCards";
+import { replacer } from "../../componentGraph/ComponentGraph";
 
 export async function createFilterInfoCard(count: number){
     createFilterDisabledArea();
@@ -89,6 +90,9 @@ export async function saveFilterChanges(newInfo: string[], count:number){
 
     const filterData = helpers.getDataWithId("globalFilter", [], count);
     if (!filterData) {
+        const editedElem = global.editedTexts.find(editedElem => editedElem.idParts[0] === "globalFilter" && editedElem.count === count);
+        const index = global.editedTexts.indexOf(editedElem!);
+        global.editedTexts.splice(index, 1);
       return;
     }
 
@@ -114,10 +118,21 @@ export async function saveFilterChanges(newInfo: string[], count:number){
             filterData.changedFilterInfos[i] = "";
         }
     }
+
+    localStorage.setItem("settings", JSON.stringify(global.settings, replacer));
 }
 
 export async function resetFilterChanges(count: number){
     const filterInfos = await helpers.getFilterInfo();
+
+    let info = filterInfos.join("\r\n");
+    info = info.replaceAll("<br>", " \n");
+    const textBox = document.getElementById("textBox")! as HTMLTextAreaElement; 
+    textBox.value = info;
+
+    const editedElem = global.editedTexts.find(editedElem => editedElem.idParts[0] === "globalFilter" && editedElem.count === count);
+    const index = global.editedTexts.indexOf(editedElem!);
+    global.editedTexts.splice(index, 1);
 
     const filterData = helpers.getDataWithId("globalFilter", [], count);
     if (!filterData) {
@@ -133,4 +148,6 @@ export async function resetFilterChanges(count: number){
             filterData.changedFilterInfos.splice(i, 1);
         }
     }
+
+    localStorage.setItem("settings", JSON.stringify(global.settings, replacer));
 }

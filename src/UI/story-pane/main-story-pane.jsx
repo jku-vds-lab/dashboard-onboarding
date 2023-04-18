@@ -4,6 +4,9 @@ import { ReactFlowProvider } from "reactflow";
 import NodesCanvas from "../nodes-canvas/canvas-index";
 import "../assets/css/dashboard.scss";
 import { editedTexts } from "../../onboarding/ts/globalVariables";
+import { resetVisualChanges } from "../../onboarding/ts/infoCards";
+import { resetDashboardChanges } from "../../onboarding/ts/dashboardInfoCard";
+import { resetFilterChanges } from "../../onboarding/ts/filterInfoCards";
 
 export default function StoryPane() {
   const saveAnnotationChanges = (e) => {
@@ -26,6 +29,23 @@ export default function StoryPane() {
     }
   };
 
+  const resetAnnotationChanges = async () => {
+    const nodeId =  document.getElementById("textBox").getAttribute("nodeId");
+    const currentIdParts = nodeId?.split(" ");
+    
+    switch(currentIdParts[0]){
+      case "dashboard":
+        await resetDashboardChanges(1);
+        break;
+      case "globalFilter":
+        await resetFilterChanges(1);
+        break;
+      default:
+        await resetVisualChanges(currentIdParts, 1);
+        break;
+    }
+  };
+
   return (
     <div id="canvas-container" className="canvas-cont" style={{ flexGrow: 1 }}>
       <div className="flow">
@@ -42,6 +62,7 @@ export default function StoryPane() {
           </div>
           <textarea id="textBox" className="form-control" rows="4" onChange={saveAnnotationChanges} />
         </div>
+        <div className="btn btn-secondary btn-sm me-auto" onClick={resetAnnotationChanges}>Reset Text</div>
       </div>
     </div>
   );

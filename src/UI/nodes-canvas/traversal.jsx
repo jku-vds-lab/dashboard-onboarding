@@ -2,7 +2,8 @@ import { editedTexts } from "../../onboarding/ts/globalVariables";
 import { createTraversalOfNodes } from "../../onboarding/ts/traversal";
 import { groupType } from "../../onboarding/ts/traversal";
 import { saveVisualChanges } from "../../onboarding/ts/infoCards";
-import * as global from "../../onboarding/ts/globalVariables";
+import { saveDashboardChanges } from "../../onboarding/ts/dashboardInfoCard";
+import { saveFilterChanges } from "../../onboarding/ts/filterInfoCards";
 
 class TraversalOrder {
   simpleNodes = [];
@@ -192,7 +193,17 @@ class TraversalOrder {
       this.setRank();
       await createTraversalOfNodes(this.simpleNodes, this.groupElementsCount);
       for(const edited of editedTexts){
-        await saveVisualChanges(edited.newInfos, edited.idParts, edited.count);
+        switch(currentIdParts[0]) {
+          case "dashboard":
+            await saveDashboardChanges(edited.newInfo, edited.count);
+            break;
+          case "globalFilter":
+            await saveFilterChanges(edited.newInfo, edited.count);
+            break;
+          default:
+            await saveVisualChanges(edited.newInfos, edited.idParts, edited.count);
+            break;
+        }
       }
     } catch (error) {
       console.log("Error: ", error);

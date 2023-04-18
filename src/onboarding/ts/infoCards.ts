@@ -376,12 +376,23 @@ export async function resetVisualChanges(idParts: string[],count: number){
     } else {
         categories.push("general");
     }
-    const visualData = helpers.getDataWithId(idParts[0], categories, count);
-    if (!visualData) {
-      return;
-    }
+
     const originalInfo = await getOriginalVisualInfos(idParts);
     if(!originalInfo){
+        return;
+    }
+
+    let info = originalInfo.join("\r\n");
+    info = info.replaceAll("<br>", " \n");
+    const textBox = document.getElementById("textBox")! as HTMLTextAreaElement; 
+    textBox.value = info;
+
+    const editedElem = global.editedTexts.find(editedElem => editedElem.idParts.every((idPart: string) => idParts.includes(idPart)) && editedElem.count === count);
+    const index = global.editedTexts.indexOf(editedElem!);
+    global.editedTexts.splice(index, 1);
+
+    const visualData = helpers.getDataWithId(idParts[0], categories, count);
+    if (!visualData) {
         return;
     }
 
@@ -416,4 +427,6 @@ export async function resetVisualChanges(idParts: string[],count: number){
             }
         }
     }
+
+    localStorage.setItem("settings", JSON.stringify(global.settings, replacer));
 }
