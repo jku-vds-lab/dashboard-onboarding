@@ -314,7 +314,7 @@ export function createGroupOverlay() {
     }
   }
   notTraversed.forEach((trav: TraversalElement) => firstVisuals.push(trav[0]));
-  if (currentElement.element.type === groupType.atLeastOne) {
+  if (currentElement.element.type === groupType.atLeastOne && currentId !== global.settings.traversalStrategy.length-1) {
     firstVisuals.push(global.settings.traversalStrategy[currentId + 1]);
   }
   createInformationCard("group", currentElement.count, firstVisuals, undefined);

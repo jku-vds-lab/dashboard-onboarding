@@ -111,7 +111,7 @@ export async function createTabsWithContent(visual: any, count: number, categori
             }
         }
 
-        createInfoList(images, infos, "insightTab");
+        createInfoList(images, infos, category + "Tab");
     }
 }
 

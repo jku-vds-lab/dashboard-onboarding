@@ -8,6 +8,7 @@ import { createVisualInfo } from "./visualInfo";
 import { createDashboardInfoCard, getNewDashboardInfo, removeDashboardInfoCard } from "./dashboardInfoCard";
 import { createGroupOverlay, createInformationCard, createLookedAtIds, currentId, getCurrentTraversalElementType, groupType, isGroup, lookedAtInGroup, setCurrentId, setTraversalInGroupIndex, setVisualInGroupIndex, TraversalElement, traversalInGroupIndex, traversalStrategy, updateLookedAt, visualInGroupIndex } from "./traversal";
 import { textSize } from "./sizes";
+import { replacer } from "../../componentGraph/ComponentGraph";
 
 export async function createInfoCard(visual: any, count: number, categories: string[]){
     disable.disableFrame();
@@ -31,7 +32,9 @@ export async function createInfoCard(visual: any, count: number, categories: str
 }
 
 export function createInfoCardButtons(id: string, categories: string[], count: number){
-    if(currentId === 0 && global.isGuidedTour){
+    if(currentId === 0 && currentId === global.settings.traversalStrategy.length-1 && global.isGuidedTour){
+        createCardButtonsWithGroup(id, categories, count, "", "close");
+    }else if(currentId === 0 && global.isGuidedTour){
         createCardButtonsWithGroup(id, categories, count, "", "next");
     } else if(currentId === global.settings.traversalStrategy.length-1 && global.isGuidedTour){
         createCardButtonsWithGroup(id, categories, count, "previous", "close");
@@ -83,6 +86,8 @@ function createCardButtonsForLastGroupElement(leftButton: string, rightButton: s
                 }
             }
             if(traversed === traversalElem.visuals.length){
+                lookedAtInGroup.elements = [];
+                lookedAtInGroup.groupId = "";
                 helpers.createCardButtons("cardButtons", leftButton, "", rightButton);
             } else {
                 helpers.createCardButtons("cardButtons", leftButton, "", "back to group");
@@ -168,18 +173,23 @@ export function previousInGroup(){
 
 export async function getVisualInfoInEditor(idParts: string[], count: number){
     let infos = [];
-
     let editedElem = null;
     if(idParts.length > 1){
         editedElem =  global.editedTexts.find(edited => edited.idParts[0] === idParts[0] && edited.idParts[1] === idParts[1]);
     }else{
-        editedElem = global.editedTexts.find(edited => edited.idParts[0] === idParts[0]);
+        editedElem = global.editedTexts.find(edited => edited.idParts[0] === idParts[0] && edited.idParts.length === 1);
     }
 
     if(editedElem){
         infos = editedElem.newInfos;
-    } else{
-        const visualData = helpers.getDataWithId(idParts[0], count);
+    } else {
+        const categories = [];
+        if(idParts.length > 1){
+            categories.push(idParts[1].toLowerCase());
+        } else {
+            categories.push("general");
+        }
+        const visualData = helpers.getDataWithId(idParts[0], categories, count);
         const visual = global.allVisuals.find(function (visual) {
             return visual.name == idParts[0];
         });
@@ -248,9 +258,18 @@ export async function getVisualInfoInEditor(idParts: string[], count: number){
 }
 
 export async function saveVisualChanges(newInfo: string[], idParts: string[], count: number){
-    const visualData = helpers.getDataWithId(idParts[0], count);
+    const categories = [];
+    if(idParts.length > 1){
+        categories.push(idParts[1].toLowerCase());
+    } else {
+        categories.push("general");
+    }
+    const visualData = helpers.getDataWithId(idParts[0], categories, count);
     if (!visualData) {
-      return;
+        const editedElem = global.editedTexts.find(editedElem => editedElem.idParts.every((idPart: string) => idParts.includes(idPart)) && editedElem.count === count);
+        const index = global.editedTexts.indexOf(editedElem!);
+        global.editedTexts.splice(index, 1);
+        return;
     }
     
     const originalInfo = await getOriginalVisualInfos(idParts);
@@ -307,7 +326,6 @@ export async function saveVisualChanges(newInfo: string[], idParts: string[], co
             }
         }
     } else {
-
         for (let i = 0; i < newInfo.length; ++i) {
             if(newInfo.length == 0 || newInfo == null){
                 visualData.generalInfosStatus[0] = "deleted";
@@ -332,6 +350,8 @@ export async function saveVisualChanges(newInfo: string[], idParts: string[], co
             }
         }
     }
+    
+    localStorage.setItem("settings", JSON.stringify(global.settings, replacer));
 }
 
 async function getOriginalVisualInfos(idParts: string[]){
@@ -350,7 +370,13 @@ async function getOriginalVisualInfos(idParts: string[]){
   }
 
 export async function resetVisualChanges(idParts: string[],count: number){
-    const visualData = helpers.getDataWithId(idParts[0], count);
+    const categories = [];
+    if(idParts.length > 1){
+        categories.push(idParts[1].toLowerCase());
+    } else {
+        categories.push("general");
+    }
+    const visualData = helpers.getDataWithId(idParts[0], categories, count);
     if (!visualData) {
       return;
     }

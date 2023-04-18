@@ -30,7 +30,7 @@ export function createDashboardInfoCard(count: number){
 function setDashboardTitle(dashboard: Dashboard, count:number){
     const title = dashboard.title.text;
 
-    const dashboardData = helpers.getDataWithId("dashboard", count);
+    const dashboardData = helpers.getDataWithId("dashboard", [], count);
     if (!dashboardData) {
       return;
     }
@@ -65,7 +65,7 @@ export function getDashboardInfos(count: number){
     const images = dashboardInfo[0];
     const infos = dashboardInfo[1];
 
-    const dashboardData = helpers.getDataWithId("dashboard", count);
+    const dashboardData = helpers.getDataWithId("dashboard",[], count);
     if (!dashboardData) {
       return;
     }
@@ -108,7 +108,7 @@ export function saveDashboardChanges(newInfo: string[], count: number){
     const dashboardInfo = getNewDashboardInfo(dashboard);
     const originalInfos = dashboardInfo[1];
 
-    const dashboardData = helpers.getDataWithId("dashboard", count);
+    const dashboardData = helpers.getDataWithId("dashboard",[], count);
     if (!dashboardData) {
       return;
     }
@@ -142,7 +142,7 @@ export async function resetDashboardChanges(count: number){
     const dashboardInfo = getNewDashboardInfo(dashboard);
     const originalInfos = dashboardInfo[1];
 
-    const dashboardData = helpers.getDataWithId("dashboard", count);
+    const dashboardData = helpers.getDataWithId("dashboard", [], count);
     if (!dashboardData) {
       return;
     }

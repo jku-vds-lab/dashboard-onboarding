@@ -556,20 +556,20 @@ export function getDataOfVisual(visual: any, count: number) {
   return foundVisual?.element;
 }
 
-export function getDataWithId(ID: string, count: number) {
+export function getDataWithId(ID: string, categories: string[], count: number) {
   const traversalElements = global.settings.traversalStrategy;
   let foundVisual;
   for (const elem of traversalElements) {
     if (isGroup(elem.element)) {
       for (const groupTraversals of elem.element.visuals) {
         for (const groupElem of groupTraversals) {
-          if (groupElem.element.id === ID && groupElem.count == count) {
+          if (groupElem.element.id === ID && groupElem.categories.every((category: string) => categories.includes(category)) && groupElem.count == count) {
             foundVisual = groupElem;
           }
         }
       }
     } else {
-      if (elem.element.id === ID && elem.count == count) {
+      if (elem.element.id === ID && elem.categories.every((category: string) => categories.includes(category)) && elem.count == count) {
         foundVisual = elem;
       }
     }

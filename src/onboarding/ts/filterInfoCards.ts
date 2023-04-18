@@ -13,7 +13,7 @@ export async function createFilterInfoCard(count: number){
 
     helpers.createCloseButton("closeButton", "closeButtonPlacementBig", "", helpers.getCloseFunction(), "filterInfoCard");
 
-    const filterData = helpers.getDataWithId("globalFilter", count);
+    const filterData = helpers.getDataWithId("globalFilter", [], count);
     if (!filterData) {
       return;
     }
@@ -55,7 +55,7 @@ export function getFilterDescription(filter: Filter){
 export async function getFilterInfos(count: number){
     const filterInfos = await helpers.getFilterInfo();
 
-    const filterData = helpers.getDataWithId("globalFilter", count);
+    const filterData = helpers.getDataWithId("globalFilter", [], count);
     if (!filterData) {
       return;
     }
@@ -87,7 +87,7 @@ export function removeFilterInfoCard(){
 export async function saveFilterChanges(newInfo: string[], count:number){
     const filterInfos = await helpers.getFilterInfo();
 
-    const filterData = helpers.getDataWithId("globalFilter", count);
+    const filterData = helpers.getDataWithId("globalFilter", [], count);
     if (!filterData) {
       return;
     }
@@ -119,7 +119,7 @@ export async function saveFilterChanges(newInfo: string[], count:number){
 export async function resetFilterChanges(count: number){
     const filterInfos = await helpers.getFilterInfo();
 
-    const filterData = helpers.getDataWithId("globalFilter", count);
+    const filterData = helpers.getDataWithId("globalFilter", [], count);
     if (!filterData) {
       return;
     }
