@@ -271,7 +271,7 @@ export function createOverlayForVisuals(visuals: TraversalElement[]) {
           global.reportHeight!
         );
         style += "border: 5px solid lightgreen;";
-        createOverlay("globalFilter", style, visualInfo.count);
+        createOverlay("globalFilter", style, visualInfo.count, ["general"]);
         break;
       default:
         const visual = global.currentVisuals.find(

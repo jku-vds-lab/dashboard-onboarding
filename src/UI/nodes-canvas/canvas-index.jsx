@@ -12,6 +12,8 @@ import * as helpers from "../../onboarding/ts/helperFunctions";
 import Traversal from "./traversal";
 
 import { getVisualInfoInEditor } from "../../onboarding/ts/infoCards";
+import { getDashboardInfoInEditor } from "../../onboarding/ts/dashboardInfoCard";
+import { getFilterInfoInEditor } from "../../onboarding/ts/filterInfoCards";
 
 import { useUpdateNodeInternals } from "reactflow";
 
@@ -43,7 +45,17 @@ export default function NodesCanvas() {
     }
 
     if (idParts.length > 0) {
-      getVisualInfoInEditor(idParts, 1);
+      switch(idParts[0]) {
+        case "dashboard":
+          await getDashboardInfoInEditor(1);
+          break;
+        case "globalFilter":
+          await getFilterInfoInEditor(1);
+          break;
+        default:
+          await getVisualInfoInEditor(idParts, 1);
+          break;
+      }
     }
   }, []);
 
@@ -75,7 +87,7 @@ export default function NodesCanvas() {
       const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
       const id = event.dataTransfer.getData("id");
       const type = event.dataTransfer.getData("nodeType");
-      const data = event.dataTransfer.getData("data");
+      const visType = event.dataTransfer.getData("visType");
       const title = event.dataTransfer.getData("title");
 
       // check if the dropped element is valid
@@ -94,7 +106,7 @@ export default function NodesCanvas() {
         position,
         data: {
           title: title,
-          type: data,
+          type: visType,
         },
       };
 

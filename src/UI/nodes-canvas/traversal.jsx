@@ -193,12 +193,12 @@ class TraversalOrder {
       this.setRank();
       await createTraversalOfNodes(this.simpleNodes, this.groupElementsCount);
       for(const edited of editedTexts){
-        switch(currentIdParts[0]) {
+        switch(edited.idParts[0]) {
           case "dashboard":
-            await saveDashboardChanges(edited.newInfo, edited.count);
+            await saveDashboardChanges(edited.newInfos, edited.count);
             break;
           case "globalFilter":
-            await saveFilterChanges(edited.newInfo, edited.count);
+            await saveFilterChanges(edited.newInfos, edited.count);
             break;
           default:
             await saveVisualChanges(edited.newInfos, edited.idParts, edited.count);

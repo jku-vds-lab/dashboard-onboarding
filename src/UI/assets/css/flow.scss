@@ -1,11 +1,12 @@
 $bg-dark: rgb(32,32,32);
 $bg-dark-1: rgb(83,83,83);
 $default-handle-color: rgb(158, 159, 160);
-$dashboard-color: rgb(233, 78, 127);
-$line-chart-color: rgb(27,158,119);
-$bar-chart-color: rgb(217,95,2);
+$dashboard-color: rgb(78, 145, 233);
+$line-chart-color: rgb(217,95,2);
+$bar-chart-color: rgb(27,158,119);
 $kpi-color: rgb(117,112,179);
 $filter-color: rgb(231,41,138);
+$globalFilter-color: rgb(226, 87, 87);
 $column-color: rgb(102,166,30);
 $color-white: #f1f1f1;
 
@@ -41,7 +42,7 @@ $color-white: #f1f1f1;
       margin: 0;
     }
   }
-  &.dashboard{
+  &.Dashboard{
     background-color: #{$dashboard-color};
   }
   &.Bar{
@@ -58,6 +59,9 @@ $color-white: #f1f1f1;
   }
   &.Column{
     background-color: #{$column-color};
+  }
+  &.GlobalFilter{
+    background-color: #{$globalFilter-color};
   }
 }
 
@@ -149,7 +153,7 @@ $color-white: #f1f1f1;
   box-shadow: 0 0 4px #1a1717;
   font-size: small;
 
-  &.dashboard{
+  &.Dashboard{
     background-color: #{$dashboard-color};
   }
   &.Bar{
@@ -166,6 +170,9 @@ $color-white: #f1f1f1;
   }
   &.Column{
     background-color: #{$column-color};
+  }
+  &.GlobalFilter{
+    background-color: #{$globalFilter-color};
   }
 }
 
