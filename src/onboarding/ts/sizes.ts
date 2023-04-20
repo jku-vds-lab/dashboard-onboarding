@@ -118,7 +118,10 @@ function resizeReport(){
 }
 
 function resizeHeaderButtons(){
-    document.getElementById("editButton")!.style.fontSize = textSize + "rem";
+    const editButton = document.getElementById("editButton")
+    if(editButton){
+        editButton.style.fontSize = textSize + "rem";
+    }
     document.getElementById("guidedTour")!.style.fontSize = textSize + "rem";
     document.getElementById("dashboardExploration")!.style.fontSize = textSize + "rem";
 }
