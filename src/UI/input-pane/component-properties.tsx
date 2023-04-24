@@ -2,6 +2,7 @@ import { allVisuals } from "../../onboarding/ts/globalVariables";
 import React, { useEffect } from "react";
 import Accordion from "react-bootstrap/Accordion";
 import "../assets/css/dashboard.scss";
+import { drag } from "d3";
 
 //visParentId: components, subcomponents
 // classname: dndnode
@@ -72,18 +73,18 @@ export default function ComponentsProperties() {
     const titles = [];
     switch (type) {
       case "card":
-        ids.push(oldId[0] + " Insight");
-        titles.push(oldTitle[0] + " Insight");
+        ids.push(oldId + " Insight");
+        titles.push(oldTitle + " Insight");
         break;
       case "slicer":
-        ids.push(oldId[0] + " Interaction");
-        titles.push(oldTitle[0] + " Interaction");
+        ids.push(oldId + " Interaction");
+        titles.push(oldTitle + " Interaction");
         break;
       default:
-        ids.push(oldId[0] + " Insight");
-        titles.push(oldTitle[0] + " Insight");
-        ids.push(oldId[0] + " Interaction");
-        titles.push(oldTitle[0] + " Interaction");
+        ids.push(oldId + " Insight");
+        titles.push(oldTitle + " Insight");
+        ids.push(oldId + " Interaction");
+        titles.push(oldTitle + " Interaction");
     }
     return {
       ids: ids,
@@ -130,6 +131,7 @@ export default function ComponentsProperties() {
     visType: string,
     title: string
   ) {
+    debugger;
     event.dataTransfer.setData("nodeType", nodeType);
     event.dataTransfer.setData("id", nodeId);
     event.dataTransfer.setData("visType", visType); // data is the title and the type of the node for the story editor
@@ -159,24 +161,17 @@ export default function ComponentsProperties() {
         {visTitle}
       </div>
     );
+
+    const dragDiv = document.getElementById(id);
+    dragDiv?.addEventListener("dragstart", function () {
+      onDragStart(event, "simple", id, visType, visTitle);
+    });
+
     return myDiv;
   }
 
   console.log("Input nodes", inputNode);
 
-  const myelement = (
-    <table>
-      <tr>
-        <th>Name</th>
-      </tr>
-      <tr>
-        <td>John</td>
-      </tr>
-      <tr>
-        <td>Elsa</td>
-      </tr>
-    </table>
-  );
   return (
     <Accordion.Item eventKey="1">
       <Accordion.Header>{inputNode.mainNode}</Accordion.Header>
