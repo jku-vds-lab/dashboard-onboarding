@@ -28,25 +28,30 @@ function KeyValueAccordion({ data }) {
 
   const renderAccordionItems = () => {
     return (
-      <Card border="light" style={{ width: "10rem" }}>
-        <Card.Header>
-          <CustomToggle eventKey="0">{data.mainComponent}</CustomToggle>
-        </Card.Header>
-        <Accordion.Collapse eventKey="0">
-          <Card.Body>hi</Card.Body>
-          {/* {data.subComponents?.map((subComp, index) => (
-            <Card.Body key={data.key}>{subComp}</Card.Body>
-          ))} */}
-        </Accordion.Collapse>
-      </Card>
+      <Accordion>
+        <Accordion.Item eventKey="0">
+          <Accordion.Header>{data.mainComponent}</Accordion.Header>
+          <Accordion.Body>Hi</Accordion.Body>
+        </Accordion.Item>
+      </Accordion>
+      // <Card border="light" style={{ width: "10rem" }}>
+      //   <Card.Header>
+      //     <CustomToggle eventKey="0">{data.mainComponent}</CustomToggle>
+      //   </Card.Header>
+      //   <Accordion.Collapse eventKey="0">
+      //     <Card.Body>hi</Card.Body>
+      //     {/* {data.subComponents?.map((subComp, index) => (
+      //       <Card.Body key={data.key}>{subComp}</Card.Body>
+      //     ))} */}
+      //   </Accordion.Collapse>
+      // </Card>
     );
   };
 
-  return (
-    <Accordion>
-      <Accordion.Item eventKey="1">{renderAccordionItems()}</Accordion.Item>
-    </Accordion>
-  );
+  return renderAccordionItems();
+  // <Accordion>
+  //   <Accordion.Item eventKey="1">{renderAccordionItems()}</Accordion.Item>
+  // </Accordion>
 }
 
 export default KeyValueAccordion;
