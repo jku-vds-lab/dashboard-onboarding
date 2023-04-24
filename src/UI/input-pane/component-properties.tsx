@@ -178,10 +178,18 @@ export default function ComponentsProperties() {
   ];
 
   return inputNodes.map((iNode) => {
-    // <Accordion.Header key={iNode.key}>
-    //        {iNode.key}
-    //      </Accordion.Header>;
-    return <KeyValueAccordion key={iNode.key} data={iNode}></KeyValueAccordion>;
+    return (
+      <Accordion key={iNode.key}>
+        <Accordion.Item eventKey="0">
+          <Accordion.Header>{iNode.mainComponent}</Accordion.Header>
+          <KeyValueAccordion
+            key={iNode.key}
+            data={iNode.subComponents}
+          ></KeyValueAccordion>
+          ;
+        </Accordion.Item>
+      </Accordion>
+    );
   });
 }
 
