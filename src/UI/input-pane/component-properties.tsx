@@ -9,7 +9,7 @@ export interface InputNode {
   key: string;
 }
 
-export default function ComponentsProperties() {
+export default function Components() {
   const inputNodes: InputNode[] = [];
   const className = "dndnode";
   const visParentId = "componentNodes";
