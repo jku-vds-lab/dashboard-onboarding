@@ -2,13 +2,14 @@ import { allVisuals } from "../../onboarding/ts/globalVariables";
 import React, { useEffect } from "react";
 import Accordion from "react-bootstrap/Accordion";
 import "../assets/css/dashboard.scss";
-import { drag } from "d3";
+import KeyValueAccordion from "./KeyValueAccordion";
 
 //visParentId: components, subcomponents
 // classname: dndnode
 export interface InputNode {
-  mainNode: any;
-  subNodes?: any[];
+  mainComponent: any;
+  subComponents?: any[];
+  key: string;
 }
 
 export default function ComponentsProperties() {
@@ -17,13 +18,14 @@ export default function ComponentsProperties() {
   const visParentId = "componentNodes";
 
   let inputNode: InputNode = {
-    mainNode: createNode(
+    mainComponent: createNode(
       "dashboard",
       className + " Dashboard",
       "Dashboard",
       visParentId,
       "Dashboard"
     ),
+    key: "dashboard",
   };
   inputNodes.push(inputNode);
 
@@ -46,18 +48,19 @@ export default function ComponentsProperties() {
     const subtitles = result?.contents;
 
     inputNode = {
-      mainNode: createNode(
+      mainComponent: createNode(
         mainId,
         visClassName,
         visTitle,
         visParentId,
         visTitle
       ),
-      subNodes: [],
+      subComponents: [],
+      key: mainId,
     };
 
     subIds.forEach((id, idx) => {
-      inputNode.subNodes?.push(
+      inputNode.subComponents?.push(
         createNode(id, visClassName, subtitles[idx], mainId, subtitles[idx])
       );
     });
@@ -169,15 +172,42 @@ export default function ComponentsProperties() {
 
     return myDiv;
   }
+  const rootPanels = [
+    { key: "panel-1", value: "Level 1" },
+    { key: "panel-2", value: "Level 2" },
+  ];
 
-  console.log("Input nodes", inputNode);
-
-  return (
-    <Accordion.Item eventKey="1">
-      <Accordion.Header>{inputNode.mainNode}</Accordion.Header>
-      {inputNode.subNodes?.map((sNode) => (
-        <Accordion.Body key={sNode.id}>{sNode}</Accordion.Body>
-      ))}
-    </Accordion.Item>
-  );
+  return inputNodes.map((iNode) => {
+    // <Accordion.Header key={iNode.key}>
+    //        {iNode.key}
+    //      </Accordion.Header>;
+    return <KeyValueAccordion key={iNode.key} data={iNode}></KeyValueAccordion>;
+  });
 }
+
+// return (
+//   <Accordion.Item eventKey="1">
+//     <Accordion.Header>Components</Accordion.Header>
+//     <Accordion.Body>
+//       {inputNodes.map((iNode) => {
+//         <Accordion.Header key={iNode.mainComponent.id}>
+//           {iNode.mainComponent}
+//         </Accordion.Header>;
+//         {
+//           iNode.subComponents?.map((sNode) => (
+//             <Accordion.Body key={sNode.id}>{sNode}</Accordion.Body>
+//           ));
+//         }
+//       })}
+//     </Accordion.Body>
+//   </Accordion.Item>
+// );
+
+// return (
+//   <Accordion.Item eventKey="1">
+//     <Accordion.Header>{inputNode.mainNode}</Accordion.Header>
+//     {inputNode.subNodes?.map((sNode) => (
+//       <Accordion.Body key={sNode.id}>{sNode}</Accordion.Body>
+//     ))}
+//   </Accordion.Item>
+// );
