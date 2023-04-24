@@ -22,6 +22,29 @@ $color-white: #f1f1f1;
   display: none;
 }
 
+div[class*="Dashboard"]{
+  background-color: #{$dashboard-color};
+}
+div[class*="Bar"]{
+  background-color: #{$bar-chart-color};
+}
+div[class*="Line"] {
+  background-color: #{$line-chart-color};
+}
+div[class*="KPI"] {
+
+  background-color: #{$kpi-color};
+}
+div[class*="Filter"] {
+  background-color: #{$filter-color};
+}
+div[class*="Column"] {
+  background-color: #{$column-color};
+}
+div[class*="GlobalFilter"] {
+  background-color: #{$globalFilter-color};
+}
+
 .box-node, .simple-node {
   background-color: #595959;
   width: 80px;
@@ -41,27 +64,6 @@ $color-white: #f1f1f1;
       text-align: center;
       margin: 0;
     }
-  }
-  &.Dashboard{
-    background-color: #{$dashboard-color};
-  }
-  &.Bar{
-    background-color: #{$bar-chart-color};
-  }
-  &.Line{
-    background-color: #{$line-chart-color};
-  }
-  &.KPI{
-    background-color: #{$kpi-color};
-  }
-  &.Filter{
-    background-color: #{$filter-color};
-  }
-  &.Column{
-    background-color: #{$column-color};
-  }
-  &.GlobalFilter{
-    background-color: #{$globalFilter-color};
   }
 }
 
@@ -152,28 +154,6 @@ $color-white: #f1f1f1;
   border-radius: 4px;
   box-shadow: 0 0 4px #1a1717;
   font-size: small;
-
-  &.Dashboard{
-    background-color: #{$dashboard-color};
-  }
-  &.Bar{
-    background-color: #{$bar-chart-color};
-  }
-  &.Line{
-    background-color: #{$line-chart-color};
-  }
-  &.KPI{
-    background-color: #{$kpi-color};
-  }
-  &.Filter{
-    background-color: #{$filter-color};
-  }
-  &.Column{
-    background-color: #{$column-color};
-  }
-  &.GlobalFilter{
-    background-color: #{$globalFilter-color};
-  }
 }
 
 
