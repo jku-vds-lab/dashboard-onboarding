@@ -26,6 +26,18 @@ export default function ComponentsProperties() {
   };
   inputNodes.push(inputNode);
 
+  inputNode = {
+    mainComponent: createNode(
+      "globalFilter",
+      className + " GlobalFilter",
+      "Global Filters",
+      visParentId,
+      "GlobalFilter"
+    ),
+    key: "globalFilter",
+  };
+  inputNodes.push(inputNode);
+
   for (const vis of allVisuals) {
     let visTitle = createNodeTitle(vis.type);
     const visClassName = className + " " + visTitle;
@@ -34,11 +46,8 @@ export default function ComponentsProperties() {
       visTitle = visTitle + " (" + vis.title + ")";
     }
 
-    let visName = "";
-
     const mainId = vis.name;
     const title = visTitle;
-    visName = vis.name;
 
     const result = getSubComponents(mainId, title, vis.type);
     const subIds = result?.ids;
@@ -63,18 +72,6 @@ export default function ComponentsProperties() {
     });
     inputNodes.push(inputNode);
   }
-
-  inputNode = {
-    mainComponent: createNode(
-      "globalFilter",
-      className + " GlobalFilter",
-      "Global Filters",
-      visParentId,
-      "GlobalFilter"
-    ),
-    key: "globalFilter",
-  };
-  inputNodes.push(inputNode);
 
   function getSubComponents(oldId: string, oldTitle: string, type: string) {
     const ids = [];
