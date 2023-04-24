@@ -1,8 +1,7 @@
 import Accordion from "react-bootstrap/Accordion";
 import TraversalPane from "./traversal-pane";
-import ComponentsPane from "./components-pane";
 import ComponentsProperties from "./component-properties";
-import SubcomponentsPane from "./subcomponents-pane";
+
 import {
   ResizeContent,
   ResizeHandleRight,
