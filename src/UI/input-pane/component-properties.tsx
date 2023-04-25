@@ -1,5 +1,4 @@
 import { allVisuals } from "../../onboarding/ts/globalVariables";
-import React, { useEffect } from "react";
 import Accordion from "react-bootstrap/Accordion";
 import "../assets/css/dashboard.scss";
 
@@ -136,7 +135,6 @@ export default function Components() {
     visType: string,
     title: string
   ) {
-    debugger;
     event.dataTransfer.setData("nodeType", nodeType);
     event.dataTransfer.setData("id", nodeId);
     event.dataTransfer.setData("visType", visType); // data is the title and the type of the node for the story editor
@@ -152,24 +150,28 @@ export default function Components() {
     visType: string
   ) {
     const myDiv = (
-      <div id={id} className={visClassName} draggable>
+      <div
+        id={id + className}
+        className={visClassName}
+        onDragStart={(event) =>
+          onDragStart(event, "simple", id, visType, visTitle)
+        }
+        draggable
+      >
         {visTitle}
       </div>
     );
 
-    const dragDiv = document.getElementById(id);
-    dragDiv?.addEventListener("dragstart", function () {
-      onDragStart(event, "simple", id, visType, visTitle);
-    });
-
     return myDiv;
   }
 
-  return inputNodes.map((iNode) => {
+  return inputNodes.map((iNode, nIndex) => {
     return (
-      <Accordion key={iNode.key}>
+      <Accordion key={nIndex}>
         <Accordion.Item eventKey="0">
-          <Accordion.Header>{iNode.mainComponent}</Accordion.Header>
+          <Accordion.Header key={nIndex}>
+            {iNode.mainComponent}
+          </Accordion.Header>
           {iNode.subComponents?.map((d, index) => (
             <Accordion.Body key={index}>{d}</Accordion.Body>
           ))}
