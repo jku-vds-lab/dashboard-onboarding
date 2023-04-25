@@ -169,9 +169,7 @@ export default function Components() {
     return (
       <Accordion key={nIndex}>
         <Accordion.Item eventKey="0">
-          <Accordion.Header key={nIndex}>
-            {iNode.mainComponent}
-          </Accordion.Header>
+          <Accordion.Header>{iNode.mainComponent}</Accordion.Header>
           {iNode.subComponents?.map((d, index) => (
             <Accordion.Body key={index}>{d}</Accordion.Body>
           ))}
