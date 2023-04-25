@@ -20,24 +20,12 @@ export default function InputPane() {
       <ResizeContent>
         <Accordion defaultActiveKey={["0"]} alwaysOpen>
           <TraversalPane />
-          <div>
-            {" "}
-            Components{" "}
-            <button
-              className="btn btn-primary"
-              type="button"
-              data-bs-toggle="collapse"
-              data-bs-target="#collapseExample"
-              aria-expanded="false"
-              aria-controls="collapseExample"
-            >
-              {" "}
-            </button>{" "}
-          </div>
-          <div className="collapse" id="collapseExample">
-            {" "}
-            <Components />{" "}
-          </div>
+          <Accordion.Item eventKey="0">
+            <Accordion.Header>Components</Accordion.Header>
+            <Accordion.Body>
+              <Components />
+            </Accordion.Body>
+          </Accordion.Item>
         </Accordion>
       </ResizeContent>
       <ResizeHandleRight className="resize">
