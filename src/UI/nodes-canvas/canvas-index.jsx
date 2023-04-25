@@ -45,7 +45,7 @@ export default function NodesCanvas() {
     }
 
     if (idParts.length > 0) {
-      switch(idParts[0]) {
+      switch (idParts[0]) {
         case "dashboard":
           await getDashboardInfoInEditor(1);
           break;
@@ -64,7 +64,7 @@ export default function NodesCanvas() {
     event.dataTransfer.dropEffect = "move";
   }, []);
 
-  function getNodeIDs(event){
+  function getNodeIDs(event) {
     let nodeId;
     if (event.target.classList.contains("title")) {
       nodeId =
@@ -261,7 +261,7 @@ export default function NodesCanvas() {
           title: "group node",
           callback: getLabelInfo,
           type: "group",
-          traverse: "all", //getLabelInfo();
+          traverse: "All", //getLabelInfo();
         },
         className: "dndnode node-group",
         style: { width: width, height: height },
