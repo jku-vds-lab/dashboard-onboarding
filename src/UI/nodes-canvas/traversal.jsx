@@ -4,6 +4,7 @@ import { groupType } from "../../onboarding/ts/traversal";
 import { saveVisualChanges } from "../../onboarding/ts/infoCards";
 import { saveDashboardChanges } from "../../onboarding/ts/dashboardInfoCard";
 import { saveFilterChanges } from "../../onboarding/ts/filterInfoCards";
+import "../assets/css/flow.scss";
 
 class TraversalOrder {
   simpleNodes = [];
@@ -192,8 +193,8 @@ class TraversalOrder {
       this.setProb();
       this.setRank();
       await createTraversalOfNodes(this.simpleNodes, this.groupElementsCount);
-      for(const edited of editedTexts){
-        switch(edited.idParts[0]) {
+      for (const edited of editedTexts) {
+        switch (edited.idParts[0]) {
           case "dashboard":
             await saveDashboardChanges(edited.newInfos, edited.count);
             break;
@@ -201,7 +202,11 @@ class TraversalOrder {
             await saveFilterChanges(edited.newInfos, edited.count);
             break;
           default:
-            await saveVisualChanges(edited.newInfos, edited.idParts, edited.count);
+            await saveVisualChanges(
+              edited.newInfos,
+              edited.idParts,
+              edited.count
+            );
             break;
         }
       }
@@ -216,10 +221,11 @@ export default function Traversal(props) {
 
   return (
     <div
-      className="btn btn-secondary btn-sm me-auto"
+      id="traversal"
+      className="btn btn-outline-info me-auto"
       onClick={() => sNode.onClick(props)}
     >
-      Save my changes
+      Save Traversal
     </div>
   );
 }

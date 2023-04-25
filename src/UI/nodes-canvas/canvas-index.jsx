@@ -351,8 +351,8 @@ export default function NodesCanvas() {
               { label: "Group", effect: addGroup },
             ]}
           ></ContextMenu>
+          <Traversal nodes={nodes} />
         </ReactFlow>
-        <Traversal nodes={nodes} />
       </div>
     </div>
   );
