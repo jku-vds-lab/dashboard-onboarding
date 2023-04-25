@@ -60,7 +60,7 @@ div[class*="GlobalFilter"] {
 
     .title {
       color: #ffffff;
-      font-size: 8px;
+      font-size: 7px;
       text-align: center;
       margin: 0;
     }
@@ -141,16 +141,16 @@ div[class*="GlobalFilter"] {
 }
 
 .dndnode {
-  padding: 4px;
-  border: 1px solid #1a192b;
-  margin-bottom: 10px;
+  // padding: 4px;
+  // border: 1px solid #1a192b;
+  // margin-bottom: 10px;
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: grab;
   background-color: #595959;
-  width: 100px;
-  height: 40px;
+  width: 130px;
+  height: 30px;
   border-radius: 4px;
   box-shadow: 0 0 4px #1a1717;
   font-size: small;

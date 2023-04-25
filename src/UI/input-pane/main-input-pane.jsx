@@ -1,6 +1,5 @@
-import Accordion from "react-bootstrap/Accordion";
 import TraversalPane from "./traversal-pane";
-import Components from "./component-properties";
+import ComponentPane from "./component-pane";
 
 import {
   ResizeContent,
@@ -18,15 +17,8 @@ export default function InputPane() {
       minWidth={250}
     >
       <ResizeContent>
-        <Accordion defaultActiveKey={["0"]} alwaysOpen>
-          <TraversalPane />
-          <Accordion.Item eventKey="0">
-            <Accordion.Header>Components</Accordion.Header>
-            <Accordion.Body>
-              <Components />
-            </Accordion.Body>
-          </Accordion.Item>
-        </Accordion>
+        <TraversalPane />
+        <ComponentPane />
       </ResizeContent>
       <ResizeHandleRight className="resize">
         <div className="col-resize" />
