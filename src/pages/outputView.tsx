@@ -17,6 +17,7 @@ import * as onboarding from "../onboarding/ts/onboarding";
 import * as global from "../onboarding/ts/globalVariables";
 import { provectories } from "../Provenance/Provectories";
 import { Link } from "react-router-dom";
+import "../UI/assets/css/dashboard.scss";
 const powerbi = new service.Service(
   factories.hpmFactory,
   factories.wpmpFactory,

@@ -221,7 +221,8 @@ div[class*="GlobalFilter"] {
 
 .btn-outline-info {
   // background-color: #9e9fa0 !important;
+  z-index: 99999 !important;
 }
 .btn-outline-info:hover {
-  background-color: #000000 !important;
+  background-color: #d4cbcb !important;
 }
