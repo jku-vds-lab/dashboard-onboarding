@@ -7,7 +7,6 @@ import {
   findTraversalVisual,
   Group,
   isGroup,
-  setBasicTraversalStrategy,
   traversalStrategy,
 } from "./traversal";
 
