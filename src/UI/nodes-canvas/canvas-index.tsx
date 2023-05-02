@@ -71,7 +71,7 @@ export default function NodesCanvas() {
       justifyContent: "center",
       alignItems: "center",
       cursor: "-moz-grab",
-      width: "130px",
+      width: "100px",
       height: "30px",
       borderRadius: "4px",
       boxShadow: "0 0 4px #1a1717",
@@ -89,27 +89,33 @@ export default function NodesCanvas() {
     return basicName;
   }, []);
 
-  const onClick = useCallback(async (event) => {
-    // here we need to update the reactFlowWrapper and Instance
+  const onClick = useCallback(
+    async (event) => {
+      // here we need to update the reactFlowWrapper and Instance
 
-    const container = document.getElementById("canvas-container");
-    event.target.classList.contains("react-flow__pane")
-      ? container?.classList.remove("show")
-      : container?.classList.add("show");
+      const container = document.getElementById("canvas-container");
+      event.target.classList.contains("react-flow__pane")
+        ? container?.classList.remove("show")
+        : container?.classList.add("show");
 
-    const basicName = getBasicName(event);
-    switch (basicName) {
-      case "dashboard":
-        getDashboardInfoInEditor(1);
-        break;
-      case "globalFilter":
-        await getFilterInfoInEditor(1);
-        break;
-      default:
-        await getVisualInfoInEditor(getFullNodeNameArray(event), 1);
-        break;
-    }
-  }, []);
+      const fullNameArray = getFullNodeNameArray(event);
+      const basicName = getBasicName(event);
+
+      console.log("fullName Array", fullNameArray);
+      switch (basicName) {
+        case "dashboard":
+          getDashboardInfoInEditor(1);
+          break;
+        case "globalFilter":
+          await getFilterInfoInEditor(1);
+          break;
+        default:
+          await getVisualInfoInEditor(fullNameArray, 1);
+          break;
+      }
+    },
+    [getBasicName]
+  );
 
   const onDragOver = useCallback((event) => {
     event.preventDefault();
@@ -118,19 +124,15 @@ export default function NodesCanvas() {
 
   function getFullNodeNameArray(event: any, name?: string) {
     let nodeName = "";
+    let nameArray: string[] = [];
     if (name) {
       nodeName = name;
-    } else if (event.target.classList.contains("title")) {
-      nodeName =
-        event.target.parentNode.parentNode.parentNode.getAttribute("data-id");
-    } else if (event.target.classList.contains("header")) {
-      nodeName = event.target.parentNode.parentNode.getAttribute("data-id");
     } else {
-      nodeName = event.target.parentNode.getAttribute("data-id");
+      nodeName = event.target.getAttribute("data-id");
     }
     document?.getElementById("textBox")?.setAttribute("nodeId", nodeName);
 
-    const nameArray = nodeName?.split(" ");
+    nameArray = nodeName?.split(" ");
     return nameArray;
   }
 
