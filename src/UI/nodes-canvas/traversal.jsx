@@ -171,7 +171,9 @@ class TraversalOrder {
       let groupStoryNodes = [];
 
       if (storyNodes.length > 0) {
-        simpleStoryNodes = storyNodes.filter((sNode) => sNode.type == "simple");
+        simpleStoryNodes = storyNodes.filter(
+          (sNode) => sNode.type == "default"
+        );
         groupStoryNodes = storyNodes.filter((sNode) => sNode.type == "group");
 
         simpleStoryNodes.forEach((sNode) => {

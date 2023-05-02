@@ -1,14 +1,17 @@
-import { useState, useRef, useCallback } from "react";
-import ReactFlow, { useNodesState, Controls, useReactFlow } from "reactflow";
+import { useState, useRef, useCallback, CSSProperties, useEffect } from "react";
+import ReactFlow, {
+  useNodesState,
+  Controls,
+  useReactFlow,
+  ReactFlowInstance,
+} from "reactflow";
+import { Node } from "reactflow";
 import "reactflow/dist/style.css";
 import "../assets/css/flow.scss";
 
-import SimpleNode from "./nodeTypes/simpleNode";
-import GroupNode from "./nodeTypes/groupNode";
-
+// import ICustomNode from "./nodeTypes/ICustomNode";
 import { ContextMenu } from "./context-menu";
 
-import * as helpers from "../../onboarding/ts/helperFunctions";
 import Traversal from "./traversal";
 
 import { getVisualInfoInEditor } from "../../onboarding/ts/infoCards";
@@ -17,45 +20,94 @@ import { getFilterInfoInEditor } from "../../onboarding/ts/filterInfoCards";
 
 import { useUpdateNodeInternals } from "reactflow";
 
-const initialNodes = [];
-
-const nodeTypes = { simple: SimpleNode, group: GroupNode };
-// const nodeTypes = { simple: SimpleNode };
-
 export default function NodesCanvas() {
+  const initialNodes: Node[] = [];
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [reactFlowInstance, setReactFlowInstance] = useState(null);
+  const [setReactFlowInstance] = useState<ReactFlowInstance>();
+  const reactFlowInstance = useReactFlow();
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const { getIntersectingNodes } = useReactFlow();
-  const [nodeData, setNodeData] = useState(null);
+  const [nodeData, setNodeData] = useState<Node>();
   const [isOpen, setIsOpen] = useState(false);
-  const reactFlowWrapper = useRef(null);
-  const [selectedNodes, setSelectedNodes] = useNodesState(initialNodes);
+  const reactFlowWrapper = useRef<HTMLInputElement>(null); // this could be the reason why we run into the initial worng position issue
+  const [selectedNodes, setSelectedNodes] = useNodesState<null>([]);
   const [groupId] = useState({ id: 0 });
 
-  const onClick = useCallback(async (event) => {
-    let container = document.getElementById("canvas-container");
-    event.target.classList.contains("react-flow__pane")
-      ? container.classList.remove("show")
-      : container.classList.add("show");
-
-    const idParts = getNodeIDs(event);
-    if (!idParts) {
-      return;
+  const getNodeBgColor = (type: string) => {
+    let color = "";
+    switch (type) {
+      case "Dashboard":
+        color = "#4e91e9";
+        break;
+      case "Line":
+        color = "#d95f02";
+        break;
+      case "Bar":
+        color = "#1b9e77";
+        break;
+      case "Filter":
+        color = "#e7298a";
+        break;
+      case "KPI":
+        color = "#7570b3";
+        break;
+      case "GlobalFilter":
+        color = "#e25757";
+        break;
+      case "Column":
+        color = "#66a61e";
+        break;
+      default:
+        color = "#595959";
+        break;
     }
 
-    if (idParts.length > 0) {
-      switch (idParts[0]) {
-        case "dashboard":
-          await getDashboardInfoInEditor(1);
-          break;
-        case "globalFilter":
-          await getFilterInfoInEditor(1);
-          break;
-        default:
-          await getVisualInfoInEditor(idParts, 1);
-          break;
-      }
+    return color;
+  };
+
+  const style = useCallback(() => {
+    const nodeStyle: CSSProperties = {
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      cursor: "-moz-grab",
+      width: "130px",
+      height: "30px",
+      borderRadius: "4px",
+      boxShadow: "0 0 4px #1a1717",
+      fontSize: "10px",
+    };
+    return nodeStyle;
+  }, []);
+
+  const getBasicName = useCallback((event: any, name?: string) => {
+    let basicName: string = "";
+    const nameArray = getFullNodeNameArray(event, name);
+    if (nameArray?.length > 0) {
+      basicName = nameArray[0];
+    }
+    return basicName;
+  }, []);
+
+  const onClick = useCallback(async (event) => {
+    // here we need to update the reactFlowWrapper and Instance
+
+    const container = document.getElementById("canvas-container");
+    event.target.classList.contains("react-flow__pane")
+      ? container?.classList.remove("show")
+      : container?.classList.add("show");
+
+    const basicName = getBasicName(event);
+    switch (basicName) {
+      case "dashboard":
+        getDashboardInfoInEditor(1);
+        break;
+      case "globalFilter":
+        await getFilterInfoInEditor(1);
+        break;
+      default:
+        await getVisualInfoInEditor(getFullNodeNameArray(event), 1);
+        break;
     }
   }, []);
 
@@ -64,27 +116,30 @@ export default function NodesCanvas() {
     event.dataTransfer.dropEffect = "move";
   }, []);
 
-  function getNodeIDs(event) {
-    let nodeId;
-    if (event.target.classList.contains("title")) {
-      nodeId =
+  function getFullNodeNameArray(event: any, name?: string) {
+    let nodeName = "";
+    if (name) {
+      nodeName = name;
+    } else if (event.target.classList.contains("title")) {
+      nodeName =
         event.target.parentNode.parentNode.parentNode.getAttribute("data-id");
     } else if (event.target.classList.contains("header")) {
-      nodeId = event.target.parentNode.parentNode.getAttribute("data-id");
+      nodeName = event.target.parentNode.parentNode.getAttribute("data-id");
     } else {
-      nodeId = event.target.parentNode.getAttribute("data-id");
+      nodeName = event.target.parentNode.getAttribute("data-id");
     }
+    document?.getElementById("textBox")?.setAttribute("nodeId", nodeName);
 
-    document.getElementById("textBox").setAttribute("nodeId", nodeId);
-
-    const idParts = nodeId?.split(" ");
-    return idParts;
+    const nameArray = nodeName?.split(" ");
+    return nameArray;
   }
 
   const onDrop = useCallback(
     (event) => {
       event.preventDefault();
-      const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
+
+      const reactFlowBounds =
+        reactFlowWrapper?.current?.getBoundingClientRect();
       const id = event.dataTransfer.getData("id");
       const type = event.dataTransfer.getData("nodeType");
       const visType = event.dataTransfer.getData("visType");
@@ -95,35 +150,38 @@ export default function NodesCanvas() {
         return;
       }
 
-      const position = reactFlowInstance.project({
-        x: event.clientX - reactFlowBounds.left,
-        y: event.clientY - reactFlowBounds.top,
+      const left = reactFlowBounds ? reactFlowBounds.left : 0;
+      const top = reactFlowBounds ? reactFlowBounds.top : 0;
+
+      const position = reactFlowInstance?.project({
+        x: event.clientX - left,
+        y: event.clientY - top,
       });
 
-      const newNode = {
+      const basicName = getBasicName(event, visType);
+      const nodeStyle = style();
+      nodeStyle.backgroundColor = getNodeBgColor(basicName);
+      console.log("here is the basic name", basicName);
+
+      const newNode: Node = {
         id,
         type,
         position,
         data: {
-          title: title,
+          label: title,
           type: visType,
         },
+        style: nodeStyle,
       };
 
       setNodes((nds) => nds.concat(newNode));
     },
-    [reactFlowInstance, setNodes]
+    [getBasicName, reactFlowInstance, setNodes, style]
   );
 
   const onNodeDragStart = useCallback(
     (event, node) => {
       const intersections = getIntersectingNodes(node).map((n) => n.id);
-
-      // getIntersectingNodes(node).forEach((iNode) => {
-      //   if (iNode.type === "group") {
-      //     node.parentNode = "node-3";
-      //   }
-      // });
 
       //check if the node is dropped to the group
       setNodes((nodes) =>
@@ -136,12 +194,13 @@ export default function NodesCanvas() {
     [getIntersectingNodes, setNodes]
   );
 
-  function UpdateNodeButton(nodeId) {
+  // we need this function to update node position
+  function UpdateNodeButton(nodeId: string) {
     const updateNodeInternals = useUpdateNodeInternals();
     updateNodeInternals(nodeId);
   }
 
-  const onNodeDragStop = (event, node) => {
+  const onNodeDragStop = (event: any, node: Node) => {
     console.log("Node pos", node.position);
 
     if (node.type == "group") {
@@ -155,19 +214,24 @@ export default function NodesCanvas() {
     }
   };
 
-  const onNodeMouseEnter = (e, node) => {
+  const onNodeMouseEnter = (e: any, node: Node) => {
     if (node.type === "group") {
     }
     setNodeData(node);
   };
 
   const onSelectionContextMenu = useCallback(
-    (e, sNodes) => {
+    (e, sNodes: Node[]) => {
+      // but this is not any. this is React.Dispatch<React.SetStateAction<Node<SimpleNodeDiv | GroupNodeDiv, string | undefined>[]>>
       e.preventDefault();
-      const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
+      const reactFlowBounds =
+        reactFlowWrapper?.current?.getBoundingClientRect();
+      const xBound = reactFlowBounds ? reactFlowBounds.left : 0;
+      const yBound = reactFlowBounds ? reactFlowBounds.top : 0;
+
       setPosition({
-        x: e.clientX - reactFlowBounds.left,
-        y: e.clientY - reactFlowBounds.top,
+        x: e.clientX - xBound,
+        y: e.clientY - yBound,
       });
 
       setSelectedNodes(sNodes);
@@ -178,29 +242,31 @@ export default function NodesCanvas() {
 
   const onNodeContextMenu = useCallback((e) => {
     e.preventDefault();
-    const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
+    const reactFlowBounds = reactFlowWrapper?.current?.getBoundingClientRect();
+    const xBound = reactFlowBounds ? reactFlowBounds.left : 0;
+    const yBound = reactFlowBounds ? reactFlowBounds.top : 0;
     setPosition({
-      x: e.clientX - reactFlowBounds.left,
-      y: e.clientY - reactFlowBounds.top,
+      x: e.clientX - xBound,
+      y: e.clientY - yBound,
     });
     setIsOpen(true);
   }, []);
 
   const deleteNode = () => {
-    if (nodeData.type === "group") {
+    if (nodeData?.type === "group") {
       setNodes((nodes) => nodes.filter((n) => n.parentNode !== nodeData.id));
       setNodes((nodes) => nodes.filter((n) => n.id !== nodeData.id));
-    } else {
+    } else if (nodeData?.type === "default") {
       setNodes((nodes) => nodes.filter((n) => n.id !== nodeData.id));
     }
     setIsOpen(false);
   };
 
   const getLabelInfo = useCallback(
-    (traverse, id) => {
+    (traverse: string, id: string) => {
       console.log(traverse);
-      setNodes((nds) =>
-        nds.map((node) => {
+      setNodes((nds: Node[]) =>
+        nds.map((node: Node) => {
           if (node.id === id) {
             node.data = {
               ...node.data,
@@ -216,7 +282,7 @@ export default function NodesCanvas() {
   );
 
   const createGroupNode = useCallback(() => {
-    let groupNode = null;
+    let groupNode: Node;
     try {
       let minX = 10000;
       let minY = 10000;
@@ -237,14 +303,14 @@ export default function NodesCanvas() {
         if (node.position.y > maxY) {
           maxY = node.position.y;
         }
-        nodeWidth = node.width;
-        nodeHeight = node.height;
+        nodeWidth = node.width as number;
+        nodeHeight = node.height as number;
       });
       let width = 0;
       let height = 0;
-      let offset = 40;
-      let minHeight = 70 + nodeHeight;
-      let minWidth = nodeWidth + offset;
+      const offset = 40;
+      const minHeight = 70 + nodeHeight;
+      const minWidth = nodeWidth + offset;
 
       width = maxX - minX + minWidth;
       height = maxY - minY + minHeight;
@@ -269,10 +335,10 @@ export default function NodesCanvas() {
       };
 
       setNodes((nds) => nds.concat(groupNode));
+      return groupNode;
     } catch (error) {
       console.log("Error", error);
     }
-    return groupNode;
   }, [getLabelInfo, groupId.id, selectedNodes, setNodes]);
 
   const addGroup = useCallback(() => {
@@ -289,7 +355,7 @@ export default function NodesCanvas() {
         return;
       }
 
-      let groupNode = createGroupNode();
+      const groupNode = createGroupNode();
 
       if (!groupNode) {
         console.log("No group node found");
@@ -326,9 +392,8 @@ export default function NodesCanvas() {
     <div className="dndflow">
       <div className="reactflow-wrapper" ref={reactFlowWrapper}>
         <ReactFlow
-          onInit={setReactFlowInstance}
+          // onInit={setReactFlowInstance}
           nodes={nodes}
-          nodeTypes={nodeTypes}
           onDrop={onDrop}
           onClick={onClick}
           onDragOver={onDragOver}

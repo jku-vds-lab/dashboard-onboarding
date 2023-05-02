@@ -172,7 +172,7 @@ export default function Components() {
         id={id + className}
         className={visClassName}
         onDragStart={(event) =>
-          onDragStart(event, "simple", id, visType, visTitle)
+          onDragStart(event, "default", id, visType, visTitle)
         }
         draggable
       >

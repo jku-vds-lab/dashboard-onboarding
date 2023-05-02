@@ -1,24 +1,20 @@
 import Dropdown from "react-bootstrap/Dropdown";
 import { useNodeId } from "reactflow";
 import icon from "../icon-1.svg";
+import ICustomNode from "./ICustomNode";
 
-export default function GroupNode(groupData) {
+export default function GroupNodeDiv(customNode: ICustomNode) {
+  // let groupNode: GroupNode;
   const nodeId = useNodeId();
 
-  function updateLabel(event) {
-    console.log(groupData);
+  function updateLabel(event: any) {
+    console.log(customNode);
     event.target.closest(".dropdown").nextElementSibling.innerText =
       event.target.innerText;
 
-    groupData.data.callback(event.target.innerText, groupData.id);
+    customNode.data.callback(event.target.innerText, customNode.id);
   }
-  function updateGroup(e) {
-    try {
-      console.log("Group update is called");
-    } catch (error) {
-      console.log(error);
-    }
-  }
+  function updateGroup(e: any) {}
   return (
     <div className={`node node-group`} onClick={updateGroup}>
       <div className={`header`}>
