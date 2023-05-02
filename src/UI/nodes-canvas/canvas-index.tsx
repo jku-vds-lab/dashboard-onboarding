@@ -19,6 +19,7 @@ import { getDashboardInfoInEditor } from "../../onboarding/ts/dashboardInfoCard"
 import { getFilterInfoInEditor } from "../../onboarding/ts/filterInfoCards";
 
 import { useUpdateNodeInternals } from "reactflow";
+import GroupNode from "./nodeTypes/groupNode";
 
 export default function NodesCanvas() {
   const initialNodes: Node[] = [];
@@ -65,7 +66,28 @@ export default function NodesCanvas() {
     return color;
   };
 
-  const style = useCallback(() => {
+  // const groupStyle = useCallback(() => {
+  //   const gStyle: CSSProperties = {
+  //     mygroup: {
+  //       height: "100%",
+  //       padding: "10px",
+  //     },
+  //     header: {
+  //       display: "flex",
+
+  //       justifyContent: "center",
+  //       alignItems: "left",
+  //       cursor: "-moz-grab",
+  //       width: "100px",
+  //       borderRadius: "4px",
+  //       boxShadow: "0 0 4px #1a1717",
+  //       fontSize: "10px",
+  //     },
+  //   };
+  //   return gStyle;
+  // }, []);
+
+  const defaultStyle = useCallback(() => {
     const nodeStyle: CSSProperties = {
       display: "flex",
       justifyContent: "center",
@@ -108,6 +130,8 @@ export default function NodesCanvas() {
           break;
         case "globalFilter":
           await getFilterInfoInEditor(1);
+          break;
+        case "group":
           break;
         default:
           await getVisualInfoInEditor(fullNameArray, 1);
@@ -161,7 +185,7 @@ export default function NodesCanvas() {
       });
 
       const basicName = getBasicName(event, visType);
-      const nodeStyle = style();
+      const nodeStyle = defaultStyle();
       nodeStyle.backgroundColor = getNodeBgColor(basicName);
       console.log("here is the basic name", basicName);
 
@@ -174,11 +198,12 @@ export default function NodesCanvas() {
           type: visType,
         },
         style: nodeStyle,
+        selectable: true,
       };
 
       setNodes((nds) => nds.concat(newNode));
     },
-    [getBasicName, reactFlowInstance, setNodes, style]
+    [getBasicName, reactFlowInstance, setNodes, defaultStyle]
   );
 
   const onNodeDragStart = useCallback(
@@ -283,66 +308,6 @@ export default function NodesCanvas() {
     [setNodes]
   );
 
-  const createGroupNode = useCallback(() => {
-    let groupNode: Node;
-    try {
-      let minX = 10000;
-      let minY = 10000;
-      let maxX = 0;
-      let maxY = 0;
-      let nodeWidth = 0;
-      let nodeHeight = 0;
-      selectedNodes.forEach((node) => {
-        if (node.position.x < minX) {
-          minX = node.position.x;
-        }
-        if (node.position.x > maxX) {
-          maxX = node.position.x;
-        }
-        if (node.position.y < minY) {
-          minY = node.position.y;
-        }
-        if (node.position.y > maxY) {
-          maxY = node.position.y;
-        }
-        nodeWidth = node.width as number;
-        nodeHeight = node.height as number;
-      });
-      let width = 0;
-      let height = 0;
-      const offset = 40;
-      const minHeight = 70 + nodeHeight;
-      const minWidth = nodeWidth + offset;
-
-      width = maxX - minX + minWidth;
-      height = maxY - minY + minHeight;
-      if (height < 0) {
-        height = -height;
-      }
-
-      const position = { x: minX - offset, y: minY - offset };
-      groupNode = {
-        id: "group" + groupId.id++,
-        type: "group",
-        position,
-        data: {
-          title: "group node",
-          callback: getLabelInfo,
-          type: "group",
-          traverse: "All", //getLabelInfo();
-        },
-        className: "dndnode node-group",
-        style: { width: width, height: height },
-        zIndex: -1,
-      };
-
-      setNodes((nds) => nds.concat(groupNode));
-      return groupNode;
-    } catch (error) {
-      console.log("Error", error);
-    }
-  }, [getLabelInfo, groupId.id, selectedNodes, setNodes]);
-
   const addGroup = useCallback(() => {
     try {
       let noGroup = false;
@@ -357,7 +322,11 @@ export default function NodesCanvas() {
         return;
       }
 
-      const groupNode = createGroupNode();
+      const groupNode = GroupNode({
+        nodes: selectedNodes,
+        id: "group " + groupId.id++,
+      });
+      setNodes((nds) => nds.concat(groupNode));
 
       if (!groupNode) {
         console.log("No group node found");
@@ -388,7 +357,7 @@ export default function NodesCanvas() {
     } catch (error) {
       console.log("Error", error);
     }
-  }, [createGroupNode, nodes, selectedNodes]);
+  }, [groupId.id, nodes, selectedNodes, setNodes]);
 
   return (
     <div className="dndflow">
