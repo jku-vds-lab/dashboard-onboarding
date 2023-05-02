@@ -1,5 +1,5 @@
 import { getTraversalElement } from "./createSettings";
-import { createTraversalElement } from "./traversal";
+import { createTraversalElement, getStandartCategories } from "./traversal";
 import * as global from "./globalVariables";
 
 export async function depthFirstTraversalStrategy() {
@@ -8,18 +8,13 @@ export async function depthFirstTraversalStrategy() {
     traversalElem.element = await getTraversalElement("dashboard");
     trav.push(traversalElem);
     for (const vis of global.currentVisuals) {
-      const traversalElem2 = createTraversalElement(vis.type);
-      traversalElem2.element = await getTraversalElement(vis.name);
-      traversalElem2.categories = ["general"];
-      trav.push(traversalElem2);
-      const traversalElem3 = createTraversalElement(vis.type);
-      traversalElem3.element = await getTraversalElement(vis.name);
-      traversalElem3.categories = ["insight"];
-      trav.push(traversalElem3);
-      const traversalElem4 = createTraversalElement(vis.type);
-      traversalElem4.element = await getTraversalElement(vis.name);
-      traversalElem4.categories = ["interaction"];
-      trav.push(traversalElem4);
+        const categories = getStandartCategories(vis.type);
+        for(const category of categories){
+            const traversalElem2 = createTraversalElement(vis.type);
+            traversalElem2.element = await getTraversalElement(vis.name);
+            traversalElem2.categories = [category];
+            trav.push(traversalElem2);
+        }
     }
     const traversalElem1 = createTraversalElement("globalFilter");
     traversalElem1.element = await getTraversalElement("globalFilter");
