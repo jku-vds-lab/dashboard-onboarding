@@ -8,8 +8,16 @@ import { resetVisualChanges } from "../../onboarding/ts/infoCards";
 import { resetDashboardChanges } from "../../onboarding/ts/dashboardInfoCard";
 import { resetFilterChanges } from "../../onboarding/ts/filterInfoCards";
 import OpenAI from "./main-open-ai";
+import { useEffect, useState } from 'react';
 
-export default function StoryPane() {
+interface Props{
+  mainTrigger: number
+  traversal: any
+}
+
+export default function StoryPane(props: Props) {
+  const [trigger, setTrigger] = useState(0);
+
   const saveAnnotationChanges = (e: any) => {
     const nodeId = e.target.getAttribute("nodeId");
     const currentIdParts = nodeId?.split(" ");
@@ -59,11 +67,22 @@ export default function StoryPane() {
     }
   };
 
+  useEffect(() => {
+    if (props.mainTrigger) {
+      console.log("q", props.traversal)
+      buildTraversal();
+    }
+  }, [props.mainTrigger]);
+
+  const buildTraversal = () => {
+    setTrigger((trigger) => trigger + 1);
+  }
+
   return (
     <div id="canvas-container" className="canvas-cont" style={{ flexGrow: 1 }}>
       <div className="flow">
         <ReactFlowProvider>
-          <NodesCanvas />
+          <NodesCanvas trigger={trigger} traversal={props.traversal}/>
         </ReactFlowProvider>
       </div>
       <div id="annotation-box" className="text-end">

@@ -4,22 +4,25 @@ import Form from "react-bootstrap/Form";
 import { basicTraversalStrategy, depthFirstTraversalStrategy, martiniGlassTraversalStrategy } from "../../onboarding/ts/traversalStrategies";
 import * as global from "../../onboarding/ts/globalVariables";
 
-export default function TraversalPane() {
+export default function TraversalPane(props) {
   const [checked] = React.useState(true);
 
   function createCustomTrav(){
     const trav = global.settings.traversalStrategy;
-    console.log(trav);
+    props.setTrav(trav);
+    props.buildTraversal();
   }
 
   async function createMartiniGlassTrav(){
     const trav = await martiniGlassTraversalStrategy();
-    console.log(trav);
+    props.setTrav(trav);
+    props.buildTraversal();
   }
 
   async function createDepthFirstTrav(){
-    const trav = await depthFirstTraversalStrategy(); 
-    console.log(trav);
+    const trav = await depthFirstTraversalStrategy();
+    props.setTrav(trav);
+    props.buildTraversal();
   }
 
   return (
