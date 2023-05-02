@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import ReactFlow, { useNodesState, Controls, useReactFlow } from "reactflow";
 import "reactflow/dist/style.css";
 import "../assets/css/flow.scss";
@@ -16,13 +16,15 @@ import { getDashboardInfoInEditor } from "../../onboarding/ts/dashboardInfoCard"
 import { getFilterInfoInEditor } from "../../onboarding/ts/filterInfoCards";
 
 import { useUpdateNodeInternals } from "reactflow";
+import * as global from "../../onboarding/ts/globalVariables";
+import { findTraversalVisual } from "../../onboarding/ts/traversal";
 
 const initialNodes = [];
 
 const nodeTypes = { simple: SimpleNode, group: GroupNode };
 // const nodeTypes = { simple: SimpleNode };
 
-export default function NodesCanvas() {
+export default function NodesCanvas({trigger, traversal}) {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
   const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -109,7 +111,7 @@ export default function NodesCanvas() {
           type: visType,
         },
       };
-
+      console.log(newNode)
       setNodes((nds) => nds.concat(newNode));
     },
     [reactFlowInstance, setNodes]
@@ -321,6 +323,124 @@ export default function NodesCanvas() {
       console.log("Error", error);
     }
   }, [createGroupNode, nodes, selectedNodes]);
+
+
+  useEffect(() => {
+    if (trigger) {
+      console.log("q", traversal)
+      buildTraversal(traversal);
+    }
+  }, [trigger]);
+
+  function buildTraversal(traversal){
+    const position = {
+        x: 0,
+        y: 50,
+    };
+
+    for(const { index, elem } of traversal.map((elem, index) => ({ index, elem }))){
+      console.log(elem)
+        const visTitle = getTitle(elem);
+        const visType = getType(visTitle);
+        const newNode = {
+            id: getID(elem),
+            type: "simple",
+            position: getPosition(position, index),
+            data: {
+              title: visTitle,
+              type: visType,
+            },
+          };
+          console.log(newNode)
+        setNodes((nds) => nds.concat(newNode));
+    } 
+
+    function getPosition(position, index){
+      const offset = index * 35; 
+      let pos = {
+        x: position.x,
+        y: position.y + offset,
+      }
+      return pos;
+    }
+
+    function getID(elem){
+        let id = elem.element.id;
+        if(elem.categories.length === 1 && elem.categories[0] === "insight"){
+            id += " Insight";
+        }else if(elem.categories.length === 1 && elem.categories[0] === "interaction"){
+            id += " Interaction";
+        }
+    
+        return id; 
+    }
+
+    function getType(title){
+      let type = title;
+      if(title === "Global Filters"){
+        type = "GlobalFilter";
+      }
+      return type;
+    }
+    
+    function getTitle(elem){
+        let visTitle = "";
+        switch(elem.element.id){
+            case "dashboard":
+                visTitle = "Dashboard";
+                break;
+            case "globalFilter":
+                visTitle = "Global Filters";
+                break;
+            default:
+                const vis = findTraversalVisual(elem.element.id);
+                visTitle = createNodeTitle(vis.type);
+                const itemLength = checkDuplicateComponents(vis.type);
+                if (itemLength > 1) {
+                    visTitle = visTitle + " (" + vis.title + ")";
+                }
+        }
+        if(elem.categories.length === 1 && elem.categories[0] === "insight"){
+          visTitle += " Insight";
+        }else if(elem.categories.length === 1 && elem.categories[0] === "interaction"){
+          visTitle += " Interaction";
+        }
+
+        return visTitle;
+
+        function checkDuplicateComponents(visType) {
+            const componentItems = global.allVisuals.filter(function (visual) {
+              return visual.type == visType;
+            });
+            return componentItems.length;
+          }
+        
+        function createNodeTitle(title, index = "") {
+        let newTitle = title;
+        switch (title) {
+            case "card":
+            newTitle = "KPI";
+            break;
+            case "slicer":
+            newTitle = "Filter";
+            break;
+            case "lineClusteredColumnComboChart":
+            newTitle = "Column Chart";
+            break;
+            case "clusteredBarChart":
+            newTitle = "Bar Chart";
+            break;
+            case "lineChart":
+            newTitle = "Line Chart";
+            break;
+            default:
+            newTitle = title;
+        }
+        newTitle = newTitle + index;
+        return newTitle;
+        }
+    }
+}
 
   return (
     <div className="dndflow">

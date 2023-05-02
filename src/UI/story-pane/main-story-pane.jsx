@@ -7,8 +7,11 @@ import { editedTexts } from "../../onboarding/ts/globalVariables";
 import { resetVisualChanges } from "../../onboarding/ts/infoCards";
 import { resetDashboardChanges } from "../../onboarding/ts/dashboardInfoCard";
 import { resetFilterChanges } from "../../onboarding/ts/filterInfoCards";
+import { useEffect, useState } from 'react';
 
-export default function StoryPane() {
+export default function StoryPane({mainTrigger, traversal}) {
+  const [trigger, setTrigger] = useState(0);
+
   const saveAnnotationChanges = (e) => {
     const nodeId = e.target.getAttribute("nodeId");
     const currentIdParts = nodeId?.split(" ");
@@ -46,11 +49,22 @@ export default function StoryPane() {
     }
   };
 
+  useEffect(() => {
+    if (mainTrigger) {
+      console.log("q", traversal)
+      buildTraversal();
+    }
+  }, [mainTrigger]);
+
+  const buildTraversal = () => {
+    setTrigger((trigger) => trigger + 1);
+  }
+
   return (
     <div id="canvas-container" className="canvas-cont" style={{ flexGrow: 1 }}>
       <div className="flow">
         <ReactFlowProvider>
-          <NodesCanvas />
+          <NodesCanvas trigger={trigger} traversal={traversal}/>
         </ReactFlowProvider>
       </div>
       <div id="annotation-box" className="text-end">

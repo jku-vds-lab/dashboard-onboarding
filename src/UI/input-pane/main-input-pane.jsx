@@ -9,7 +9,8 @@ import {
 } from "react-hook-resize-panel";
 import "../assets/css/dashboard.scss";
 
-export default function InputPane() {
+export default function InputPane(props) {
+
   return (
     <ResizePanel
       className="component-cont"
@@ -19,7 +20,7 @@ export default function InputPane() {
     >
       <ResizeContent>
         <Accordion defaultActiveKey={["0"]} alwaysOpen>
-          <TraversalPane />
+          <TraversalPane buildTraversal={() => props.buildTraversal()} setTrav={props.setTrav}/>
           <ComponentsPane />
           <SubcomponentsPane />
         </Accordion>
