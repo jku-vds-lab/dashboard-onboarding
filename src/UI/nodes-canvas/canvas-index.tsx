@@ -21,14 +21,9 @@ import { getFilterInfoInEditor } from "../../onboarding/ts/filterInfoCards";
 import { useUpdateNodeInternals } from "reactflow";
 import GroupNode from "./nodeTypes/groupNode";
 
+const nodeTypes = { group: GroupNode.groupNodeType };
+
 export default function NodesCanvas() {
-  const groupNodeObj = new GroupNode({
-    id: "",
-    nodes: [],
-    data: null,
-    position: { x: 0, y: 0 },
-  });
-  const nodeTypes = { group: groupNodeObj.groupNodeType };
   const initialNodes: Node[] = [];
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [setReactFlowInstance] = useState<ReactFlowInstance>();
@@ -141,7 +136,9 @@ export default function NodesCanvas() {
         case "group":
           break;
         default:
-          await getVisualInfoInEditor(fullNameArray, 1);
+          if (fullNameArray) {
+            await getVisualInfoInEditor(fullNameArray, 1);
+          }
           break;
       }
     },
@@ -329,13 +326,13 @@ export default function NodesCanvas() {
         return;
       }
 
-      const gNodeObj = new GroupNode({
+      const groupNodeObj = new GroupNode({
         nodes: selectedNodes,
         id: "group " + groupId.id++,
         position: { x: 0, y: 0 },
         data: null,
       });
-      const groupNode = gNodeObj.getGroupNode();
+      const groupNode = groupNodeObj.getGroupNode();
       setNodes((nds) => nds.concat(groupNode));
 
       if (!groupNode) {

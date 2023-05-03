@@ -68,18 +68,18 @@ export default class GroupNode {
     return this.groupNode;
   }
 
-  updateLabel(event: any) {
+  static updateLabel(event: any) {
     event.target.closest(".dropdown").nextElementSibling.innerText =
       event.target.innerText;
 
     // node.data.callback(event.target.innerText, nodeId);
   }
 
-  updateGroup(e: any) {}
+  static updateGroup() {}
 
-  groupNodeType() {
+  static groupNodeType() {
     return (
-      <div className={`node node-group`} onClick={this.updateGroup}>
+      <div className={`node node-group`} onClick={GroupNode.updateGroup}>
         <div className={`header`}>
           <Dropdown>
             <Dropdown.Toggle variant="" className="n-button options">
@@ -93,13 +93,13 @@ export default class GroupNode {
             </Dropdown.Toggle>
 
             <Dropdown.Menu>
-              <Dropdown.Item eventKey="1" onClick={this.updateLabel}>
+              <Dropdown.Item eventKey="1" onClick={GroupNode.updateLabel}>
                 At least one
               </Dropdown.Item>
-              <Dropdown.Item eventKey="2" onClick={this.updateLabel}>
+              <Dropdown.Item eventKey="2" onClick={GroupNode.updateLabel}>
                 Only one
               </Dropdown.Item>
-              <Dropdown.Item eventKey="3" onClick={this.updateLabel}>
+              <Dropdown.Item eventKey="3" onClick={GroupNode.updateLabel}>
                 All
               </Dropdown.Item>
             </Dropdown.Menu>
@@ -112,34 +112,32 @@ export default class GroupNode {
 }
 
 // return (
-//   <ReactFlow nodes={groupNode}>
-//     <div className={`node node-group`} onClick={updateGroup}>
-//       <div className={`header`}>
-//         <Dropdown>
-//           <Dropdown.Toggle variant="" className="n-button options">
-//             <img
-//               className="icon options"
-//               src={icon}
-//               alt="connect icon"
-//               width="10px"
-//               height="10px"
-//             />
-//           </Dropdown.Toggle>
+//   <div className={`node node-group`} onClick={this.updateGroup}>
+//     <div className={`header`}>
+//       <Dropdown>
+//         <Dropdown.Toggle variant="" className="n-button options">
+//           <img
+//             className="icon options"
+//             src={icon}
+//             alt="connect icon"
+//             width="10px"
+//             height="10px"
+//           />
+//         </Dropdown.Toggle>
 
-//           <Dropdown.Menu>
-//             <Dropdown.Item eventKey="1" onClick={updateLabel}>
-//               At least one
-//             </Dropdown.Item>
-//             <Dropdown.Item eventKey="2" onClick={updateLabel}>
-//               Only one
-//             </Dropdown.Item>
-//             <Dropdown.Item eventKey="3" onClick={updateLabel}>
-//               All
-//             </Dropdown.Item>
-//           </Dropdown.Menu>
-//         </Dropdown>
-//         <div className="label">All</div>
-//       </div>
+//         <Dropdown.Menu>
+//           <Dropdown.Item eventKey="1" onClick={this.updateLabel}>
+//             At least one
+//           </Dropdown.Item>
+//           <Dropdown.Item eventKey="2" onClick={this.updateLabel}>
+//             Only one
+//           </Dropdown.Item>
+//           <Dropdown.Item eventKey="3" onClick={this.updateLabel}>
+//             All
+//           </Dropdown.Item>
+//         </Dropdown.Menu>
+//       </Dropdown>
+//       <div className="label">All</div>
 //     </div>
-//   </ReactFlow>
+//   </div>
 // );
