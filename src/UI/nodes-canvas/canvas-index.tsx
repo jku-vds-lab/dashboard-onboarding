@@ -20,8 +20,9 @@ import { getFilterInfoInEditor } from "../../onboarding/ts/filterInfoCards";
 
 import { useUpdateNodeInternals } from "reactflow";
 import GroupNode from "./nodeTypes/groupNode";
+import GroupNodeType from "./nodeTypes/groupNodeType";
 
-const nodeTypes = { group: GroupNode.groupNodeType };
+const nodeTypes = { group: GroupNodeType };
 
 export default function NodesCanvas() {
   const initialNodes: Node[] = [];
@@ -67,27 +68,6 @@ export default function NodesCanvas() {
 
     return color;
   };
-
-  // const groupStyle = useCallback(() => {
-  //   const gStyle: CSSProperties = {
-  //     mygroup: {
-  //       height: "100%",
-  //       padding: "10px",
-  //     },
-  //     header: {
-  //       display: "flex",
-
-  //       justifyContent: "center",
-  //       alignItems: "left",
-  //       cursor: "-moz-grab",
-  //       width: "100px",
-  //       borderRadius: "4px",
-  //       boxShadow: "0 0 4px #1a1717",
-  //       fontSize: "10px",
-  //     },
-  //   };
-  //   return gStyle;
-  // }, []);
 
   const defaultStyle = useCallback(() => {
     const nodeStyle: CSSProperties = {
