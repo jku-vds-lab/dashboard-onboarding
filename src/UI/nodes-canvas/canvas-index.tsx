@@ -41,6 +41,28 @@ export default function NodesCanvas() {
     return new DefaultNode();
   }, []);
 
+  //refactor reactflowbounds
+  // then traversal file
+  // then the file with traversal logic from onboarding side
+  // then create a new feature which supports means
+
+  const getPosition = useCallback(
+    (event: any) => {
+      const reactFlowBounds =
+        reactFlowWrapper?.current?.getBoundingClientRect();
+
+      const left = reactFlowBounds ? reactFlowBounds.left : 0;
+      const top = reactFlowBounds ? reactFlowBounds.top : 0;
+
+      const position = reactFlowInstance?.project({
+        x: event.clientX - left,
+        y: event.clientY - top,
+      });
+      return position;
+    },
+    [reactFlowInstance]
+  );
+
   const onClick = useCallback(
     async (event) => {
       // here we need to update the reactFlowWrapper and Instance
@@ -53,7 +75,6 @@ export default function NodesCanvas() {
       const fullNameArray = defaultNode().getFullNodeNameArray(event);
       const basicName = defaultNode().getBasicName(event);
 
-      console.log("fullName Array", fullNameArray);
       switch (basicName) {
         case "dashboard":
           getDashboardInfoInEditor(1);
@@ -82,8 +103,6 @@ export default function NodesCanvas() {
     (event) => {
       event.preventDefault();
 
-      const reactFlowBounds =
-        reactFlowWrapper?.current?.getBoundingClientRect();
       const id = event.dataTransfer.getData("id");
       const type = event.dataTransfer.getData("nodeType");
       const visType = event.dataTransfer.getData("visType");
@@ -94,13 +113,7 @@ export default function NodesCanvas() {
         return;
       }
 
-      const left = reactFlowBounds ? reactFlowBounds.left : 0;
-      const top = reactFlowBounds ? reactFlowBounds.top : 0;
-
-      const position = reactFlowInstance?.project({
-        x: event.clientX - left,
-        y: event.clientY - top,
-      });
+      const position = getPosition(event);
 
       const newNode = defaultNode().getNode(
         event,
@@ -113,7 +126,7 @@ export default function NodesCanvas() {
 
       setNodes((nds) => nds.concat(newNode));
     },
-    [reactFlowInstance, setNodes, defaultNode]
+    [getPosition, defaultNode, setNodes]
   );
 
   const onNodeDragStart = useCallback(
@@ -131,20 +144,12 @@ export default function NodesCanvas() {
     [getIntersectingNodes, setNodes]
   );
 
-  // we need this function to update node position
-  function UpdateNodeButton(nodeId: string) {
-    const updateNodeInternals = useUpdateNodeInternals();
-    updateNodeInternals(nodeId);
-  }
-
   const onNodeDragStop = (event: any, node: Node) => {
     console.log("Node pos", node.position);
 
     if (node.type == "group") {
       nodes.forEach((sNode) => {
         if (sNode.parentNode == node.id) {
-          // UpdateNodeButton(sNode.id);
-          // here we need to update the node position
           console.log(sNode.positionAbsolute); // --> this is not getting updated
         }
       });
@@ -158,36 +163,33 @@ export default function NodesCanvas() {
   };
 
   const onSelectionContextMenu = useCallback(
-    (e, sNodes: Node[]) => {
-      // but this is not any. this is React.Dispatch<React.SetStateAction<Node<SimpleNodeDiv | GroupNodeDiv, string | undefined>[]>>
-      e.preventDefault();
-      const reactFlowBounds =
-        reactFlowWrapper?.current?.getBoundingClientRect();
-      const xBound = reactFlowBounds ? reactFlowBounds.left : 0;
-      const yBound = reactFlowBounds ? reactFlowBounds.top : 0;
+    (event, sNodes: Node[]) => {
+      event.preventDefault();
 
+      const position = getPosition(event);
       setPosition({
-        x: e.clientX - xBound,
-        y: e.clientY - yBound,
+        x: position.x,
+        y: position.y,
       });
 
       setSelectedNodes(sNodes);
       setIsOpen(true);
     },
-    [setSelectedNodes]
+    [getPosition, setSelectedNodes]
   );
 
-  const onNodeContextMenu = useCallback((e) => {
-    e.preventDefault();
-    const reactFlowBounds = reactFlowWrapper?.current?.getBoundingClientRect();
-    const xBound = reactFlowBounds ? reactFlowBounds.left : 0;
-    const yBound = reactFlowBounds ? reactFlowBounds.top : 0;
-    setPosition({
-      x: e.clientX - xBound,
-      y: e.clientY - yBound,
-    });
-    setIsOpen(true);
-  }, []);
+  const onNodeContextMenu = useCallback(
+    (event) => {
+      event.preventDefault();
+      const position = getPosition(event);
+      setPosition({
+        x: position.x,
+        y: position.y,
+      });
+      setIsOpen(true);
+    },
+    [getPosition]
+  );
 
   const deleteNode = () => {
     if (nodeData?.type === "group") {
