@@ -19,8 +19,9 @@ import { getDashboardInfoInEditor } from "../../onboarding/ts/dashboardInfoCard"
 import { getFilterInfoInEditor } from "../../onboarding/ts/filterInfoCards";
 
 import { useUpdateNodeInternals } from "reactflow";
-import GroupNode from "./nodeTypes/groupNode";
-import GroupNodeType from "./nodeTypes/groupNodeType";
+import GroupNode from "./nodes/groupNode";
+import GroupNodeType from "./nodes/groupNodeType";
+import DefaultNode from "./nodes/defaultNode";
 
 const nodeTypes = { group: GroupNodeType };
 
@@ -36,61 +37,8 @@ export default function NodesCanvas() {
   const reactFlowWrapper = useRef<HTMLInputElement>(null); // this could be the reason why we run into the initial worng position issue
   const [selectedNodes, setSelectedNodes] = useNodesState<null>([]);
   const [groupId] = useState({ id: 0 });
-
-  const getNodeBgColor = (type: string) => {
-    let color = "";
-    switch (type) {
-      case "Dashboard":
-        color = "#4e91e9";
-        break;
-      case "Line":
-        color = "#d95f02";
-        break;
-      case "Bar":
-        color = "#1b9e77";
-        break;
-      case "Filter":
-        color = "#e7298a";
-        break;
-      case "KPI":
-        color = "#7570b3";
-        break;
-      case "GlobalFilter":
-        color = "#e25757";
-        break;
-      case "Column":
-        color = "#66a61e";
-        break;
-      default:
-        color = "#595959";
-        break;
-    }
-
-    return color;
-  };
-
-  const defaultStyle = useCallback(() => {
-    const nodeStyle: CSSProperties = {
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      cursor: "-moz-grab",
-      width: "100px",
-      height: "30px",
-      borderRadius: "4px",
-      boxShadow: "0 0 4px #1a1717",
-      fontSize: "10px",
-    };
-    return nodeStyle;
-  }, []);
-
-  const getBasicName = useCallback((event: any, name?: string) => {
-    let basicName: string = "";
-    const nameArray = getFullNodeNameArray(event, name);
-    if (nameArray?.length > 0) {
-      basicName = nameArray[0];
-    }
-    return basicName;
+  const defaultNode = useCallback(() => {
+    return new DefaultNode();
   }, []);
 
   const onClick = useCallback(
@@ -102,8 +50,8 @@ export default function NodesCanvas() {
         ? container?.classList.remove("show")
         : container?.classList.add("show");
 
-      const fullNameArray = getFullNodeNameArray(event);
-      const basicName = getBasicName(event);
+      const fullNameArray = defaultNode().getFullNodeNameArray(event);
+      const basicName = defaultNode().getBasicName(event);
 
       console.log("fullName Array", fullNameArray);
       switch (basicName) {
@@ -122,27 +70,13 @@ export default function NodesCanvas() {
           break;
       }
     },
-    [getBasicName]
+    [defaultNode]
   );
 
   const onDragOver = useCallback((event) => {
     event.preventDefault();
     event.dataTransfer.dropEffect = "move";
   }, []);
-
-  function getFullNodeNameArray(event: any, name?: string) {
-    let nodeName = "";
-    let nameArray: string[] = [];
-    if (name) {
-      nodeName = name;
-    } else {
-      nodeName = event.target.getAttribute("data-id");
-    }
-    document?.getElementById("textBox")?.setAttribute("nodeId", nodeName);
-
-    nameArray = nodeName?.split(" ");
-    return nameArray;
-  }
 
   const onDrop = useCallback(
     (event) => {
@@ -168,26 +102,18 @@ export default function NodesCanvas() {
         y: event.clientY - top,
       });
 
-      const basicName = getBasicName(event, visType);
-      const nodeStyle = defaultStyle();
-      nodeStyle.backgroundColor = getNodeBgColor(basicName);
-      console.log("here is the basic name", basicName);
-
-      const newNode: Node = {
+      const newNode = defaultNode().getNode(
+        event,
+        visType,
         id,
         type,
         position,
-        data: {
-          label: title,
-          type: visType,
-        },
-        style: nodeStyle,
-        selectable: true,
-      };
+        title
+      );
 
       setNodes((nds) => nds.concat(newNode));
     },
-    [getBasicName, reactFlowInstance, setNodes, defaultStyle]
+    [reactFlowInstance, setNodes, defaultNode]
   );
 
   const onNodeDragStart = useCallback(

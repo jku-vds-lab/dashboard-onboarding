@@ -53,9 +53,8 @@ export default class GroupNode {
       position,
       data: {
         title: "group node",
-        // callback: getLabelInfo,
         type: "group",
-        traverse: "All", //getLabelInfo();
+        traverse: "All",
       },
       className: "dndnode node-group",
       style: { width: width, height: height },
