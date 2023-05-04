@@ -9,31 +9,43 @@ import { resetDashboardChanges } from "../../onboarding/ts/dashboardInfoCard";
 import { resetFilterChanges } from "../../onboarding/ts/filterInfoCards";
 
 export default function StoryPane() {
-  const saveAnnotationChanges = (e) => {
+  const saveAnnotationChanges = (e: any) => {
     const nodeId = e.target.getAttribute("nodeId");
     const currentIdParts = nodeId?.split(" ");
     const info = e.target.value.replaceAll(" \n", "<br>");
     const currentNewInfos = info.split("\n");
 
     let editedElem = null;
-    if(currentIdParts.length > 1){
-      editedElem = editedTexts.find(edited => edited.idParts[0] === currentIdParts[0] && edited.idParts[1] === currentIdParts[1]);
-    }else{
-      editedElem = editedTexts.find(edited => edited.idParts[0] === currentIdParts[0]);
+    if (currentIdParts.length > 1) {
+      editedElem = editedTexts.find(
+        (edited) =>
+          edited.idParts[0] === currentIdParts[0] &&
+          edited.idParts[1] === currentIdParts[1]
+      );
+    } else {
+      editedElem = editedTexts.find(
+        (edited) => edited.idParts[0] === currentIdParts[0]
+      );
     }
 
-    if(editedElem){
+    if (editedElem) {
       editedElem.newInfos = currentNewInfos;
     } else {
-      editedTexts.push({newInfos: currentNewInfos, idParts: currentIdParts, count: 1});
+      editedTexts.push({
+        newInfos: currentNewInfos,
+        idParts: currentIdParts,
+        count: 1,
+      });
     }
   };
 
   const resetAnnotationChanges = async () => {
-    const nodeId =  document.getElementById("textBox").getAttribute("nodeId");
+    const nodeId = document?.getElementById("textBox")?.getAttribute("nodeId");
     const currentIdParts = nodeId?.split(" ");
-    
-    switch(currentIdParts[0]){
+    if (!currentIdParts) {
+      return;
+    }
+    switch (currentIdParts[0]) {
       case "dashboard":
         await resetDashboardChanges(1);
         break;
@@ -60,9 +72,19 @@ export default function StoryPane() {
               <FaPencilAlt />
             </span>
           </div>
-          <textarea id="textBox" className="form-control" rows="4" onChange={saveAnnotationChanges} />
+          <textarea
+            id="textBox"
+            className="form-control"
+            rows={4}
+            onChange={saveAnnotationChanges}
+          />
         </div>
-        <div className="btn btn-secondary btn-sm me-auto" onClick={resetAnnotationChanges}>Reset Text</div>
+        <div
+          className="btn btn-secondary btn-sm me-auto"
+          onClick={resetAnnotationChanges}
+        >
+          Reset Text
+        </div>
       </div>
     </div>
   );

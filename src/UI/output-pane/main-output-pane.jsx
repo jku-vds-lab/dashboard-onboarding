@@ -19,13 +19,16 @@ export default function OutputPane() {
       maxWidth={800}
       minWidth={400}
     >
-      <ResizeHandleLeft className="resize" onClick ={reloadOnboarding}>
+      <ResizeHandleLeft className="resize" onClick={reloadOnboarding}>
         <div className="col-resize" />
       </ResizeHandleLeft>
       <ResizeContent>
         <Tabs defaultActiveKey="output" id="" justify>
           <Tab eventKey="output" title="Output view">
-            <div id="outputView" style={{ color: "black", backgroundColor: "white"}}>
+            <div
+              id="outputView"
+              style={{ color: "black", backgroundColor: "white" }}
+            >
               <OutputView />
             </div>
           </Tab>
