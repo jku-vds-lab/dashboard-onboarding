@@ -6,6 +6,10 @@ import { saveDashboardChanges } from "../../onboarding/ts/dashboardInfoCard";
 import { saveFilterChanges } from "../../onboarding/ts/filterInfoCards";
 import "../assets/css/flow.scss";
 
+// then traversal file
+// then the file with traversal logic from onboarding side
+// then create a new feature which supports means
+
 class TraversalOrder {
   simpleNodes = [];
   groupNodes = [];
