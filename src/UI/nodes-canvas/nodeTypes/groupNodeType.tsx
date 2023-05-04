@@ -1,12 +1,12 @@
 import Dropdown from "react-bootstrap/Dropdown";
 import icon from "../icon-1.svg";
 
-export default function GroupNodeType() {
+export default function GroupNodeType(nodeData: any) {
   function updateLabel(event: any) {
-    event.target.closest(".dropdown").nextElementSibling.innerText =
-      event.target.innerText;
+    const label = event.target.innerText;
+    event.target.closest(".dropdown").nextElementSibling.innerText = label;
 
-    // node.data.callback(event.target.innerText, nodeId);
+    nodeData.data.traverse = label;
   }
   function updateGroup() {}
 

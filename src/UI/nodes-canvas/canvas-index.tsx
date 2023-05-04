@@ -273,25 +273,6 @@ export default function NodesCanvas() {
     setIsOpen(false);
   };
 
-  const getLabelInfo = useCallback(
-    (traverse: string, id: string) => {
-      console.log(traverse);
-      setNodes((nds: Node[]) =>
-        nds.map((node: Node) => {
-          if (node.id === id) {
-            node.data = {
-              ...node.data,
-              traverse: traverse,
-            };
-          }
-
-          return node;
-        })
-      );
-    },
-    [setNodes]
-  );
-
   const addGroup = useCallback(() => {
     try {
       let noGroup = false;
