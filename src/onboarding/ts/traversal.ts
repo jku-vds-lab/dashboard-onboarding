@@ -314,7 +314,10 @@ export function createGroupOverlay() {
     }
   }
   notTraversed.forEach((trav: TraversalElement) => firstVisuals.push(trav[0]));
-  if (currentElement.element.type === groupType.atLeastOne && currentId !== global.settings.traversalStrategy.length-1) {
+  if (
+    currentElement.element.type === groupType.atLeastOne &&
+    currentId !== global.settings.traversalStrategy.length - 1
+  ) {
     firstVisuals.push(global.settings.traversalStrategy[currentId + 1]);
   }
   createInformationCard("group", currentElement.count, firstVisuals, undefined);
@@ -528,13 +531,13 @@ export async function getTraversalElem(sNode: any) {
 }
 
 export async function createTraversalOfNodes(
-  simpleNodes: any[],
+  defaultNodes: any[],
   groupNodes: any[]
 ) {
   try {
     const trav: TraversalElement[] = [];
     let groupNode = null;
-    for (const sNode of simpleNodes) {
+    for (const sNode of defaultNodes) {
       if (groupNode) {
         if (sNode.pGrp?.id == groupNode.id) {
         } else if (sNode.pGrp) {

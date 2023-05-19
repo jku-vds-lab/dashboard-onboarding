@@ -18,54 +18,6 @@ export class TraversalOrder {
     this.groupNodes = [];
     this.groupId = 99; // new ids for new possible groups
   }
-
-  // nodes which are not in a group but at a same horizontal position, should be treated as a group, only one, then the sequence
-  // setGroupNodesAndElementsCount(storyNodes: any[]) {
-  //   this.groupNodes = storyNodes.filter((sNode) => sNode.type == "group");
-  //   this.groupNodes.forEach((gNode) => {
-  //     this.groupElementsCount.push({
-  //       id: gNode.id,
-  //       count: 0,
-  //       type: "",
-  //       nodes: [],
-  //     });
-  //   });
-  //   this.defaultNodes.forEach((sNode) => {
-  //     if (sNode.pGrp) {
-  //       this.groupElementsCount.map((gElem) => {
-  //         if (gElem.id == sNode.pGrp.id) {
-  //           gElem.count++;
-  //           gElem.type = sNode.pGrpCat;
-  //           gElem.nodes.push(sNode);
-  //         }
-  //       });
-  //     }
-  //   });
-  // }
-
-  // setGrpCnt() {
-  //   this.defaultNodes.map((sNode) => {
-  //     if (sNode.pGrp) {
-  //       let elem = this.groupElementsCount.find(
-  //         (gElem) => gElem.id == sNode.pGrp.id
-  //       );
-  //       sNode.pGrpCnt = elem.count;
-  //     }
-  //   });
-  // }
-
-  // setProb() {
-  //   this.defaultNodes.forEach((sNode) => {
-  //     if (sNode.pGrp) {
-  //       if (sNode.pGrpCat == groupType.all) {
-  //         sNode.probability = 1;
-  //       } else {
-  //         sNode.probability = 1 / sNode.pGrpCnt;
-  //       }
-  //     }
-  //   });
-  // }
-
   setRank() {
     // sort simple nodes by y- position
     // if they are of the same y-position, check if they are in the same group, assign rank based on x position
@@ -85,8 +37,6 @@ export class TraversalOrder {
     // -1: elem1 then elem2
     // 1: elem2 then elem1
     // 0: elem1 = elem 2
-    // simpleNodes with parents have position absolute, while others don't
-
     // const groupNodeObj = new GroupNode({
     //   nodes: selectedNodes,
     //   id: "group " + groupId.id++,
@@ -133,8 +83,6 @@ export class TraversalOrder {
   compare(elem1: IDefaultNode, elem2: IDefaultNode) {
     // -1: elem1 then elem2
     // 1: elem2 then elem1
-    // 0: elem1 = elem 2
-    // simpleNodes with parents have position absolute, while others don't
     try {
       const yPos1 = elem1.positionAbsolute
         ? elem1.positionAbsolute.y
@@ -156,34 +104,6 @@ export class TraversalOrder {
     return 0;
   }
 
-  // updateRank() {
-  //   this.defaultNodes.forEach((sNode) => {
-  //     if (sNode.pGrp) {
-  //       if (sNode.pGrpCat == groupType.all) {
-  //         sNode.probability = 1;
-  //       } else {
-  //         sNode.probability = 1 / sNode.pGrpCnt;
-  //       }
-  //     }
-  //   });
-  // }
-
-  updateProb() {
-    // Get the information from what was clicked by the user
-    // based on that, set the probabilities of others accordingly
-    // old nodes can simply be discarded
-    this.defaultNodes.forEach((dNode: IDefaultNode) => {
-      if (dNode.parentNode) {
-        if (dNode.groupCategory == groupType.all) {
-          dNode.probability = 1;
-        } else {
-          const count = dNode.group?.nodes.length ?? 1;
-          dNode.probability = 1 / count;
-        }
-      }
-    });
-  }
-
   // separate nodes that are within and without a group
   async onClick(props: any) {
     try {
@@ -202,9 +122,6 @@ export class TraversalOrder {
         );
       }
 
-      // this.setGroupNodesAndElementsCount(storyNodes);
-      // this.setGrpCnt();
-      // this.setProb();
       this.setRank();
       await createTraversalOfNodes(this.defaultNodes, this.groupNodes);
       for (const edited of editedTexts) {
