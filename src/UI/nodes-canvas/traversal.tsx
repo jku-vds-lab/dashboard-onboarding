@@ -11,6 +11,7 @@ import { IDefaultNode } from "./nodes/defaultNode";
 export class TraversalOrder {
   private defaultNodes: IDefaultNode[] = [];
   private groupNodes: IGroupNode[] = [];
+  private allNodes: (IDefaultNode | IGroupNode)[] = [];
   private groupId: number = 100;
 
   constructor() {
@@ -27,6 +28,10 @@ export class TraversalOrder {
       this.defaultNodes.forEach((sNode, index) => {
         sNode.rank = index + 1;
       });
+
+      this.allNodes.push(...this.defaultNodes);
+      this.allNodes.push(...this.groupNodes);
+      this.allNodes = this.allNodes.sort(this.compare);
       console.log(this.defaultNodes);
     } catch (error) {
       console.log("Error", error);
@@ -80,7 +85,7 @@ export class TraversalOrder {
     return 0;
   }
 
-  compare(elem1: IDefaultNode, elem2: IDefaultNode) {
+  compare(elem1: IDefaultNode | IGroupNode, elem2: IDefaultNode | IGroupNode) {
     // -1: elem1 then elem2
     // 1: elem2 then elem1
     try {
@@ -123,7 +128,7 @@ export class TraversalOrder {
       }
 
       this.setRank();
-      await createTraversalOfNodes(this.defaultNodes, this.groupNodes);
+      await createTraversalOfNodes(this.allNodes);
       for (const edited of editedTexts) {
         switch (edited.idParts[0]) {
           case "dashboard":

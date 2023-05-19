@@ -14,6 +14,8 @@ import * as helpers from "./helperFunctions";
 import * as global from "./globalVariables";
 import { replacer } from "../../componentGraph/ComponentGraph";
 import { getTraversalElement } from "./createSettings";
+import { IDefaultNode } from "../../UI/nodes-canvas/nodes/defaultNode";
+import { IGroupNode } from "../../UI/nodes-canvas/nodes/groupNode";
 
 export let traversalStrategy: TraversalElement[] = [];
 export const lookedAtInGroup = createLookedAtInGroup();
@@ -531,30 +533,18 @@ export async function getTraversalElem(sNode: any) {
 }
 
 export async function createTraversalOfNodes(
-  defaultNodes: any[],
-  groupNodes: any[]
+  allNodes: (IDefaultNode | IGroupNode)[]
 ) {
   try {
     const trav: TraversalElement[] = [];
-    let groupNode = null;
-    for (const sNode of defaultNodes) {
-      if (groupNode) {
-        if (sNode.pGrp?.id == groupNode.id) {
-        } else if (sNode.pGrp) {
-          groupNode = groupNodes.find((gNode) => gNode.id == sNode.pGrp.id);
-          const travElem = createTraversalElement("group");
-          travElem.element = await createTraversalOfGroupNodes(groupNode);
-          trav.push(travElem);
-        } else {
-          trav.push(await getTraversalElem(sNode));
-        }
-      } else if (sNode.pGrp) {
-        groupNode = groupNodes.find((gNode) => gNode.id == sNode.pGrp.id);
-        const travElem = createTraversalElement("group");
-        travElem.element = await createTraversalOfGroupNodes(groupNode);
-        trav.push(travElem);
+
+    for (const node of allNodes) {
+      if (node.type == "default") {
+        trav.push(await getTraversalElem(node));
       } else {
-        trav.push(await getTraversalElem(sNode));
+        const travElem = createTraversalElement("group");
+        travElem.element = await createTraversalOfGroupNodes(node);
+        trav.push(travElem);
       }
     }
     console.log("Trav", trav);
@@ -567,6 +557,7 @@ export async function createTraversalOfNodes(
 export async function updateTraversal(
   newTraversalStrategy: TraversalElement[]
 ) {
+  debugger;
   const traversal: TraversalElement[] = [];
   const oldTraversalStrategy = global.settings.traversalStrategy;
   setTraversalStrategy([]);
