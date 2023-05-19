@@ -1,12 +1,12 @@
 import { Node } from "reactflow";
-export interface IGroupNodeElements extends Node {
+export interface IGroupNode extends Node {
   nodes: Node[];
   id: string;
 }
 export default class GroupNode {
-  private groupNode: IGroupNodeElements;
+  private groupNode: IGroupNode;
 
-  constructor(gNode: IGroupNodeElements) {
+  constructor(gNode: IGroupNode) {
     this.groupNode = gNode;
   }
 

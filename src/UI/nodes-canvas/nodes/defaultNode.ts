@@ -1,6 +1,14 @@
 import { CSSProperties } from "react";
 import { Node } from "reactflow";
+import { IGroupNode } from "./groupNode";
+import { groupType } from "../../../onboarding/ts/traversal";
 
+export interface IDefaultNode extends Node {
+  rank?: number;
+  probability?: number;
+  group?: IGroupNode;
+  groupCategory?: groupType;
+}
 export default class DefaultNode {
   constructor() {}
 
