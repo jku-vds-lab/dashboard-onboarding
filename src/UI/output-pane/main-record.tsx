@@ -2,18 +2,12 @@ import React from "react";
 import { useReactMediaRecorder } from "react-media-recorder";
 
 export default function RecordView() {
-  const {
-    status,
-    startRecording,
-    stopRecording,
-    mediaBlobUrl,
-    previewStream,
-    error,
-  } = useReactMediaRecorder({
-    video: true,
-    audio: true,
-    screen: true,
-  });
+  const { status, startRecording, stopRecording, mediaBlobUrl, error } =
+    useReactMediaRecorder({
+      video: true,
+      audio: true,
+      screen: true,
+    });
 
   const handleDownload = () => {
     // Create a temporary <a> element
@@ -34,12 +28,7 @@ export default function RecordView() {
       <p>{status}</p>
       <div>
         {status === "idle" && (
-          <>
-            <button onClick={startRecording}>Start Recording</button>
-            {/* <button onClick={startRecording} disabled={!previewStream}>
-              Start Recording with Preview
-            </button> */}
-          </>
+          <button onClick={startRecording}>Start Recording</button>
         )}
         {status === "recording" && (
           <button onClick={stopRecording}>Stop Recording</button>
