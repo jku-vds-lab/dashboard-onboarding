@@ -7,6 +7,7 @@ import { editedTexts } from "../../onboarding/ts/globalVariables";
 import { resetVisualChanges } from "../../onboarding/ts/infoCards";
 import { resetDashboardChanges } from "../../onboarding/ts/dashboardInfoCard";
 import { resetFilterChanges } from "../../onboarding/ts/filterInfoCards";
+import OpenAI from "./main-open-ai";
 
 export default function StoryPane() {
   const saveAnnotationChanges = (e: any) => {
@@ -85,6 +86,7 @@ export default function StoryPane() {
         >
           Reset Text
         </div>
+        <OpenAI />
       </div>
     </div>
   );

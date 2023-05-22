@@ -15,6 +15,7 @@
     "d3": "^7.0.0",
     "lodash": "^4.17.21",
     "msal": "^1.4.1",
+    "openai": "^3.2.1",
     "powerbi-client": "^2.19.1",
     "powerbi-models": "^1.9.8",
     "powerbi-report-authoring": "^1.1.3",
