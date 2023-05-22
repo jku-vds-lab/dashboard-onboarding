@@ -1,15 +1,33 @@
+import React from "react";
 import { useReactMediaRecorder } from "react-media-recorder";
 
-export const RecordView = () => {
+export default function RecordView() {
   const { status, startRecording, stopRecording, mediaBlobUrl } =
-    useReactMediaRecorder({ video: true });
+    useReactMediaRecorder({ screen: true });
+
+  const handleDownload = () => {
+    // Create a temporary <a> element
+    const downloadLink = document.createElement("a");
+    downloadLink.href = mediaBlobUrl ?? "";
+    downloadLink.download = "screen-recording.mp4"; // Specify the file name and extension
+
+    // Trigger the download
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+
+    // Cleanup
+    document.body.removeChild(downloadLink);
+  };
 
   return (
     <div>
       <p>{status}</p>
       <button onClick={startRecording}>Start Recording</button>
       <button onClick={stopRecording}>Stop Recording</button>
+      {mediaBlobUrl && (
+        <button onClick={handleDownload}>Download Recording</button>
+      )}
       <video src={mediaBlobUrl} controls autoPlay loop />
     </div>
   );
-};
+}
