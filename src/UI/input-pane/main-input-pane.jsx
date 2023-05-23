@@ -1,7 +1,6 @@
-import Accordion from "react-bootstrap/Accordion";
 import TraversalPane from "./traversal-pane";
-import ComponentsPane from "./components-pane";
-import SubcomponentsPane from "./subcomponents-pane";
+import ComponentPane from "./component-pane";
+
 import {
   ResizeContent,
   ResizeHandleRight,
@@ -11,18 +10,10 @@ import "../assets/css/dashboard.scss";
 
 export default function InputPane() {
   return (
-    <ResizePanel
-      className="component-cont"
-      initialWidth={250}
-      maxWidth={400}
-      minWidth={250}
-    >
-      <ResizeContent>
-        <Accordion defaultActiveKey={["0"]} alwaysOpen>
-          <TraversalPane />
-          <ComponentsPane />
-          <SubcomponentsPane />
-        </Accordion>
+    <ResizePanel initialWidth={250} maxWidth={400} minWidth={250}>
+      <ResizeContent class="component-cont">
+        <TraversalPane />
+        <ComponentPane />
       </ResizeContent>
       <ResizeHandleRight className="resize">
         <div className="col-resize" />

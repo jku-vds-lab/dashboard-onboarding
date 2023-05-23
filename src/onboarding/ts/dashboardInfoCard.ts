@@ -10,6 +10,7 @@ import dataImg from "../assets/data.png";
 import bulletpointImg from "../assets/dot.png";
 import { createInfoCardButtons } from "./infoCards";
 import { currentId } from "./traversal";
+import { replacer } from "../../componentGraph/ComponentGraph";
 
 export function createDashboardInfoCard(count: number){
     global.setShowsDashboardInfo(true);
@@ -30,7 +31,7 @@ export function createDashboardInfoCard(count: number){
 function setDashboardTitle(dashboard: Dashboard, count:number){
     const title = dashboard.title.text;
 
-    const dashboardData = helpers.getDataWithId("dashboard", count);
+    const dashboardData = helpers.getDataWithId("dashboard", ["general"], count);
     if (!dashboardData) {
       return;
     }
@@ -65,7 +66,7 @@ export function getDashboardInfos(count: number){
     const images = dashboardInfo[0];
     const infos = dashboardInfo[1];
 
-    const dashboardData = helpers.getDataWithId("dashboard", count);
+    const dashboardData = helpers.getDataWithId("dashboard", ["general"], count);
     if (!dashboardData) {
       return;
     }
@@ -108,8 +109,11 @@ export function saveDashboardChanges(newInfo: string[], count: number){
     const dashboardInfo = getNewDashboardInfo(dashboard);
     const originalInfos = dashboardInfo[1];
 
-    const dashboardData = helpers.getDataWithId("dashboard", count);
+    const dashboardData = helpers.getDataWithId("dashboard", ["general"], count);
     if (!dashboardData) {
+        const editedElem = global.editedTexts.find(editedElem => editedElem.idParts[0] === "dashboard" && editedElem.count === count);
+        const index = global.editedTexts.indexOf(editedElem!);
+        global.editedTexts.splice(index, 1);
       return;
     }
 
@@ -135,6 +139,8 @@ export function saveDashboardChanges(newInfo: string[], count: number){
             dashboardData.changedInfos[i] = "";
         }
     }
+    
+    localStorage.setItem("settings", JSON.stringify(global.settings, replacer));
 }
 
 export async function resetDashboardChanges(count: number){
@@ -142,7 +148,16 @@ export async function resetDashboardChanges(count: number){
     const dashboardInfo = getNewDashboardInfo(dashboard);
     const originalInfos = dashboardInfo[1];
 
-    const dashboardData = helpers.getDataWithId("dashboard", count);
+    let info = originalInfos.join("\r\n");
+    info = info.replaceAll("<br>", " \n");
+    const textBox = document.getElementById("textBox")! as HTMLTextAreaElement; 
+    textBox.value = info;
+
+    const editedElem = global.editedTexts.find(editedElem => editedElem.idParts[0] === "dashboard" && editedElem.count === count);
+    const index = global.editedTexts.indexOf(editedElem!);
+    global.editedTexts.splice(index, 1);
+
+    const dashboardData = helpers.getDataWithId("dashboard", ["general"], count);
     if (!dashboardData) {
       return;
     }
@@ -156,4 +171,44 @@ export async function resetDashboardChanges(count: number){
             dashboardData.changedInfos.splice(i, 1);
         }
     }
+
+    localStorage.setItem("settings", JSON.stringify(global.settings, replacer));
+}
+
+export function getDashboardInfoInEditor(count: number){
+    let infos = [];
+
+    const editedElem = global.editedTexts.find(edited => edited.idParts[0] === "dashboard" && edited.idParts.length === 1);
+    
+    if(editedElem){
+        infos = editedElem.newInfos;
+    } else {
+        const dashboard = global.componentGraph.dashboard;
+        const dashboardInfo = getNewDashboardInfo(dashboard);
+        const dashboardInfos = dashboardInfo[1];
+
+        const dashboardData = helpers.getDataWithId("dashboard", ["general"], count);
+        if (!dashboardData) {
+            infos = dashboardInfos;
+        } else {
+            for (let i = 0; i < dashboardData.infoStatus.length; ++i) {
+                switch(dashboardData.infoStatus[i]){
+                    case global.infoStatus.original:
+                        infos.push(dashboardInfos[i]);
+                        break;
+                    case global.infoStatus.changed:
+                    case global.infoStatus.added:
+                        infos.push(dashboardData.changedInfos[i]);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+    }
+
+    let info = infos.join("\r\n");
+    info = info.replaceAll("<br>", " \n");
+    const textBox = document.getElementById("textBox")! as HTMLTextAreaElement; 
+    textBox.value = info;
 }

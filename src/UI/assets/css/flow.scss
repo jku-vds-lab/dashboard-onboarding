@@ -1,12 +1,13 @@
 $bg-dark: rgb(32,32,32);
 $bg-dark-1: rgb(83,83,83);
 $default-handle-color: rgb(158, 159, 160);
-$dashboard-color: rgb(233, 78, 127);
-$line-chart-color: rgb(27,158,119);
-$bar-chart-color: rgb(217,95,2);
-$kpi-color: rgb(117,112,179);
-$filter-color: rgb(231,41,138);
-$column-color: rgb(102,166,30);
+$dashboard-color: #4e91e9;
+$line-chart-color: #d95f02;
+$bar-chart-color: #1b9e77;
+$kpi-color: #7570b3;
+$filter-color: #e7298a;
+$globalFilter-color: #e25757;
+$column-color: #66a61e;
 $color-white: #f1f1f1;
 
 .empty{
@@ -19,6 +20,29 @@ $color-white: #f1f1f1;
 
 .react-flow__attribution {
   display: none;
+}
+
+div[class*="Dashboard"]{
+  background-color: #{$dashboard-color};
+}
+div[class*="Bar"]{
+  background-color: #{$bar-chart-color};
+}
+div[class*="Line"] {
+  background-color: #{$line-chart-color};
+}
+div[class*="KPI"] {
+
+  background-color: #{$kpi-color};
+}
+div[class*="Filter"] {
+  background-color: #{$filter-color};
+}
+div[class*="Column"] {
+  background-color: #{$column-color};
+}
+div[class*="GlobalFilter"] {
+  background-color: #{$globalFilter-color};
 }
 
 .box-node, .simple-node {
@@ -36,28 +60,10 @@ $color-white: #f1f1f1;
 
     .title {
       color: #ffffff;
-      font-size: 8px;
+      font-size: 7px;
       text-align: center;
       margin: 0;
     }
-  }
-  &.dashboard{
-    background-color: #{$dashboard-color};
-  }
-  &.Bar{
-    background-color: #{$bar-chart-color};
-  }
-  &.Line{
-    background-color: #{$line-chart-color};
-  }
-  &.KPI{
-    background-color: #{$kpi-color};
-  }
-  &.Filter{
-    background-color: #{$filter-color};
-  }
-  &.Column{
-    background-color: #{$column-color};
   }
 }
 
@@ -135,38 +141,19 @@ $color-white: #f1f1f1;
 }
 
 .dndnode {
-  padding: 4px;
-  border: 1px solid #1a192b;
-  margin-bottom: 10px;
+  // padding: 4px;
+  // border: 1px solid #1a192b;
+  // margin-bottom: 10px;
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: grab;
   background-color: #595959;
-  width: 100px;
-  height: 40px;
+  width: 130px;
+  height: 30px;
   border-radius: 4px;
   box-shadow: 0 0 4px #1a1717;
   font-size: small;
-
-  &.dashboard{
-    background-color: #{$dashboard-color};
-  }
-  &.Bar{
-    background-color: #{$bar-chart-color};
-  }
-  &.Line{
-    background-color: #{$line-chart-color};
-  }
-  &.KPI{
-    background-color: #{$kpi-color};
-  }
-  &.Filter{
-    background-color: #{$filter-color};
-  }
-  &.Column{
-    background-color: #{$column-color};
-  }
 }
 
 
@@ -225,4 +212,17 @@ $color-white: #f1f1f1;
       background-color: rgba(255,255,255,0.2);
     }
   }
+}
+#traversal {
+  top: 95%;
+    left: 90%;
+    position: relative;
+}
+
+.btn-outline-info {
+  // background-color: #9e9fa0 !important;
+  z-index: 99999 !important;
+}
+.btn-outline-info:hover {
+  background-color: #d4cbcb !important;
 }

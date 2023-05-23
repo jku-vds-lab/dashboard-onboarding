@@ -4,6 +4,7 @@ import { createFilterDisabledArea, removeFrame } from "./disableArea";
 import Filter from "../../componentGraph/Filter";
 import { removeElement } from "./elements";
 import { createInfoCardButtons } from "./infoCards";
+import { replacer } from "../../componentGraph/ComponentGraph";
 
 export async function createFilterInfoCard(count: number){
     createFilterDisabledArea();
@@ -13,7 +14,7 @@ export async function createFilterInfoCard(count: number){
 
     helpers.createCloseButton("closeButton", "closeButtonPlacementBig", "", helpers.getCloseFunction(), "filterInfoCard");
 
-    const filterData = helpers.getDataWithId("globalFilter", count);
+    const filterData = helpers.getDataWithId("globalFilter", ["general"], count);
     if (!filterData) {
       return;
     }
@@ -55,7 +56,7 @@ export function getFilterDescription(filter: Filter){
 export async function getFilterInfos(count: number){
     const filterInfos = await helpers.getFilterInfo();
 
-    const filterData = helpers.getDataWithId("globalFilter", count);
+    const filterData = helpers.getDataWithId("globalFilter", ["general"], count);
     if (!filterData) {
       return;
     }
@@ -87,8 +88,11 @@ export function removeFilterInfoCard(){
 export async function saveFilterChanges(newInfo: string[], count:number){
     const filterInfos = await helpers.getFilterInfo();
 
-    const filterData = helpers.getDataWithId("globalFilter", count);
+    const filterData = helpers.getDataWithId("globalFilter", ["general"], count);
     if (!filterData) {
+        const editedElem = global.editedTexts.find(editedElem => editedElem.idParts[0] === "globalFilter" && editedElem.count === count);
+        const index = global.editedTexts.indexOf(editedElem!);
+        global.editedTexts.splice(index, 1);
       return;
     }
 
@@ -114,12 +118,23 @@ export async function saveFilterChanges(newInfo: string[], count:number){
             filterData.changedFilterInfos[i] = "";
         }
     }
+
+    localStorage.setItem("settings", JSON.stringify(global.settings, replacer));
 }
 
 export async function resetFilterChanges(count: number){
     const filterInfos = await helpers.getFilterInfo();
 
-    const filterData = helpers.getDataWithId("globalFilter", count);
+    let info = filterInfos.join("\r\n");
+    info = info.replaceAll("<br>", " \n");
+    const textBox = document.getElementById("textBox")! as HTMLTextAreaElement; 
+    textBox.value = info;
+
+    const editedElem = global.editedTexts.find(editedElem => editedElem.idParts[0] === "globalFilter" && editedElem.count === count);
+    const index = global.editedTexts.indexOf(editedElem!);
+    global.editedTexts.splice(index, 1);
+
+    const filterData = helpers.getDataWithId("globalFilter", ["general"], count);
     if (!filterData) {
       return;
     }
@@ -133,4 +148,42 @@ export async function resetFilterChanges(count: number){
             filterData.changedFilterInfos.splice(i, 1);
         }
     }
+
+    localStorage.setItem("settings", JSON.stringify(global.settings, replacer));
+}
+
+export async function getFilterInfoInEditor(count: number){
+    let infos = [];
+
+    const editedElem = global.editedTexts.find(edited => edited.idParts[0] === "globalFilter" && edited.idParts.length === 1);
+    
+    if(editedElem){
+        infos = editedElem.newInfos;
+    } else {
+        const filterInfos = await helpers.getFilterInfo();
+
+        const filterData = helpers.getDataWithId("globalFilter", ["general"], count);
+        if (!filterData) {
+            infos = filterInfos;
+        } else {
+            for (let i = 0; i < filterData.filterInfosStatus.length; ++i) {
+                switch(filterData.filterInfosStatus[i]){
+                    case global.infoStatus.original:
+                        infos.push(filterInfos[i]);
+                        break;
+                    case global.infoStatus.changed:
+                    case global.infoStatus.added:
+                        infos.push(filterData.changedFilterInfos[i]);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+    }
+
+    let info = infos.join("\r\n");
+    info = info.replaceAll("<br>", " \n");
+    const textBox = document.getElementById("textBox")! as HTMLTextAreaElement; 
+    textBox.value = info;
 }

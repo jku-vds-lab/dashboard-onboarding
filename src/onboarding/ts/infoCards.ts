@@ -8,6 +8,7 @@ import { createVisualInfo } from "./visualInfo";
 import { createDashboardInfoCard, getNewDashboardInfo, removeDashboardInfoCard } from "./dashboardInfoCard";
 import { createGroupOverlay, createInformationCard, createLookedAtIds, currentId, getCurrentTraversalElementType, groupType, isGroup, lookedAtInGroup, setCurrentId, setTraversalInGroupIndex, setVisualInGroupIndex, TraversalElement, traversalInGroupIndex, traversalStrategy, updateLookedAt, visualInGroupIndex } from "./traversal";
 import { textSize } from "./sizes";
+import { replacer } from "../../componentGraph/ComponentGraph";
 
 export async function createInfoCard(visual: any, count: number, categories: string[]){
     disable.disableFrame();
@@ -31,7 +32,9 @@ export async function createInfoCard(visual: any, count: number, categories: str
 }
 
 export function createInfoCardButtons(id: string, categories: string[], count: number){
-    if(currentId === 0 && global.isGuidedTour){
+    if(currentId === 0 && currentId === global.settings.traversalStrategy.length-1 && global.isGuidedTour){
+        createCardButtonsWithGroup(id, categories, count, "", "close");
+    }else if(currentId === 0 && global.isGuidedTour){
         createCardButtonsWithGroup(id, categories, count, "", "next");
     } else if(currentId === global.settings.traversalStrategy.length-1 && global.isGuidedTour){
         createCardButtonsWithGroup(id, categories, count, "previous", "close");
@@ -55,33 +58,41 @@ export function createCardButtonsWithGroup(id: string, categories: string[], cou
             }
         }
 
-        if(index === 0){
+        if(index === travLength && index === 0){
+            createCardButtonsForLastGroupElement("", rightButton, traversalElem);
+        }else if(index === travLength){
+            createCardButtonsForLastGroupElement("previousInGroup", rightButton, traversalElem);
+        } else if(index === 0){
             helpers.createCardButtons("cardButtons", leftButton, "", "nextInGroup");
-        } else if(index === travLength){
-            if(global.explorationMode){
-                helpers.createCardButtons("groupButtons", "previousInGroup", "", "back to group");
-            } else {
-                if(traversalElem.type === groupType.onlyOne){
-                    helpers.createCardButtons("cardButtons", "previousInGroup", "", rightButton);
-                }else{
-                    let traversed = 0;
-                    for(const trav of traversalElem.visuals){ 
-                        if(trav.every((vis: TraversalElement) => lookedAtInGroup.elements.find(elem => elem.id === vis.element.id && elem.categories.every(category => vis.categories.includes(category)) && elem.count === vis.count))){
-                            traversed ++;
-                        }
-                    }
-                    if(traversed === traversalElem.visuals.length){
-                        helpers.createCardButtons("cardButtons", "previousInGroup", "", rightButton);
-                    } else {
-                        helpers.createCardButtons("groupButtons", "previousInGroup", "", "back to group");
-                    }
-                }
-            }
         } else {
-            helpers.createCardButtons("groupButtons", "previousInGroup", "", "nextInGroup");
+            helpers.createCardButtons("cardButtons", "previousInGroup", "", "nextInGroup");
         }
     } else {
         helpers.createCardButtons("cardButtons", leftButton, "", rightButton);
+    }
+}
+
+function createCardButtonsForLastGroupElement(leftButton: string, rightButton: string, traversalElem: any){
+    if(global.explorationMode){
+        helpers.createCardButtons("cardButtons", leftButton, "", "back to group");
+    } else {
+        if(traversalElem.type === groupType.onlyOne){
+            helpers.createCardButtons("cardButtons", leftButton, "", rightButton);
+        }else{
+            let traversed = 0;
+            for(const trav of traversalElem.visuals){ 
+                if(trav.every((vis: TraversalElement) => lookedAtInGroup.elements.find(elem => elem.id === vis.element.id && elem.categories.every(category => vis.categories.includes(category)) && elem.count === vis.count))){
+                    traversed ++;
+                }
+            }
+            if(traversed === traversalElem.visuals.length){
+                lookedAtInGroup.elements = [];
+                lookedAtInGroup.groupId = "";
+                helpers.createCardButtons("cardButtons", leftButton, "", rightButton);
+            } else {
+                helpers.createCardButtons("cardButtons", leftButton, "", "back to group");
+            }
+        }
     }
 }
 
@@ -160,67 +171,105 @@ export function previousInGroup(){
     }
 }
 
-export async function getVisualInfo(idParts: string[], count: number){
-    const info = [];
-    const visualData = helpers.getDataWithId(idParts[0], count);
-    if (!visualData) {
-      return;
+export async function getVisualInfoInEditor(idParts: string[], count: number){
+    let infos = [];
+    let editedElem = null;
+    if(idParts.length > 1){
+        editedElem =  global.editedTexts.find(edited => edited.idParts[0] === idParts[0] && edited.idParts[1] === idParts[1]);
+    }else{
+        editedElem = global.editedTexts.find(edited => edited.idParts[0] === idParts[0] && edited.idParts.length === 1);
     }
-    const visual = global.allVisuals.find(function (visual) {
-        return visual.name == visualData.id;
-    });
-    const visualInfos = await helpers.getVisualInfos(visual);
 
-    if(idParts.length > 1 && idParts[1] == "Insight"){
-      for (let i = 0; i < visualData.insightInfosStatus.length; ++i) {
-        switch(visualData.insightInfosStatus[i]){
-             case global.infoStatus.original:
-                 info.push(visualInfos.insightInfos[i]);
-                 break;
-             case global.infoStatus.changed:
-             case global.infoStatus.added:
-                 info.push(visualData.changedInsightInfos[i]);
-                 break;
-             default:
-                 break;
-        }
-      }
-    } else if(idParts.length > 1 && idParts[1] == "Interaction"){
-      for (let i = 0; i < visualData.interactionInfosStatus.length; ++i) {
-        switch(visualData.interactionInfosStatus[i]){
-             case global.infoStatus.original:
-                 info.push(visualInfos.interactionInfos[i]);
-                 break;
-             case global.infoStatus.changed:
-             case global.infoStatus.added:
-                 info.push(visualData.changedInteractionInfos[i]);
-                 break;
-             default:
-                 break;
-        }
-      }
+    if(editedElem){
+        infos = editedElem.newInfos;
     } else {
-      for (let i = 0; i < visualData.generalInfosStatus.length; ++i) {
-        switch(visualData.generalInfosStatus[i]){
-             case global.infoStatus.original:
-                 info.push(visualInfos.generalInfos[i]);
-                 break;
-             case global.infoStatus.changed:
-             case global.infoStatus.added:
-                 info.push(visualData.changedGeneralInfos[i]);
-                 break;
-             default:
-                 break;
+        const categories = [];
+        if(idParts.length > 1){
+            categories.push(idParts[1].toLowerCase());
+        } else {
+            categories.push("general");
         }
-      }
+        const visualData = helpers.getDataWithId(idParts[0], categories, count);
+        const visual = global.allVisuals.find(function (visual) {
+            return visual.name == idParts[0];
+        });
+        const visualInfos = await helpers.getVisualInfos(visual);
+        
+        if (!visualData) {
+            if (idParts.length > 1 && idParts[1] == "Insight") {
+                infos = visualInfos.insightInfos;
+            } else if (idParts.length > 1 && idParts[1] == "Interaction") {
+                infos = visualInfos.interactionInfos;
+            } else {
+                infos = visualInfos.generalInfos;
+            }
+        } else{
+            if(idParts.length > 1 && idParts[1] == "Insight"){
+                for (let i = 0; i < visualData.insightInfosStatus.length; ++i) {
+                  switch(visualData.insightInfosStatus[i]){
+                       case global.infoStatus.original:
+                            infos.push(visualInfos.insightInfos[i]);
+                           break;
+                       case global.infoStatus.changed:
+                       case global.infoStatus.added:
+                            infos.push(visualData.changedInsightInfos[i]);
+                           break;
+                       default:
+                           break;
+                  }
+                }
+            } else if(idParts.length > 1 && idParts[1] == "Interaction"){
+                for (let i = 0; i < visualData.interactionInfosStatus.length; ++i) {
+                    switch(visualData.interactionInfosStatus[i]){
+                        case global.infoStatus.original:
+                            infos.push(visualInfos.interactionInfos[i]);
+                            break;
+                        case global.infoStatus.changed:
+                        case global.infoStatus.added:
+                            infos.push(visualData.changedInteractionInfos[i]);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            } else {
+                for (let i = 0; i < visualData.generalInfosStatus.length; ++i) {
+                    switch(visualData.generalInfosStatus[i]){
+                        case global.infoStatus.original:
+                            infos.push(visualInfos.generalInfos[i]);
+                            break;
+                        case global.infoStatus.changed:
+                        case global.infoStatus.added:
+                            infos.push(visualData.changedGeneralInfos[i]);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+        }
+    
     }
-    return info;
+
+    let info = infos.join("\r\n");
+    info = info.replaceAll("<br>", " \n");
+    const textBox = document.getElementById("textBox")! as HTMLTextAreaElement; 
+    textBox.value = info;
 }
 
 export async function saveVisualChanges(newInfo: string[], idParts: string[], count: number){
-    const visualData = helpers.getDataWithId(idParts[0], count);
+    const categories = [];
+    if(idParts.length > 1){
+        categories.push(idParts[1].toLowerCase());
+    } else {
+        categories.push("general");
+    }
+    const visualData = helpers.getDataWithId(idParts[0], categories, count);
     if (!visualData) {
-      return;
+        const editedElem = global.editedTexts.find(editedElem => editedElem.idParts.every((idPart: string) => idParts.includes(idPart)) && editedElem.count === count);
+        const index = global.editedTexts.indexOf(editedElem!);
+        global.editedTexts.splice(index, 1);
+        return;
     }
     
     const originalInfo = await getOriginalVisualInfos(idParts);
@@ -277,7 +326,6 @@ export async function saveVisualChanges(newInfo: string[], idParts: string[], co
             }
         }
     } else {
-
         for (let i = 0; i < newInfo.length; ++i) {
             if(newInfo.length == 0 || newInfo == null){
                 visualData.generalInfosStatus[0] = "deleted";
@@ -302,6 +350,8 @@ export async function saveVisualChanges(newInfo: string[], idParts: string[], co
             }
         }
     }
+    
+    localStorage.setItem("settings", JSON.stringify(global.settings, replacer));
 }
 
 async function getOriginalVisualInfos(idParts: string[]){
@@ -320,12 +370,29 @@ async function getOriginalVisualInfos(idParts: string[]){
   }
 
 export async function resetVisualChanges(idParts: string[],count: number){
-    const visualData = helpers.getDataWithId(idParts[0], count);
-    if (!visualData) {
-      return;
+    const categories = [];
+    if(idParts.length > 1){
+        categories.push(idParts[1].toLowerCase());
+    } else {
+        categories.push("general");
     }
+
     const originalInfo = await getOriginalVisualInfos(idParts);
     if(!originalInfo){
+        return;
+    }
+
+    let info = originalInfo.join("\r\n");
+    info = info.replaceAll("<br>", " \n");
+    const textBox = document.getElementById("textBox")! as HTMLTextAreaElement; 
+    textBox.value = info;
+
+    const editedElem = global.editedTexts.find(editedElem => editedElem.idParts.every((idPart: string) => idParts.includes(idPart)) && editedElem.count === count);
+    const index = global.editedTexts.indexOf(editedElem!);
+    global.editedTexts.splice(index, 1);
+
+    const visualData = helpers.getDataWithId(idParts[0], categories, count);
+    if (!visualData) {
         return;
     }
 
@@ -360,4 +427,6 @@ export async function resetVisualChanges(idParts: string[],count: number){
             }
         }
     }
+
+    localStorage.setItem("settings", JSON.stringify(global.settings, replacer));
 }
