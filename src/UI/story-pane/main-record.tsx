@@ -25,20 +25,14 @@ export default function RecordView() {
 
   return (
     <div>
-      <p>{status}</p>
       <div>
-        {status === "idle" && (
-          <button onClick={startRecording}>Start Recording</button>
-        )}
-        {status === "recording" && (
-          <button onClick={stopRecording}>Stop Recording</button>
-        )}
-        {error && <div>{error}</div>}
+        <button onClick={startRecording}>Start Recording</button>
+        <button onClick={stopRecording}>Stop Recording</button>
       </div>
       {mediaBlobUrl && (
         <button onClick={handleDownload}>Download Recording</button>
       )}
-      <video src={mediaBlobUrl} controls autoPlay loop />
+      {/* <video src={mediaBlobUrl} controls autoPlay loop /> */}
     </div>
   );
 }

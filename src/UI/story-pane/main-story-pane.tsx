@@ -8,11 +8,13 @@ import { resetVisualChanges } from "../../onboarding/ts/infoCards";
 import { resetDashboardChanges } from "../../onboarding/ts/dashboardInfoCard";
 import { resetFilterChanges } from "../../onboarding/ts/filterInfoCards";
 import OpenAI from "./main-open-ai";
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
+import RecordView from "./main-record";
+import UploadVideo from "./main-upload-video";
 
-interface Props{
-  mainTrigger: number
-  traversal: any
+interface Props {
+  mainTrigger: number;
+  traversal: any;
 }
 
 export default function StoryPane(props: Props) {
@@ -69,20 +71,20 @@ export default function StoryPane(props: Props) {
 
   useEffect(() => {
     if (props.mainTrigger) {
-      console.log("q", props.traversal)
+      console.log("q", props.traversal);
       buildTraversal();
     }
-  }, [props.mainTrigger]);
+  }, [props.mainTrigger, props.traversal]);
 
   const buildTraversal = () => {
     setTrigger((trigger) => trigger + 1);
-  }
+  };
 
   return (
     <div id="canvas-container" className="canvas-cont" style={{ flexGrow: 1 }}>
       <div className="flow">
         <ReactFlowProvider>
-          <NodesCanvas trigger={trigger} traversal={props.traversal}/>
+          <NodesCanvas trigger={trigger} traversal={props.traversal} />
         </ReactFlowProvider>
       </div>
       <div id="annotation-box" className="text-end">
@@ -105,6 +107,8 @@ export default function StoryPane(props: Props) {
         >
           Reset Text
         </div>
+        <RecordView />
+        <UploadVideo />
         <OpenAI />
       </div>
     </div>
