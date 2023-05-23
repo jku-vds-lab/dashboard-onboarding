@@ -3,7 +3,7 @@ import { Configuration, OpenAIApi } from "openai";
 export default function OpenAI() {
   const configuration = new Configuration({
     organization: "org-UHILsVnnYBaXU6LsY8WtZjSU",
-    apiKey: "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",
+    apiKey: "",
   });
 
   const DEFAULT_PARAMS = {
