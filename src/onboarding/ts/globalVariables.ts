@@ -493,3 +493,31 @@ export function createTextareaAttributes() {
     parentId: "",
   };
 }
+
+export function createVideoAttributes() {
+  return {
+    id: "",
+    width: "",
+    controls: "true",
+    parentId: ""
+  };
+}
+
+export function createSourceAttributes() {
+  return {
+    id: "",
+    src: "",
+    type: "",
+    parentId: ""
+  };
+}
+
+export function createYoutubeVideoAttributes() {
+  return {
+    id: "",
+    width: "",
+    height: "100%",
+    src: "",
+    parentId: ""
+  };
+}

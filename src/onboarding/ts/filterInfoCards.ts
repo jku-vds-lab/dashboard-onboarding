@@ -1,5 +1,6 @@
 import * as helpers from "./helperFunctions";
 import * as global from "./globalVariables";
+import * as elements from "./elements";
 import { createFilterDisabledArea, removeFrame } from "./disableArea";
 import Filter from "../../componentGraph/Filter";
 import { removeElement } from "./elements";
@@ -24,18 +25,34 @@ export async function createFilterInfoCard(count: number){
     
     const filters = await getFilterInfos(count);
     if(filters){
-       createFilterList(filters, "contentText"); 
+       createFilterList(filters, "contentText", count); 
     }
 }
 
-export function createFilterList(list: string | any[], parentId: string){
-    const ul = document.createElement('ul');
-    document.getElementById(parentId)?.appendChild(ul);
+export function createFilterList(list: string | any[], parentId: string, count: number){
+    document.getElementById("contentText")!.innerHTML = "";
+    const visualData = helpers.getDataWithId("dashboard", ["general", "interaction", "insight"], count);
+    if(!visualData){
+        return;
+    }
+    switch(visualData.mediaType){
+        case "Video":
+            const videoAttributes = global.createYoutubeVideoAttributes();
+            videoAttributes.id = "video";
+            videoAttributes.width = global.infoCardWidth-60 + "px";
+            videoAttributes.src = visualData.videoURL;
+            videoAttributes.parentId = "contentText";
+            elements.createYoutubeVideo(videoAttributes);
+            break;
+        default:
+            const ul = document.createElement('ul');
+            document.getElementById(parentId)?.appendChild(ul);
 
-    for (let i = 0; i < list.length; ++i) {
-        const li = document.createElement('li');
-        li.innerHTML =  list[i];
-        ul.appendChild(li);
+            for (let i = 0; i < list.length; ++i) {
+                const li = document.createElement('li');
+                li.innerHTML =  list[i];
+                ul.appendChild(li);
+            }
     }
 }
 

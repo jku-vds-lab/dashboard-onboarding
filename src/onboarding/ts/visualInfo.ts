@@ -7,15 +7,26 @@ import { divisor } from "./sizes";
 
 export async function createVisualInfo(visual: any, count: number, categories: string[]){
     document.getElementById("contentText")!.innerHTML = "";
-    await info.createTabsWithContent(visual, count, categories);
-}
-
-export async function createTabsWithContent(visual: any, count: number, categories: string[]){
-    const visualInfos = await helpers.getVisualInfos(visual);  
     const visualData = helpers.getDataOfVisual(visual, count);
     if(!visualData){
         return;
     }
+    // switch(visualData.mediaType){
+    //     case "Video":
+            const videoAttributes = global.createYoutubeVideoAttributes();
+            videoAttributes.id = "video";
+            videoAttributes.width = global.infoCardWidth-60 + "px";
+            videoAttributes.src = "https://www.youtube.com/embed/V5sBTOhRuKY"//visualData.videoURL;
+            videoAttributes.parentId = "contentText";
+            elements.createYoutubeVideo(videoAttributes);
+            // break;
+    //     default:
+    //         await info.createTabsWithContent(visual, visualData, count, categories);
+    // }
+}
+
+export async function createTabsWithContent(visual: any, visualData: any, count: number, categories: string[]){
+    const visualInfos = await helpers.getVisualInfos(visual);  
 
     createTabs(categories);
 

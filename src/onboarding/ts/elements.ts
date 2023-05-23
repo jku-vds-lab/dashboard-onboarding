@@ -185,6 +185,31 @@ export function createTextarea(attributes: { id: any; class: any; style: any; va
     } 
 }
 
+export function createVideo(attributes: { id: any; width: any; controls: any; parentId: any; }){
+    const video = document.createElement('video');
+    video.id = attributes.id;
+    video.setAttribute("width", attributes.width); 
+    video.setAttribute("controls", attributes.controls); 
+    document.getElementById(attributes.parentId)?.appendChild(video);
+}
+
+export function createSource(attributes: { id: any; src: any; type:any; parentId: any; }){
+    const source = document.createElement('source');
+    source.id = attributes.id;
+    source.setAttribute("src", attributes.src);
+    source.setAttribute("type", attributes.type); 
+    document.getElementById(attributes.parentId)?.appendChild(source);
+}
+
+export function createYoutubeVideo(attributes: { id: any; width: any; height: any; src: any; parentId: any; }){
+    const video = document.createElement('iframe');
+    video.id = attributes.id;
+    video.setAttribute("width", attributes.width);
+    video.setAttribute("height", attributes.height); 
+    video.setAttribute("src", attributes.src); 
+    document.getElementById(attributes.parentId)?.appendChild(video);
+}
+
 export function removeElement(id: string){
     const elem = document.getElementById(id);
     if (elem){

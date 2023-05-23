@@ -1,5 +1,6 @@
 import * as helpers from "./helperFunctions";
 import * as global from "./globalVariables";
+import * as elements from "./elements";
 import { removeElement } from "./elements";
 import { disableAll } from "./disableArea";
 import Dashboard from "../../componentGraph/Dashboard";
@@ -53,10 +54,26 @@ function setDashboardTitle(dashboard: Dashboard, count:number){
 }
 
 function setDashboardInfos(count: number){
-    const dashboardInfos = getDashboardInfos(count);
-    
-    if(dashboardInfos){
-        createInfoList(dashboardInfos[0], dashboardInfos[1], "contentText");
+    document.getElementById("contentText")!.innerHTML = "";
+    const visualData = helpers.getDataWithId("dashboard", ["general", "interaction", "insight"], count);
+    if(!visualData){
+        return;
+    }
+    switch(visualData.mediaType){
+        case "Video":
+            const videoAttributes = global.createYoutubeVideoAttributes();
+            videoAttributes.id = "video";
+            videoAttributes.width = global.infoCardWidth-60 + "px";
+            videoAttributes.src = visualData.videoURL;
+            videoAttributes.parentId = "contentText";
+            elements.createYoutubeVideo(videoAttributes);
+            break;
+        default:
+            const dashboardInfos = getDashboardInfos(count);
+            
+            if(dashboardInfos){
+                createInfoList(dashboardInfos[0], dashboardInfos[1], "contentText");
+            }
     }
 }
 
