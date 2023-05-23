@@ -8,11 +8,12 @@ import {
 } from "react-hook-resize-panel";
 import "../assets/css/dashboard.scss";
 
-export default function InputPane() {
+export default function InputPane(props) {
+
   return (
     <ResizePanel initialWidth={250} maxWidth={400} minWidth={250}>
       <ResizeContent class="component-cont">
-        <TraversalPane />
+        <TraversalPane  buildTraversal={() => props.buildTraversal()} setTrav={props.setTrav}/>
         <ComponentPane />
       </ResizeContent>
       <ResizeHandleRight className="resize">
