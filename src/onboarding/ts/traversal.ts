@@ -15,7 +15,7 @@ import * as global from "./globalVariables";
 import { replacer } from "../../componentGraph/ComponentGraph";
 import { getTraversalElement } from "./createSettings";
 import { IDefaultNode } from "../../UI/nodes-canvas/nodes/defaultNode";
-import { IGroupNode } from "../../UI/nodes-canvas/nodes/groupNode";
+import GroupNode, { IGroupNode } from "../../UI/nodes-canvas/nodes/groupNode";
 
 export let traversalStrategy: TraversalElement[] = [];
 export const lookedAtInGroup = createLookedAtInGroup();
@@ -497,10 +497,11 @@ function createExplainGroupText() {
   return explaination;
 }
 
-export async function createTraversalOfGroupNodes(groupNode: any) {
+export async function createTraversalOfGroupNodes(groupNode: IGroupNode) {
   const group = createGroup();
+
   try {
-    group.type = groupNode.type;
+    group.type = groupNode.data.traverse;
     for (const sNode of groupNode.nodes) {
       const traversalElem = await getTraversalElem(sNode);
       group.visuals.push([traversalElem]);
@@ -543,7 +544,7 @@ export async function createTraversalOfNodes(
         trav.push(await getTraversalElem(node));
       } else {
         const travElem = createTraversalElement("group");
-        travElem.element = await createTraversalOfGroupNodes(node);
+        travElem.element = await createTraversalOfGroupNodes(<IGroupNode>node);
         trav.push(travElem);
       }
     }
@@ -557,81 +558,84 @@ export async function createTraversalOfNodes(
 export async function updateTraversal(
   newTraversalStrategy: TraversalElement[]
 ) {
-  debugger;
-  const traversal: TraversalElement[] = [];
-  const oldTraversalStrategy = global.settings.traversalStrategy;
-  setTraversalStrategy([]);
-  global.settings.traversalStrategy = [];
-  localStorage.setItem("settings", JSON.stringify(global.settings, replacer));
+  try {
+    const traversal: TraversalElement[] = [];
+    const oldTraversalStrategy = global.settings.traversalStrategy;
+    setTraversalStrategy([]);
+    global.settings.traversalStrategy = [];
+    localStorage.setItem("settings", JSON.stringify(global.settings, replacer));
 
-  for (const elem of newTraversalStrategy) {
-    if (isGroup(elem.element)) {
-      const oldGroup = oldTraversalStrategy.find(
-        (elemSetting) =>
-          elemSetting.element.id === elem.element.id &&
-          elemSetting.categories.every((category) =>
-            elem.categories.includes(category)
-          ) &&
-          elemSetting.count === elem.count
-      );
-      if (oldGroup) {
-        const newTraversals = [];
-        for (const groupTraversal of elem.element.visuals) {
-          const newVisuals = [];
-          for (const groupElem of groupTraversal) {
-            const oldSetting = findElementInTraversal(
-              oldTraversalStrategy,
-              groupElem.element.id,
-              groupElem.categories,
-              groupElem.count
-            );
-            if (oldSetting) {
-              newVisuals.push(oldSetting);
-            } else {
-              const traversalElem = createTraversalElement("");
-              traversalElem.element = await getTraversalElement(
-                groupElem.element.id
+    for (const elem of newTraversalStrategy) {
+      if (isGroup(elem.element)) {
+        const oldGroup = oldTraversalStrategy.find(
+          (elemSetting) =>
+            elemSetting.element.id === elem.element.id &&
+            elemSetting.categories.every((category) =>
+              elem.categories.includes(category)
+            ) &&
+            elemSetting.count === elem.count
+        );
+        if (oldGroup) {
+          const newTraversals = [];
+          for (const groupTraversal of elem.element.visuals) {
+            const newVisuals = [];
+            for (const groupElem of groupTraversal) {
+              const oldSetting = findElementInTraversal(
+                oldTraversalStrategy,
+                groupElem.element.id,
+                groupElem.categories,
+                groupElem.count
               );
-              traversalElem.count = groupElem.count;
-              traversalElem.categories = groupElem.categories;
-              newVisuals.push(traversalElem);
+              if (oldSetting) {
+                newVisuals.push(oldSetting);
+              } else {
+                const traversalElem = createTraversalElement("");
+                traversalElem.element = await getTraversalElement(
+                  groupElem.element.id
+                );
+                traversalElem.count = groupElem.count;
+                traversalElem.categories = groupElem.categories;
+                newVisuals.push(traversalElem);
+              }
             }
+            newTraversals.push(newVisuals);
           }
-          newTraversals.push(newVisuals);
+          elem.element.visuals = newTraversals;
+          traversal.push(elem);
+        } else {
+          const traversalElem = createTraversalElement("");
+          traversalElem.element = await getTraversalElement(elem.element);
+          traversalElem.count = elem.count;
+          traversalElem.categories = elem.categories;
+          traversal.push(traversalElem);
         }
-        elem.element.visuals = newTraversals;
-        traversal.push(elem);
       } else {
-        const traversalElem = createTraversalElement("");
-        traversalElem.element = await getTraversalElement(elem.element);
-        traversalElem.count = elem.count;
-        traversalElem.categories = elem.categories;
-        traversal.push(traversalElem);
-      }
-    } else {
-      const oldSetting = oldTraversalStrategy.find(
-        (elemSetting) =>
-          elemSetting.element.id === elem.element.id &&
-          elemSetting.categories.every((category) =>
-            elem.categories.includes(category)
-          ) &&
-          elemSetting.count === elem.count
-      );
-      if (oldSetting) {
-        traversal.push(oldSetting);
-      } else {
-        const traversalElem = createTraversalElement("");
-        traversalElem.element = await getTraversalElement(elem.element.id);
-        traversalElem.count = elem.count;
-        traversalElem.categories = elem.categories;
-        traversal.push(traversalElem);
+        const oldSetting = oldTraversalStrategy.find(
+          (elemSetting) =>
+            elemSetting.element.id === elem.element.id &&
+            elemSetting.categories.every((category) =>
+              elem.categories.includes(category)
+            ) &&
+            elemSetting.count === elem.count
+        );
+        if (oldSetting) {
+          traversal.push(oldSetting);
+        } else {
+          const traversalElem = createTraversalElement("");
+          traversalElem.element = await getTraversalElement(elem.element.id);
+          traversalElem.count = elem.count;
+          traversalElem.categories = elem.categories;
+          traversal.push(traversalElem);
+        }
       }
     }
-  }
 
-  setTraversalStrategy(traversal);
-  global.settings.traversalStrategy = traversal;
-  localStorage.setItem("settings", JSON.stringify(global.settings, replacer));
+    setTraversalStrategy(traversal);
+    global.settings.traversalStrategy = traversal;
+    localStorage.setItem("settings", JSON.stringify(global.settings, replacer));
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 export function updateLookedAt(lookedAt: LookedAtIds) {

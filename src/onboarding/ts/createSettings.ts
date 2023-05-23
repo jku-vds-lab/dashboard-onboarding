@@ -97,30 +97,35 @@ function setDashboardInfo() {
 }
 
 async function setVisualsInfo(id: string) {
-  const visual = findTraversalVisual(id);
-  const settingsVisual = global.createVisual();
-  settingsVisual.id = visual.name;
-  const CGVisual = global.componentGraph.dashboard.visualizations.find(
-    (vis) => vis.id === visual.name
-  )!;
-  settingsVisual.title = CGVisual.title.text;
+  try {
+    const visual = findTraversalVisual(id);
+    const settingsVisual = global.createVisual();
+    settingsVisual.id = visual.name;
+    const CGVisual = global.componentGraph.dashboard.visualizations.find(
+      (vis) => vis.id === visual.name
+    )!;
+    settingsVisual.title = CGVisual.title.text;
 
-  const visualInfos = await helpers.getVisualInfos(visual);
+    const visualInfos = await helpers.getVisualInfos(visual);
 
-  for (let i = 0; i < visualInfos.generalInfos.length; ++i) {
-    settingsVisual.generalInfosStatus.push("original");
-    settingsVisual.changedGeneralInfos.push("");
-  }
-  for (let i = 0; i < visualInfos.interactionInfos.length; ++i) {
-    settingsVisual.interactionInfosStatus.push("original");
-    settingsVisual.changedInteractionInfos.push("");
-  }
-  for (let i = 0; i < visualInfos.insightInfos.length; ++i) {
-    settingsVisual.insightInfosStatus.push("original");
-    settingsVisual.changedInsightInfos.push("");
-  }
+    for (let i = 0; i < visualInfos.generalInfos.length; ++i) {
+      settingsVisual.generalInfosStatus.push("original");
+      settingsVisual.changedGeneralInfos.push("");
+    }
+    for (let i = 0; i < visualInfos.interactionInfos.length; ++i) {
+      settingsVisual.interactionInfosStatus.push("original");
+      settingsVisual.changedInteractionInfos.push("");
+    }
+    for (let i = 0; i < visualInfos.insightInfos.length; ++i) {
+      settingsVisual.insightInfosStatus.push("original");
+      settingsVisual.changedInsightInfos.push("");
+    }
 
-  return settingsVisual;
+    return settingsVisual;
+  } catch (error) {
+    debugger;
+    console.error(error);
+  }
 }
 
 async function setFilterInfo() {

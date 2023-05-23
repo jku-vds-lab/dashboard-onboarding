@@ -17,6 +17,7 @@ export class TraversalOrder {
   constructor() {
     this.defaultNodes = [];
     this.groupNodes = [];
+    this.allNodes = [];
     this.groupId = 99; // new ids for new possible groups
   }
   setRank() {
