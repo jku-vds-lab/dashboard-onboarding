@@ -26,39 +26,41 @@ export default function TraversalPane(props) {
   }
 
   return (
-    <Accordion.Item eventKey="0">
-      <Accordion.Header>Traversal strategies</Accordion.Header>
-      <Accordion.Body>
-        <Form>
-          <div key={`default-checkbox`} className="mb-3">
-            <Form.Check
+    <Accordion defaultActiveKey={["0"]}>
+      <Accordion.Item eventKey="0">
+        <Accordion.Button className="basic">Traversal strategies</Accordion.Button>
+        <Accordion.Body>
+          <Form>
+            <div key={`default-checkbox`} className="mb-3">
+              <Form.Check
+                  type="radio"
+                  name="traversal"
+                  id="custom"
+                  label="Custom"
+                  className="check-button"
+                  defaultChecked={checked}
+                  onClick={createCustomTrav}
+              />
+              <Form.Check
                 type="radio"
                 name="traversal"
-                id="custom"
-                label="Custom"
+                id="depth-first"
+                label="Depth First"
                 className="check-button"
-                defaultChecked={checked}
-                onClick={createCustomTrav}
-            />
-            <Form.Check
-              type="radio"
-              name="traversal"
-              id="depth-first"
-              label="Depth First"
-              className="check-button"
-              onClick={createDepthFirstTrav}
-            />
-            <Form.Check
-              type="radio"
-              name="traversal"
-              id="martiniGlass"
-              label="Martini Glass"
-              className="check-button"
-              onClick={createMartiniGlassTrav}
-            />
-          </div>
-        </Form>
-      </Accordion.Body>
+                onClick={createDepthFirstTrav}
+              />
+              <Form.Check
+                type="radio"
+                name="traversal"
+                id="martiniGlass"
+                label="Martini Glass"
+                className="check-button"
+                onClick={createMartiniGlassTrav}
+              />
+            </div>
+          </Form>
+        </Accordion.Body>
     </Accordion.Item>
+  </Accordion>
   );
 }

@@ -273,22 +273,20 @@ export default function NodesCanvas(props: Props) {
       console.log(elem)
         const visTitle = getTitle(elem);
         const visType = getType(visTitle);
-        const newNode = {
-            id: getID(elem),
-            type: "simple",
-            position: getPosition(position, index),
-            data: {
-              title: visTitle,
-              type: visType,
-            },
-          };
-          console.log(newNode)
+        const newNode = defaultNode().getNode(
+          event,
+          visType,
+          getID(elem),
+          "default",
+          getPosition(position, index),
+          visTitle
+        );
         setNodes((nds) => nds.concat(newNode));
     } 
 
     function getPosition(position:any, index:number){
       const offset = index * 35; 
-      let pos = {
+      const pos = {
         x: position.x,
         y: position.y + offset,
       }
