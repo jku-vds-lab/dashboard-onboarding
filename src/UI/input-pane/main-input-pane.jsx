@@ -13,7 +13,7 @@ export default function InputPane(props) {
   return (
     <ResizePanel initialWidth={250} maxWidth={400} minWidth={250}>
       <ResizeContent class="component-cont">
-        <TraversalPane buildTraversal={() => props.buildTraversal()} setTrav={props.setTrav}/>
+        <TraversalPane/>
         <ComponentPane />
       </ResizeContent>
       <ResizeHandleRight className="resize">
