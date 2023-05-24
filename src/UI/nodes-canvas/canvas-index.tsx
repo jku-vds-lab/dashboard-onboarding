@@ -32,20 +32,38 @@ interface Props{
 }
 
 export default function NodesCanvas(props: Props) {
-  const initialNodes: Node[] = [];
+  const defaultNode = useCallback(() => {
+    return new DefaultNode();
+  }, []);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const initialNodes: Node[] = createIntitialNodes();
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [setReactFlowInstance] = useState<ReactFlowInstance>();
   const reactFlowInstance = useReactFlow();
-  const [position, setPosition] = useState({ x: 0, y: 0 });
   const { getIntersectingNodes } = useReactFlow();
   const [nodeData, setNodeData] = useState<Node>();
   const [isOpen, setIsOpen] = useState(false);
   const reactFlowWrapper = useRef<HTMLInputElement>(null); // this could be the reason why we run into the initial worng position issue
   const [selectedNodes, setSelectedNodes] = useNodesState<null>([]);
   const [groupId] = useState({ id: 0 });
-  const defaultNode = useCallback(() => {
-    return new DefaultNode();
-  }, []);
+
+  function createIntitialNodes(){
+    const initialNodes: Node[] = [];
+    for(const { index, elem } of global.settings.traversalStrategy.map((elem:TraversalElement, index:number) => ({ index, elem }))){
+      const visTitle = getTitle(elem);
+      const visType = getType(visTitle);
+      const newNode = defaultNode().getNode(
+        event,
+        visType,
+        getID(elem),
+        "default",
+        getPositionForWholeTrav(position, index),
+        visTitle
+      );
+      initialNodes.push(newNode);
+    } 
+    return initialNodes;
+  }
 
   const getPosition = useCallback(
     (event: any) => {
@@ -279,96 +297,96 @@ export default function NodesCanvas(props: Props) {
           visType,
           getID(elem),
           "default",
-          getPosition(position, index),
+          getPositionForWholeTrav(position, index),
           visTitle
         );
         setNodes((nds) => nds.concat(newNode));
     } 
+}
 
-    function getPosition(position:any, index:number){
-      const offset = index * 35; 
-      const pos = {
-        x: position.x,
-        y: position.y + offset,
+function getPositionForWholeTrav(position:any, index:number){
+  const offset = index * 35; 
+  const pos = {
+    x: position.x,
+    y: position.y + offset,
+  }
+  return pos;
+}
+
+function getID(elem:TraversalElement){
+  let id = elem.element.id;
+  if(elem.categories.length === 1 && elem.categories[0] === "insight"){
+      id += " Insight";
+  }else if(elem.categories.length === 1 && elem.categories[0] === "interaction"){
+      id += " Interaction";
+  }
+
+  return id; 
+}
+
+function getType(title:string){
+  let type = title;
+  if(title === "Global Filters"){
+    type = "GlobalFilter";
+  }
+  return type;
+}
+
+function getTitle(elem:TraversalElement){
+    let visTitle = "";
+    switch(elem.element.id){
+        case "dashboard":
+            visTitle = "Dashboard";
+            break;
+        case "globalFilter":
+            visTitle = "Global Filters";
+            break;
+        default:
+            const vis = findTraversalVisual(elem.element.id);
+            visTitle = createNodeTitle(vis.type);
+            const itemLength = checkDuplicateComponents(vis.type);
+            if (itemLength > 1) {
+                visTitle = visTitle + " (" + vis.title + ")";
+            }
+    }
+    if(elem.categories.length === 1 && elem.categories[0] === "insight"){
+      visTitle += " Insight";
+    }else if(elem.categories.length === 1 && elem.categories[0] === "interaction"){
+      visTitle += " Interaction";
+    }
+
+    return visTitle;
+
+    function checkDuplicateComponents(visType:string) {
+        const componentItems = global.allVisuals.filter(function (visual) {
+          return visual.type == visType;
+        });
+        return componentItems.length;
       }
-      return pos;
+
+    function createNodeTitle(title:string, index = "") {
+    let newTitle = title;
+    switch (title) {
+        case "card":
+        newTitle = "KPI";
+        break;
+        case "slicer":
+        newTitle = "Filter";
+        break;
+        case "lineClusteredColumnComboChart":
+        newTitle = "Column Chart";
+        break;
+        case "clusteredBarChart":
+        newTitle = "Bar Chart";
+        break;
+        case "lineChart":
+        newTitle = "Line Chart";
+        break;
+        default:
+        newTitle = title;
     }
-
-    function getID(elem:TraversalElement){
-        let id = elem.element.id;
-        if(elem.categories.length === 1 && elem.categories[0] === "insight"){
-            id += " Insight";
-        }else if(elem.categories.length === 1 && elem.categories[0] === "interaction"){
-            id += " Interaction";
-        }
-
-        return id; 
-    }
-
-    function getType(title:string){
-      let type = title;
-      if(title === "Global Filters"){
-        type = "GlobalFilter";
-      }
-      return type;
-    }
-
-    function getTitle(elem:TraversalElement){
-        let visTitle = "";
-        switch(elem.element.id){
-            case "dashboard":
-                visTitle = "Dashboard";
-                break;
-            case "globalFilter":
-                visTitle = "Global Filters";
-                break;
-            default:
-                const vis = findTraversalVisual(elem.element.id);
-                visTitle = createNodeTitle(vis.type);
-                const itemLength = checkDuplicateComponents(vis.type);
-                if (itemLength > 1) {
-                    visTitle = visTitle + " (" + vis.title + ")";
-                }
-        }
-        if(elem.categories.length === 1 && elem.categories[0] === "insight"){
-          visTitle += " Insight";
-        }else if(elem.categories.length === 1 && elem.categories[0] === "interaction"){
-          visTitle += " Interaction";
-        }
-
-        return visTitle;
-
-        function checkDuplicateComponents(visType:string) {
-            const componentItems = global.allVisuals.filter(function (visual) {
-              return visual.type == visType;
-            });
-            return componentItems.length;
-          }
-
-        function createNodeTitle(title:string, index = "") {
-        let newTitle = title;
-        switch (title) {
-            case "card":
-            newTitle = "KPI";
-            break;
-            case "slicer":
-            newTitle = "Filter";
-            break;
-            case "lineClusteredColumnComboChart":
-            newTitle = "Column Chart";
-            break;
-            case "clusteredBarChart":
-            newTitle = "Bar Chart";
-            break;
-            case "lineChart":
-            newTitle = "Line Chart";
-            break;
-            default:
-            newTitle = title;
-        }
-        newTitle = newTitle + index;
-        return newTitle;
-        }
+    newTitle = newTitle + index;
+    return newTitle;
     }
 }
 
