@@ -11,18 +11,23 @@ export async function createVisualInfo(visual: any, count: number, categories: s
     if(!visualData){
         return;
     }
-    // switch(visualData.mediaType){
-    //     case "Video":
+    switch(visualData.mediaType){
+        case "Video":
+            const attributes = global.createDivAttributes();
+            attributes.id = "videoContainer";
+            attributes.style = "position: relative;padding-bottom: 56.25%;height: 0;";
+            attributes.parentId = "contentText";
+            elements.createDiv(attributes);
             const videoAttributes = global.createYoutubeVideoAttributes();
             videoAttributes.id = "video";
-            videoAttributes.width = global.infoCardWidth-60 + "px";
-            videoAttributes.src = "https://www.youtube.com/embed/V5sBTOhRuKY"//visualData.videoURL;
-            videoAttributes.parentId = "contentText";
+            videoAttributes.style = `position: absolute; top: 0; left: 0; width: 100%; height: 100%;`;
+            videoAttributes.src = visualData.videoURL; //"https://www.youtube.com/embed/V5sBTOhRuKY"
+            videoAttributes.parentId = "videoContainer";
             elements.createYoutubeVideo(videoAttributes);
-            // break;
-    //     default:
-    //         await info.createTabsWithContent(visual, visualData, count, categories);
-    // }
+            break;
+        default:
+            await info.createTabsWithContent(visual, visualData, count, categories);
+    }
 }
 
 export async function createTabsWithContent(visual: any, visualData: any, count: number, categories: string[]){

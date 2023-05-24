@@ -270,7 +270,6 @@ export default function NodesCanvas(props: Props) {
     };
 
     for(const { index, elem } of traversal.map((elem:TraversalElement, index:number) => ({ index, elem }))){
-      console.log(elem)
         const visTitle = getTitle(elem);
         const visType = getType(visTitle);
         const newNode = defaultNode().getNode(

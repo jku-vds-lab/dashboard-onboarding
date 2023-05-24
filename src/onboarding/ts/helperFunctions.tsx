@@ -39,7 +39,7 @@ import { IFilterColumnTarget, IFilterMeasureTarget } from "powerbi-models";
 import "powerbi-report-authoring";
 import { VisualDescriptor } from "powerbi-client";
 import lightbulbImg from "../assets/lightbulb.png";
-import ComponentGraph, { reviver } from "../../componentGraph/ComponentGraph";
+import ComponentGraph, { replacer, reviver } from "../../componentGraph/ComponentGraph";
 import Filter from "../../componentGraph/Filter";
 import { exportData } from "../../Provenance/utils";
 import * as sizes from "./sizes";
@@ -1201,4 +1201,16 @@ export function getLocalFilterText(visual: any) {
   const filterText = dataToStringNoConnection(filterTexts);
 
   return filterText;
+}
+
+export function saveInfoVideo(url: string, visId:string, categories: string[], count: number){
+  const visData = getDataWithId(visId, categories, count);
+  if (!visData) {
+    return;
+  }
+
+  visData.mediaType = global.mediaType.video;
+  visData.videoURL = url;
+  
+  localStorage.setItem("settings", JSON.stringify(global.settings, replacer));
 }

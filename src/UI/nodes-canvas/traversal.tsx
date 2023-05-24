@@ -130,6 +130,7 @@ export class TraversalOrder {
 
       this.setRank();
       await createTraversalOfNodes(this.allNodes);
+      //TODO update visuals with videos, saveInfoVideo(), when editor side is ready and we know when and with what to update
       for (const edited of editedTexts) {
         switch (edited.idParts[0]) {
           case "dashboard":

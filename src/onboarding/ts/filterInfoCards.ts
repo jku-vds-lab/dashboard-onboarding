@@ -31,17 +31,22 @@ export async function createFilterInfoCard(count: number){
 
 export function createFilterList(list: string | any[], parentId: string, count: number){
     document.getElementById("contentText")!.innerHTML = "";
-    const visualData = helpers.getDataWithId("dashboard", ["general", "interaction", "insight"], count);
+    const visualData = helpers.getDataWithId("globalFilter", ["general"], count);
     if(!visualData){
         return;
     }
     switch(visualData.mediaType){
         case "Video":
+            const attributes = global.createDivAttributes();
+            attributes.id = "videoContainer";
+            attributes.style = "position: relative;padding-bottom: 56.25%;height: 0;";
+            attributes.parentId = "contentText";
+            elements.createDiv(attributes);
             const videoAttributes = global.createYoutubeVideoAttributes();
             videoAttributes.id = "video";
-            videoAttributes.width = global.infoCardWidth-60 + "px";
-            videoAttributes.src = visualData.videoURL;
-            videoAttributes.parentId = "contentText";
+            videoAttributes.style = `position: absolute; top: 0; left: 0; width: 100%; height: 100%;`;
+            videoAttributes.src = visualData.videoURL; //"https://www.youtube.com/embed/V5sBTOhRuKY"
+            videoAttributes.parentId = "videoContainer";
             elements.createYoutubeVideo(videoAttributes);
             break;
         default:
@@ -100,7 +105,6 @@ export function removeFilterInfoCard(){
     removeElement("disabledLeft");
     removeFrame();
 }
-
 
 export async function saveFilterChanges(newInfo: string[], count:number){
     const filterInfos = await helpers.getFilterInfo();

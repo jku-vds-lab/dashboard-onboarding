@@ -62,6 +62,11 @@ export enum infoStatus {
   deleted = "deleted",
 }
 
+export enum mediaType {
+  video = "Video",
+  text = "Text"
+}
+
 export interface editedText {
   newInfos: string[];
   idParts: string[];
@@ -77,6 +82,8 @@ export interface ReportOffset {
 
 export interface DashboardInfo {
   id: string;
+  mediaType: mediaType;
+  videoURL: string;
   titleStatus: string;
   changedTitle: string;
   infoStatus: string[];
@@ -85,6 +92,8 @@ export interface DashboardInfo {
 
 export interface SettingsVisual {
   id: string;
+  mediaType: mediaType;
+  videoURL: string;
   title: string | undefined;
   disabled: boolean;
   generalInfosStatus: string[];
@@ -111,6 +120,8 @@ export interface Settings {
 
 export interface FilterVisual {
   id: string;
+  mediaType: mediaType;
+  videoURL: string;
   title: string | undefined;
   generalInformation: string | undefined;
   filterInfosStatus: string[];
@@ -156,6 +167,8 @@ export function createReportOffset() {
 export function createDashboardInfo() {
   const dashboardInfo: DashboardInfo = {
     id: "",
+    mediaType: mediaType.text,
+    videoURL: "",
     titleStatus: "",
     changedTitle: "",
     infoStatus: [],
@@ -167,6 +180,8 @@ export function createDashboardInfo() {
 export function createVisual() {
   return {
     id: "",
+    mediaType: mediaType.text,
+    videoURL: "",
     title: "",
     disabled: false,
     generalInfosStatus: [] as string[],
@@ -181,6 +196,8 @@ export function createVisual() {
 export function createFilterVisual() {
   return {
     id: "",
+    mediaType: mediaType.text,
+    videoURL: "",
     title: "",
     generalInformation: "",
     filterInfosStatus: [] as string[],
@@ -515,8 +532,7 @@ export function createSourceAttributes() {
 export function createYoutubeVideoAttributes() {
   return {
     id: "",
-    width: "",
-    height: "100%",
+    style: "",
     src: "",
     parentId: ""
   };

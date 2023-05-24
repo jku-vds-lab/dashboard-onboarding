@@ -201,11 +201,10 @@ export function createSource(attributes: { id: any; src: any; type:any; parentId
     document.getElementById(attributes.parentId)?.appendChild(source);
 }
 
-export function createYoutubeVideo(attributes: { id: any; width: any; height: any; src: any; parentId: any; }){
+export function createYoutubeVideo(attributes: { id: any; style:any, src: any; parentId: any; }){
     const video = document.createElement('iframe');
     video.id = attributes.id;
-    video.setAttribute("width", attributes.width);
-    video.setAttribute("height", attributes.height); 
+    video.style.cssText = attributes.style;
     video.setAttribute("src", attributes.src); 
     document.getElementById(attributes.parentId)?.appendChild(video);
 }
