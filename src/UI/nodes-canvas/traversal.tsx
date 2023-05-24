@@ -114,7 +114,7 @@ export class TraversalOrder {
   async onClick(props: any) {
     try {
       const storyNodes = props.nodes;
-
+      
       if (storyNodes.length > 0) {
         this.defaultNodes = storyNodes.filter((sNode: any) => {
           if (sNode.type == "default") {
@@ -148,6 +148,9 @@ export class TraversalOrder {
             break;
         }
       }
+      this.defaultNodes = [];
+      this.groupNodes = [];
+      this.allNodes = [];
     } catch (error) {
       console.log("Error: ", error);
     }

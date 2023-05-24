@@ -264,6 +264,8 @@ export default function NodesCanvas(props: Props) {
   }, [props.trigger]);
 
   function buildTraversal(traversal: any){
+    setNodes([]);
+
     const position = {
         x: 0,
         y: 50,
