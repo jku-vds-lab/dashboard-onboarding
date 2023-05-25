@@ -82,7 +82,7 @@ export default function StoryPane(props: Props) {
     <div id="canvas-container" className="canvas-cont" style={{ flexGrow: 1 }}>
       <div className="flow">
         <ReactFlowProvider>
-          <NodesCanvas trigger={trigger} traversal={props.traversal}/>
+          {/* <NodesCanvas trigger={trigger} traversal={props.traversal}/> */}
         </ReactFlowProvider>
       </div>
       <div id="annotation-box" className="text-end">
@@ -105,7 +105,6 @@ export default function StoryPane(props: Props) {
         >
           Reset Text
         </div>
-        <OpenAI />
       </div>
     </div>
   );

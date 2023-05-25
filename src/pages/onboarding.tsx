@@ -118,6 +118,7 @@ class Onboarding extends React.Component<AppProps, AppState> {
             // Triggers when a content schema is successfully loaded
            report.on("loaded", async function () {
                 onboarding.onLoadReport();
+                global.setIsLoaded(true);
                 console.log('Provectories report')
                 provectories(report);
             });

@@ -55,6 +55,8 @@ export let draggingStarted: boolean | null = false;
 
 export const editedTexts: editedText[] = [];
 
+export let isLoaded: boolean = false;
+
 export enum infoStatus {
   original = "original",
   changed = "changed",
@@ -372,6 +374,10 @@ export function setPlaceholderElement(newPlaceholderElement: HTMLDivElement) {
 }
 export function setDraggingStarted(newDraggingStarted: boolean) {
   draggingStarted = newDraggingStarted;
+}
+
+export function setIsLoaded(newIsLoaded: boolean) {
+  isLoaded = newIsLoaded;
 }
 
 export function createDivAttributes() {
