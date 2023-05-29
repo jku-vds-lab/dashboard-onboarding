@@ -1,0 +1,65 @@
+[
+    {
+      "title": "New Hires",
+      "explanation": {
+        "general": "This element is a card that displays the most important facts of a report. It summarizes the number of new hires.",
+        "dependencies": "This visual is not dependent on any other visual on the dashboard.",
+        "insight": "This visual provides an overview of the number of new hires."
+      },
+      "type": "card"
+    },
+    {
+      "title": "New Hires SPLY",
+      "explanation": {
+        "general": "This element is a card that displays the most important facts of a report. It summarizes the number of new hires in the same period last year.",
+        "dependencies": "This visual is not dependent on any other visual on the dashboard.",
+        "insight": "This visual provides an overview of the number of new hires in the same period last year."
+      },
+      "type": "card"
+    },
+    {
+      "title": "Region",
+      "explanation": {
+        "general": "This element is a slicer that acts as a filter for the report. It allows you to select a specific region to focus on.",
+        "dependencies": "This visual affects the 'New Hires and New Hires Same Period Last Year' visual by allowing you to filter by region.",
+        "insight": "This visual allows you to focus on a specific region and see how it affects the number of new hires."
+      },
+      "type": "slicer"
+    },
+    {
+      "title": "Ethnicity",
+      "explanation": {
+        "general": "This element is a slicer that acts as a filter for the report. It allows you to select a specific ethnicity to focus on.",
+        "dependencies": "This visual affects the 'New Hires and New Hires Same Period Last Year' visual by allowing you to filter by ethnicity.",
+        "insight": "This visual allows you to focus on a specific ethnicity and see how it affects the number of new hires."
+      },
+      "type": "slicer"
+    },
+    {
+      "title": "New Hires and New Hires Same Period Last Year",
+      "explanation": {
+        "general": "This element is a line clustered column combo chart that can combine lines and bars in one chart. It compares the number of new hires to the number of new hires in the same period last year.",
+        "dependencies": "This visual is affected by the 'Region' and 'Ethnicity' slicers, which allow you to filter by region and ethnicity. It affects the 'New Hires by Month and FPDesc' visual by allowing you to compare the number of new hires to the number of new hires in the same period last year.",
+        "insight": "This visual allows you to compare the number of new hires to the number of new hires in the same period last year and see how they have changed over time."
+      },
+      "type": "lineClusteredColumnComboChart"
+    },
+    {
+      "title": "New Hires by Month and FPDesc",
+      "explanation": {
+        "general": "This element is a line chart that shows the number of new hires by month and full-time/part-time status.",
+        "dependencies": "This visual is affected by the 'New Hires and New Hires Same Period Last Year' visual, which allows you to compare the number of new hires to the number of new hires in the same period last year. It affects the 'New Hires by Region and Ethnicity' visual by allowing you to filter by full-time/part-time status.",
+        "insight": "This visual allows you to see how the number of new hires varies by month and full-time/part-time status."
+      },
+      "type": "lineChart"
+    },
+    {
+      "title": "New Hires by Region and Ethnicity",
+      "explanation": {
+        "general": "This element is a clustered bar chart that shows the number of new hires by region and ethnicity.",
+        "dependencies": "This visual is affected by the 'New Hires by Month and FPDesc' visual, which allows you to filter by full-time/part-time status.",
+        "insight": "This visual allows you to see how the number of new hires varies by region and ethnicity."
+      },
+      "type": "clusteredBarChart"
+    }
+  ]

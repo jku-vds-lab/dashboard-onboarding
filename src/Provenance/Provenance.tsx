@@ -14,7 +14,7 @@ import { getComponentGraph } from "../componentGraph/ComponentGraph";
 import Visualization from "../componentGraph/Visualization";
 import { visuals } from "../componentGraph/ComponentGraph";
 import Filter from "../componentGraph/Filter";
-import { replace } from "lodash";
+import {setProvenanceTraversalStrategy, setProvenanceTraversalStrategyLLM} from "./traversal_prov"
 
 let restoring = false;
 
@@ -52,10 +52,10 @@ async function updateGraph(provenance:any, currentNode:any) {
       const newGlobalFilters = new Global_Filter();
       newGlobalFilters.setGlobalFilter();
       componentGraph.dashboard.global_filter = newGlobalFilters;
+      saveComponentGraph(componentGraph)
       const currentNodeState = provenance.getState(currentNode);
-      console.log('54 ', currentNodeState)
+      //console.log('CurrentState', currentNodeState)
       const vis_array = [];
-      // const oldComponentGraph = getComponentGraph();
       for (const vis of visuals) {
         const visualization = new Visualization();
         await visualization.setVisualData(vis);
@@ -124,7 +124,8 @@ async function updateGraph(provenance:any, currentNode:any) {
         }
       }
       saveComponentGraph(componentGraph);
-      console.log("COMP", componentGraph);
+      console.log("COMPONENT GRAPH", componentGraph);
+     
       return componentGraph
 }
 
@@ -142,7 +143,6 @@ const lastKnownLabel: Array<string> = ["none"];
  * @param newState: any
  */
 function moveStack(newState: any) {
-  //console.log("moveStack ", newState)
   stack[1] = stack[0];
   stack[0] = newState;
 }
@@ -165,7 +165,7 @@ export function setupProvenance(defaultState: IAppState): IAppProvenance {
   const compGraphs = {};
 
   function updateBookmarkMap(id: any, node:any, bookmark:any){
-    console.log('bookmark', id, bookmark, node)
+    //console.log('bookmark', id, bookmark, node)
     nodeBookmarkMap[id] = {
       node: node,
       bookmark: bookmark,
@@ -173,7 +173,6 @@ export function setupProvenance(defaultState: IAppState): IAppProvenance {
     bookmarksCopies[id] = {
       bookmark: bookmark.bookmark
     }
-    console.log(bookmarksCopies)
     localStorage.setItem('oldBookmarks', JSON.stringify(bookmarksCopies))
   }
   /**
@@ -182,7 +181,6 @@ export function setupProvenance(defaultState: IAppState): IAppProvenance {
   async function applyBookmark(bookmark_: any) {
     const { bookmark, report } = bookmark_;
     moveStack("_appliedBookmark");
-    console.log('97, ', bookmark, bookmark_)
     const s = await report.bookmarksManager.applyState(bookmark);
   }
   /**
@@ -193,11 +191,8 @@ export function setupProvenance(defaultState: IAppState): IAppProvenance {
       document.getElementById("provDiv")!,
       provenance,
       (newNode: NodeID) => {
-        //console.log('New node ', newNode)
-        console.log('108 ', nodeBookmarkMap, newNode, nodeBookmarkMap[newNode])
         const { node, bookmark } = nodeBookmarkMap[newNode];
         provenance.goToNode(node.id);
-        //console.log('captured state', nodeBookmarkMap[newNode].bookmark.bookmark)
         applyBookmark(bookmark);
         console.log("RESTORED GRAPH", graphMap[newNode].graph);
         saveComponentGraph(graphMap[newNode].graph);
@@ -228,6 +223,8 @@ export function setupProvenance(defaultState: IAppState): IAppProvenance {
       graph: any;
     }>
   ) => {
+
+    
     const odc = await onDashboardClick();
     const { newState, label, updateProv, bookmark, graph } = odc;
     const {eventType} = odc;
@@ -269,14 +266,12 @@ export function setupProvenance(defaultState: IAppState): IAppProvenance {
         usedLabel = lastKnownLabel[0];
       }
     }
-    //console.log("stack before ", stack)
     if (
       updateProv &&
       (dataChanged || renderedAfterSelection) &&
       stack[0] != "_appliedBookmark" &&
       eventType !== "loaded"
     ) {
-      //console.log('STATE LABEL::: ' + usedLabel)
       provenance.apply(
         {
           apply: () =>
@@ -322,11 +317,9 @@ export function setupProvenance(defaultState: IAppState): IAppProvenance {
         } else {
           oldBookmarks = JSON.parse(localStorage.getItem('oldBookmarks')!)
         }
-        console.log('Oldbookmarks ', oldBookmarks)
         const mapping: Record<string, string> = {};
         const visitedNodes: Array<string> = [];
         const rootNodeId = provenance.current.id;
-        console.log("Root id ", rootNodeId);
         const graph = JSON.parse(JSON.parse(
           localStorage.getItem("ProvenanceGraph")!,
           reviver
@@ -337,7 +330,6 @@ export function setupProvenance(defaultState: IAppState): IAppProvenance {
         let oldCurrentBookmark = null;
 
         const visit = (node: any, parentNode: any) => {
-          console.log('Visit', node, parent)
           if (node["id"] in visitedNodes) {
             return null;
           }
@@ -361,7 +353,6 @@ export function setupProvenance(defaultState: IAppState): IAppProvenance {
         
             
             if (node["id"] == oldCurrent){
-              console.log("Found old current")
               oldCurrentBookmark = bookmark
             }
           } else {
@@ -385,7 +376,6 @@ export function setupProvenance(defaultState: IAppState): IAppProvenance {
             const oldBm = {...bookmark}
             
             oldBm['bookmark'] = oldBookmarks[node["id"]]['bookmark']
-            console.log('oldBM', node["id"], oldBookmarks, oldBookmarks[node["id"]['bookmark']], oldBm)
             updateBookmarkMap(currentNode, provenance.current, oldBm)
             const provenance_current = provenance.current
            
@@ -403,7 +393,7 @@ export function setupProvenance(defaultState: IAppState): IAppProvenance {
             // };
             visitedNodes.push(node["id"])
             if (node["id"] == oldCurrent){
-              console.log("Found old current")
+              //console.log("Found old current")
               oldCurrentBookmark = oldBm
             }
           }
@@ -414,19 +404,11 @@ export function setupProvenance(defaultState: IAppState): IAppProvenance {
           }
 
         };
-        console.log('Loaded graph')
-        console.log(graph)
-        console.log(typeof graph)
-        console.log(graph["nodes"])
-        console.log('Reading root', graph["root"])
-        // console.log(graph['nodes'][graph['root']])
+        
         visit(graph['nodes'][graph['root']], null)
-        console.log("Old current bookmark", oldCurrentBookmark)
         applyBookmark(oldCurrentBookmark)
-        console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@', mapping[oldCurrent], oldCurrent)
         provenance.goToNode(mapping[oldCurrent])
         const res = () => {
-          console.log("Not restoring anymore")
           restoring = false
         }
         new Promise(r => setTimeout(r, 3000)).then(res);
@@ -460,6 +442,10 @@ export function setupProvenance(defaultState: IAppState): IAppProvenance {
 
     moveStack(eventType);
     prevState[0] = stateAsString;
+    const provNodes = JSON.parse(provenance.exportProvenanceGraph()).nodes;
+    console.log("PROVENANCE GRAPH", provNodes)
+    //setProvenanceTraversalStrategy(provNodes);
+    setProvenanceTraversalStrategyLLM(provNodes);
   };
   return {
     provenance,

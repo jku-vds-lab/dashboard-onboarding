@@ -1,0 +1,107 @@
+{
+  "layout": "This dashboard consists of 7 visuals and 8 global filters.",
+  "purpose": "The purpose of this dashboard is to allow an in-depth investigation of the New Hires statistics.",
+  "task": "The task of this dashboard is to show the New Hires statistics.",
+  "visuals": [
+    {
+      "description": "This element is a card. Cards display the most important facts of a report.",
+      "title": "New Hires",
+      "type": "card",
+      "task": "summarize",
+      "mark": "Value",
+      "attributes": ["New Hires"]
+    },
+    {
+      "description": "This element is a line clustered column combo chart. It can combine lines and bars in one chart.",
+      "title": "New Hires and New Hires Same Period Last Year",
+      "type": "lineClusteredColumnComboChart",
+      "task": "compare, lookup values and find trends",
+      "mark": "Line or Bar",
+      "attributes": ["Month", "New Hires", "New Hires SPLY"]
+    },
+    {
+      "description": "This element is a line chart.",
+      "title": "New Hires by Month and FPDesc",
+      "type": "lineChart",
+      "task": "show trends",
+      "mark": "Line",
+      "attributes": ["Month", "FPDesc", "New Hires"]
+    },
+    {
+      "description": "This element is a card. Cards display the most important facts of a report.",
+      "title": "New Hires SPLY",
+      "type": "card",
+      "task": "summarize",
+      "mark": "Value",
+      "attributes": ["New Hires SPLY"]
+    },
+    {
+      "description": "This element is a clusterd bar chart.",
+      "title": "New Hires by Region and Ethnicity",
+      "type": "clusteredBarChart",
+      "task": "show part-to-whole relationship, lookup values and find trends",
+      "mark": "Bar",
+      "attributes": ["Region", "VP", "Ethnicity", "New Hires"]
+    },
+    {
+      "description": "This element is a slicer. Slicers act as filters for the report.",
+      "title": "Region",
+      "type": "slicer",
+      "task": "discover, derive and explore",
+      "mark": "Value",
+      "attributes": ["Region"]
+    },
+    {
+      "description": "This element is a slicer. Slicers act as filters for the report.",
+      "title": "Ethnicity",
+      "type": "slicer",
+      "task": "discover, derive and explore",
+      "mark": "Value",
+      "attributes": ["Ethnicity"]
+    }
+  ],
+  "interactions": [
+    {
+      "sequence": [
+        ["Root", "Region (slicer) - Region: North selected"],
+        [
+          "Region (slicer) - Region: North selected",
+          "New Hires and New Hires Same Period Last Year (lineClusteredColumnComboChart) - Month: Apr, May, Jun, Jul, Aug, Sep, Apr, May, Jun, Jul, Aug, Sep selected"
+        ],
+        [
+          "Region (slicer) - Region: North selected",
+          "Ethnicity (slicer) - Ethnicity: Group G selected"
+        ],
+        [
+          "Region (slicer) - Region: North selected",
+          "New Hires and New Hires Same Period Last Year (lineClusteredColumnComboChart) - Month: Nov selected"
+        ],
+        [
+          "New Hires and New Hires Same Period Last Year (lineClusteredColumnComboChart) - Month: Nov selected",
+          "Ethnicity (slicer) - Ethnicity: Group A selected"
+        ],
+        ["Ethnicity (slicer) - Ethnicity: Group A selected", "Page Reloaded"],
+        [
+          "Ethnicity (slicer) - Ethnicity: Group G selected",
+          "New Hires and New Hires Same Period Last Year (lineClusteredColumnComboChart) - Month: Jun selected"
+        ],
+        [
+          "New Hires and New Hires Same Period Last Year (lineClusteredColumnComboChart) - Month: Jun selected",
+          "New Hires by Month and FPDesc (lineChart) - FPDesc: Part-Time selected"
+        ],
+        [
+          "New Hires and New Hires Same Period Last Year (lineClusteredColumnComboChart) - Month: Apr, May, Jun, Jul, Aug, Sep, Apr, May, Jun, Jul, Aug, Sep selected",
+          "New Hires by Month and FPDesc (lineChart) - FPDesc: Full-Time selected"
+        ],
+        [
+          "New Hires by Month and FPDesc (lineChart) - FPDesc: Full-Time selected",
+          "New Hires by Month and FPDesc (lineChart) - FPDesc: Part-Time selected"
+        ],
+        [
+          "New Hires by Month and FPDesc (lineChart) - FPDesc: Part-Time selected",
+          "New Hires by Region and Ethnicity (clusteredBarChart) - Region: North. Ethnicity: Group A selected"
+        ]
+      ]
+    }
+  ]
+}
