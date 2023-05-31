@@ -26,7 +26,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: npm ci --legacy-peer-deps
+    - run: npm install --legacy-peer-deps
     - run: npm run build --legacy-peer-deps --if-present
     - run: npm test --legacy-peer-deps
     - name: Deploy to GitHub Pages
