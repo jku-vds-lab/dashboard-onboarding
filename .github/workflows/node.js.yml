@@ -26,9 +26,9 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: npm ci
-    - run: npm run build --if-present
-    - run: npm test
+    - run: npm ci --legacy-peer-deps
+    - run: npm run build --legacy-peer-deps --if-present
+    - run: npm test --legacy-peer-deps
     - name: Deploy to GitHub Pages
       uses: crazy-max/ghaction-github-pages@v1
       with:

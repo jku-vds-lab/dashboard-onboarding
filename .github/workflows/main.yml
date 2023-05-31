@@ -23,8 +23,8 @@ jobs:
       -
         name: npm install and build
         run: |
-          npm ci
-          npm run build --if-present
+          npm ci --legacy-peer-deps
+          npm run build --legacy-peer-deps --if-present
         env:
           CI: true
 
