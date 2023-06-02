@@ -1,5 +1,6 @@
 {
   "name": "onboarding",
+  "homepage": "http://jku-vds-lab.at/dashboard-onboarding/",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
