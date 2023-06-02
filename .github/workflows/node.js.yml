@@ -32,8 +32,10 @@ jobs:
     - run: npm install --legacy-peer-deps
     - run: npm run build --legacy-peer-deps --if-present
     - name: Deploy to GitHub Pages
-      uses: crazy-max/ghaction-github-pages@v1
+      if: success()
+      uses: crazy-max/ghaction-github-pages@v3
       with:
-          build_dir: build
+        target_branch: gh-pages
+        build_dir: public
       env:
-          GITHUB_PAT: ${{ secrets.ACTIONS_DEPLOY_ACCESS_TOKEN  }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
