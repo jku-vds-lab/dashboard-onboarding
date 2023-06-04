@@ -8,8 +8,12 @@ import os
 import openai
 from pydantic_models import ComponentGraph
 from utils import *
+from graphs import *
 
-openai.api_key = os.environ["OPENAI_API_KEY"]
+# uvicorn main:app --reload
+
+
+openai.api_key = os.environ.get("OPENAI_API_KEY", "fake_key")
 FAKE_OAI_RESPONSE = True
 
 app = FastAPI()
@@ -30,7 +34,7 @@ app.add_middleware(
 def read_root():
     return {"Hello": "World"}
 
-@app.post("/provenance")
+@app.post("/provenance/chatgpt")
 def provenance(component_graph: ComponentGraph):
     # save component graph to a local json file
     
@@ -47,8 +51,22 @@ def provenance(component_graph: ComponentGraph):
     else:
         with open("chatgpt_onboarding_traversal.json", "r") as f:
             as_json = json.load(f)
-    order = []
     for v in as_json:
         type_ = lookup_type(v["title"], component_graph.visuals)
         v["type"] = type_
     return {"order": as_json}
+
+
+@app.post("/provenance/dfs")
+def provenance_dfs(component_graph: ComponentGraph):
+    # save component graph to a local json file
+    cg = component_graph.dict()
+    STRATEGY = "DFS" 
+    return get_traversal(cg, STRATEGY)
+
+@app.post("/provenance/bfs")
+def provenance_bfs(component_graph: ComponentGraph):
+    # save component graph to a local json file
+    cg = component_graph.dict()
+    STRATEGY = "BFS" # BFS or DFS
+    return get_traversal(cg, STRATEGY)

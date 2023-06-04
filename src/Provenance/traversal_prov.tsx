@@ -125,7 +125,8 @@ export async function setProvenanceTraversalStrategyLLM(prov: any){
         body["visuals"].push(visualElem);
     }
     body["interactions"] = [{"sequence":transitions}]
-    const resp = await fetch('http://localhost:8000/provenance', {
+    // endpoints:chatgpt, dfs, bfs
+    const resp = await fetch('http://localhost:8000/provenance/chatgpt', {
         method: 'POST',
         body: JSON.stringify(body),
         headers: {
@@ -134,13 +135,13 @@ export async function setProvenanceTraversalStrategyLLM(prov: any){
       });
     const data = await resp.json();
     const trav = [];
-
+    console.log('DATA ORDER', data.order)
     for (const val of data.order){
         const traversal_visual = visuals.filter(v => v.type === val.type && v.title == val.title)[0]
         const traversaElem = createTraversalElement(traversal_visual.type);
         traversaElem.element = await getTraversalElement(traversal_visual.name);
         trav.push(traversaElem);
     }
-    console.log('TRAVERSAL LLM STRATEGY', trav)
+    console.log('TRAVERSAL (LLM/DFS/BFS) STRATEGY', trav)
     return trav;
 }
