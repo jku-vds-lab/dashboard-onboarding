@@ -51,6 +51,7 @@ import {
   findCurrentTraversalVisualIndex,
   isGroup,
 } from "./traversal";
+import { reportId } from "../../Config";
 
 export function addContainerOffset(cardHeight: number) {
   const pageOffset = parseInt(
@@ -1214,4 +1215,10 @@ export function saveInfoVideo(url: string, visId:string, categories: string[], c
   visData.videoURL = url;
   
   localStorage.setItem("settings", JSON.stringify(global.settings, replacer));
+}
+
+export async function handelNewReport(){
+  if(global.settings.reportId !== reportId){
+    await createSettings();
+  }
 }

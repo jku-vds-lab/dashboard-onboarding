@@ -368,6 +368,7 @@ function getTitle(elem:TraversalElement){
     let newTitle = title;
     switch (title) {
         case "card":
+        case "multiRowCard":
         newTitle = "KPI";
         break;
         case "slicer":
@@ -378,6 +379,9 @@ function getTitle(elem:TraversalElement){
         break;
         case "clusteredBarChart":
         newTitle = "Bar Chart";
+        break;
+        case 'clusteredColumnChart':
+        newTitle = "ColumnChart";
         break;
         case "lineChart":
         newTitle = "Line Chart";

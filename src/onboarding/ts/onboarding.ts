@@ -53,6 +53,8 @@ export async function onLoadReport() {
   console.log(global.componentGraph);
   await helpers.getSettings();
 
+  await helpers.handelNewReport();
+
   const trav = await basicTraversalStrategy();
   global.setBasicTraversal(trav);
 

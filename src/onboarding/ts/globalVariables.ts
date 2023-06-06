@@ -120,6 +120,8 @@ export interface Settings {
   reportOffset: ReportOffset;
   traversalStrategy: TraversalElement[];
   interactionExample: InteractionExample;
+  allVisuals: string[];
+  reportId: string;
 }
 
 export interface FilterVisual {
@@ -154,6 +156,8 @@ export function createSettingsObject() {
     reportOffset: createReportOffset(),
     traversalStrategy: [] as TraversalElement[],
     interactionExample: createInteractionExample(),
+    allVisuals: [] as string [],
+    reportId: ""
   };
   return settings;
 }
