@@ -4,10 +4,11 @@ import * as elements from "./elements";
 import * as info from "./visualInfo";
 import bulletpointImg from "../assets/dot.png";
 import { divisor } from "./sizes";
+import { TraversalElement } from "./traversal";
 
-export async function createVisualInfo(visual: any, count: number, categories: string[]){
+export async function createVisualInfo(traversal: TraversalElement[], visual: any, count: number, categories: string[]){
     document.getElementById("contentText")!.innerHTML = "";
-    const visualData = helpers.getDataOfVisual(visual, count);
+    const visualData = helpers.getDataOfVisual(traversal, visual, count);
     if(!visualData){
         return;
     }

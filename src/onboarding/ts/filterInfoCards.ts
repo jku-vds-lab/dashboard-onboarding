@@ -6,6 +6,7 @@ import Filter from "../../componentGraph/Filter";
 import { removeElement } from "./elements";
 import { createInfoCardButtons } from "./infoCards";
 import { replacer } from "../../componentGraph/ComponentGraph";
+import { TraversalElement } from "./traversal";
 
 export async function createFilterInfoCard(count: number){
     createFilterDisabledArea();
@@ -15,23 +16,30 @@ export async function createFilterInfoCard(count: number){
 
     helpers.createCloseButton("closeButton", "closeButtonPlacementBig", "", helpers.getCloseFunction(), "filterInfoCard");
 
-    const filterData = helpers.getDataWithId("globalFilter", ["general"], count);
+    let traversal: TraversalElement[];
+    if(global.explorationMode){
+        traversal = global.basicTraversal;
+    } else {
+        traversal = global.settings.traversalStrategy;
+    }
+
+    const filterData = helpers.getDataWithId(traversal, "globalFilter", ["general", "interaction", "insight"], count);
     if (!filterData) {
       return;
     }
 
     helpers.createCardContent(filterData.title, filterData.generalInformation, "filterInfoCard");
-    createInfoCardButtons("globalFilter", [], count);
+    createInfoCardButtons(traversal, "globalFilter", [], count);
     
-    const filters = await getFilterInfos(count);
+    const filters = await getFilterInfos(traversal, count);
     if(filters){
-       createFilterList(filters, "contentText", count); 
+       createFilterList(traversal, filters, "contentText", count); 
     }
 }
 
-export function createFilterList(list: string | any[], parentId: string, count: number){
+export function createFilterList(traversal: TraversalElement[], list: string | any[], parentId: string, count: number){
     document.getElementById("contentText")!.innerHTML = "";
-    const visualData = helpers.getDataWithId("globalFilter", ["general"], count);
+    const visualData = helpers.getDataWithId(traversal, "globalFilter", ["general", "interaction", "insight"], count);
     if(!visualData){
         return;
     }
@@ -75,10 +83,10 @@ export function getFilterDescription(filter: Filter){
     return filter.attribute + ": " + filterText;
 }
 
-export async function getFilterInfos(count: number){
+export async function getFilterInfos(traversal: TraversalElement[], count: number){
     const filterInfos = await helpers.getFilterInfo();
 
-    const filterData = helpers.getDataWithId("globalFilter", ["general"], count);
+    const filterData = helpers.getDataWithId(traversal, "globalFilter", ["general", "interaction", "insight"], count);
     if (!filterData) {
       return;
     }
@@ -109,7 +117,7 @@ export function removeFilterInfoCard(){
 export async function saveFilterChanges(newInfo: string[], count:number){
     const filterInfos = await helpers.getFilterInfo();
 
-    const filterData = helpers.getDataWithId("globalFilter", ["general"], count);
+    const filterData = helpers.getDataWithId(global.settings.traversalStrategy, "globalFilter", ["general", "interaction", "insight"], count);
     if (!filterData) {
         const editedElem = global.editedTexts.find(editedElem => editedElem.idParts[0] === "globalFilter" && editedElem.count === count);
         const index = global.editedTexts.indexOf(editedElem!);
@@ -155,7 +163,7 @@ export async function resetFilterChanges(count: number){
     const index = global.editedTexts.indexOf(editedElem!);
     global.editedTexts.splice(index, 1);
 
-    const filterData = helpers.getDataWithId("globalFilter", ["general"], count);
+    const filterData = helpers.getDataWithId(global.settings.traversalStrategy, "globalFilter", ["general", "interaction", "insight"], count);
     if (!filterData) {
       return;
     }
@@ -183,7 +191,7 @@ export async function getFilterInfoInEditor(count: number){
     } else {
         const filterInfos = await helpers.getFilterInfo();
 
-        const filterData = helpers.getDataWithId("globalFilter", ["general"], count);
+        const filterData = helpers.getDataWithId(global.settings.traversalStrategy, "globalFilter", ["general", "interaction", "insight"], count);
         if (!filterData) {
             infos = filterInfos;
         } else {

@@ -37,27 +37,11 @@ export function createDiv(attributes: { id: any; categories: string[], count: nu
                 removeOnboardingOverlay();
                 removeContainerOffset();
                 removeExplainGroupCard();
-                setCurrentId(findVisualIndexInTraversal(attributes.id, attributes.count));
-                const currentElem = global.settings.traversalStrategy[currentId].element;
-                if(isGroup(currentElem)){
-                    const lookedAt = createLookedAtIds(attributes.id, attributes.categories, attributes.count);
-                    updateLookedAt(lookedAt);
-                    const elemInGroup = findElementInTraversal(global.settings.traversalStrategy, attributes.id, attributes.categories, attributes.count);
-                    if(attributes.id === "globalFilter"){
-                        createInformationCard("globalFilter", elemInGroup.count);
-                    } else {
-                        if(global.explorationMode){
-                            createInformationCard("visual", elemInGroup.count, undefined, elemInGroup.element.id, attributes.categories);
-                        } else {
-                            createInformationCard("visual", elemInGroup.count, undefined, elemInGroup.element.id, elemInGroup.categories);
-                        }
-                    }
-                } else{
-                    if(attributes.id === "globalFilter"){
-                        createInformationCard("globalFilter", 1);
-                    } else {
-                        createInformationCard("visual", 1, undefined, attributes.id, attributes.categories);
-                    }
+                setCurrentId(findVisualIndexInTraversal(global.basicTraversal, attributes.id, attributes.count));
+                if(attributes.id === "globalFilter"){
+                    createInformationCard("globalFilter", 1);
+                } else {
+                    createInformationCard("visual", 1, undefined, attributes.id, attributes.categories);
                 }
             }
         }  

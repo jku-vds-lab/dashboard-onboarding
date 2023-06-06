@@ -44,6 +44,7 @@ import Filter from "../../componentGraph/Filter";
 import { exportData } from "../../Provenance/utils";
 import * as sizes from "./sizes";
 import {
+  TraversalElement,
   createGroupOverlay,
   createInformationCard,
   findCurrentTraversalVisual,
@@ -532,8 +533,8 @@ export function getDataOfInteractionVisual(visual: any) {
   return visualData;
 }
 
-export function getDataOfVisual(visual: any, count: number) {
-  const traversalElements = global.settings.traversalStrategy;
+export function getDataOfVisual(traversal: TraversalElement[], visual: any, count: number) {
+  const traversalElements = traversal;
   let foundVisual;
   for (const elem of traversalElements) {
     if (isGroup(elem.element)) {
@@ -556,8 +557,8 @@ export function getDataOfVisual(visual: any, count: number) {
   return foundVisual?.element;
 }
 
-export function getDataWithId(ID: string, categories: string[], count: number) {
-  const traversalElements = global.settings.traversalStrategy;
+export function getDataWithId(traversal: TraversalElement[], ID: string, categories: string[], count: number) {
+  const traversalElements = traversal;
   let foundVisual;
   for (const elem of traversalElements) {
     if (isGroup(elem.element)) {
@@ -1204,7 +1205,7 @@ export function getLocalFilterText(visual: any) {
 }
 
 export function saveInfoVideo(url: string, visId:string, categories: string[], count: number){
-  const visData = getDataWithId(visId, categories, count);
+  const visData = getDataWithId(global.settings.traversalStrategy, visId, categories, count);
   if (!visData) {
     return;
   }

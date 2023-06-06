@@ -57,6 +57,8 @@ export const editedTexts: editedText[] = [];
 
 export let isLoaded: boolean = false;
 
+export let basicTraversal: TraversalElement[] = [];
+
 export enum infoStatus {
   original = "original",
   changed = "changed",
@@ -378,6 +380,10 @@ export function setDraggingStarted(newDraggingStarted: boolean) {
 
 export function setIsLoaded(newIsLoaded: boolean) {
   isLoaded = newIsLoaded;
+}
+
+export function setBasicTraversal(newBasicTraversal: TraversalElement[]) {
+  basicTraversal = newBasicTraversal;
 }
 
 export function createDivAttributes() {

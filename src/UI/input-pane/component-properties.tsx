@@ -173,9 +173,9 @@ export default function Components() {
       <div
         id={id + className}
         className={visClassName}
-        // onDragStart={(event) =>
-        //   onDragStart(event, "default", id, visType, visTitle)
-        // }
+        onDragStart={(event) =>
+          onDragStart(event, "default", id, visType, visTitle)
+        }
         draggable
       >
         {visDisplayTitle}
@@ -185,22 +185,22 @@ export default function Components() {
     return myDiv;
   }
 
-  // return inputNodes.map((iNode, nIndex) => {
-  //   let bClass = "emptysubcomponents";
-  //   if (iNode.subComponents) {
-  //     bClass = "components";
-  //   }
-  //   return (
-  //     <Accordion key={nIndex}>
-  //       <Accordion.Item eventKey="1">
-  //         <Accordion.Button className={bClass}>
-  //           {iNode.mainComponent}
-  //         </Accordion.Button>
-  //         {iNode.subComponents?.map((d, index) => (
-  //           <Accordion.Body key={index}>{d}</Accordion.Body>
-  //         ))}
-  //       </Accordion.Item>
-  //     </Accordion>
-  //   );
-  // });
+  return inputNodes.map((iNode, nIndex) => {
+    let bClass = "emptysubcomponents";
+    if (iNode.subComponents) {
+      bClass = "components";
+    }
+    return (
+      <Accordion key={nIndex}>
+        <Accordion.Item eventKey="1">
+          <Accordion.Button className={bClass}>
+            {iNode.mainComponent}
+          </Accordion.Button>
+          {iNode.subComponents?.map((d, index) => (
+            <Accordion.Body key={index}>{d}</Accordion.Body>
+          ))}
+        </Accordion.Item>
+      </Accordion>
+    );
+  });
 }
