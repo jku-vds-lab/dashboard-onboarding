@@ -114,7 +114,7 @@ export class TraversalOrder {
   async onClick(props: any) {
     try {
       const storyNodes = props.nodes;
-
+      
       if (storyNodes.length > 0) {
         this.defaultNodes = storyNodes.filter((sNode: any) => {
           if (sNode.type == "default") {
@@ -130,6 +130,7 @@ export class TraversalOrder {
 
       this.setRank();
       await createTraversalOfNodes(this.allNodes);
+      //TODO update visuals with videos, saveInfoVideo(), when editor side is ready and we know when and with what to update
       for (const edited of editedTexts) {
         switch (edited.idParts[0]) {
           case "dashboard":
@@ -147,6 +148,9 @@ export class TraversalOrder {
             break;
         }
       }
+      this.defaultNodes = [];
+      this.groupNodes = [];
+      this.allNodes = [];
     } catch (error) {
       console.log("Error: ", error);
     }
