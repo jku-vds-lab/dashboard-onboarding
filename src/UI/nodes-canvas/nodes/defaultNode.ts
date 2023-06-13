@@ -26,7 +26,7 @@ export default class DefaultNode {
     //nodeStyle.backgroundColor = this.getNodeBgColor(basicName);
 
     const newNode: Node = {
-      id,
+      id: id + " " + basicName,
       type,
       position,
       data: {
@@ -35,7 +35,7 @@ export default class DefaultNode {
       },
       style: nodeStyle,
       selectable: true,
-      className: 'node-'+basicName,
+      className: "node-" + basicName,
     };
     return newNode;
   }
@@ -108,7 +108,8 @@ export default class DefaultNode {
     } else {
       nodeName = event.target.getAttribute("data-id");
     }
-    document?.getElementById("textBox")?.setAttribute("nodeId", nodeName);
+    // document?.getElementById("textBox")?.setAttribute("nodeId", nodeName);
+    document?.getElementById("saveText")?.setAttribute("nodeId", nodeName);
 
     nameArray = nodeName?.split(" ");
     return nameArray;

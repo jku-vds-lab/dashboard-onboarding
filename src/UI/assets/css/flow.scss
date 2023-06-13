@@ -23,7 +23,7 @@ $color-white: #f1f1f1;
   display: none;
 }
 
-div[class*="Dashboard"]{
+div[data-id*="Dashboard"]{
   &:before{
     background-color: #{$dashboard-color};
   }
@@ -32,7 +32,7 @@ div[class*="Dashboard"]{
   }
 
 }
-div[class*="Bar"]{
+div[data-id*="Bar"]{
   &:before{
     background-color: #{$bar-chart-color};
   }
@@ -41,7 +41,7 @@ div[class*="Bar"]{
   }
   }
 
-div[class*="Line"] {
+div[data-id*="Line"] {
   &:before{
     background-color: #{$line-chart-color};
   }
@@ -49,7 +49,7 @@ div[class*="Line"] {
     background-image: url("../img/icon-2.png");
   }
 }
-div[class*="KPI"] {
+div[data-id*="KPI"] {
   &:before{
     background-color: #{$kpi-color};
   }
@@ -57,7 +57,7 @@ div[class*="KPI"] {
     background-image: url("../img/icon-5.png");
   }
 }
-div[class*="Filter"] {
+div[data-id*="Filter"] {
   &:before{
     background-color: #{$filter-color};
   }
@@ -65,7 +65,7 @@ div[class*="Filter"] {
     background-image: url("../img/icon-6.png");
   }
 }
-div[class*="Column"] {
+div[data-id*="Column"] {
   &:before{
     background-color: #{$column-color};
   }
@@ -73,7 +73,16 @@ div[class*="Column"] {
     background-image: url("../img/icon-3.png");
   }
 }
-div[class*="GlobalFilter"] {
+
+div[data-id*="dashboard"] {
+  &:before{
+    background-color: #{$column-color};
+  }
+  &:after{
+    background-image: url("../img/icon-3.png");
+  }
+}
+div[data-id*="GlobalFilter"] {
   &:before{
     background-color: #{$globalFilter-color};
   }
