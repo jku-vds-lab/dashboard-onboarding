@@ -37,27 +37,11 @@ export function createDiv(attributes: { id: any; categories: string[], count: nu
                 removeOnboardingOverlay();
                 removeContainerOffset();
                 removeExplainGroupCard();
-                setCurrentId(findVisualIndexInTraversal(attributes.id, attributes.count));
-                const currentElem = global.settings.traversalStrategy[currentId].element;
-                if(isGroup(currentElem)){
-                    const lookedAt = createLookedAtIds(attributes.id, attributes.categories, attributes.count);
-                    updateLookedAt(lookedAt);
-                    const elemInGroup = findElementInTraversal(global.settings.traversalStrategy, attributes.id, attributes.categories, attributes.count);
-                    if(attributes.id === "globalFilter"){
-                        createInformationCard("globalFilter", elemInGroup.count);
-                    } else {
-                        if(global.explorationMode){
-                            createInformationCard("visual", elemInGroup.count, undefined, elemInGroup.element.id, attributes.categories);
-                        } else {
-                            createInformationCard("visual", elemInGroup.count, undefined, elemInGroup.element.id, elemInGroup.categories);
-                        }
-                    }
-                } else{
-                    if(attributes.id === "globalFilter"){
-                        createInformationCard("globalFilter", 1);
-                    } else {
-                        createInformationCard("visual", 1, undefined, attributes.id, attributes.categories);
-                    }
+                setCurrentId(findVisualIndexInTraversal(global.basicTraversal, attributes.id, attributes.count));
+                if(attributes.id === "globalFilter"){
+                    createInformationCard("globalFilter", 1);
+                } else {
+                    createInformationCard("visual", 1, undefined, attributes.id, attributes.categories);
                 }
             }
         }  
@@ -183,6 +167,30 @@ export function createTextarea(attributes: { id: any; class: any; style: any; va
     } else {
         parent?.appendChild(textarea);
     } 
+}
+
+export function createVideo(attributes: { id: any; width: any; controls: any; parentId: any; }){
+    const video = document.createElement('video');
+    video.id = attributes.id;
+    video.setAttribute("width", attributes.width); 
+    video.setAttribute("controls", attributes.controls); 
+    document.getElementById(attributes.parentId)?.appendChild(video);
+}
+
+export function createSource(attributes: { id: any; src: any; type:any; parentId: any; }){
+    const source = document.createElement('source');
+    source.id = attributes.id;
+    source.setAttribute("src", attributes.src);
+    source.setAttribute("type", attributes.type); 
+    document.getElementById(attributes.parentId)?.appendChild(source);
+}
+
+export function createYoutubeVideo(attributes: { id: any; style:any, src: any; parentId: any; }){
+    const video = document.createElement('iframe');
+    video.id = attributes.id;
+    video.style.cssText = attributes.style;
+    video.setAttribute("src", attributes.src); 
+    document.getElementById(attributes.parentId)?.appendChild(video);
 }
 
 export function removeElement(id: string){

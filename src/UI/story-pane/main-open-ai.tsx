@@ -44,5 +44,5 @@ export default function OpenAI() {
       console.error(error);
     });
 
-  return <div>Open AI</div>;
+  return <div></div>;
 }

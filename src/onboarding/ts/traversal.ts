@@ -135,7 +135,7 @@ export function createInformationCard(
       break;
     case "visual":
       createInfoCard(
-        currentVisuals.find((vis) => vis.name === visualId),
+        global.allVisuals.find((vis) => vis.name === visualId),
         count,
         categories!
       );
@@ -143,8 +143,8 @@ export function createInformationCard(
   }
 }
 
-export function getCurrentTraversalElementType() {
-  const currentElement = global.settings.traversalStrategy[currentId];
+export function getCurrentTraversalElementType(traversal: TraversalElement[]) {
+  const currentElement = traversal[currentId];
 
   if (isGroup(currentElement.element)) {
     const firstVisuals: TraversalElement[] = [];
@@ -197,13 +197,13 @@ export function createGroupOverlay() {
   createInformationCard("group", currentElement.count, firstVisuals, undefined);
 }
 
-export function findVisualIndexInTraversal(id: string, count: number) {
-  const elem = global.settings.traversalStrategy.find(
+export function findVisualIndexInTraversal(traversal: TraversalElement[], id: string, count: number) {
+  const elem = traversal.find(
     (vis) => vis.element.id === id && vis.count === count
   );
-  let index = global.settings.traversalStrategy.indexOf(elem!);
+  let index = traversal.indexOf(elem!);
   if (index == -1) {
-    const groups = global.settings.traversalStrategy.filter((object) =>
+    const groups = traversal.filter((object) =>
       isGroup(object.element)
     );
     for (const group of groups) {
@@ -213,11 +213,11 @@ export function findVisualIndexInTraversal(id: string, count: number) {
             visInGroup.element.id === id && visInGroup.count === count
         );
         if (elemInGroup) {
-          const groupElem = global.settings.traversalStrategy.find(
+          const groupElem = traversal.find(
             (vis) =>
               vis.element.id === group.element.id && vis.count === group.count
           );
-          const groupIndex = global.settings.traversalStrategy.indexOf(
+          const groupIndex = traversal.indexOf(
             groupElem!
           );
           return groupIndex;
@@ -271,7 +271,14 @@ export function findTraversalVisual(id: string) {
 }
 
 export function findCurrentTraversalVisual() {
-  const traversalElem = global.settings.traversalStrategy[currentId];
+  let traversal: TraversalElement[];
+  if(global.explorationMode){
+      traversal = global.basicTraversal;
+  } else {
+      traversal = global.settings.traversalStrategy;
+  }
+
+  const traversalElem = traversal[currentId];
   if (isGroup(traversalElem)) {
     const trav = traversalElem.visuals[traversalInGroupIndex];
     const visInGroup = trav[visualInGroupIndex];
@@ -306,7 +313,14 @@ export function findCurrentTraversalCount() {
 }
 
 export function findCurrentTraversalVisualIndex() {
-  const traversalElem = global.settings.traversalStrategy[currentId].element;
+  let traversal: TraversalElement[];
+  if(global.explorationMode){
+      traversal = global.basicTraversal;
+  } else {
+      traversal = global.settings.traversalStrategy;
+  }
+
+  const traversalElem = traversal[currentId].element;
 
   if (
     !isGroup(traversalElem) &&

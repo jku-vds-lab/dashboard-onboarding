@@ -17,6 +17,8 @@ import { resetFilterChanges } from "../../onboarding/ts/filterInfoCards";
 import mediaIcon from "../assets/img/icon-7.png";
 import OpenAI from "./main-open-ai";
 import { useEffect, useState } from "react";
+import RecordView from "./main-record";
+import UploadVideo from "./main-upload-video";
 
 interface Props {
   mainTrigger: number;
@@ -152,6 +154,9 @@ export default function StoryPane(props: Props) {
             </div>
           </div>
         </div>
+        <RecordView />
+        <UploadVideo />
+        <OpenAI />
       </div>
     </div>
   );

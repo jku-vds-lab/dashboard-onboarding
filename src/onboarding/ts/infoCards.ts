@@ -25,26 +25,34 @@ export async function createInfoCard(visual: any, count: number, categories: str
         helpers.createCloseButton("closeButton", "closeButtonPlacementBig", "", helpers.getCloseFunction(), "infoCard");
     }
 
-    const visualData = helpers.getDataOfVisual(visual, count);
+    let traversal: TraversalElement[];
+    if(global.explorationMode){
+        traversal = global.basicTraversal;
+    } else {
+        traversal = global.settings.traversalStrategy;
+    }
+
+    const visualData = helpers.getDataOfVisual(traversal, visual, count);
     helpers.createCardContent(visualData?.title, "", "infoCard");
-    createInfoCardButtons(visual.name, categories, count);
-    await createVisualInfo(visual, count, categories);
+
+    createInfoCardButtons(traversal, visual.name, categories, count);
+    await createVisualInfo(traversal, visual, count, categories);
 }
 
-export function createInfoCardButtons(id: string, categories: string[], count: number){
-    if(currentId === 0 && currentId === global.settings.traversalStrategy.length-1 && global.isGuidedTour){
-        createCardButtonsWithGroup(id, categories, count, "", "close");
+export function createInfoCardButtons(traversal: TraversalElement[], id: string, categories: string[], count: number){
+    if(currentId === 0 && currentId === traversal.length-1 && global.isGuidedTour){
+        createCardButtonsWithGroup(traversal, id, categories, count, "", "close");
     }else if(currentId === 0 && global.isGuidedTour){
-        createCardButtonsWithGroup(id, categories, count, "", "next");
-    } else if(currentId === global.settings.traversalStrategy.length-1 && global.isGuidedTour){
-        createCardButtonsWithGroup(id, categories, count, "previous", "close");
+        createCardButtonsWithGroup(traversal, id, categories, count, "", "next");
+    } else if(currentId === traversal.length-1 && global.isGuidedTour){
+        createCardButtonsWithGroup(traversal, id, categories, count, "previous", "close");
     } else {
-        createCardButtonsWithGroup(id, categories, count, "previous", "next");
+        createCardButtonsWithGroup(traversal, id, categories, count, "previous", "next");
     }
 }
 
-export function createCardButtonsWithGroup(id: string, categories: string[], count: number, leftButton: string, rightButton: string){
-    const traversalElem = global.settings.traversalStrategy[currentId].element;
+export function createCardButtonsWithGroup(traversal: TraversalElement[], id: string, categories: string[], count: number, leftButton: string, rightButton: string){
+    const traversalElem = traversal[currentId].element;
     if(isGroup(traversalElem)){
         let index = 0;
         let travLength = 0;
@@ -106,29 +114,49 @@ export function removeInfoCard(){
 }
 
 export function nextInfoCard(){
-    if(currentId == global.settings.traversalStrategy.length-1){
-        setCurrentId(0);
+    if(global.explorationMode){
+        if(currentId == global.basicTraversal.length-1){
+            setCurrentId(0);
+        } else {
+            setCurrentId(currentId + 1);
+        } 
+
+        getCurrentTraversalElementType(global.basicTraversal);
     } else {
-        setCurrentId(currentId + 1);
-    } 
-
-    lookedAtInGroup.groupId = "";
-    lookedAtInGroup.elements = [];
-
-    getCurrentTraversalElementType();
+        if(currentId == global.settings.traversalStrategy.length-1){
+            setCurrentId(0);
+        } else {
+            setCurrentId(currentId + 1);
+        } 
+    
+        lookedAtInGroup.groupId = "";
+        lookedAtInGroup.elements = [];
+    
+        getCurrentTraversalElementType(global.settings.traversalStrategy);
+    }
 }
 
 export function previousInfoCard(){
-    if(currentId == 0){
-        setCurrentId(global.settings.traversalStrategy.length-1);
+    if(global.explorationMode){
+        if(currentId == 0){
+            setCurrentId(global.basicTraversal.length-1);
+        } else {
+            setCurrentId(currentId - 1);
+        }
+    
+        getCurrentTraversalElementType(global.basicTraversal); 
     } else {
-        setCurrentId(currentId - 1);
-    } 
-
-    lookedAtInGroup.groupId = "";
-    lookedAtInGroup.elements = [];
-
-    getCurrentTraversalElementType(); 
+        if(currentId == 0){
+            setCurrentId(global.settings.traversalStrategy.length-1);
+        } else {
+            setCurrentId(currentId - 1);
+        } 
+    
+        lookedAtInGroup.groupId = "";
+        lookedAtInGroup.elements = [];
+    
+        getCurrentTraversalElementType(global.settings.traversalStrategy); 
+    }
 }
 
 export function nextInGroup(){
@@ -189,7 +217,7 @@ export async function getVisualInfoInEditor(idParts: string[], count: number){
         } else {
             categories.push("general");
         }
-        const visualData = helpers.getDataWithId(idParts[0], categories, count);
+        const visualData = helpers.getDataWithId(global.settings.traversalStrategy, idParts[0], categories, count);
         const visual = global.allVisuals.find(function (visual) {
             return visual.name == idParts[0];
         });
@@ -264,7 +292,7 @@ export async function saveVisualChanges(newInfo: string[], idParts: string[], co
     } else {
         categories.push("general");
     }
-    const visualData = helpers.getDataWithId(idParts[0], categories, count);
+    const visualData = helpers.getDataWithId(global.settings.traversalStrategy, idParts[0], categories, count);
     if (!visualData) {
         const editedElem = global.editedTexts.find(editedElem => editedElem.idParts.every((idPart: string) => idParts.includes(idPart)) && editedElem.count === count);
         const index = global.editedTexts.indexOf(editedElem!);
@@ -391,7 +419,7 @@ export async function resetVisualChanges(idParts: string[],count: number){
     const index = global.editedTexts.indexOf(editedElem!);
     global.editedTexts.splice(index, 1);
 
-    const visualData = helpers.getDataWithId(idParts[0], categories, count);
+    const visualData = helpers.getDataWithId(global.settings.traversalStrategy, idParts[0], categories, count);
     if (!visualData) {
         return;
     }

@@ -4,18 +4,35 @@ import * as elements from "./elements";
 import * as info from "./visualInfo";
 import bulletpointImg from "../assets/dot.png";
 import { divisor } from "./sizes";
+import { TraversalElement } from "./traversal";
 
-export async function createVisualInfo(visual: any, count: number, categories: string[]){
+export async function createVisualInfo(traversal: TraversalElement[], visual: any, count: number, categories: string[]){
     document.getElementById("contentText")!.innerHTML = "";
-    await info.createTabsWithContent(visual, count, categories);
-}
-
-export async function createTabsWithContent(visual: any, count: number, categories: string[]){
-    const visualInfos = await helpers.getVisualInfos(visual);  
-    const visualData = helpers.getDataOfVisual(visual, count);
+    const visualData = helpers.getDataOfVisual(traversal, visual, count);
     if(!visualData){
         return;
     }
+    switch(visualData.mediaType){
+        case "Video":
+            const attributes = global.createDivAttributes();
+            attributes.id = "videoContainer";
+            attributes.style = "position: relative;padding-bottom: 56.25%;height: 0;";
+            attributes.parentId = "contentText";
+            elements.createDiv(attributes);
+            const videoAttributes = global.createYoutubeVideoAttributes();
+            videoAttributes.id = "video";
+            videoAttributes.style = `position: absolute; top: 0; left: 0; width: 100%; height: 100%;`;
+            videoAttributes.src = visualData.videoURL; //"https://www.youtube.com/embed/V5sBTOhRuKY"
+            videoAttributes.parentId = "videoContainer";
+            elements.createYoutubeVideo(videoAttributes);
+            break;
+        default:
+            await info.createTabsWithContent(visual, visualData, count, categories);
+    }
+}
+
+export async function createTabsWithContent(visual: any, visualData: any, count: number, categories: string[]){
+    const visualInfos = await helpers.getVisualInfos(visual);  
 
     createTabs(categories);
 
