@@ -25,20 +25,16 @@ export default function RecordView() {
 
   return (
     <div>
-      <p>{status}</p>
       <div>
-        {status === "idle" && (
-          <button onClick={startRecording}>Start Recording</button>
-        )}
-        {status === "recording" && (
-          <button onClick={stopRecording}>Stop Recording</button>
-        )}
-        {error && <div>{error}</div>}
+        <button onClick={startRecording}>Start Recording</button>
+        <button onClick={stopRecording}>Stop Recording</button>
       </div>
       {mediaBlobUrl && (
         <button onClick={handleDownload}>Download Recording</button>
       )}
-      <video src={mediaBlobUrl} controls autoPlay loop />
+      {/* <video src={mediaBlobUrl} controls autoPlay loop /> */}
     </div>
   );
 }
+
+// https://pro2future-my.sharepoint.com/:v:/g/personal/vaishali_dhanoa_pro2future_at/EePprVnwemtKsqcSQDbjG5wBm9-To0CJwUs1ybCfR3URJQ?e=DwO76U
