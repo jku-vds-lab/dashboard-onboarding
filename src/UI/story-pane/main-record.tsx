@@ -25,12 +25,12 @@ export default function RecordView() {
 
   return (
     <div>
-      <div>
-        <button onClick={startRecording}>Start Recording</button>
-        <button onClick={stopRecording}>Stop Recording</button>
+      <div id="recording">
+        <button id="startRecording" className="btn btn-secondary btn-xs d-flex justify-content-center align-items-center" onClick={startRecording}>Start Recording</button>
+        <button id="stopRecording" className="btn btn-secondary btn-xs d-flex justify-content-center align-items-center" onClick={stopRecording}>Stop Recording</button>
       </div>
       {mediaBlobUrl && (
-        <button onClick={handleDownload}>Download Recording</button>
+        <button className="btn btn-secondary btn-xs d-flex justify-content-center align-items-center" onClick={handleDownload}>Download Recording</button>
       )}
       {/* <video src={mediaBlobUrl} controls autoPlay loop /> */}
     </div>

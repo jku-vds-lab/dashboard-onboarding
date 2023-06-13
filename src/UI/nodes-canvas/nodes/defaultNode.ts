@@ -23,10 +23,10 @@ export default class DefaultNode {
     const basicName = this.getBasicName(event, visType);
     const nodeStyle = this.style();
 
-    nodeStyle.backgroundColor = this.getNodeBgColor(basicName);
+    //nodeStyle.backgroundColor = this.getNodeBgColor(basicName);
 
     const newNode: Node = {
-      id,
+      id: id + " " + basicName,
       type,
       position,
       data: {
@@ -35,11 +35,12 @@ export default class DefaultNode {
       },
       style: nodeStyle,
       selectable: true,
+      className: "node-" + basicName,
     };
     return newNode;
   }
 
-  getNodeBgColor(type: string) {
+  /*getNodeBgColor(type: string) {
     let color = "";
     switch (type) {
       case "Dashboard":
@@ -69,19 +70,23 @@ export default class DefaultNode {
     }
 
     return color;
-  }
+  }*/
 
   style() {
     const nodeStyle: CSSProperties = {
       display: "flex",
-      justifyContent: "center",
+      /*justifyContent: "center",*/
       alignItems: "center",
       cursor: "-moz-grab",
       width: "100px",
       height: "30px",
       borderRadius: "4px",
       boxShadow: "0 0 4px #1a1717",
-      fontSize: "10px",
+      fontSize: "8px",
+      textAlign: "left",
+      paddingLeft: "15px",
+      paddingRight: "25px",
+      lineHeight: "1.2",
     };
     return nodeStyle;
   }
@@ -103,7 +108,8 @@ export default class DefaultNode {
     } else {
       nodeName = event.target.getAttribute("data-id");
     }
-    document?.getElementById("textBox")?.setAttribute("nodeId", nodeName);
+    // document?.getElementById("textBox")?.setAttribute("nodeId", nodeName);
+    document?.getElementById("saveText")?.setAttribute("nodeId", nodeName);
 
     nameArray = nodeName?.split(" ");
     return nameArray;

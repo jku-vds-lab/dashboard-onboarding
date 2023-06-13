@@ -37,8 +37,8 @@ export default function UploadVideo() {
   }, [selectedFile]);
 
   return (
-    <div>
-      <input type="file" accept="video/*" onChange={handleFileChange} />
+    <div className="upload">
+      <input type="file" className="custom-file-input" accept="video/*" onChange={handleFileChange} />
     </div>
   );
 }
