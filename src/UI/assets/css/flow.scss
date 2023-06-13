@@ -298,5 +298,33 @@ div[data-id*="GlobalFilter"] {
   background-color: #d4cbcb !important;
 }
 
+.custom-file-input::file-selector-button{
+  color: #fff;
+  background-color: #6c757d;
+  border: solid;
+  border-color: #6c757d;
+  border-radius: 5px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  padding-left: 12px;
+  padding-right: 12px;
+}
+
+.upload{
+  padding: 5px;
+  border: 0.5px solid;
+  border-color: #6c757d;
+}
+
+#recording{
+  position:relative;
+  margin-bottom: 5px;
+}
+
+#stopRecording{
+  position: absolute;
+  top: 0px; right: 0px
+}
+
 
 

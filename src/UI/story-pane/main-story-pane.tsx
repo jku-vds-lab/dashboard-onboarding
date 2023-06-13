@@ -27,6 +27,7 @@ interface Props {
 
 export default function StoryPane(props: Props) {
   const [trigger, setTrigger] = useState(0);
+  const [showMediaOptions, setShowMediaOptions] = useState(false);
 
   const saveAnnotationChanges = (e: any) => {
     console.log(e);
@@ -85,6 +86,10 @@ export default function StoryPane(props: Props) {
     }
   };
 
+  const addMediaOptions = () =>{
+    setShowMediaOptions(true);
+  }
+
   useEffect(() => {
     if (props.mainTrigger) {
       console.log("q", props.traversal);
@@ -115,18 +120,23 @@ export default function StoryPane(props: Props) {
               aria-controls="collapseDesc"
             >
               Component description
-              <div className="btn-outline btn-xs d-flex justify-content-center align-items-center">
+              { showMediaOptions? 
+                <div>
+                  <RecordView />
+                  <UploadVideo />
+                </div>
+              :
+              <div className="btn btn-secondary btn-xs d-flex justify-content-center align-items-center" onClick={addMediaOptions}>
                 <img
-                  className="me-2"
-                  src={mediaIcon}
-                  width="20px"
-                  height="20px"
-                  alt="Add media icon"
+                className="me-2"
+                src={mediaIcon}
+                width="20px"
+                height="20px"
+                alt="Add media icon"
                 />
-                <RecordView />
-                <UploadVideo />
                 Add media
               </div>
+              }
             </button>
           </h2>
           <div
