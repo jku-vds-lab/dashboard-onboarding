@@ -105,7 +105,6 @@ export default function StoryPane(props: Props) {
         >
           Reset Text
         </div>
-        <OpenAI />
       </div>
     </div>
   );

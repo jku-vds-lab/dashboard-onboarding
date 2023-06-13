@@ -2,6 +2,25 @@ import { getTraversalElement } from "./createSettings";
 import { createTraversalElement, getStandartCategories } from "./traversal";
 import * as global from "./globalVariables";
 
+
+export async function basicTraversalStrategy() {
+    const trav = [];
+    const traversalElem = createTraversalElement("dashboard");
+    traversalElem.element = await getTraversalElement("dashboard");
+    trav.push(traversalElem);
+    for (const vis of global.allVisuals) {
+        const categories = getStandartCategories(vis.type);
+        const traversalElem2 = createTraversalElement(vis.type);
+        traversalElem2.element = await getTraversalElement(vis.name);
+        traversalElem2.categories = categories;
+        trav.push(traversalElem2);
+    }
+    const traversalElem1 = createTraversalElement("globalFilter");
+    traversalElem1.element = await getTraversalElement("globalFilter");
+    trav.push(traversalElem1);
+    return trav;
+}
+
 export async function depthFirstTraversalStrategy() {
     const trav = [];
     const traversalElem = createTraversalElement("dashboard");

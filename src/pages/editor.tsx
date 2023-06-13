@@ -4,7 +4,7 @@ import MainLayout from "../UI/main-layout";
 const Editor = () => {
   return (
     <div className="editor">
-      <MainLayout />
+      <MainLayout/>
     </div>
   );
 };

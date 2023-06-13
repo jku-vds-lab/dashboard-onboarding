@@ -39,6 +39,8 @@ export default function Components() {
   };
   inputNodes.push(inputNode);
 
+  
+  console.log("test", allVisuals)
   for (const vis of allVisuals) {
     let visTitle = createNodeTitle(vis.type);
     const visClassName = className + " " + visTitle;

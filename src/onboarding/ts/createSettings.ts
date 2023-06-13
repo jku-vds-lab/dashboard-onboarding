@@ -9,11 +9,17 @@ import {
   isGroup,
   traversalStrategy,
 } from "./traversal";
+import { VisualDescriptor } from "powerbi-client";
+import { reportId } from "../../Config";
 
 export async function createSettings() {
   const settings = global.createSettingsObject();
   settings.traversalStrategy = await setTraversalStrategy();
   settings.interactionExample = setInteractionExampleInfo();
+  settings.allVisuals = global.allVisuals.map((visual: VisualDescriptor) => {
+    return visual.name;
+  })
+  settings.reportId = reportId;
 
   global.setSettings(settings);
   localStorage.setItem("settings", JSON.stringify(global.settings, replacer));
