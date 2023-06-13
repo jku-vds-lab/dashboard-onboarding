@@ -39,17 +39,19 @@ import { IFilterColumnTarget, IFilterMeasureTarget } from "powerbi-models";
 import "powerbi-report-authoring";
 import { VisualDescriptor } from "powerbi-client";
 import lightbulbImg from "../assets/lightbulb.png";
-import ComponentGraph, { reviver } from "../../componentGraph/ComponentGraph";
+import ComponentGraph, { replacer, reviver } from "../../componentGraph/ComponentGraph";
 import Filter from "../../componentGraph/Filter";
 import { exportData } from "../../Provenance/utils";
 import * as sizes from "./sizes";
 import {
+  TraversalElement,
   createGroupOverlay,
   createInformationCard,
   findCurrentTraversalVisual,
   findCurrentTraversalVisualIndex,
   isGroup,
 } from "./traversal";
+import { reportId } from "../../Config";
 
 export function addContainerOffset(cardHeight: number) {
   const pageOffset = parseInt(
@@ -532,8 +534,8 @@ export function getDataOfInteractionVisual(visual: any) {
   return visualData;
 }
 
-export function getDataOfVisual(visual: any, count: number) {
-  const traversalElements = global.settings.traversalStrategy;
+export function getDataOfVisual(traversal: TraversalElement[], visual: any, count: number) {
+  const traversalElements = traversal;
   let foundVisual;
   for (const elem of traversalElements) {
     if (isGroup(elem.element)) {
@@ -556,8 +558,8 @@ export function getDataOfVisual(visual: any, count: number) {
   return foundVisual?.element;
 }
 
-export function getDataWithId(ID: string, categories: string[], count: number) {
-  const traversalElements = global.settings.traversalStrategy;
+export function getDataWithId(traversal: TraversalElement[], ID: string, categories: string[], count: number) {
+  const traversalElements = traversal;
   let foundVisual;
   for (const elem of traversalElements) {
     if (isGroup(elem.element)) {
@@ -1201,4 +1203,22 @@ export function getLocalFilterText(visual: any) {
   const filterText = dataToStringNoConnection(filterTexts);
 
   return filterText;
+}
+
+export function saveInfoVideo(url: string, visId:string, categories: string[], count: number){
+  const visData = getDataWithId(global.settings.traversalStrategy, visId, categories, count);
+  if (!visData) {
+    return;
+  }
+
+  visData.mediaType = global.mediaType.video;
+  visData.videoURL = url;
+  
+  localStorage.setItem("settings", JSON.stringify(global.settings, replacer));
+}
+
+export async function handelNewReport(){
+  if(global.settings.reportId !== reportId){
+    await createSettings();
+  }
 }

@@ -55,11 +55,20 @@ export let draggingStarted: boolean | null = false;
 
 export const editedTexts: editedText[] = [];
 
+export let isLoaded: boolean = false;
+
+export let basicTraversal: TraversalElement[] = [];
+
 export enum infoStatus {
   original = "original",
   changed = "changed",
   added = "added",
   deleted = "deleted",
+}
+
+export enum mediaType {
+  video = "Video",
+  text = "Text"
 }
 
 export interface editedText {
@@ -77,6 +86,8 @@ export interface ReportOffset {
 
 export interface DashboardInfo {
   id: string;
+  mediaType: mediaType;
+  videoURL: string;
   titleStatus: string;
   changedTitle: string;
   infoStatus: string[];
@@ -85,6 +96,8 @@ export interface DashboardInfo {
 
 export interface SettingsVisual {
   id: string;
+  mediaType: mediaType;
+  videoURL: string;
   title: string | undefined;
   disabled: boolean;
   generalInfosStatus: string[];
@@ -107,10 +120,14 @@ export interface Settings {
   reportOffset: ReportOffset;
   traversalStrategy: TraversalElement[];
   interactionExample: InteractionExample;
+  allVisuals: string[];
+  reportId: string;
 }
 
 export interface FilterVisual {
   id: string;
+  mediaType: mediaType;
+  videoURL: string;
   title: string | undefined;
   generalInformation: string | undefined;
   filterInfosStatus: string[];
@@ -139,6 +156,8 @@ export function createSettingsObject() {
     reportOffset: createReportOffset(),
     traversalStrategy: [] as TraversalElement[],
     interactionExample: createInteractionExample(),
+    allVisuals: [] as string [],
+    reportId: ""
   };
   return settings;
 }
@@ -156,6 +175,8 @@ export function createReportOffset() {
 export function createDashboardInfo() {
   const dashboardInfo: DashboardInfo = {
     id: "",
+    mediaType: mediaType.text,
+    videoURL: "",
     titleStatus: "",
     changedTitle: "",
     infoStatus: [],
@@ -167,6 +188,8 @@ export function createDashboardInfo() {
 export function createVisual() {
   return {
     id: "",
+    mediaType: mediaType.text,
+    videoURL: "",
     title: "",
     disabled: false,
     generalInfosStatus: [] as string[],
@@ -181,6 +204,8 @@ export function createVisual() {
 export function createFilterVisual() {
   return {
     id: "",
+    mediaType: mediaType.text,
+    videoURL: "",
     title: "",
     generalInformation: "",
     filterInfosStatus: [] as string[],
@@ -357,6 +382,14 @@ export function setDraggingStarted(newDraggingStarted: boolean) {
   draggingStarted = newDraggingStarted;
 }
 
+export function setIsLoaded(newIsLoaded: boolean) {
+  isLoaded = newIsLoaded;
+}
+
+export function setBasicTraversal(newBasicTraversal: TraversalElement[]) {
+  basicTraversal = newBasicTraversal;
+}
+
 export function createDivAttributes() {
   return {
     id: "",
@@ -491,5 +524,32 @@ export function createTextareaAttributes() {
     style: "",
     value: "",
     parentId: "",
+  };
+}
+
+export function createVideoAttributes() {
+  return {
+    id: "",
+    width: "",
+    controls: "true",
+    parentId: ""
+  };
+}
+
+export function createSourceAttributes() {
+  return {
+    id: "",
+    src: "",
+    type: "",
+    parentId: ""
+  };
+}
+
+export function createYoutubeVideoAttributes() {
+  return {
+    id: "",
+    style: "",
+    src: "",
+    parentId: ""
   };
 }
