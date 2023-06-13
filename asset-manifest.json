@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/dashboard-onboarding/static/css/main.da561acc.css",
+    "main.js": "/dashboard-onboarding/static/js/main.191dbe08.js",
+    "static/media/pattern-1.png": "/dashboard-onboarding/static/media/pattern-1.b64e5951db6bbb25e776.png",
+    "static/media/icon-1.svg": "/dashboard-onboarding/static/media/icon-1.6a949ccf8f4329ff335d38ce75ca7e8f.svg",
+    "index.html": "/dashboard-onboarding/index.html",
+    "main.da561acc.css.map": "/dashboard-onboarding/static/css/main.da561acc.css.map",
+    "main.191dbe08.js.map": "/dashboard-onboarding/static/js/main.191dbe08.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.da561acc.css",
+    "static/js/main.191dbe08.js"
+  ]
+}
