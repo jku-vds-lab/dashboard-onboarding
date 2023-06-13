@@ -123,6 +123,8 @@ export default function StoryPane(props: Props) {
                   height="20px"
                   alt="Add media icon"
                 />
+                <RecordView />
+                <UploadVideo />
                 Add media
               </div>
             </button>
@@ -154,8 +156,7 @@ export default function StoryPane(props: Props) {
             </div>
           </div>
         </div>
-        <RecordView />
-        <UploadVideo />
+
         <OpenAI />
       </div>
     </div>
