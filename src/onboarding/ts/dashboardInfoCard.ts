@@ -74,12 +74,18 @@ function setDashboardInfos(traversal: TraversalElement[], count: number){
             attributes.style = "position: relative;padding-bottom: 56.25%;height: 0;";
             attributes.parentId = "contentText";
             elements.createDiv(attributes);
-            const videoAttributes = global.createYoutubeVideoAttributes();
+            const videoAttributes = global.createVideoAttributes();
             videoAttributes.id = "video";
-            videoAttributes.style = `position: absolute; top: 0; left: 0; width: 100%; height: 100%;`;
-            videoAttributes.src = visualData.videoURL; //"https://www.youtube.com/embed/V5sBTOhRuKY"
+            videoAttributes.width = "100%";
             videoAttributes.parentId = "videoContainer";
-            elements.createYoutubeVideo(videoAttributes);
+            elements.createVideo(videoAttributes);
+
+            const sourceAttributes = global.createSourceAttributes();
+            sourceAttributes.id = "source";
+            sourceAttributes.src = visualData.videoURL;
+            sourceAttributes.type = "video/mp4";
+            sourceAttributes.parentId = "video";
+            elements.createSource(sourceAttributes);
             break;
         default:
             const dashboardInfos = getDashboardInfos(traversal, count);

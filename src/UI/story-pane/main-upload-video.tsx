@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { saveInfoVideo } from "../../onboarding/ts/helperFunctions";
 
 const handleVideoUpload = async (file: File) => {
   try {
@@ -21,6 +22,14 @@ export default function UploadVideo() {
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0] || null;
     setSelectedFile(file);
+
+    const nodeId = document?.getElementById("Upload-Video")?.getAttribute("nodeId");
+    const currentIdParts = nodeId?.split(" ");
+    let category = "general";
+    if(currentIdParts!.length>2){
+      category = currentIdParts![1];
+    }
+    saveInfoVideo(selectedFile!.name, currentIdParts![0], [category], 1);
   };
 
   useEffect(() => {
