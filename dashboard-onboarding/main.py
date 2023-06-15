@@ -46,13 +46,14 @@ async def upload_video(video: UploadFile):
     file_path = f"{video.filename}"
     with open(file_path, "wb") as f:
         f.write(await video.read())
+    # return {"file_path": file_path}
 
     # Upload the video to YouTube
-    youtube_api_key = "AIzaSyAW55cclUDiBPa2frd8KdAeqhffj4doPPs"  # Replace with your actual YouTube API key
-    upload_url = "https://www.googleapis.com/upload/youtube/v3/videos?part=snippet" #"https://www.googleapis.com/upload/youtube/v3/videos"
+    youtube_api_key = "AIzaSyBFhxayEi-w9LAgo5rzlTxnXLkcU02lMGU"  # Replace with your actual YouTube API key
+    upload_url = "https://www.googleapis.com/upload/youtube/v3/videos"
 
     headers = {
-        "Authorization": f"Bearer ya29.a0AWY7Cknb6Mnmcy3yCf8U5HtxDVOq1fqKdFThx9aeSC6c0tYfl538jzWCxbrXEzwAcMSvsm9NgkVM667CZC7u1S2eB1BAUG6GhI_MVjTxieYnuKXMyRE9kZdB77XJv6QALBUSQrLHT-9NJaohr9C0-oRNLmc6aCgYKASkSARMSFQG1tDrp4d8dvQ64CYVp16MkYBFF3w0163",
+        "Authorization": f"Bearer {youtube_api_key}",
         "Content-Type": "application/json",
     }
 
@@ -74,4 +75,4 @@ async def upload_video(video: UploadFile):
         # Process the response data as needed
         return video_data
     else:
-        return {"error": "Failed to upload video to YouTube"}
+        return {"error": f"Failed to upload video to YouTube {response}" }
