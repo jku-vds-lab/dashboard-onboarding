@@ -264,7 +264,7 @@ function createTabContent(ids: string[], tabPills: string[]){
 }
 
 export function createInfoList(images: string | any[], infos: string[], parentId: string){
-    for (let i = 0; i < images.length; ++i) {
+    for (let i = 0; i < infos.length; ++i) {
         const ul = document.createElement('ul');
         if(divisor<=2){
             ul.style.listStyleImage = "url("+ images[i] + ")";

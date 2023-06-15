@@ -108,7 +108,6 @@ export default class DefaultNode {
     } else {
       nodeName = event.target.getAttribute("data-id");
     }
-    // document?.getElementById("textBox")?.setAttribute("nodeId", nodeName);
     document?.getElementById("saveText")?.setAttribute("nodeId", nodeName);
 
     nameArray = nodeName?.split(" ");

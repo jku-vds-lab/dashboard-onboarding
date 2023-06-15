@@ -30,11 +30,10 @@ export default function StoryPane(props: Props) {
   const [showMediaOptions, setShowMediaOptions] = useState(false);
 
   const saveAnnotationChanges = (e: any) => {
-    console.log(e);
+    setShowMediaOptions(false);
     const value = (document.getElementById("textBox")! as HTMLTextAreaElement)
       .value;
     const nodeId = e.target.getAttribute("nodeId");
-    debugger;
     const currentIdParts = nodeId?.split(" ");
     const info = value.replaceAll(" \n", "<br>");
     const currentNewInfos = info.split("\n");
@@ -64,10 +63,7 @@ export default function StoryPane(props: Props) {
   };
 
   const resetAnnotationChanges = async () => {
-    let nodeId = document?.getElementById("textBox")?.getAttribute("nodeId");
-    if (!nodeId) {
-      nodeId = document?.getElementById("saveText")?.getAttribute("nodeId");
-    }
+    const nodeId = document?.getElementById("saveText")?.getAttribute("nodeId");
 
     const currentIdParts = nodeId?.split(" ");
     if (!currentIdParts) {
@@ -146,12 +142,12 @@ export default function StoryPane(props: Props) {
             data-bs-parent="#annotation-box"
           >
             <div className="accordion-body">
-              <textarea
+              {/* <textarea
                 id="textBox"
                 className="form-control"
                 rows={4}
-                // onChange={saveAnnotationChanges}
-              />
+              /> */}
+              <div id="textBox" className="editable form-control" contentEditable="true"></div>
               <div className="controls">
                 <div
                   className="btn btn-secondary btn-sm me-auto"

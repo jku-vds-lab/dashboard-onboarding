@@ -4,7 +4,7 @@ import * as elements from "./elements";
 import * as disable from "./disableArea";
 import { createIntroCard } from "./introCards";
 import { createFilterInfoCard, removeFilterInfoCard } from "./filterInfoCards";
-import { createVisualInfo } from "./visualInfo";
+import { createInfoList, createVisualInfo } from "./visualInfo";
 import { createDashboardInfoCard, getNewDashboardInfo, removeDashboardInfoCard } from "./dashboardInfoCard";
 import { createGroupOverlay, createInformationCard, createLookedAtIds, currentId, getCurrentTraversalElementType, groupType, isGroup, lookedAtInGroup, setCurrentId, setTraversalInGroupIndex, setVisualInGroupIndex, TraversalElement, traversalInGroupIndex, traversalStrategy, updateLookedAt, visualInGroupIndex } from "./traversal";
 import { textSize } from "./sizes";
@@ -201,6 +201,7 @@ export function previousInGroup(){
 
 export async function getVisualInfoInEditor(idParts: string[], count: number){
     let infos = [];
+    const images = [];
     let editedElem = null;
     if(idParts.length > 1){
         editedElem =  global.editedTexts.find(edited => edited.idParts[0] === idParts[0] && edited.idParts[1] === idParts[1]);
@@ -264,10 +265,12 @@ export async function getVisualInfoInEditor(idParts: string[], count: number){
                 for (let i = 0; i < visualData.generalInfosStatus.length; ++i) {
                     switch(visualData.generalInfosStatus[i]){
                         case global.infoStatus.original:
+                            images.push(visualInfos.generalImages[i]);
                             infos.push(visualInfos.generalInfos[i]);
                             break;
                         case global.infoStatus.changed:
                         case global.infoStatus.added:
+                            images.push(visualInfos.generalImages[i]);
                             infos.push(visualData.changedGeneralInfos[i]);
                             break;
                         default:
@@ -281,8 +284,10 @@ export async function getVisualInfoInEditor(idParts: string[], count: number){
 
     let info = infos.join("\r\n");
     info = info.replaceAll("<br>", " \n");
+    console.log(images)
+    createInfoList(images, infos, "textBox");
     const textBox = document.getElementById("textBox")! as HTMLTextAreaElement; 
-    textBox.value = info;
+    // textBox.value = info;
 }
 
 export async function saveVisualChanges(newInfo: string[], idParts: string[], count: number){
