@@ -4,6 +4,13 @@ $bg-darker: rgb(17, 17, 17);
 /*$bg-dark-1: rgb(83,83,83);*/
 $bg-dark-1: #2B2D30;
 $bg-dark-1-lighter: rgb(170, 170, 170);
+$dashboard-color: #4e91e9;
+$line-chart-color: #d95f02;
+$bar-chart-color: #1b9e77;
+$kpi-color: #7570b3;
+$filter-color: #e7298a;
+$globalFilter-color: #e25757;
+$column-color: #66a61e;
 $color-white: #f1f1f1;
 
 .d-board {
@@ -311,4 +318,66 @@ $color-white: #f1f1f1;
 }
 .btn-xs{
   font-size: 14px;
+}
+
+/*----------------------------------
+--------------Nav Tabs---------------
+----------------------------------*/
+.label{
+  background-color: #2B2D30;
+  color: #f1f1f1;
+  border-radius: 0;
+  border: 1px solid rgb(30, 31, 34);
+  outline: none;
+  padding: 5px 20px;
+}
+.tabs-container{
+  display: flex;
+}
+.tabs-container .tab-content{
+  width:100%;
+  padding:0 16px;
+}
+.nav-pills.icon-nav .nav-link.active, .nav-pills.icon-nav .show > .nav-link{
+  color: #f1f1f1;
+  background-color: #1E1F22;
+  border-color: rgba(75, 77, 71, 0.51);;
+}
+.nav-pills.icon-nav .nav-link{
+  border: 1px solid rgba(75, 77, 71, 0.5);
+  color: #f1f1f1;
+  background-color: #2B2D30;
+  border-radius: 0;
+}
+.icon-tabs-container {
+  max-width:52px !important;
+}
+.tab-body-header{
+  height: 42px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.tab-body-header .color-box{
+  width:20px;
+  height:10px;
+  border-radius: 2px;
+}
+.dashboard .color-box{
+  background-color: #{$dashboard-color};
+}
+.filters .color-box{
+  background-color: #{$filter-color};
+}
+.kpi .color-box{
+  background-color: #{$kpi-color};
+}
+.column-chart .color-box{
+  background-color: #{$column-color};
+}
+.line-chart .color-box{
+  background-color: #{$line-chart-color};
+}
+.bar-chart .color-box{
+  background-color: #{$bar-chart-color};
 }
