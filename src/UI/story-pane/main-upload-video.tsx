@@ -33,6 +33,7 @@ export default function UploadVideo() {
     <div className="upload">
       <input
         type="file"
+        id="Upload-Video"
         className="custom-file-input"
         accept="video/*"
         onChange={handleFileChange}

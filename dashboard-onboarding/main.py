@@ -1,5 +1,5 @@
 from typing import Union
-from fastapi import FastAPI, UploadFile
+from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 import requests
 
@@ -26,53 +26,11 @@ def read_root():
 
     return response.text
 
-@app.get("/youtube/{video}")
-def get_youtube_video(video:str):
-    api_key = "AIzaSyAW55cclUDiBPa2frd8KdAeqhffj4doPPs"  # Replace with your actual YouTube API key
-    url = f"https://www.googleapis.com/youtube/v3/videos?id={video}&key={api_key}&part=snippet"
-
-    response = requests.get(url)
-
-    if response.status_code == 200:
-        video_data = response.json()
-        # Process the video data and return a response
-        return video_data
-    else:
-        return {"error": "Failed to retrieve video data"}
-
 @app.post("/upload-video")
-async def upload_video(video: UploadFile):
+async def upload_video(video: UploadFile = File(...)):
     # Save the video file locally
-    file_path = f"{video.filename}"
+    file_path = f"uploads/{video.filename}"
     with open(file_path, "wb") as f:
         f.write(await video.read())
-    # return {"file_path": file_path}
+    return {"file_path": file_path}
 
-    # Upload the video to YouTube
-    youtube_api_key = "AIzaSyBFhxayEi-w9LAgo5rzlTxnXLkcU02lMGU"  # Replace with your actual YouTube API key
-    upload_url = "https://www.googleapis.com/upload/youtube/v3/videos"
-
-    headers = {
-        "Authorization": f"Bearer {youtube_api_key}",
-        "Content-Type": "application/json",
-    }
-
-    data = {
-        "snippet": {
-            "title": "My Uploaded Video",
-            "description": "Description of my video",
-        },
-        "status": {
-            "privacyStatus": "private"
-        }
-    }
-
-    response = requests.post(upload_url, headers=headers, json=data, files={"video": open(file_path, "rb")})
-
-    # Handle the YouTube API response
-    if response.status_code == 200:
-        video_data = response.json()
-        # Process the response data as needed
-        return video_data
-    else:
-        return {"error": f"Failed to upload video to YouTube {response}" }
