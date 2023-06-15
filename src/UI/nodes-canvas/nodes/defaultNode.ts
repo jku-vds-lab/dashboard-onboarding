@@ -109,6 +109,7 @@ export default class DefaultNode {
       nodeName = event.target.getAttribute("data-id");
     }
     document?.getElementById("saveText")?.setAttribute("nodeId", nodeName);
+    document?.getElementById("Upload-Video")?.setAttribute("nodeId", nodeName);
 
     nameArray = nodeName?.split(" ");
     return nameArray;

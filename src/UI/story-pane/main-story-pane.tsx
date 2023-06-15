@@ -82,9 +82,9 @@ export default function StoryPane(props: Props) {
     }
   };
 
-  const addMediaOptions = () =>{
+  const addMediaOptions = () => {
     setShowMediaOptions(true);
-  }
+  };
 
   useEffect(() => {
     if (props.mainTrigger) {
@@ -116,23 +116,26 @@ export default function StoryPane(props: Props) {
               aria-controls="collapseDesc"
             >
               Component description
-              { showMediaOptions? 
+              {showMediaOptions ? (
                 <div>
                   <RecordView />
                   <UploadVideo />
                 </div>
-              :
-              <div className="btn btn-secondary btn-xs d-flex justify-content-center align-items-center" onClick={addMediaOptions}>
-                <img
-                className="me-2"
-                src={mediaIcon}
-                width="20px"
-                height="20px"
-                alt="Add media icon"
-                />
-                Add media
-              </div>
-              }
+              ) : (
+                <div
+                  className="btn btn-secondary btn-xs d-flex justify-content-center align-items-center"
+                  onClick={addMediaOptions}
+                >
+                  <img
+                    className="me-2"
+                    src={mediaIcon}
+                    width="20px"
+                    height="20px"
+                    alt="Add media icon"
+                  />
+                  Add media
+                </div>
+              )}
             </button>
           </h2>
           <div
