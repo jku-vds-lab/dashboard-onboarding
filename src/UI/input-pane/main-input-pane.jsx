@@ -9,6 +9,7 @@ import {
 import "../assets/css/dashboard.scss";
 
 export default function InputPane(props) {
+    //TODO: Move TraversalPane to the Main Layout to the toolbar
 
   return (
     <ResizePanel initialWidth={250} maxWidth={400} minWidth={250}>

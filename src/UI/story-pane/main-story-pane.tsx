@@ -102,7 +102,7 @@ export default function StoryPane(props: Props) {
   };
 
   return (
-    <div id="canvas-container" className="canvas-cont" style={{ flexGrow: 1 }}>
+    <div id="canvas-container" className="canvas-cont" style={{ flexGrow: 1, position: "relative" }}>
       <div className="flow">
         <ReactFlowProvider>
           <NodesCanvas trigger={trigger} traversal={props.traversal} />

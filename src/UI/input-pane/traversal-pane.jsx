@@ -3,30 +3,37 @@ import Accordion from "react-bootstrap/Accordion";
 import Form from "react-bootstrap/Form";
 import { basicTraversalStrategy, depthFirstTraversalStrategy, martiniGlassTraversalStrategy } from "../../onboarding/ts/traversalStrategies";
 import * as global from "../../onboarding/ts/globalVariables";
+import Dropdown from 'react-bootstrap/Dropdown';
 
 export default function TraversalPane(props) {
   const [checked] = React.useState(true);
+  const [selectedOption, setSelectedOption] = React.useState(null);
 
-  function createCustomTrav(){
+  function createCustomTrav(option){
+    setSelectedOption(option);
     const trav = global.settings.traversalStrategy;
     props.setTrav(trav);
     props.buildTraversal();
   }
 
-  async function createMartiniGlassTrav(){
+  async function createMartiniGlassTrav(option){
+    setSelectedOption(option);
     const trav = await martiniGlassTraversalStrategy();
     props.setTrav(trav);
     props.buildTraversal();
   }
 
-  async function createDepthFirstTrav(){
+  async function createDepthFirstTrav(option){
+    setSelectedOption(option);
+
     const trav = await depthFirstTraversalStrategy();
     props.setTrav(trav);
     props.buildTraversal();
   }
 
+
   return (
-    <Accordion defaultActiveKey={["0"]}>
+    /*<Accordion defaultActiveKey={["0"]}>
       <Accordion.Item eventKey="0">
         <Accordion.Button className="basic">Traversal strategies</Accordion.Button>
         <Accordion.Body>
@@ -61,6 +68,28 @@ export default function TraversalPane(props) {
           </Form>
         </Accordion.Body>
     </Accordion.Item>
-  </Accordion>
+  </Accordion>*/
+      <Dropdown className="custom-dropdown">
+        <Dropdown.Toggle>
+          {selectedOption ? selectedOption : 'Traversal Strategies'}
+        </Dropdown.Toggle>
+        <Dropdown.Menu>
+          <Dropdown.Item selected
+                         id="custom"
+                         className="check-button"
+                         onClick={() => createCustomTrav('Custom')}>
+            Custom
+          </Dropdown.Item>
+          <Dropdown.Item id="depth-first"
+                         onClick={() => createDepthFirstTrav('Depth First')}
+          >
+            Depth First
+          </Dropdown.Item>
+          <Dropdown.Item id="martiniGlass"
+                         onClick={() => createMartiniGlassTrav('Martini Glass')}>
+            Martini Glass
+          </Dropdown.Item>
+        </Dropdown.Menu>
+      </Dropdown>
   );
 }

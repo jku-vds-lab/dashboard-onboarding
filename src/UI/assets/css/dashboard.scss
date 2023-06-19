@@ -234,10 +234,13 @@ $color-white: #f1f1f1;
       border:1px solid #{$bg-dark-1-lighter};
     }
   }
+  .node-desc{
+    position: relative;
+  }
   .node-desc .accordion-item{
     border: none;
     position: absolute;
-    bottom:0;
+    bottom:10px;
     left:0;
     width: 100%;
     background-color: #{$bg-dark-1};
@@ -380,4 +383,46 @@ $color-white: #f1f1f1;
 }
 .bar-chart .color-box{
   background-color: #{$bar-chart-color};
+}
+.toolbar{
+  width: 100%;
+  padding: 10px 20px;
+  background-color: #{$bg-dark-1};
+
+}
+/*----------------------------------
+--------------Dropdown---------------
+----------------------------------*/
+.custom-dropdown{
+  .dropdown-toggle.btn-primary{
+    min-width: 150px;
+    background-color: #{$bg-dark};
+    border-color: #{$bg-dark};
+    border-radius: 2px;
+    text-align: left;
+    position: relative;
+    padding-right:35px;
+
+    &.active{
+      color: #{$color-white};
+      background-color: #{$bg-dark};
+      border-color: #{$bg-dark};
+    }
+  }
+  .dropdown-toggle::after {
+    position: absolute;
+    right:10px;
+    top:45%;
+  }
+  .dropdown-menu.show{
+    background-color: #{$bg-dark};
+    border-radius: 2px;
+  }
+  .dropdown-item{
+    color: #{$color-white} !important;
+    &:hover{
+      background-color: #{$bg-dark-1};
+    }
+}
+
 }
