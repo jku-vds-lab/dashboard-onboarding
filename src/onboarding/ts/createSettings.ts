@@ -18,7 +18,7 @@ export async function createSettings() {
   settings.interactionExample = setInteractionExampleInfo();
   settings.allVisuals = global.allVisuals.map((visual: VisualDescriptor) => {
     return visual.name;
-  })
+  });
   settings.reportId = reportId;
 
   global.setSettings(settings);
@@ -27,17 +27,22 @@ export async function createSettings() {
 
 export async function getTraversalElement(elem: any) {
   let traversalElement;
-  if (isGroup(elem)) {
-    const traversalGroupVisuals = await setGroup(elem);
-    elem.visuals = traversalGroupVisuals;
-    traversalElement = elem;
-  } else if (elem === "dashboard") {
-    traversalElement = setDashboardInfo();
-  } else if (elem === "globalFilter") {
-    traversalElement = await setFilterInfo();
-  } else {
-    traversalElement = await setVisualsInfo(elem);
+  try {
+    if (isGroup(elem)) {
+      const traversalGroupVisuals = await setGroup(elem);
+      elem.visuals = traversalGroupVisuals;
+      traversalElement = elem;
+    } else if (elem === "dashboard") {
+      traversalElement = setDashboardInfo();
+    } else if (elem === "globalFilter") {
+      traversalElement = await setFilterInfo();
+    } else {
+      traversalElement = await setVisualsInfo(elem);
+    }
+  } catch (error) {
+    console.log("Error in getTraversalElement", error);
   }
+
   return traversalElement;
 }
 

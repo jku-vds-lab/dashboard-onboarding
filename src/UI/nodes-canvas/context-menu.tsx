@@ -5,13 +5,20 @@ interface ContextProps {
   isOpen: boolean;
   position: any;
   actions: any;
+  onClick: any;
   onMouseLeave: any;
 }
-export const ContextMenu = memo((props: ContextProps) =>
-  props.isOpen ? (
+
+export const ContextMenu = memo((props: ContextProps) => {
+  const handleClick = () => {
+    console.log("Div clicked!");
+    // Perform any desired actions on mouse click
+  };
+  return props.isOpen ? (
     <div
       className="context-menu"
       onMouseLeave={props.onMouseLeave}
+      onClick={handleClick}
       style={{
         position: "absolute",
         left: props.position.x,
@@ -24,5 +31,5 @@ export const ContextMenu = memo((props: ContextProps) =>
         </div>
       ))}
     </div>
-  ) : null
-);
+  ) : null;
+});
