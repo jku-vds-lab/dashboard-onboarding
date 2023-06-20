@@ -334,7 +334,7 @@ export default function NodesCanvas(props: Props) {
               const newNode = defaultNode().getNode(
                 event,
                 visType,
-                getID(elem),
+                getID(vis),
                 "default",
                 getPositionForWholeTrav(position, index),
                 visTitle
@@ -349,6 +349,7 @@ export default function NodesCanvas(props: Props) {
             position: { x: 0, y: 0 },
             data: null,
           });
+          debugger;
           const groupNode = groupNodeObj.getGroupNode();
           setNodes((nds) => nds.concat(groupNode));
         } else {
@@ -381,6 +382,7 @@ export default function NodesCanvas(props: Props) {
 
   function getID(elem: TraversalElement) {
     let id = elem.element.id;
+    debugger;
     if (elem.categories.length === 1 && elem.categories[0] === "insight") {
       id += " Insight";
     } else if (

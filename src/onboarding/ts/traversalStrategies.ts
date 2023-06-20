@@ -113,15 +113,20 @@ export async function depthFirstTraversalStrategy() {
     const group = createGroup();
     const groupTrav1 = [];
 
+    const traversalElem1 = createTraversalElement("dashboard");
+    traversalElem1.element = await getTraversalElement("dashboard");
+    trav.push(traversalElem1);
+
     const traversalElemv11 = createTraversalElement(currentVisuals[0].type);
     traversalElemv11.element = await getTraversalElement(
       currentVisuals[0].name
     );
     traversalElemv11.categories = ["general"];
     groupTrav1.push(traversalElemv11);
-    const traversalElemv11ia = createTraversalElement(currentVisuals[0].type);
+
+    const traversalElemv11ia = createTraversalElement(currentVisuals[1].type);
     traversalElemv11ia.element = await getTraversalElement(
-      currentVisuals[0].name
+      currentVisuals[1].name
     );
     traversalElemv11ia.categories = ["insight"];
     groupTrav1.push(traversalElemv11ia);
