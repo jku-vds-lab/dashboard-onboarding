@@ -340,6 +340,7 @@ export default function NodesCanvas(props: Props) {
                 visTitle
               );
               nodesWithinGroup.push(newNode);
+              setNodes((nds) => nds.concat(newNode));
             });
           }
 
@@ -352,6 +353,16 @@ export default function NodesCanvas(props: Props) {
           debugger;
           const groupNode = groupNodeObj.getGroupNode();
           setNodes((nds) => nds.concat(groupNode));
+
+          nodesWithinGroup.forEach((node) => {
+            node.parentNode = groupNode?.id;
+            node.extent = "parent";
+            node.position = {
+              x: groupNode.position.x + 10,
+              y: groupNode.position.y + 10,
+            };
+            node.draggable = true;
+          });
         } else {
           const visTitle = getTitle(elem);
           const visType = getType(visTitle);
