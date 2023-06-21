@@ -1,9 +1,4 @@
-import { editedTexts } from "../../onboarding/ts/globalVariables";
 import { createTraversalOfNodes } from "../../onboarding/ts/traversal";
-import { groupType } from "../../onboarding/ts/traversal";
-import { saveVisualChanges } from "../../onboarding/ts/infoCards";
-import { saveDashboardChanges } from "../../onboarding/ts/dashboardInfoCard";
-import { saveFilterChanges } from "../../onboarding/ts/filterInfoCards";
 import "../assets/css/flow.scss";
 import { IGroupNode } from "./nodes/groupNode";
 import { IDefaultNode } from "./nodes/defaultNode";
@@ -130,24 +125,6 @@ export class TraversalOrder {
 
       this.setRank();
       await createTraversalOfNodes(this.allNodes);
-      //TODO update visuals with videos, saveInfoVideo(), when editor side is ready and we know when and with what to update
-      for (const edited of editedTexts) {
-        switch (edited.idParts[0]) {
-          case "dashboard":
-            await saveDashboardChanges(edited.newInfos, edited.count);
-            break;
-          case "globalFilter":
-            await saveFilterChanges(edited.newInfos, edited.count);
-            break;
-          default:
-            await saveVisualChanges(
-              edited.newInfos,
-              edited.idParts,
-              edited.count
-            );
-            break;
-        }
-      }
       this.defaultNodes = [];
       this.groupNodes = [];
       this.allNodes = [];

@@ -5,13 +5,10 @@ import { removeElement } from "./elements";
 import { disableAll } from "./disableArea";
 import Dashboard from "../../componentGraph/Dashboard";
 import { createInfoList } from "./visualInfo";
-import infoImg from "../assets/info.png";
-import layoutImg from "../assets/layout.png";
-import dataImg from "../assets/data.png";
-import bulletpointImg from "../assets/dot.png";
 import { createInfoCardButtons } from "./infoCards";
-import { TraversalElement, currentId } from "./traversal";
+import { TraversalElement, createTraversalElement, currentId } from "./traversal";
 import { replacer } from "../../componentGraph/ComponentGraph";
+import { getTraversalElement } from "./createSettings";
 
 export function createDashboardInfoCard(count: number){
     global.setShowsDashboardInfo(true);
@@ -91,7 +88,7 @@ function setDashboardInfos(traversal: TraversalElement[], count: number){
             const dashboardInfos = getDashboardInfos(traversal, count);
             
             if(dashboardInfos){
-                createInfoList(dashboardInfos[0], dashboardInfos[1], "contentText");
+                createInfoList(dashboardInfos[0], dashboardInfos[1], "contentText", false);
             }
     }
 }
@@ -117,7 +114,7 @@ export function getDashboardInfos(traversal: TraversalElement[], count: number){
                 break;
             case global.infoStatus.changed:
             case global.infoStatus.added:
-                newImages.push(bulletpointImg);
+                newImages.push("dotImg");
                 newInfos.push(dashboardData.changedInfos[i]);
                 break;
             default:
@@ -134,23 +131,25 @@ export function removeDashboardInfoCard(){
 }
 
 export function getNewDashboardInfo(dashboard: Dashboard){
-    const images = [infoImg, dataImg, layoutImg];
+    const images = ["infoImg", "dataImg", "layoutImg"];
     const infos = [dashboard.purpose, dashboard.task, dashboard.layout];
 
     return [images, infos];
 }
 
-export function saveDashboardChanges(newInfo: string[], count: number){
+export async function saveDashboardChanges(newInfo: string[], count: number){
     const dashboard = global.componentGraph.dashboard;
     const dashboardInfo = getNewDashboardInfo(dashboard);
     const originalInfos = dashboardInfo[1];
 
-    const dashboardData = helpers.getDataWithId(global.settings.traversalStrategy, "dashboard", ["general", "interaction", "insight"], count);
+    let dashboardData = helpers.getDataWithId(global.settings.traversalStrategy, "dashboard", ["general", "interaction", "insight"], count);
     if (!dashboardData) {
-        const editedElem = global.editedTexts.find(editedElem => editedElem.idParts[0] === "dashboard" && editedElem.count === count);
-        const index = global.editedTexts.indexOf(editedElem!);
-        global.editedTexts.splice(index, 1);
-      return;
+        const traversalElem = createTraversalElement("");
+        traversalElem.element = await getTraversalElement("dashboard");
+        traversalElem.count = count;
+        traversalElem.categories = ["general", "interaction", "insight"];
+        global.settings.traversalStrategy.push(traversalElem);
+        dashboardData = helpers.getDataWithId(global.settings.traversalStrategy, "dashboard", ["general", "interaction", "insight"], count);
     }
 
     for (let i = 0; i < newInfo.length; ++i) {
@@ -182,16 +181,13 @@ export function saveDashboardChanges(newInfo: string[], count: number){
 export async function resetDashboardChanges(count: number){
     const dashboard = global.componentGraph.dashboard;
     const dashboardInfo = getNewDashboardInfo(dashboard);
+    const originalImages = dashboardInfo[1];
     const originalInfos = dashboardInfo[1];
 
-    let info = originalInfos.join("\r\n");
-    info = info.replaceAll("<br>", " \n");
     const textBox = document.getElementById("textBox")! as HTMLTextAreaElement; 
-    textBox.value = info;
+    textBox.innerHTML = "";
 
-    const editedElem = global.editedTexts.find(editedElem => editedElem.idParts[0] === "dashboard" && editedElem.count === count);
-    const index = global.editedTexts.indexOf(editedElem!);
-    global.editedTexts.splice(index, 1);
+    await createInfoList(originalImages, originalInfos, "textBox", true);
 
     const dashboardData = helpers.getDataWithId(global.settings.traversalStrategy, "dashboard", ["general", "interaction", "insight"], count);
     if (!dashboardData) {
@@ -211,29 +207,37 @@ export async function resetDashboardChanges(count: number){
     localStorage.setItem("settings", JSON.stringify(global.settings, replacer));
 }
 
-export function getDashboardInfoInEditor(count: number){
+export async function getDashboardInfoInEditor(count: number){
     let infos = [];
+    let images = [];
 
     const editedElem = global.editedTexts.find(edited => edited.idParts[0] === "dashboard" && edited.idParts.length === 1);
     
     if(editedElem){
         infos = editedElem.newInfos;
+        for(let i = 0; infos.length; i++){
+            images.push("dotImg");
+        }
     } else {
         const dashboard = global.componentGraph.dashboard;
         const dashboardInfo = getNewDashboardInfo(dashboard);
+        const dashboardImages = dashboardInfo[0];
         const dashboardInfos = dashboardInfo[1];
 
         const dashboardData = helpers.getDataWithId(global.settings.traversalStrategy, "dashboard", ["general", "interaction", "insight"], count);
         if (!dashboardData) {
+            images = dashboardImages;
             infos = dashboardInfos;
         } else {
             for (let i = 0; i < dashboardData.infoStatus.length; ++i) {
                 switch(dashboardData.infoStatus[i]){
                     case global.infoStatus.original:
+                        images.push(dashboardImages[i]);
                         infos.push(dashboardInfos[i]);
                         break;
                     case global.infoStatus.changed:
                     case global.infoStatus.added:
+                        images.push("dotImg");
                         infos.push(dashboardData.changedInfos[i]);
                         break;
                     default:
@@ -243,8 +247,8 @@ export function getDashboardInfoInEditor(count: number){
         }
     }
 
-    let info = infos.join("\r\n");
-    info = info.replaceAll("<br>", " \n");
     const textBox = document.getElementById("textBox")! as HTMLTextAreaElement; 
-    textBox.value = info;
+    textBox.innerHTML = "";
+
+    await createInfoList(images, infos, "textBox", true);
 }

@@ -2,9 +2,9 @@ import * as helpers from "./helperFunctions";
 import * as global from "./globalVariables";
 import * as elements from "./elements";
 import * as info from "./visualInfo";
-import bulletpointImg from "../assets/dot.png";
 import { divisor } from "./sizes";
 import { TraversalElement } from "./traversal";
+import { icons } from "./textIcons";
 
 export async function createVisualInfo(traversal: TraversalElement[], visual: any, count: number, categories: string[]){
     document.getElementById("contentText")!.innerHTML = "";
@@ -55,7 +55,7 @@ export async function createTabsWithContent(visual: any, visualData: any, count:
                     break;
                 case global.infoStatus.changed:
                 case global.infoStatus.added:
-                    generalImages.push(bulletpointImg);
+                    generalImages.push("dotImg");
                     generalInfos.push(visualData.changedGeneralInfos[i]);
                     break;
                 default:
@@ -63,7 +63,7 @@ export async function createTabsWithContent(visual: any, visualData: any, count:
             }
         }
 
-        createInfoList(generalImages, generalInfos, "generalTab");
+        createInfoList(generalImages, generalInfos, "generalTab", false);
     }
 
     if(categories.includes("interaction")){
@@ -79,7 +79,7 @@ export async function createTabsWithContent(visual: any, visualData: any, count:
                     break;
                 case global.infoStatus.changed:
                 case global.infoStatus.added:
-                    interactionImages.push(bulletpointImg);
+                    interactionImages.push("dotImg");
                     interactionInfos.push(visualData.changedInteractionInfos[i]);
                     break;
                 default:
@@ -87,7 +87,7 @@ export async function createTabsWithContent(visual: any, visualData: any, count:
             }
         }
 
-        createInfoList(interactionImages, interactionInfos, "interactionTab");
+        createInfoList(interactionImages, interactionInfos, "interactionTab", false);
         helpers.createInteractionExampleButton("interactionTab", visual);
     }
 
@@ -103,7 +103,7 @@ export async function createTabsWithContent(visual: any, visualData: any, count:
                     break;
                 case global.infoStatus.changed:
                 case global.infoStatus.added:
-                    insightImages.push(bulletpointImg);
+                    insightImages.push("dotImg");
                     insightInfos.push(visualData.changedInsightInfos[i]);
                     break;
                 default:
@@ -111,7 +111,7 @@ export async function createTabsWithContent(visual: any, visualData: any, count:
             }
         }
 
-        createInfoList(insightImages, insightInfos, "insightTab");
+        createInfoList(insightImages, insightInfos, "insightTab", false);
     }
 
     const otherCategories = categories.filter(category => category !== "general" && category !== "interaction" && category !== "insight");
@@ -127,7 +127,7 @@ export async function createTabsWithContent(visual: any, visualData: any, count:
                     break;
                 case global.infoStatus.changed:
                 case global.infoStatus.added:
-                    images.push(bulletpointImg);
+                    images.push("dotImg");
                     infos.push(visualData["changed" + category + "Infos"][i]);
                     break;
                 default:
@@ -135,7 +135,7 @@ export async function createTabsWithContent(visual: any, visualData: any, count:
             }
         }
 
-        createInfoList(images, infos, category + "Tab");
+        createInfoList(images, infos, category + "Tab", false);
     }
 }
 
@@ -270,18 +270,22 @@ function createTabContent(ids: string[], tabPills: string[]){
     });
 }
 
-export function createInfoList(images: string | any[], infos: string[], parentId: string){
+export async function createInfoList(images: string | any[], infos: string[], parentId: string, editor: boolean){
+    const ul = document.createElement('ul');
+    document.getElementById(parentId)?.appendChild(ul);
     for (let i = 0; i < infos.length; ++i) {
-        const ul = document.createElement('ul');
-        if(divisor<=2){
-            ul.style.listStyleImage = "url("+ images[i] + ")";
-            ul.style.paddingLeft = "30px";
-        } else {
-            ul.style.paddingLeft = "10px";
-        }
-        document.getElementById(parentId)?.appendChild(ul);
-
         const li = document.createElement('li');
+        if(editor){
+            //TODO add white to image string
+            li.style.listStyleImage = "url("+ icons[images[i]] + ")";
+            li.style.paddingLeft = "10px";
+        } else {
+            if(divisor<=2){
+                li.style.listStyleImage = "url("+ icons[images[i]] + ")";
+            }
+            li.style.paddingLeft = "10px";
+        }
+
         li.innerHTML =  infos[i];
         ul.appendChild(li);
     }

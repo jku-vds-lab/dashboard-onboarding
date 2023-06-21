@@ -128,7 +128,6 @@ async function setVisualsInfo(id: string) {
 
     return settingsVisual;
   } catch (error) {
-    debugger;
     console.error(error);
   }
 }

@@ -407,7 +407,7 @@ export async function getTraversalElem(sNode: any) {
     const idParts: string[] = sNode.id.split(" ");
     let nodeId: string = sNode.id;
     let nodeCat: string = "general";
-    if (idParts.length > 1) {
+    if (idParts.length > 2) {
       nodeId = idParts[0];
       nodeCat = idParts[1].toLowerCase();
     }

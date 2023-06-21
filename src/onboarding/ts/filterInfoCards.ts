@@ -6,7 +6,8 @@ import Filter from "../../componentGraph/Filter";
 import { removeElement } from "./elements";
 import { createInfoCardButtons } from "./infoCards";
 import { replacer } from "../../componentGraph/ComponentGraph";
-import { TraversalElement } from "./traversal";
+import { TraversalElement, createTraversalElement } from "./traversal";
+import { getTraversalElement } from "./createSettings";
 
 export async function createFilterInfoCard(count: number){
     createFilterDisabledArea();
@@ -123,12 +124,14 @@ export function removeFilterInfoCard(){
 export async function saveFilterChanges(newInfo: string[], count:number){
     const filterInfos = await helpers.getFilterInfo();
 
-    const filterData = helpers.getDataWithId(global.settings.traversalStrategy, "globalFilter", ["general", "interaction", "insight"], count);
+    let  filterData = helpers.getDataWithId(global.settings.traversalStrategy, "globalFilter", ["general", "interaction", "insight"], count);
     if (!filterData) {
-        const editedElem = global.editedTexts.find(editedElem => editedElem.idParts[0] === "globalFilter" && editedElem.count === count);
-        const index = global.editedTexts.indexOf(editedElem!);
-        global.editedTexts.splice(index, 1);
-      return;
+        const traversalElem = createTraversalElement("");
+        traversalElem.element = await getTraversalElement("globalFilter");
+        traversalElem.count = count;
+        traversalElem.categories = ["general", "interaction", "insight"];
+        global.settings.traversalStrategy.push(traversalElem);
+        filterData = helpers.getDataWithId(global.settings.traversalStrategy, "globalFilter", ["general", "interaction", "insight"], count);
     }
 
     for (let i = 0; i < newInfo.length; ++i) {
@@ -189,6 +192,7 @@ export async function resetFilterChanges(count: number){
 
 export async function getFilterInfoInEditor(count: number){
     let infos = [];
+    const images = [];
 
     const editedElem = global.editedTexts.find(edited => edited.idParts[0] === "globalFilter" && edited.idParts.length === 1);
     
@@ -217,8 +221,15 @@ export async function getFilterInfoInEditor(count: number){
         }
     }
 
-    let info = infos.join("\r\n");
-    info = info.replaceAll("<br>", " \n");
     const textBox = document.getElementById("textBox")! as HTMLTextAreaElement; 
-    textBox.value = info;
+    textBox.innerHTML = "";
+
+    const ul = document.createElement('ul');
+    document.getElementById("textBox")?.appendChild(ul);
+
+    for (let i = 0; i < infos.length; ++i) {
+        const li = document.createElement('li');
+        li.innerHTML =  infos[i];
+        ul.appendChild(li);
+    }
 }

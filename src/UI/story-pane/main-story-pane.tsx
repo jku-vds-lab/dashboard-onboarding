@@ -10,10 +10,9 @@ import {
 import { ReactFlowProvider } from "reactflow";
 import NodesCanvas from "../nodes-canvas/canvas-index";
 import "../assets/css/dashboard.scss";
-import { editedTexts } from "../../onboarding/ts/globalVariables";
-import { resetVisualChanges } from "../../onboarding/ts/infoCards";
-import { resetDashboardChanges } from "../../onboarding/ts/dashboardInfoCard";
-import { resetFilterChanges } from "../../onboarding/ts/filterInfoCards";
+import { resetVisualChanges, saveVisualChanges } from "../../onboarding/ts/infoCards";
+import { resetDashboardChanges, saveDashboardChanges } from "../../onboarding/ts/dashboardInfoCard";
+import { resetFilterChanges, saveFilterChanges } from "../../onboarding/ts/filterInfoCards";
 import mediaIcon from "../assets/img/icon-7.png";
 import OpenAI from "./main-open-ai";
 import { useEffect, useState } from "react";
@@ -29,36 +28,37 @@ export default function StoryPane(props: Props) {
   const [trigger, setTrigger] = useState(0);
   const [showMediaOptions, setShowMediaOptions] = useState(false);
 
-  const saveAnnotationChanges = (e: any) => {
-    setShowMediaOptions(false);
-    const value = (document.getElementById("textBox")! as HTMLTextAreaElement)
-      .value;
-    const nodeId = e.target.getAttribute("nodeId");
-    const currentIdParts = nodeId?.split(" ");
-    const info = value.replaceAll(" \n", "<br>");
-    const currentNewInfos = info.split("\n");
+  const saveAnnotationChanges = async (e: any) => {
+    const infos = [];
 
-    let editedElem = null;
-    if (currentIdParts.length > 2) {
-      editedElem = editedTexts.find(
-        (edited) =>
-          edited.idParts[0] === currentIdParts[0] &&
-          edited.idParts[2] === currentIdParts[2]
-      );
-    } else {
-      editedElem = editedTexts.find(
-        (edited) => edited.idParts[0] === currentIdParts[0]
-      );
+    setShowMediaOptions(false);
+
+    const list = (document.getElementById("textBox")! as HTMLTextAreaElement).children[0];
+    const listElems = list.children;
+
+    for (let i = 0; i < listElems.length; i++) {
+      infos.push(listElems[i].innerHTML);
     }
 
-    if (editedElem) {
-      editedElem.newInfos = currentNewInfos;
-    } else {
-      editedTexts.push({
-        newInfos: currentNewInfos,
-        idParts: currentIdParts,
-        count: 1,
-      });
+    const nodeId = e.target.getAttribute("nodeId");
+    const currentIdParts = nodeId?.split(" ");
+
+    //TODO update visuals with videos, saveInfoVideo(), when editor side is ready and we know when and with what to update
+
+    switch (currentIdParts[0]) {
+      case "dashboard":
+        await saveDashboardChanges(infos, 1);
+        break;
+      case "globalFilter":
+        await saveFilterChanges(infos, 1);
+        break;
+      default:
+        await saveVisualChanges(
+          infos,
+          currentIdParts,
+          1
+        );
+        break;
     }
   };
 
@@ -145,11 +145,6 @@ export default function StoryPane(props: Props) {
             data-bs-parent="#annotation-box"
           >
             <div className="accordion-body">
-              {/* <textarea
-                id="textBox"
-                className="form-control"
-                rows={4}
-              /> */}
               <div id="textBox" className="editable form-control" contentEditable="true"></div>
               <div className="controls">
                 <div

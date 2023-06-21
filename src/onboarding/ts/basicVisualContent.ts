@@ -1,10 +1,5 @@
 import * as helpers from "./helperFunctions";
 import * as global from "./globalVariables";
-import infoImg from "../assets/info.png";
-import elemClickImg from "../assets/element-click.png";
-import dataImg from "../assets/data.png";
-import filterImg from "../assets/filter.png";
-import interactImg from "../assets/interact.png";
 
 export async function getCardInfo(visual: any) {
     const CGVisual = global.componentGraph.dashboard.visualizations.find(vis => vis.id === visual.name); 
@@ -17,7 +12,7 @@ export async function getCardInfo(visual: any) {
     const insightImages: any[] = [];
     const insightInfos: string[] =[];
 
-    generalImages.push(infoImg);
+    generalImages.push("infoImg");
     generalInfos.push(CGVisual?.description!);
 
     let dataText = "";
@@ -26,12 +21,12 @@ export async function getCardInfo(visual: any) {
         dataText += " It shows the current value of "+ dataName.attribute + ", which is " + dataValue[0] + ".";
     }
 
-    generalImages.push(dataImg);
+    generalImages.push("dataImg");
     generalInfos.push("The purpose of this chart is to " + CGVisual?.task + "." + dataText);
 
     const filterText = helpers.getLocalFilterText(CGVisual);
     if(filterText !== ""){
-        generalImages.push(filterImg);
+        generalImages.push("filterImg");
         generalInfos.push("This chart has the following filters:<br>" + filterText);
     }
     
@@ -62,25 +57,25 @@ export async function getSlicerInfo(visual: any) {
     const insightImages: any[] = [];
     const insightInfos: string[] =[];
 
-    generalImages.push(infoImg);
+    generalImages.push("infoImg");
     generalInfos.push(CGVisual?.description!);
 
     if(filterName){
-        generalImages.push(dataImg);
+        generalImages.push("dataImg");
         generalInfos.push("With this one you can filter by " + filterName.attribute + ". The purpose of this chart is to " + CGVisual?.task + ".");
     }
 
     const filterText = helpers.getLocalFilterText(CGVisual);
     if(filterText !== ""){
-        generalImages.push(filterImg);
+        generalImages.push("filterImg");
         generalInfos.push("This chart has the following filters:<br>" + filterText);
     }
     
-    interactionImages.push(interactImg);
+    interactionImages.push("interactImg");
     interactionInfos.push(CGVisual?.interactions.description!);
 
     if(filterName){
-        interactionImages.push(elemClickImg);
+        interactionImages.push("elemClickImg");
         interactionInfos.push("With clicking on a " + CGVisual?.mark + " you can filter the report by " + filterName.attribute + ".");
     }
 

@@ -38,7 +38,6 @@ import { getFilterDescription } from "./filterInfoCards";
 import { IFilterColumnTarget, IFilterMeasureTarget } from "powerbi-models";
 import "powerbi-report-authoring";
 import { VisualDescriptor } from "powerbi-client";
-import lightbulbImg from "../assets/lightbulb.png";
 import ComponentGraph, { replacer, reviver } from "../../componentGraph/ComponentGraph";
 import Filter from "../../componentGraph/Filter";
 import { exportData } from "../../Provenance/utils";
@@ -980,7 +979,7 @@ export async function getVisualInfos(visual: any) {
   );
   const insights = CGVisual?.insight?.insights!;
   for (const insight of insights) {
-    visualInfos.insightImages.push(lightbulbImg);
+    visualInfos.insightImages.push("lightbulbImg");
     visualInfos.insightInfos.push(insight);
   }
   return visualInfos;
