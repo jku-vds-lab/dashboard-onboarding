@@ -423,7 +423,7 @@ function getTitle(elem:TraversalElement){
               { label: "Group", effect: addGroup },
             ]}
           ></ContextMenu>
-          <Traversal nodes={nodes} />
+            <Traversal nodes={nodes} />
         </ReactFlow>
       </div>
     </div>

@@ -4,6 +4,7 @@ import StoryPane from "./story-pane/main-story-pane";
 import OutputPane from "./output-pane/main-output-pane";
 import { useState } from "react";
 import Dropdown from 'react-bootstrap/Dropdown';
+import TraversalPane from "./input-pane/traversal-pane";
 
 export default function MainLayout() {
   const [trigger, setTrigger] = useState(0);
@@ -15,23 +16,8 @@ export default function MainLayout() {
 
   return (
       <div style={{width: "100%", height: "100vh", position: "relative", overflow: "hidden"}}>
-        <div className="toolbar control-toolbar">
-          <Dropdown className="custom-dropdown">
-            <Dropdown.Toggle>
-              Traversal Strategies
-            </Dropdown.Toggle>
-            <Dropdown.Menu>
-              <Dropdown.Item href="#">
-                Custom
-              </Dropdown.Item>
-              <Dropdown.Item href="#">
-                Depth First
-              </Dropdown.Item>
-              <Dropdown.Item href="#">
-                Martini Glass
-              </Dropdown.Item>
-            </Dropdown.Menu>
-          </Dropdown>
+        <div  className="toolbar control-toolbar">
+          <TraversalPane buildTraversal={buildTraversal} setTrav={setTrav} />
         </div>
     <div
       className="d-board"
@@ -39,7 +25,7 @@ export default function MainLayout() {
     >
       {" "}
 
-      <InputPane buildTraversal={buildTraversal} setTrav={setTrav} />
+      <InputPane/>
       <StoryPane mainTrigger={trigger} traversal={traversal}/>
       <OutputPane />
     </div>

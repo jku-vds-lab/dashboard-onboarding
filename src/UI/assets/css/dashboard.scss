@@ -45,16 +45,6 @@ $color-white: #f1f1f1;
 
   .canvas-cont{
     position: relative;
-    &.show{
-      #annotation-box{
-        display: block;
-      }
-
-      .flow{
-        height:100%;
-      }
-
-    }
   }
 
   .component-cont {
@@ -240,7 +230,7 @@ $color-white: #f1f1f1;
   .node-desc .accordion-item{
     border: none;
     position: absolute;
-    bottom:10px;
+    bottom:13px;
     left:0;
     width: 100%;
     background-color: #{$bg-dark-1};
@@ -321,6 +311,7 @@ $color-white: #f1f1f1;
 }
 .btn-xs{
   font-size: 14px;
+  max-width:150px;
 }
 
 /*----------------------------------

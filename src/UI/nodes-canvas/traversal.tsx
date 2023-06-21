@@ -163,7 +163,7 @@ export default function Traversal(props: any) {
   return (
     <div
       id="traversal"
-      className="btn btn-outline-info me-auto"
+      className="btn btn-secondary btn-xs d-flex justify-content-center align-items-center"
       onClick={() => tOrder.onClick(props)}
     >
       Save Traversal
