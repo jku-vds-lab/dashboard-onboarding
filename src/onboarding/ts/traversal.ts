@@ -197,15 +197,17 @@ export function createGroupOverlay() {
   createInformationCard("group", currentElement.count, firstVisuals, undefined);
 }
 
-export function findVisualIndexInTraversal(traversal: TraversalElement[], id: string, count: number) {
+export function findVisualIndexInTraversal(
+  traversal: TraversalElement[],
+  id: string,
+  count: number
+) {
   const elem = traversal.find(
     (vis) => vis.element.id === id && vis.count === count
   );
   let index = traversal.indexOf(elem!);
   if (index == -1) {
-    const groups = traversal.filter((object) =>
-      isGroup(object.element)
-    );
+    const groups = traversal.filter((object) => isGroup(object.element));
     for (const group of groups) {
       for (const groupTraversal of group.element.visuals) {
         const elemInGroup = groupTraversal.find(
@@ -217,9 +219,7 @@ export function findVisualIndexInTraversal(traversal: TraversalElement[], id: st
             (vis) =>
               vis.element.id === group.element.id && vis.count === group.count
           );
-          const groupIndex = traversal.indexOf(
-            groupElem!
-          );
+          const groupIndex = traversal.indexOf(groupElem!);
           return groupIndex;
         }
       }
@@ -272,10 +272,10 @@ export function findTraversalVisual(id: string) {
 
 export function findCurrentTraversalVisual() {
   let traversal: TraversalElement[];
-  if(global.explorationMode){
-      traversal = global.basicTraversal;
+  if (global.explorationMode) {
+    traversal = global.basicTraversal;
   } else {
-      traversal = global.settings.traversalStrategy;
+    traversal = global.settings.traversalStrategy;
   }
 
   const traversalElem = traversal[currentId];
@@ -314,10 +314,10 @@ export function findCurrentTraversalCount() {
 
 export function findCurrentTraversalVisualIndex() {
   let traversal: TraversalElement[];
-  if(global.explorationMode){
-      traversal = global.basicTraversal;
+  if (global.explorationMode) {
+    traversal = global.basicTraversal;
   } else {
-      traversal = global.settings.traversalStrategy;
+    traversal = global.settings.traversalStrategy;
   }
 
   const traversalElem = traversal[currentId].element;
@@ -388,6 +388,7 @@ export async function createTraversalOfGroupNodes(groupNode: IGroupNode) {
 
   try {
     group.type = groupNode.data.traverse;
+    debugger;
     for (const sNode of groupNode.nodes) {
       const traversalElem = await getTraversalElem(sNode);
       group.visuals.push([traversalElem]);
@@ -414,7 +415,9 @@ export async function getTraversalElem(sNode: any) {
     traversalElem = createTraversalElement(sNode.data.type);
     traversalElem.element = await getTraversalElement(nodeId);
     traversalElem.categories = [nodeCat];
-  } catch (error) {}
+  } catch (error) {
+    console.log("Error in getTraversalElem", error);
+  }
 
   return traversalElem;
 }

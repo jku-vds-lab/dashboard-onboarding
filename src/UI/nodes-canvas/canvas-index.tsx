@@ -9,7 +9,10 @@ import { Node } from "reactflow";
 import "reactflow/dist/style.css";
 import "../assets/css/flow.scss";
 import * as global from "../../onboarding/ts/globalVariables";
-import { TraversalElement, findTraversalVisual } from "../../onboarding/ts/traversal";
+import {
+  TraversalElement,
+  findTraversalVisual,
+} from "../../onboarding/ts/traversal";
 
 // import ICustomNode from "./nodeTypes/ICustomNode";
 import { ContextMenu } from "./context-menu";
@@ -23,14 +26,18 @@ import { getFilterInfoInEditor } from "../../onboarding/ts/filterInfoCards";
 import GroupNode from "./nodes/groupNode";
 import GroupNodeType from "./nodes/groupNodeType";
 import DefaultNode from "./nodes/defaultNode";
+import React from "react";
 
 const nodeTypes = { group: GroupNodeType };
 
-interface Props{
-  trigger:number
-  traversal:any
+interface Props {
+  trigger: number;
+  traversal: any;
 }
-
+interface MousePosition {
+  x: number;
+  y: number;
+}
 export default function NodesCanvas(props: Props) {
   const defaultNode = useCallback(() => {
     return new DefaultNode();
@@ -46,10 +53,23 @@ export default function NodesCanvas(props: Props) {
   const reactFlowWrapper = useRef<HTMLInputElement>(null); // this could be the reason why we run into the initial worng position issue
   const [selectedNodes, setSelectedNodes] = useNodesState<null>([]);
   const [groupId] = useState({ id: 0 });
+  const [mousePosition, setMousePosition] = React.useState<MousePosition>({
+    x: 0,
+    y: 0,
+  });
 
-  function createIntitialNodes(){
+  const handleMouseClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    console.log("Mouse click is called");
+    const { clientX, clientY } = event;
+    debugger;
+    setMousePosition({ x: clientX, y: clientY });
+  };
+
+  function createIntitialNodes() {
     const initialNodes: Node[] = [];
-    for(const { index, elem } of global.settings.traversalStrategy.map((elem:TraversalElement, index:number) => ({ index, elem }))){
+    for (const { index, elem } of global.settings.traversalStrategy.map(
+      (elem: TraversalElement, index: number) => ({ index, elem })
+    )) {
       const visTitle = getTitle(elem);
       const visType = getType(visTitle);
       const newNode = defaultNode().getNode(
@@ -61,7 +81,7 @@ export default function NodesCanvas(props: Props) {
         visTitle
       );
       initialNodes.push(newNode);
-    } 
+    }
     return initialNodes;
   }
 
@@ -276,123 +296,189 @@ export default function NodesCanvas(props: Props) {
 
   useEffect(() => {
     if (props.trigger) {
-      console.log("q", props.traversal)
+      console.log("q", props.traversal);
       buildTraversal(props.traversal);
     }
   }, [props.trigger]);
 
-  function buildTraversal(traversal: any){
-    setNodes([]);
+  function buildTraversal(traversal: any) {
+    try {
+      setNodes([]);
 
-    const position = {
+      const position = {
         x: 0,
         y: 50,
-    };
+      };
 
-    for(const { index, elem } of traversal.map((elem:TraversalElement, index:number) => ({ index, elem }))){
-        const visTitle = getTitle(elem);
-        const visType = getType(visTitle);
-        const newNode = defaultNode().getNode(
-          event,
-          visType,
-          getID(elem),
-          "default",
-          getPositionForWholeTrav(position, index),
-          visTitle
-        );
-        setNodes((nds) => nds.concat(newNode));
-    } 
-}
+      for (const { index, elem } of traversal.map(
+        (elem: TraversalElement, index: number) => ({ index, elem })
+      )) {
+        // skip for the group, only do it for the visuals
+        // build the group automatically, go inside the visuals, and check it for them individually
+        // the position of group should also be more,
 
-function getPositionForWholeTrav(position:any, index:number){
-  const offset = index * 35; 
-  const pos = {
-    x: position.x,
-    y: position.y + offset,
-  }
-  return pos;
-}
+        if (elem.element.id === "group") {
+          const nodesWithinGroup: Node[] = [];
 
-function getID(elem:TraversalElement){
-  let id = elem.element.id;
-  if(elem.categories.length === 1 && elem.categories[0] === "insight"){
-      id += " Insight";
-  }else if(elem.categories.length === 1 && elem.categories[0] === "interaction"){
-      id += " Interaction";
-  }
+          if (elem.element?.visuals?.length > 0) {
+            console.log(elem.element?.visuals);
 
-  return id; 
-}
+            const groupVisuals = elem.element
+              .visuals[0] as Array<TraversalElement>;
 
-function getType(title:string){
-  let type = title;
-  if(title === "Global Filters"){
-    type = "GlobalFilter";
-  }
-  return type;
-}
+            groupVisuals.forEach((vis: TraversalElement) => {
+              debugger;
+              console.log("Vis", vis);
+              const visTitle = getTitle(vis);
+              const visType = getType(visTitle);
+              const newNode = defaultNode().getNode(
+                event,
+                visType,
+                getID(vis),
+                "default",
+                getPositionForWholeTrav(position, index),
+                visTitle
+              );
+              nodesWithinGroup.push(newNode);
+              setNodes((nds) => nds.concat(newNode));
+            });
+          }
 
-function getTitle(elem:TraversalElement){
-    let visTitle = "";
-    switch(elem.element.id){
-        case "dashboard":
-            visTitle = "Dashboard";
-            break;
-        case "globalFilter":
-            visTitle = "Global Filters";
-            break;
-        default:
-            const vis = findTraversalVisual(elem.element.id);
-            visTitle = createNodeTitle(vis.type);
-            const itemLength = checkDuplicateComponents(vis.type);
-            if (itemLength > 1) {
-                visTitle = visTitle + " (" + vis.title + ")";
-            }
+          const groupNodeObj = new GroupNode({
+            nodes: nodesWithinGroup,
+            id: "group " + groupId.id++,
+            position: { x: 0, y: 0 },
+            data: null,
+          });
+          debugger;
+          const groupNode = groupNodeObj.getGroupNode();
+          setNodes((nds) => nds.concat(groupNode));
+
+          nodesWithinGroup.forEach((node) => {
+            node.parentNode = groupNode?.id;
+            node.extent = "parent";
+            node.position = {
+              x: groupNode.position.x + 10,
+              y: groupNode.position.y + 10,
+            };
+            node.draggable = true;
+          });
+        } else {
+          const visTitle = getTitle(elem);
+          const visType = getType(visTitle);
+          const newNode = defaultNode().getNode(
+            event,
+            visType,
+            getID(elem),
+            "default",
+            getPositionForWholeTrav(position, index),
+            visTitle
+          );
+          setNodes((nds) => nds.concat(newNode));
+        }
+      }
+    } catch (error) {
+      console.log("Error in buildTraversal: ", error);
     }
-    if(elem.categories.length === 1 && elem.categories[0] === "insight"){
+  }
+
+  function getPositionForWholeTrav(position: any, index: number) {
+    const offset = index * 35;
+    const pos = {
+      x: position.x,
+      y: position.y + offset,
+    };
+    return pos;
+  }
+
+  function getID(elem: TraversalElement) {
+    let id = elem.element.id;
+    debugger;
+    if (elem.categories.length === 1 && elem.categories[0] === "insight") {
+      id += " Insight";
+    } else if (
+      elem.categories.length === 1 &&
+      elem.categories[0] === "interaction"
+    ) {
+      id += " Interaction";
+    }
+
+    return id;
+  }
+
+  function getType(title: string) {
+    let type = title;
+    if (title === "Global Filters") {
+      type = "GlobalFilter";
+    }
+    return type;
+  }
+
+  function getTitle(elem: TraversalElement) {
+    let visTitle = "";
+    switch (elem.element.id) {
+      case "dashboard":
+        visTitle = "Dashboard";
+        break;
+      case "globalFilter":
+        visTitle = "Global Filters";
+        break;
+
+      default:
+        const vis = findTraversalVisual(elem.element.id);
+        visTitle = createNodeTitle(vis?.type);
+        const itemLength = checkDuplicateComponents(vis?.type);
+        if (itemLength > 1) {
+          visTitle = visTitle + " (" + vis?.title + ")";
+        }
+    }
+    if (elem.categories.length === 1 && elem.categories[0] === "insight") {
       visTitle += " Insight";
-    }else if(elem.categories.length === 1 && elem.categories[0] === "interaction"){
+    } else if (
+      elem.categories.length === 1 &&
+      elem.categories[0] === "interaction"
+    ) {
       visTitle += " Interaction";
     }
 
     return visTitle;
 
-    function checkDuplicateComponents(visType:string) {
-        const componentItems = global.allVisuals.filter(function (visual) {
-          return visual.type == visType;
-        });
-        return componentItems.length;
-      }
+    function checkDuplicateComponents(visType: string) {
+      const componentItems = global.allVisuals.filter(function (visual) {
+        return visual.type == visType;
+      });
+      return componentItems.length;
+    }
 
-    function createNodeTitle(title:string, index = "") {
-    let newTitle = title;
-    switch (title) {
+    function createNodeTitle(title: string, index = "") {
+      let newTitle = title;
+      switch (title) {
         case "card":
         case "multiRowCard":
-        newTitle = "KPI";
-        break;
+          newTitle = "KPI";
+          break;
         case "slicer":
-        newTitle = "Filter";
-        break;
+          newTitle = "Filter";
+          break;
         case "lineClusteredColumnComboChart":
-        newTitle = "Column Chart";
-        break;
+          newTitle = "Column Chart";
+          break;
         case "clusteredBarChart":
-        newTitle = "Bar Chart";
-        break;
-        case 'clusteredColumnChart':
-        newTitle = "ColumnChart";
-        break;
+          newTitle = "Bar Chart";
+          break;
+        case "clusteredColumnChart":
+          newTitle = "ColumnChart";
+          break;
         case "lineChart":
-        newTitle = "Line Chart";
-        break;
+          newTitle = "Line Chart";
+          break;
         default:
-        newTitle = title;
+          newTitle = title;
+      }
+      newTitle = newTitle + index;
+      return newTitle;
     }
-    newTitle = newTitle + index;
-    return newTitle;
-    }
-}
+  }
 
   return (
     <div className="dndflow">
@@ -416,6 +502,7 @@ function getTitle(elem:TraversalElement){
           <Controls />
           <ContextMenu
             isOpen={isOpen}
+            onClick={handleMouseClick}
             position={position}
             onMouseLeave={() => setIsOpen(false)}
             actions={[
