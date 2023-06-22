@@ -388,7 +388,6 @@ export async function createTraversalOfGroupNodes(groupNode: IGroupNode) {
 
   try {
     group.type = groupNode.data.traverse;
-    debugger;
     for (const sNode of groupNode.nodes) {
       const traversalElem = await getTraversalElem(sNode);
       group.visuals.push([traversalElem]);
