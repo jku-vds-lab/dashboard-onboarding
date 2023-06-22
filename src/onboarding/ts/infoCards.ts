@@ -204,94 +204,80 @@ export function previousInGroup(){
 export async function getVisualInfoInEditor(idParts: string[], count: number){
     let infos = [];
     let images = [];
-    let editedElem = null;
-    if(idParts.length > 2){
-        editedElem =  global.editedTexts.find(edited => edited.idParts[0] === idParts[0] && edited.idParts[1] === idParts[1]);
-    }else{
-        editedElem = global.editedTexts.find(edited => edited.idParts[0] === idParts[0] && edited.idParts.length === 1);
-    }
 
-    if(editedElem){
-        infos = editedElem.newInfos;
-        for(let i = 0; infos.length; i++){
-            images.push("dotImg");
-        }
+    const categories = [];
+    if(idParts.length > 2){
+        categories.push(idParts[1].toLowerCase());
     } else {
-        const categories = [];
-        if(idParts.length > 2){
-            categories.push(idParts[1].toLowerCase());
-        } else {
-            categories.push("general");
-        }
-        const visualData = helpers.getDataWithId(global.settings.traversalStrategy, idParts[0], categories, count);
-        const visual = global.allVisuals.find(function (visual) {
-            return visual.name == idParts[0];
-        });
-        const visualInfos = await helpers.getVisualInfos(visual);
-        
-        if (!visualData) {
-            if (idParts.length > 2 && idParts[1] == "Insight") {
-                images = visualInfos.insightImages;
-                infos = visualInfos.insightInfos;
-            } else if (idParts.length > 2 && idParts[1] == "Interaction") {
-                images = visualInfos.interactionImages;
-                infos = visualInfos.interactionInfos;
-            } else {
-                images = visualInfos.generalImages;
-                infos = visualInfos.generalInfos;
-            }
-        } else{
-            if(idParts.length > 2 && idParts[1] == "Insight"){
-                for (let i = 0; i < visualData.insightInfosStatus.length; ++i) {
-                  switch(visualData.insightInfosStatus[i]){
-                       case global.infoStatus.original:
-                            images.push(visualInfos.insightImages[i]);
-                            infos.push(visualInfos.insightInfos[i]);
-                           break;
-                       case global.infoStatus.changed:
-                       case global.infoStatus.added:
-                            images.push("dotImg");
-                            infos.push(visualData.changedInsightInfos[i]);
-                           break;
-                       default:
-                           break;
-                  }
-                }
-            } else if(idParts.length > 2 && idParts[1] == "Interaction"){
-                for (let i = 0; i < visualData.interactionInfosStatus.length; ++i) {
-                    switch(visualData.interactionInfosStatus[i]){
-                        case global.infoStatus.original:
-                            images.push(visualInfos.interactionImages[i]);
-                            infos.push(visualInfos.interactionInfos[i]);
-                            break;
-                        case global.infoStatus.changed:
-                        case global.infoStatus.added:
-                            images.push("dotImg");
-                            infos.push(visualData.changedInteractionInfos[i]);
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            } else {
-                for (let i = 0; i < visualData.generalInfosStatus.length; ++i) {
-                    switch(visualData.generalInfosStatus[i]){
-                        case global.infoStatus.original:
-                            images.push(visualInfos.generalImages[i]);
-                            infos.push(visualInfos.generalInfos[i]);
-                            break;
-                        case global.infoStatus.changed:
-                        case global.infoStatus.added:
-                            images.push("dotImg");
-                            infos.push(visualData.changedGeneralInfos[i]);
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            }
-        }
+        categories.push("general");
+    }
+    const visualData = helpers.getDataWithId(global.settings.traversalStrategy, idParts[0], categories, count);
+    const visual = global.allVisuals.find(function (visual) {
+        return visual.name == idParts[0];
+    });
+    const visualInfos = await helpers.getVisualInfos(visual);
     
+    if (!visualData) {
+        if (idParts.length > 2 && idParts[1] == "Insight") {
+            images = visualInfos.insightImages;
+            infos = visualInfos.insightInfos;
+        } else if (idParts.length > 2 && idParts[1] == "Interaction") {
+            images = visualInfos.interactionImages;
+            infos = visualInfos.interactionInfos;
+        } else {
+            images = visualInfos.generalImages;
+            infos = visualInfos.generalInfos;
+        }
+    } else{
+        if(idParts.length > 2 && idParts[1] == "Insight"){
+            for (let i = 0; i < visualData.insightInfosStatus.length; ++i) {
+                switch(visualData.insightInfosStatus[i]){
+                    case global.infoStatus.original:
+                        images.push(visualInfos.insightImages[i]);
+                        infos.push(visualInfos.insightInfos[i]);
+                        break;
+                    case global.infoStatus.changed:
+                    case global.infoStatus.added:
+                        images.push("dotImg");
+                        infos.push(visualData.changedInsightInfos[i]);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        } else if(idParts.length > 2 && idParts[1] == "Interaction"){
+            for (let i = 0; i < visualData.interactionInfosStatus.length; ++i) {
+                switch(visualData.interactionInfosStatus[i]){
+                    case global.infoStatus.original:
+                        images.push(visualInfos.interactionImages[i]);
+                        infos.push(visualInfos.interactionInfos[i]);
+                        break;
+                    case global.infoStatus.changed:
+                    case global.infoStatus.added:
+                        images.push("dotImg");
+                        infos.push(visualData.changedInteractionInfos[i]);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        } else {
+            for (let i = 0; i < visualData.generalInfosStatus.length; ++i) {
+                switch(visualData.generalInfosStatus[i]){
+                    case global.infoStatus.original:
+                        images.push(visualInfos.generalImages[i]);
+                        infos.push(visualInfos.generalInfos[i]);
+                        break;
+                    case global.infoStatus.changed:
+                    case global.infoStatus.added:
+                        images.push("dotImg");
+                        infos.push(visualData.changedGeneralInfos[i]);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
     }
 
     const textBox = document.getElementById("textBox")! as HTMLTextAreaElement; 
@@ -317,7 +303,8 @@ export async function saveVisualChanges(newInfo: string[], idParts: string[], co
         visualData = helpers.getDataWithId(global.settings.traversalStrategy, idParts[0], categories, count);
     }
     
-    const originalInfo = await getOriginalVisualInfos(idParts);
+    const original = await getOriginalVisualInfos(idParts);
+    const originalInfo = original[1];
     if(!originalInfo){
         return;
     }
@@ -401,17 +388,21 @@ export async function saveVisualChanges(newInfo: string[], idParts: string[], co
 
 async function getOriginalVisualInfos(idParts: string[]){
     let info;
+    let images;
     const visual = global.currentVisuals.find(vis => vis.name === idParts[0]);
     const visualInfos = await helpers.getVisualInfos(visual);
 
     if(idParts.length > 2 && idParts[1] == "Insight"){
+        images = visualInfos.insightImages;
         info = visualInfos.insightInfos;
     } else if(idParts.length > 2 && idParts[1] == "Interaction"){
+        images = visualInfos.interactionImages;
         info = visualInfos.interactionInfos;
     } else {
+        images = visualInfos.generalImages;
         info = visualInfos.generalInfos;
     }
-    return info;
+    return [images,info];
   }
 
 export async function resetVisualChanges(idParts: string[],count: number){
@@ -427,49 +418,51 @@ export async function resetVisualChanges(idParts: string[],count: number){
         return;
     }
 
-    let info = originalInfo.join("\r\n");
-    info = info.replaceAll("<br>", " \n");
     const textBox = document.getElementById("textBox")! as HTMLTextAreaElement; 
-    textBox.value = info;
+    textBox.innerHTML = "";
 
-    const editedElem = global.editedTexts.find(editedElem => editedElem.idParts.every((idPart: string) => idParts.includes(idPart)) && editedElem.count === count);
-    const index = global.editedTexts.indexOf(editedElem!);
-    global.editedTexts.splice(index, 1);
+    await createInfoList(originalInfo[0], originalInfo[1], "textBox", true);
 
     const visualData = helpers.getDataWithId(global.settings.traversalStrategy, idParts[0], categories, count);
     if (!visualData) {
+        const traversalElem = createTraversalElement("");
+        traversalElem.element = await getTraversalElement(idParts[0]);
+        traversalElem.count = count;
+        traversalElem.categories = categories;
+        global.settings.traversalStrategy.push(traversalElem);
         return;
     }
 
     if(idParts.length > 2 && idParts[1] == "Insight"){
-        for (let i = 0; i < visualData.insightInfosStatus.length; ++i) {
-            if(i < originalInfo.length){        
-                visualData.insightInfosStatus[i] = "original";
-                visualData.changedInsightInfos[i] = "";
-            } else {
-                visualData.insightInfosStatus.splice(i, 1);
-                visualData.changedInsightInfos.splice(i, 1);
-            }
+        for (let i = 0; i < visualData.insightInfosStatus.length; ++i) {       
+            visualData.insightInfosStatus[i] = "original";
+            visualData.changedInsightInfos[i] = "";
+        }
+        if(originalInfo.length < visualData.insightInfosStatus.length){
+            const elemCount = visualData.insightInfosStatus.length - originalInfo.length;
+            visualData.insightInfosStatus.splice(originalInfo.length, elemCount);
+            visualData.changedInsightInfos.splice(originalInfo.length, elemCount);
         }
     } else if(idParts.length > 2 && idParts[1] == "Interaction"){
-        for (let i = 0; i < visualData.interactionInfosStatus.length; ++i) {
-            if(i < originalInfo.length){        
-                visualData.interactionInfosStatus[i] = "original";
-                visualData.changedInteractionInfos[i] = "";
-            } else {
-                visualData.interactionInfosStatus.splice(i, 1);
-                visualData.changedInteractionInfos.splice(i, 1);
-            }
+        for (let i = 0; i < visualData.interactionInfosStatus.length; ++i) {     
+            visualData.interactionInfosStatus[i] = "original";
+            visualData.changedInteractionInfos[i] = "";
+        }
+        if(originalInfo.length < visualData.interactionInfosStatus.length){
+            const elemCount = visualData.interactionInfosStatus.length - originalInfo.length;
+            visualData.interactionInfosStatus.splice(originalInfo.length, elemCount);
+            visualData.changedInteractionInfos.splice(originalInfo.length, elemCount);
         }
     } else {
-        for (let i = 0; i < visualData.generalInfosStatus.length; ++i) {
-            if(i < originalInfo.length){        
-                visualData.generalInfosStatus[i] = "original";
-                visualData.changedGeneralInfos[i] = "";
-            } else {
-                visualData.generalInfosStatus.splice(i, 1);
-                visualData.changedGeneralInfos.splice(i, 1);
-            }
+        for (let i = 0; i < visualData.generalInfosStatus.length; ++i) {       
+            visualData.generalInfosStatus[i] = "original";
+            visualData.changedGeneralInfos[i] = "";
+        }
+        
+        if(originalInfo.length < visualData.generalInfosStatus.length){
+            const elemCount = visualData.generalInfosStatus.length - originalInfo.length;
+            visualData.generalInfosStatus.splice(originalInfo.length, elemCount);
+            visualData.changedGeneralInfos.splice(originalInfo.length, elemCount);
         }
     }
 

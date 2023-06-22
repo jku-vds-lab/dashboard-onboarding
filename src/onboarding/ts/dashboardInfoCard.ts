@@ -181,7 +181,7 @@ export async function saveDashboardChanges(newInfo: string[], count: number){
 export async function resetDashboardChanges(count: number){
     const dashboard = global.componentGraph.dashboard;
     const dashboardInfo = getNewDashboardInfo(dashboard);
-    const originalImages = dashboardInfo[1];
+    const originalImages = dashboardInfo[0];
     const originalInfos = dashboardInfo[1];
 
     const textBox = document.getElementById("textBox")! as HTMLTextAreaElement; 
@@ -191,17 +191,23 @@ export async function resetDashboardChanges(count: number){
 
     const dashboardData = helpers.getDataWithId(global.settings.traversalStrategy, "dashboard", ["general", "interaction", "insight"], count);
     if (!dashboardData) {
-      return;
+        const traversalElem = createTraversalElement("");
+        traversalElem.element = await getTraversalElement("dashboard");
+        traversalElem.count = count;
+        traversalElem.categories = ["general", "interaction", "insight"];
+        global.settings.traversalStrategy.push(traversalElem);
+        return;
     }
 
-    for (let i = 0; i < dashboardData.infoStatus.length; ++i) {
-        if(i < originalInfos.length){        
-            dashboardData.infoStatus[i] = "original";
-            dashboardData.changedInfos[i] = "";
-        } else {
-            dashboardData.infoStatus.splice(i, 1);
-            dashboardData.changedInfos.splice(i, 1);
-        }
+    for (let i = 0; i < originalInfos.length; ++i) {      
+        dashboardData.infoStatus[i] = "original";
+        dashboardData.changedInfos[i] = "";
+    }
+
+    if(originalInfos.length < dashboardData.infoStatus.length){
+        const elemCount = dashboardData.infoStatus.length - originalInfos.length;
+        dashboardData.infoStatus.splice(originalInfos.length, elemCount);
+        dashboardData.changedInfos.splice(originalInfos.length, elemCount);
     }
 
     localStorage.setItem("settings", JSON.stringify(global.settings, replacer));
@@ -211,38 +217,29 @@ export async function getDashboardInfoInEditor(count: number){
     let infos = [];
     let images = [];
 
-    const editedElem = global.editedTexts.find(edited => edited.idParts[0] === "dashboard" && edited.idParts.length === 1);
-    
-    if(editedElem){
-        infos = editedElem.newInfos;
-        for(let i = 0; infos.length; i++){
-            images.push("dotImg");
-        }
-    } else {
-        const dashboard = global.componentGraph.dashboard;
-        const dashboardInfo = getNewDashboardInfo(dashboard);
-        const dashboardImages = dashboardInfo[0];
-        const dashboardInfos = dashboardInfo[1];
+    const dashboard = global.componentGraph.dashboard;
+    const dashboardInfo = getNewDashboardInfo(dashboard);
+    const dashboardImages = dashboardInfo[0];
+    const dashboardInfos = dashboardInfo[1];
 
-        const dashboardData = helpers.getDataWithId(global.settings.traversalStrategy, "dashboard", ["general", "interaction", "insight"], count);
-        if (!dashboardData) {
-            images = dashboardImages;
-            infos = dashboardInfos;
-        } else {
-            for (let i = 0; i < dashboardData.infoStatus.length; ++i) {
-                switch(dashboardData.infoStatus[i]){
-                    case global.infoStatus.original:
-                        images.push(dashboardImages[i]);
-                        infos.push(dashboardInfos[i]);
-                        break;
-                    case global.infoStatus.changed:
-                    case global.infoStatus.added:
-                        images.push("dotImg");
-                        infos.push(dashboardData.changedInfos[i]);
-                        break;
-                    default:
-                        break;
-                }
+    const dashboardData = helpers.getDataWithId(global.settings.traversalStrategy, "dashboard", ["general", "interaction", "insight"], count);
+    if (!dashboardData) {
+        images = dashboardImages;
+        infos = dashboardInfos;
+    } else {
+        for (let i = 0; i < dashboardData.infoStatus.length; ++i) {
+            switch(dashboardData.infoStatus[i]){
+                case global.infoStatus.original:
+                    images.push(dashboardImages[i]);
+                    infos.push(dashboardInfos[i]);
+                    break;
+                case global.infoStatus.changed:
+                case global.infoStatus.added:
+                    images.push("dotImg");
+                    infos.push(dashboardData.changedInfos[i]);
+                    break;
+                default:
+                    break;
             }
         }
     }

@@ -163,28 +163,37 @@ export async function saveFilterChanges(newInfo: string[], count:number){
 export async function resetFilterChanges(count: number){
     const filterInfos = await helpers.getFilterInfo();
 
-    let info = filterInfos.join("\r\n");
-    info = info.replaceAll("<br>", " \n");
     const textBox = document.getElementById("textBox")! as HTMLTextAreaElement; 
-    textBox.value = info;
+    textBox.innerHTML = "";
 
-    const editedElem = global.editedTexts.find(editedElem => editedElem.idParts[0] === "globalFilter" && editedElem.count === count);
-    const index = global.editedTexts.indexOf(editedElem!);
-    global.editedTexts.splice(index, 1);
+    const ul = document.createElement('ul');
+    document.getElementById("textBox")?.appendChild(ul);
+
+    for (let i = 0; i < filterInfos.length; ++i) {
+        const li = document.createElement('li');
+        li.innerHTML =  filterInfos[i];
+        ul.appendChild(li);
+    }
 
     const filterData = helpers.getDataWithId(global.settings.traversalStrategy, "globalFilter", ["general", "interaction", "insight"], count);
     if (!filterData) {
-      return;
+        const traversalElem = createTraversalElement("");
+        traversalElem.element = await getTraversalElement("globalFilter");
+        traversalElem.count = count;
+        traversalElem.categories = ["general", "interaction", "insight"];
+        global.settings.traversalStrategy.push(traversalElem);
+        return;
     }
 
-    for (let i = 0; i < filterData.filterInfosStatus.length; ++i) {
-        if(i < filterInfos.length){        
-            filterData.filterInfosStatus[i] = "original";
-            filterData.changedFilterInfos[i] = "";
-        } else {
-            filterData.filterInfosStatus.splice(i, 1);
-            filterData.changedFilterInfos.splice(i, 1);
-        }
+    for (let i = 0; i < filterInfos.length; ++i) {    
+        filterData.filterInfosStatus[i] = "original";
+        filterData.changedFilterInfos[i] = "";
+    }
+
+    if(filterInfos.length < filterData.filterInfosStatus.length){
+        const elemCount = filterData.filterInfosStatus.length - filterInfos.length;
+        filterData.filterInfosStatus.splice(filterInfos.length, elemCount);
+        filterData.changedFilterInfos.splice(filterInfos.length, elemCount);
     }
 
     localStorage.setItem("settings", JSON.stringify(global.settings, replacer));
@@ -192,31 +201,24 @@ export async function resetFilterChanges(count: number){
 
 export async function getFilterInfoInEditor(count: number){
     let infos = [];
-    const images = [];
 
-    const editedElem = global.editedTexts.find(edited => edited.idParts[0] === "globalFilter" && edited.idParts.length === 1);
-    
-    if(editedElem){
-        infos = editedElem.newInfos;
+    const filterInfos = await helpers.getFilterInfo();
+
+    const filterData = helpers.getDataWithId(global.settings.traversalStrategy, "globalFilter", ["general", "interaction", "insight"], count);
+    if (!filterData) {
+        infos = filterInfos;
     } else {
-        const filterInfos = await helpers.getFilterInfo();
-
-        const filterData = helpers.getDataWithId(global.settings.traversalStrategy, "globalFilter", ["general", "interaction", "insight"], count);
-        if (!filterData) {
-            infos = filterInfos;
-        } else {
-            for (let i = 0; i < filterData.filterInfosStatus.length; ++i) {
-                switch(filterData.filterInfosStatus[i]){
-                    case global.infoStatus.original:
-                        infos.push(filterInfos[i]);
-                        break;
-                    case global.infoStatus.changed:
-                    case global.infoStatus.added:
-                        infos.push(filterData.changedFilterInfos[i]);
-                        break;
-                    default:
-                        break;
-                }
+        for (let i = 0; i < filterData.filterInfosStatus.length; ++i) {
+            switch(filterData.filterInfosStatus[i]){
+                case global.infoStatus.original:
+                    infos.push(filterInfos[i]);
+                    break;
+                case global.infoStatus.changed:
+                case global.infoStatus.added:
+                    infos.push(filterData.changedFilterInfos[i]);
+                    break;
+                default:
+                    break;
             }
         }
     }
