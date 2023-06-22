@@ -10,9 +10,18 @@ import {
 import { ReactFlowProvider } from "reactflow";
 import NodesCanvas from "../nodes-canvas/canvas-index";
 import "../assets/css/dashboard.scss";
-import { resetVisualChanges, saveVisualChanges } from "../../onboarding/ts/infoCards";
-import { resetDashboardChanges, saveDashboardChanges } from "../../onboarding/ts/dashboardInfoCard";
-import { resetFilterChanges, saveFilterChanges } from "../../onboarding/ts/filterInfoCards";
+import {
+  resetVisualChanges,
+  saveVisualChanges,
+} from "../../onboarding/ts/infoCards";
+import {
+  resetDashboardChanges,
+  saveDashboardChanges,
+} from "../../onboarding/ts/dashboardInfoCard";
+import {
+  resetFilterChanges,
+  saveFilterChanges,
+} from "../../onboarding/ts/filterInfoCards";
 import mediaIcon from "../assets/img/icon-7.png";
 import OpenAI from "./main-open-ai";
 import { useEffect, useState } from "react";
@@ -33,7 +42,8 @@ export default function StoryPane(props: Props) {
 
     setShowMediaOptions(false);
 
-    const list = (document.getElementById("textBox")! as HTMLTextAreaElement).children[0];
+    const list = (document.getElementById("textBox")! as HTMLTextAreaElement)
+      .children[0];
     const listElems = list.children;
 
     for (let i = 0; i < listElems.length; i++) {
@@ -53,11 +63,7 @@ export default function StoryPane(props: Props) {
         await saveFilterChanges(infos, 1);
         break;
       default:
-        await saveVisualChanges(
-          infos,
-          currentIdParts,
-          1
-        );
+        await saveVisualChanges(infos, currentIdParts, 1);
         break;
     }
   };
@@ -145,7 +151,11 @@ export default function StoryPane(props: Props) {
             data-bs-parent="#annotation-box"
           >
             <div className="accordion-body">
-              <div id="textBox" className="editable form-control" contentEditable="true"></div>
+              <div
+                id="textBox"
+                className="editable form-control"
+                contentEditable="true"
+              ></div>
               <div className="controls">
                 <div
                   className="btn btn-secondary btn-sm me-auto"
@@ -161,7 +171,7 @@ export default function StoryPane(props: Props) {
           </div>
         </div>
 
-        <OpenAI />
+        {/* <OpenAI /> */}
       </div>
     </div>
   );

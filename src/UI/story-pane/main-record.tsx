@@ -13,8 +13,11 @@ export default function RecordView() {
   const handleSave = async () => {
     try {
       if (mediaBlobUrl) {
+        const blobResponse = await fetch(mediaBlobUrl);
+        const blob = await blobResponse.blob();
+        const file = new File([blob], "video.mp4", { type: blob.type });
         const formData = new FormData();
-        formData.append("file", mediaBlobUrl);
+        formData.append("video", file);
 
         const response = await fetch("http://127.0.0.1:8000/upload-video", {
           method: "POST",
@@ -23,25 +26,33 @@ export default function RecordView() {
 
         const data = await response.json();
         console.log("Video uploaded successfully!", data);
-        debugger;
 
-        const nodeId = document
-          ?.getElementById("Upload-Video")
-          ?.getAttribute("nodeId");
-        const currentIdParts = nodeId?.split(" ");
-        let category = "general";
-        if (currentIdParts!.length > 2) {
-          category = currentIdParts![1];
-        }
-        saveInfoVideo(
-          "C:\\Users\\Vaishali\\Desktop\\dashboard-onboarding-master\\dashboard-onboarding\\dashboard-onboarding\\uploads\\screen-recording.mp4",
-          currentIdParts![0],
-          [category],
-          1
-        );
+        assignVideoToNode();
       }
     } catch (error) {
       console.error("Error uploading video:", error);
+    }
+  };
+
+  const assignVideoToNode = () => {
+    try {
+      const nodeId = document
+        ?.getElementById("saveRecording")
+        ?.getAttribute("nodeId");
+      const currentIdParts = nodeId?.split(" ");
+      let category = "general";
+      if (currentIdParts!.length > 2) {
+        category = currentIdParts![1];
+      }
+
+      saveInfoVideo(
+        "C:\\Users\\Vaishali\\Desktop\\dashboard-onboarding-master\\dashboard-onboarding\\dashboard-onboarding\\uploads\\video.mp4",
+        currentIdParts![0],
+        [category],
+        1
+      );
+    } catch (error) {
+      console.log("Error in assigning video to node", error);
     }
   };
 
@@ -50,14 +61,14 @@ export default function RecordView() {
       <div id="recording">
         <button
           id="startRecording"
-          className="btn btn-secondary btn-xs d-flex justify-content-center align-items-center"
+          className="btn btn-secondary btn-xs justify-content-center align-items-center"
           onClick={startRecording}
         >
           Start Recording
         </button>
         <button
           id="stopRecording"
-          className="btn btn-secondary btn-xs d-flex justify-content-center align-items-center"
+          className="btn btn-secondary btn-xs justify-content-center align-items-center"
           onClick={stopRecording}
         >
           Stop Recording
@@ -65,7 +76,8 @@ export default function RecordView() {
       </div>
       {mediaBlobUrl && (
         <button
-          className="btn btn-secondary btn-xs d-flex justify-content-center align-items-center"
+          id="saveRecording"
+          className="btn btn-secondary btn-xs justify-content-center align-items-center"
           onClick={handleSave}
         >
           Save
