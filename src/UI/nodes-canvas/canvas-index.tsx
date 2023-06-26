@@ -61,7 +61,7 @@ export default function NodesCanvas(props: Props) {
   const handleMouseClick = (event: React.MouseEvent<HTMLDivElement>) => {
     console.log("Mouse click is called");
     const { clientX, clientY } = event;
-    debugger;
+
     setMousePosition({ x: clientX, y: clientY });
   };
 
@@ -327,7 +327,6 @@ export default function NodesCanvas(props: Props) {
               .visuals[0] as Array<TraversalElement>;
 
             groupVisuals.forEach((vis: TraversalElement) => {
-              debugger;
               console.log("Vis", vis);
               const visTitle = getTitle(vis);
               const visType = getType(visTitle);
@@ -350,7 +349,7 @@ export default function NodesCanvas(props: Props) {
             position: { x: 0, y: 0 },
             data: null,
           });
-          debugger;
+
           const groupNode = groupNodeObj.getGroupNode();
           setNodes((nds) => nds.concat(groupNode));
 
@@ -393,7 +392,7 @@ export default function NodesCanvas(props: Props) {
 
   function getID(elem: TraversalElement) {
     let id = elem.element.id;
-    debugger;
+
     if (elem.categories.length === 1 && elem.categories[0] === "insight") {
       id += " Insight";
     } else if (
