@@ -8,7 +8,7 @@ import { icons } from "./textIcons";
 
 export async function createVisualInfo(traversal: TraversalElement[], visual: any, count: number, categories: string[]){
     document.getElementById("contentText")!.innerHTML = "";
-    const visualData = helpers.getDataOfVisual(traversal, visual, count);
+    const visualData = helpers.getDataWithId(traversal, visual.name, categories, count);
     if(!visualData){
         return;
     }

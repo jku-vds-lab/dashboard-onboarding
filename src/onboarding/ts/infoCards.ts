@@ -34,7 +34,7 @@ export async function createInfoCard(visual: any, count: number, categories: str
         traversal = global.settings.traversalStrategy;
     }
 
-    const visualData = helpers.getDataOfVisual(traversal, visual, count);
+    const visualData = helpers.getDataWithId(traversal, visual.name, categories, count);
     helpers.createCardContent(visualData?.title, "", "infoCard");
 
     createInfoCardButtons(traversal, visual.name, categories, count);
