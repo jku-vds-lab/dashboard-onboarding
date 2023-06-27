@@ -301,6 +301,9 @@ $color-white: #f1f1f1;
 /*----------------------------------
 --------------Buttons---------------
 ----------------------------------*/
+.btn-secondary{
+  background-color: #595959 !important;
+}
 .btn-outline{
   cursor: pointer;
   background: transparent;
@@ -310,8 +313,9 @@ $color-white: #f1f1f1;
   border-radius: 2px;
 }
 .btn-xs{
-  font-size: 14px;
+  font-size: 14px !important;
   max-width:150px;
+  padding: 4px 10px !important;
 }
 
 /*----------------------------------
@@ -377,9 +381,22 @@ $color-white: #f1f1f1;
 }
 .toolbar{
   width: 100%;
-  padding: 10px 20px;
+  padding: 10px 20px 10px 258px;
   background-color: #{$bg-dark-1};
+  display: flex;
+  justify-content: space-between;
 
+  .btn:first-child:active{
+    background-color: rgb(30, 31, 34);
+    border-color: rgb(30, 31, 34);
+  }
+
+  .btn.btn-dark{
+    background-color: #595959;
+    &:hover{
+      color: rgba(255,255,255,1);
+    }
+  }
 }
 /*----------------------------------
 --------------Dropdown---------------

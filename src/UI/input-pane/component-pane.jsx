@@ -80,6 +80,7 @@ export default function ComponentPane() {
                               headerText={tab.headerText}
                           />
                       )}
+                      <Components />
                   </Tab.Content>
               </div>
           </Tab.Container>
