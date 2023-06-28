@@ -276,8 +276,7 @@ export async function createInfoList(images: string | any[], infos: string[], pa
     for (let i = 0; i < infos.length; ++i) {
         const li = document.createElement('li');
         if(editor){
-            //TODO add white to image string
-            li.style.listStyleImage = "url("+ icons[images[i]] + ")";
+            li.style.listStyleImage = "url(" + icons["white-" + images[i]] + ")";
             li.style.paddingLeft = "10px";
         } else {
             if(divisor<=2){
