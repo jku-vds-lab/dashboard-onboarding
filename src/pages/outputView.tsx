@@ -58,9 +58,6 @@ class OutputView extends React.Component<AppProps, AppState> {
     return (
       <div className="container-fluid" id="flexContainer">
         <div className="row" id="onboarding-header">
-          <Link to="/">
-            <div className="btn btn-success m-1 px-5">Save</div>
-          </Link>
         </div>
         <div className="row">
           <div className="col-10" id="reportContainer">

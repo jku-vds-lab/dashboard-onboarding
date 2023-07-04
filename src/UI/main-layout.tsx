@@ -9,10 +9,13 @@ import Tooltip from 'react-bootstrap/Tooltip';
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 
 import icon_1 from "./assets/img/icon-8.png";
+import { Link } from "react-router-dom";
+import Traversal from "./nodes-canvas/traversal";
 
 export default function MainLayout() {
   const [trigger, setTrigger] = useState(0);
   const [traversal, setTrav] = useState("");
+  const [nodes, setNodes] = useState([]);
 
   const buildTraversal = () => {
     setTrigger((trigger) => trigger + 1);
@@ -23,23 +26,10 @@ export default function MainLayout() {
         <div  className="toolbar control-toolbar">
           <TraversalPane buildTraversal={buildTraversal} setTrav={setTrav} />
           <div>
-            <OverlayTrigger trigger="hover" placement="right" overlay={
-              <Tooltip >
-                Record
-              </Tooltip>
-            }>
-              <div className="btn btn-secondary btn-dark ms-2">
-                <img className="icon options" style={{verticalAlign: "text-bottom"}}
-                     src={icon_1}
-                     width="18px"
-                     height="18px" alt="Component icon" />
-              </div>
-            </OverlayTrigger>
-
-            <div id="traversal"
-                 className="btn btn-secondary btn-dark ms-2">
-              Save Traversal
-            </div>
+            <Traversal nodes={nodes} />
+            <Link to="/">
+              <div className="btn btn-secondary btn-dark ms-2">Back to Onboarding</div>
+            </Link>
           </div>
         </div>
     <div
@@ -49,7 +39,7 @@ export default function MainLayout() {
       {" "}
 
       <InputPane/>
-      <StoryPane mainTrigger={trigger} traversal={traversal}/>
+      <StoryPane mainTrigger={trigger} traversal={traversal} setNodes={setNodes}/>
       <OutputPane />
     </div>
       </div>

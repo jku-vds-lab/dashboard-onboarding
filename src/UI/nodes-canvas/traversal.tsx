@@ -161,11 +161,9 @@ export default function Traversal(props: any) {
   const tOrder = new TraversalOrder();
 
   return (
-    <div
-      id="traversal"
-      className="btn btn-secondary btn-xs d-none"
-      onClick={() => tOrder.onClick(props)}
-    >
+    <div id="traversal"
+      className="btn btn-secondary btn-dark ms-2"
+      onClick={() => tOrder.onClick(props)}>
       Save Traversal
     </div>
   );
