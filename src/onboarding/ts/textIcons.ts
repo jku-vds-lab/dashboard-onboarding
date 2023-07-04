@@ -10,25 +10,25 @@ import layoutImg from "../assets/layout.png";
 import legendClickImg from "../assets/legend-click.png";
 import legendImg from "../assets/legend.png";
 import lightbulbImg from "../assets/lightbulb.png";
-import lineGraphImg from "../assets/line-graph.png";
+import lineGraphImg from "../assets/line-chart.png";
 import xAxisImg from "../assets/x-axis.png";
 import yAxisImg from "../assets/y-axis.png";
 
-import whiteAxisClickImg from "../assets/white-axis-click.png";
-import whiteBarChartImg from "../assets/white-bar-chart.png";
-import whiteDataImg from "../assets/white-data.png";
-import whiteDotImg from "../assets/white-dot.png";
-import whiteElemClickImg from "../assets/white-element-click.png";
-import whiteFilterImg from "../assets/white-filter.png";
-import whiteInfoImg from "../assets/white-info.png";
-import whiteInteractImg from "../assets/white-interact.png";
-import whiteLayoutImg from "../assets/white-layout.png";
-import whiteLegendClickImg from "../assets/white-legend-click.png";
-import whiteLegendImg from "../assets/white-legend.png";
-import whiteLightbulbImg from "../assets/white-lightbulb.png";
-import whiteLineGraphImg from "../assets/white-line-graph.png";
-import whiteXAxisImg from "../assets/white-x-axis.png";
-import whiteYAxisImg from "../assets/white-y-axis.png";
+import whiteAxisClickImg from "../assets/axis-click-light.png";
+import whiteBarChartImg from "../assets/bar-chart-light.png";
+import whiteDataImg from "../assets/data-light.png";
+import whiteDotImg from "../assets/dot-light.png";
+import whiteElemClickImg from "../assets/element-click-light.png";
+import whiteFilterImg from "../assets/filter-light.png";
+import whiteInfoImg from "../assets/info-light.png";
+import whiteInteractImg from "../assets/interact-light.png";
+import whiteLayoutImg from "../assets/layout-light.png";
+import whiteLegendClickImg from "../assets/legend-click-light.png";
+import whiteLegendImg from "../assets/legend-light.png";
+import whiteLightbulbImg from "../assets/lightbulb-light.png";
+import whiteLineGraphImg from "../assets/line-chart-light.png";
+import whiteXAxisImg from "../assets/x-axis-light.png";
+import whiteYAxisImg from "../assets/y-axis-light.png";
 
 
 export const icons : {[key:string] : any} = {
@@ -62,5 +62,5 @@ export const icons : {[key:string] : any} = {
     "white-lightbulbImg" : whiteLightbulbImg,
     "white-lineGraphImg" : whiteLineGraphImg,
     "white-xAxisImg" : whiteXAxisImg,
-    "white-yAxisImg" : whiteXAxisImg,
+    "white-yAxisImg" : whiteYAxisImg,
 }
