@@ -1,6 +1,7 @@
 $bg-dark: rgb(32,32,32);
 $bg-dark-1: rgb(83,83,83);
 $default-handle-color: rgb(158, 159, 160);
+$default-node-color: #545454;
 $dashboard-color: #4e91e9;
 $line-chart-color: #d95f02;
 $bar-chart-color: #1b9e77;
@@ -22,27 +23,69 @@ $color-white: #f1f1f1;
   display: none;
 }
 
-div[class*="Dashboard"]{
-  background-color: #{$dashboard-color};
-}
-div[class*="Bar"]{
-  background-color: #{$bar-chart-color};
-}
-div[class*="Line"] {
-  background-color: #{$line-chart-color};
-}
-div[class*="KPI"] {
+div[data-id*="Dashboard"]{
+  &:before{
+    background-color: #{$dashboard-color};
+  }
+  &:after{
+    background-image: url("../img/icon-1.png");
+  }
 
-  background-color: #{$kpi-color};
 }
-div[class*="Filter"] {
-  background-color: #{$filter-color};
+div[data-id*="Bar"]{
+  &:before{
+    background-color: #{$bar-chart-color};
+  }
+  &:after{
+    background-image: url("../img/icon-4.png");
+  }
+  }
+
+div[data-id*="Line"] {
+  &:before{
+    background-color: #{$line-chart-color};
+  }
+  &:after{
+    background-image: url("../img/icon-2.png");
+  }
 }
-div[class*="Column"] {
-  background-color: #{$column-color};
+div[data-id*="KPI"] {
+  &:before{
+    background-color: #{$kpi-color};
+  }
+  &:after{
+    background-image: url("../img/icon-5.png");
+  }
 }
-div[class*="GlobalFilter"] {
-  background-color: #{$globalFilter-color};
+div[data-id*="Filter"] {
+  &:before{
+    background-color: #{$filter-color};
+  }
+  &:after{
+    background-image: url("../img/icon-6.png");
+  }
+}
+div[data-id*="Column"] {
+  &:before{
+    background-color: #{$column-color};
+  }
+  &:after{
+    background-image: url("../img/icon-3.png");
+  }
+}
+
+div[data-id*="dashboard"] {
+  &:before{
+    background-color: #{$column-color};
+  }
+  &:after{
+    background-image: url("../img/icon-3.png");
+  }
+}
+div[data-id*="GlobalFilter"] {
+  &:before{
+    background-color: #{$globalFilter-color};
+  }
 }
 
 .box-node, .simple-node {
@@ -68,6 +111,7 @@ div[class*="GlobalFilter"] {
 }
 
 .react-flow__handle{
+  visibility: hidden;
   width:8px;
   height:8px;
   background-color: #{$default-handle-color};
@@ -79,7 +123,7 @@ div[class*="GlobalFilter"] {
   padding:10px;
   .header{
     display: flex;
-    align-content: left;
+    align-content: start;
 
 
     .n-button{
@@ -172,7 +216,30 @@ div[class*="GlobalFilter"] {
 .react-flow__controls-button{
   border: none;
 }
-
+.react-flow__node{
+  background-color: #{$default-node-color} !important;
+  &:before{
+    content: '';
+    position: absolute;
+    top:-1px;
+    left:-1px;
+    width: 7px;
+    height: 30px;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+  }
+  &:after{
+    content: '';
+    position: absolute;
+    top: 8px;
+    right: 4px;
+    width: 13px;
+    height: 12px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    opacity: 0.8;
+  }
+}
 .react-flow__node.selected .node{
   box-shadow: 0px 0px 3px 2px #bbbbbb;
 }
@@ -190,7 +257,7 @@ div[class*="GlobalFilter"] {
   font-size: 12px;
   text-align: center;
   background-color: rgba(83,83,83,0.2);
-  border: 1px solid rgb(83,83,83);
+  border: 1px solid rgb(83,83,83) !important;
   color: rgba(255,255,255,0.7);
   height: 200px;
   width: 280px;
@@ -219,6 +286,10 @@ div[class*="GlobalFilter"] {
     position: relative;
 }
 
+.react-flow__panel.bottom {
+  bottom: 60px;
+}
+
 .btn-outline-info {
   // background-color: #9e9fa0 !important;
   z-index: 99999 !important;
@@ -226,3 +297,34 @@ div[class*="GlobalFilter"] {
 .btn-outline-info:hover {
   background-color: #d4cbcb !important;
 }
+
+.custom-file-input::file-selector-button{
+  color: #fff;
+  background-color: #6c757d;
+  border: solid;
+  border-color: #6c757d;
+  border-radius: 5px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  padding-left: 12px;
+  padding-right: 12px;
+}
+
+.upload{
+  padding: 5px;
+  border: 0.5px solid;
+  border-color: #6c757d;
+}
+
+#recording{
+  position:relative;
+  margin-bottom: 5px;
+}
+
+#stopRecording{
+  position: absolute;
+  top: 0px; right: 0px
+}
+
+
+
