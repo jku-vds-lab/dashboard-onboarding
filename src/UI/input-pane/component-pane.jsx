@@ -13,15 +13,73 @@ import c_icon_3 from "../assets/img/icon-5.png";
 import c_icon_4 from "../assets/img/icon-3.png";
 import c_icon_5 from "../assets/img/icon-2.png";
 import c_icon_6 from "../assets/img/icon-4.png";
+import { allVisuals } from "../../onboarding/ts/globalVariables";
+
 export default function ComponentPane() {
-    const tabsData = [
-        { eventKey: 'first', tooltip: 'Dashboard', iconSrc: c_icon, className: 'dashboard', headerText: 'Dashboard' },
-        { eventKey: 'second', tooltip: 'Filters', iconSrc: c_icon_2, className: 'filters', headerText: 'Filters' },
-        { eventKey: 'third', tooltip: 'KPIs', iconSrc: c_icon_3, className: 'kpi', headerText: 'KPI' },
-        { eventKey: 'fourth', tooltip: 'Column chart', iconSrc: c_icon_4, className: 'column-chart', headerText: 'Column chart' },
-        { eventKey: 'fifth', tooltip: 'Line chart', iconSrc: c_icon_5, className: 'line-chart', headerText: 'Line chart' },
-        { eventKey: 'sixth', tooltip: 'Bar chart', iconSrc: c_icon_6, className: 'bar-chart', headerText: 'Bar chart' },
-    ];
+    const tabsData = [];
+
+    let tab =  { eventKey: 'dashboard', tooltip: 'Dashboard', iconSrc: c_icon, className: 'dashboard', headerText: 'Dashboard' };
+    tabsData.push(tab);
+    
+    for(let i = 0; i < allVisuals.length; i++){
+        const tab = {};
+        let visData = getVisData(allVisuals[i]);
+        tab.eventKey = allVisuals[i].name;
+        tab.tooltip = visData[0];
+        tab.iconSrc = visData[2];
+        tab.className = visData[1];
+        tab.headerText = visData[0] + " " + allVisuals[i].title;
+        tabsData[i+1] = tab;
+    }
+
+    tab = { eventKey: 'globalFilters', tooltip: 'Global Filters', iconSrc: c_icon_2, className: 'globalFilters', headerText: 'Global Filters' };
+    tabsData.push(tab);
+
+    function getVisData(visual) {
+        let icon = "";
+        let type = "";
+        let name = "";
+        const VisualType = visual.type;
+        switch(VisualType){
+            case 'card': case "multiRowCard":
+                name = "KPI";
+                type = "kpi";
+                icon = c_icon_3;
+                break;
+            case 'slicer':
+                name = "Filter";
+                type = "filter";
+                icon = c_icon_2;
+                break;
+            case 'lineChart':
+                name = "Line Chart";
+                type = "lineChart";
+                icon = c_icon_5;
+                break;
+            case 'clusteredBarChart':
+                name = "Bar Chart";
+                type = "barChart";
+                icon = c_icon_6;
+                break;
+            case 'clusteredColumnChart':
+                name = "Column Chart";
+                type = "columnChart";
+                icon = c_icon_4;
+                break;
+            case 'lineClusteredColumnComboChart':
+                name = "Combo Chart";
+                type = "comboChart";
+                icon = c_icon_4;
+                break;
+            default:
+                name = VisualType;
+                type = VisualType;
+                icon = c_icon_4;
+                break;
+        }
+        return [name, type, icon];
+      }
+
     function TabItem({ eventKey, tooltip, iconSrc }) {
         return (
             <Nav.Item>
@@ -43,20 +101,13 @@ export default function ComponentPane() {
 
     function TabPaneItem({ eventKey, className, headerText }) {
         return (
-            <Tab.Pane eventKey={eventKey} className={className}>
+            <Tab.Pane eventKey={eventKey} >
                 <div className="tab-body-header"><span>{headerText}</span><span className="color-box"></span></div>
+                <Components visual={eventKey}/>
             </Tab.Pane>
         )
     }
   return (
-    /*<Accordion defaultActiveKey={["0"]} alwaysOpen>
-      <Accordion.Item eventKey="0">
-        <Accordion.Button className="basic">Components</Accordion.Button>
-        <Accordion.Body>
-          <Components />
-        </Accordion.Body>
-      </Accordion.Item>
-    </Accordion>*/
       <div>
           <div className="label">Components</div>
           <Tab.Container id="component-graph" defaultActiveKey="first">
@@ -73,14 +124,14 @@ export default function ComponentPane() {
                   </Nav>
                   <Tab.Content>
                       {tabsData.map(tab =>
+                        <div  key={tab.eventKey}>
                           <TabPaneItem
-                              key={tab.eventKey}
                               eventKey={tab.eventKey}
                               className={tab.className}
                               headerText={tab.headerText}
                           />
+                        </div>
                       )}
-                      <Components />
                   </Tab.Content>
               </div>
           </Tab.Container>

@@ -8,81 +8,89 @@ export interface InputNode {
   key: string;
 }
 
-export default function Components() {
+interface Props{
+  visual: string;
+}
+
+export default function Components(props:Props) {
   const inputNodes: InputNode[] = [];
   const className = "dndnode";
   const visParentId = "componentNodes";
-
-  let inputNode: InputNode = {
-    mainComponent: createNode(
-      "dashboard",
-      className + " Dashboard",
-      "Dashboard",
-      "Dashboard",
-      visParentId,
-      "Dashboard"
-    ),
-    key: "dashboard",
-  };
-  inputNodes.push(inputNode);
-
-  inputNode = {
-    mainComponent: createNode(
-      "globalFilter",
-      className + " GlobalFilter",
-      "Global Filters",
-      "Global Filters",
-      visParentId,
-      "GlobalFilter"
-    ),
-    key: "globalFilter",
-  };
-  inputNodes.push(inputNode);
-
+  let inputNode: InputNode;
   
-  console.log("test", allVisuals)
-  for (const vis of allVisuals) {
-    let visTitle = createNodeTitle(vis.type);
-    const visClassName = className + " " + visTitle;
-    const itemLength = checkDuplicateComponents(vis.type);
-    if (itemLength > 1) {
-      visTitle = visTitle + " (" + vis.title + ")";
-    }
+  switch(props.visual){
+    case "dashboard":
+      inputNode = {
+        mainComponent: createNode(
+          "dashboard",
+          className + " Dashboard",
+          "Dashboard",
+          "General",
+          visParentId,
+          "Dashboard"
+        ),
+        key: "dashboard",
+      };
+      inputNodes.push(inputNode);
+      break;
+    case "globalFilters":
+      inputNode = {
+        mainComponent: createNode(
+          "globalFilter",
+          className + " GlobalFilter",
+          "GlobalFilters",
+          "General",
+          visParentId,
+          "GlobalFilter"
+        ),
+        key: "globalFilter",
+      };
+      inputNodes.push(inputNode);
+      break;
+    default:
+      const vis = allVisuals.find(vis => vis.name === props.visual);
 
-    const mainId = vis.name;
-    const title = visTitle;
+      let visTitle = createNodeTitle(vis.type);
+      const visClassName = className + " " + visTitle;
+      const mainId = vis.name;
 
-    const result = getSubComponents(mainId, title, vis.type);
-    const subIds = result?.ids;
-    const subtitles = result?.contents;
-    const displayTitles = result?.displayTitles;
-
-    inputNode = {
-      mainComponent: createNode(
-        mainId,
-        visClassName,
-        visTitle,
-        visTitle,
-        visParentId,
-        visTitle
-      ),
-      subComponents: [],
-      key: mainId,
-    };
-
-    subIds.forEach((id, idx) => {
-      inputNode.subComponents?.push(
-        createNode(
-          id,
-          visClassName,
-          subtitles[idx],
-          displayTitles[idx],
+      const itemLength = checkDuplicateComponents(vis.type);
+      if (itemLength > 1) {
+        visTitle = visTitle + " (" + vis.title + ")";
+      }
+  
+      inputNode = {
+        mainComponent: createNode(
           mainId,
-          subtitles[idx]
-        )
-      );
-    });
-    inputNodes.push(inputNode);
+          visClassName,
+          visTitle,
+          "General",
+          visParentId,
+          visTitle
+        ),
+        key: mainId,
+      };
+      inputNodes.push(inputNode);
+  
+      const result = getSubComponents(mainId, visTitle, vis.type);
+      const subIds = result?.ids;
+      const subtitles = result?.contents;
+      const displayTitles = result?.displayTitles;
+
+      subIds.forEach((id, idx) => {
+        inputNode = {
+          mainComponent: createNode(
+            id,
+            visClassName,
+            subtitles[idx],
+            displayTitles[idx],
+            visParentId,
+            subtitles[idx]
+          ),
+          key: mainId,
+        };
+        inputNodes.push(inputNode);
+      });
   }
 
   function getSubComponents(oldId: string, oldTitle: string, type: string) {
@@ -185,22 +193,13 @@ export default function Components() {
     return myDiv;
   }
 
-  return inputNodes.map((iNode, nIndex) => {
-    let bClass = "emptysubcomponents";
-    if (iNode.subComponents) {
-      bClass = "components";
-    }
-    return (
-      <Accordion key={nIndex}>
-        <Accordion.Item eventKey="1">
-          <Accordion.Button className={bClass}>
-            {iNode.mainComponent}
-          </Accordion.Button>
-          {iNode.subComponents?.map((d, index) => (
-            <Accordion.Body key={index}>{d}</Accordion.Body>
-          ))}
-        </Accordion.Item>
-      </Accordion>
+  return(
+      <div>
+        {inputNodes.map(node =>
+          <div  key={node.mainComponent.id}>
+            {node.mainComponent}
+          </div>
+        )}
+      </div>
     );
-  });
 }
