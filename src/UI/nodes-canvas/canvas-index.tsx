@@ -29,6 +29,7 @@ const nodeTypes = { group: GroupNodeType };
 interface Props{
   trigger:number
   traversal:any
+  setNodesForSave: any;
 }
 
 export default function NodesCanvas(props: Props) {
@@ -61,7 +62,7 @@ export default function NodesCanvas(props: Props) {
         visTitle
       );
       initialNodes.push(newNode);
-    } 
+    }
     return initialNodes;
   }
 
@@ -159,6 +160,7 @@ export default function NodesCanvas(props: Props) {
           className: intersections.includes(n.id) ? "highlight" : "",
         }))
       );
+      props.setNodesForSave(nodes);
     },
     [getIntersectingNodes, setNodes]
   );
@@ -275,11 +277,13 @@ export default function NodesCanvas(props: Props) {
   }, [groupId.id, nodes, selectedNodes, setNodes]);
 
   useEffect(() => {
+    props.setNodesForSave(nodes);
+
     if (props.trigger) {
       console.log("q", props.traversal)
       buildTraversal(props.traversal);
     }
-  }, [props.trigger]);
+  }, [props.trigger, nodes]);
 
   function buildTraversal(traversal: any){
     setNodes([]);
@@ -423,7 +427,6 @@ function getTitle(elem:TraversalElement){
               { label: "Group", effect: addGroup },
             ]}
           ></ContextMenu>
-          <Traversal nodes={nodes} />
         </ReactFlow>
       </div>
     </div>

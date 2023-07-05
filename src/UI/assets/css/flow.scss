@@ -76,7 +76,7 @@ div[data-id*="Column"] {
 
 div[data-id*="dashboard"] {
   &:before{
-    background-color: #{$column-color};
+    background-color: #{$dashboard-color};
   }
   &:after{
     background-image: url("../img/icon-3.png");
@@ -281,9 +281,9 @@ div[data-id*="GlobalFilter"] {
   }
 }
 #traversal {
-  top: 95%;
-    left: 90%;
-    position: relative;
+  top: 0;
+  left:0;
+  position: relative;
 }
 
 .react-flow__panel.bottom {

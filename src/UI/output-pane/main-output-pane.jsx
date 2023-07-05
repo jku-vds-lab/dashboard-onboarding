@@ -32,12 +32,6 @@ export default function OutputPane() {
               <OutputView />
             </div>
           </Tab>
-          <Tab eventKey="story" title="Story text">
-            <div className="px-4">Content</div>
-          </Tab>
-          <Tab eventKey="settings" title="Settings">
-            <div className="px-4">Content</div>
-          </Tab>
         </Tabs>
       </ResizeContent>
     </ResizePanel>

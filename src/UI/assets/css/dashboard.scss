@@ -4,6 +4,13 @@ $bg-darker: rgb(17, 17, 17);
 /*$bg-dark-1: rgb(83,83,83);*/
 $bg-dark-1: #2B2D30;
 $bg-dark-1-lighter: rgb(170, 170, 170);
+$dashboard-color: #4e91e9;
+$line-chart-color: #d95f02;
+$bar-chart-color: #1b9e77;
+$kpi-color: #7570b3;
+$filter-color: #e7298a;
+$globalFilter-color: #e25757;
+$column-color: #66a61e;
 $color-white: #f1f1f1;
 
 .d-board {
@@ -38,16 +45,6 @@ $color-white: #f1f1f1;
 
   .canvas-cont{
     position: relative;
-    &.show{
-      #annotation-box{
-        display: block;
-      }
-
-      .flow{
-        height:100%;
-      }
-
-    }
   }
 
   .component-cont {
@@ -227,10 +224,13 @@ $color-white: #f1f1f1;
       border:1px solid #{$bg-dark-1-lighter};
     }
   }
+  .node-desc{
+    position: relative;
+  }
   .node-desc .accordion-item{
     border: none;
     position: absolute;
-    bottom:0;
+    bottom:13px;
     left:0;
     width: 100%;
     background-color: #{$bg-dark-1};
@@ -301,6 +301,9 @@ $color-white: #f1f1f1;
 /*----------------------------------
 --------------Buttons---------------
 ----------------------------------*/
+.btn-secondary{
+  background-color: #595959 !important;
+}
 .btn-outline{
   cursor: pointer;
   background: transparent;
@@ -310,5 +313,124 @@ $color-white: #f1f1f1;
   border-radius: 2px;
 }
 .btn-xs{
-  font-size: 14px;
+  font-size: 14px !important;
+  max-width:150px;
+  padding: 4px 10px !important;
+}
+
+/*----------------------------------
+--------------Nav Tabs---------------
+----------------------------------*/
+.label{
+  background-color: #2B2D30;
+  color: #f1f1f1;
+  border-radius: 0;
+  border: 1px solid rgb(30, 31, 34);
+  outline: none;
+  padding: 5px 20px;
+}
+.tabs-container{
+  display: flex;
+}
+.tabs-container .tab-content{
+  width:100%;
+  padding:0 16px;
+}
+.nav-pills.icon-nav .nav-link.active, .nav-pills.icon-nav .show > .nav-link{
+  color: #f1f1f1;
+  background-color: #1E1F22;
+  border-color: rgba(75, 77, 71, 0.51);;
+}
+.nav-pills.icon-nav .nav-link{
+  border: 1px solid rgba(75, 77, 71, 0.5);
+  color: #f1f1f1;
+  background-color: #2B2D30;
+  border-radius: 0;
+}
+.icon-tabs-container {
+  max-width:52px !important;
+}
+.tab-body-header{
+  height: 42px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.tab-body-header .color-box{
+  width:20px;
+  height:10px;
+  border-radius: 2px;
+}
+.dashboard .color-box{
+  background-color: #{$dashboard-color};
+}
+.filters .color-box{
+  background-color: #{$filter-color};
+}
+.kpi .color-box{
+  background-color: #{$kpi-color};
+}
+.column-chart .color-box{
+  background-color: #{$column-color};
+}
+.line-chart .color-box{
+  background-color: #{$line-chart-color};
+}
+.bar-chart .color-box{
+  background-color: #{$bar-chart-color};
+}
+.toolbar{
+  width: 100%;
+  padding: 10px 20px 10px 258px;
+  background-color: #{$bg-dark-1};
+  display: flex;
+  justify-content: space-between;
+
+  .btn:first-child:active{
+    background-color: rgb(30, 31, 34);
+    border-color: rgb(30, 31, 34);
+  }
+
+  .btn.btn-dark{
+    background-color: #595959;
+    &:hover{
+      color: rgba(255,255,255,1);
+    }
+  }
+}
+/*----------------------------------
+--------------Dropdown---------------
+----------------------------------*/
+.custom-dropdown{
+  .dropdown-toggle.btn-primary{
+    min-width: 150px;
+    background-color: #{$bg-dark};
+    border-color: #{$bg-dark};
+    border-radius: 2px;
+    text-align: left;
+    position: relative;
+    padding-right:35px;
+
+    &.active{
+      color: #{$color-white};
+      background-color: #{$bg-dark};
+      border-color: #{$bg-dark};
+    }
+  }
+  .dropdown-toggle::after {
+    position: absolute;
+    right:10px;
+    top:45%;
+  }
+  .dropdown-menu.show{
+    background-color: #{$bg-dark};
+    border-radius: 2px;
+  }
+  .dropdown-item{
+    color: #{$color-white} !important;
+    &:hover{
+      background-color: #{$bg-dark-1};
+    }
+}
+
 }
