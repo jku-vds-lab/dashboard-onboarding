@@ -398,20 +398,19 @@ export async function createTraversalOfGroupNodes(groupNode: IGroupNode) {
 }
 
 export async function getTraversalElem(sNode: any) {
-  let traversalElem: TraversalElement = {
+  const traversalElem: TraversalElement = {
     element: "",
     categories: [],
     count: 0,
   };
   try {
     const idParts: string[] = sNode.id.split(" ");
-    let nodeId: string = sNode.id;
+    const nodeId: string = idParts[0];
     let nodeCat: string = "general";
     if (idParts.length > 2) {
-      nodeId = idParts[0];
       nodeCat = idParts[1].toLowerCase();
     }
-    traversalElem = createTraversalElement(sNode.data.type);
+
     traversalElem.element = await getTraversalElement(nodeId);
     traversalElem.categories = [nodeCat];
   } catch (error) {
