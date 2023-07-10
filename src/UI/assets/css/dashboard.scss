@@ -331,36 +331,54 @@ $color-white: #f1f1f1;
 }
 .tabs-container{
   display: flex;
+  height:100%;
 }
 .tabs-container .tab-content{
   width:100%;
-  padding:0 16px;
+  position: relative;
+  background-color: #2B2D30;
+  .tab-pane{
+    position: absolute;
+    width: 100%;
+    padding: 16px;
+
+
+    .tab-body-header{
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+
+      .color-box{
+        width:20px;
+        height:10px;
+        border-radius: 2px;
+      }
+    }
+
+    .dndnode{
+      margin-bottom: 10px;
+    }
+
+  }
 }
+
 .nav-pills.icon-nav .nav-link.active, .nav-pills.icon-nav .show > .nav-link{
   color: #f1f1f1;
-  background-color: #1E1F22;
+  /* background-color: #1E1F22;*/
+  background-color: #2B2D30;
   border-color: rgba(75, 77, 71, 0.51);;
 }
 .nav-pills.icon-nav .nav-link{
   border: 1px solid rgba(75, 77, 71, 0.5);
   color: #f1f1f1;
-  background-color: #2B2D30;
+  /*background-color: #2B2D30;*/
   border-radius: 0;
 }
 .icon-tabs-container {
   max-width:52px !important;
 }
-.tab-body-header{
-  height: 42px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.tab-body-header .color-box{
-  width:20px;
-  height:10px;
-  border-radius: 2px;
-}
+
 .dashboard .color-box{
   background-color: #{$dashboard-color};
 }
@@ -433,4 +451,20 @@ $color-white: #f1f1f1;
     }
 }
 
+}
+
+.photoshoppicker{
+  position: absolute;
+  z-index: 1;
+  background: rgb(83, 83, 83) !important;
+
+  .flexbox-fix div{
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  input{
+    border: none !important;
+    background: rgba(255,255,255,0.8);
+  }
 }

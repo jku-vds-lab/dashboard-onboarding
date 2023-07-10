@@ -2,7 +2,7 @@ $bg-dark: rgb(32,32,32);
 $bg-dark-1: rgb(83,83,83);
 $default-handle-color: rgb(158, 159, 160);
 $default-node-color: #545454;
-$dashboard-color: #4e91e9;
+$dashboard-color: var(--dashboard-color);
 $line-chart-color: #d95f02;
 $bar-chart-color: #1b9e77;
 $kpi-color: #7570b3;
