@@ -1,7 +1,7 @@
 import Components from "./component-properties";
-import React, { useState, useEffect } from 'react';
-import { PhotoshopPicker } from 'react-color';
-import { Nav, Tab, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import React, {useState, useEffect} from 'react';
+import {PhotoshopPicker} from 'react-color';
+import {Nav, Tab, OverlayTrigger, Tooltip} from 'react-bootstrap';
 
 import "../assets/css/dashboard.scss";
 import icon from "../nodes-canvas/icon-1.svg";
@@ -11,17 +11,33 @@ import c_icon_3 from "../assets/img/icon-5.png";
 import c_icon_4 from "../assets/img/icon-3.png";
 import c_icon_5 from "../assets/img/icon-2.png";
 import c_icon_6 from "../assets/img/icon-4.png";
-import { allVisuals } from "../../onboarding/ts/globalVariables";
+import {allVisuals} from "../../onboarding/ts/globalVariables";
 
 
 export default function ComponentPane() {
-    const [tabsData, setTabsData] = useState([{ eventKey: 'dashboard', tooltip: 'Dashboard', iconSrc: c_icon, className: 'dashboard', headerText: 'Dashboard',  colorVariable: '--dashboard-color', colorValue: '#4e91e9' },
-        { eventKey: 'globalFilters', tooltip: 'Global Filters', iconSrc: c_icon_2, className: 'globalFilters', headerText: 'Global Filters', colorVariable: '--filters-color', colorValue: '#e7298a' }]);
+    const [tabsData, setTabsData] = useState([{
+        eventKey: 'dashboard',
+        tooltip: 'Dashboard',
+        iconSrc: c_icon,
+        className: 'dashboard',
+        headerText: 'Dashboard',
+        colorVariable: '--dashboard-color',
+        colorValue: '#4e91e9'
+    },
+        {
+            eventKey: 'globalFilters',
+            tooltip: 'Global Filters',
+            iconSrc: c_icon_2,
+            className: 'globalFilters',
+            headerText: 'Global Filters',
+            colorVariable: '--filters-color',
+            colorValue: '#e7298a'
+        }]);
 
     /*let tab =  { eventKey: 'dashboard', tooltip: 'Dashboard', iconSrc: c_icon, className: 'dashboard', headerText: 'Dashboard',  colorVariable: '--dashboard-color', colorValue: '#4e91e9' };
     tabsData.push(tab);*/
-    
-    for(let i = 0; i < allVisuals.length; i++){
+
+    for (let i = 0; i < allVisuals.length; i++) {
         const tab = {};
         let visData = getVisData(allVisuals[i]);
         tab.eventKey = allVisuals[i].name;
@@ -29,9 +45,9 @@ export default function ComponentPane() {
         tab.iconSrc = visData[2];
         tab.className = visData[1];
         tab.headerText = visData[0] + " " + allVisuals[i].title;
-        tab.colorVariable = '--'+allVisuals[i].name+'-color';
+        tab.colorVariable = '--' + allVisuals[i].name + '-color';
         tab.colorValue = '#4e91e9';
-        tabsData[i+1] = tab;
+        tabsData[i + 1] = tab;
     }
 
     /*let tab = { eventKey: 'globalFilters', tooltip: 'Global Filters', iconSrc: c_icon_2, className: 'globalFilters', headerText: 'Global Filters', colorVariable: '--filters-color', colorValue: '#e7298a' };
@@ -88,13 +104,15 @@ export default function ComponentPane() {
         // Perform necessary actions on cancel
         setPickerVisible(false); // Hide the PhotoshopPicker
     };
+
     function getVisData(visual) {
         let icon = "";
         let type = "";
         let name = "";
         const VisualType = visual.type;
-        switch(VisualType){
-            case 'card': case "multiRowCard":
+        switch (VisualType) {
+            case 'card':
+            case "multiRowCard":
                 name = "KPI";
                 type = "kpi";
                 icon = c_icon_3;
@@ -131,77 +149,79 @@ export default function ComponentPane() {
                 break;
         }
         return [name, type, icon];
-      }
+    }
 
-    function TabItem({ eventKey, tooltip, iconSrc }) {
+    function TabItem({eventKey, tooltip, iconSrc}) {
         return (
             <Nav.Item>
                 <Nav.Link eventKey={eventKey}>
                     <OverlayTrigger trigger="hover" placement="right" overlay={
-                        <Tooltip >
+                        <Tooltip>
                             {tooltip}
                         </Tooltip>
                     }>
                         <img className="icon options"
                              src={iconSrc}
                              width="18px"
-                             height="18px" alt="Component icon" />
+                             height="18px" alt="Component icon"/>
                     </OverlayTrigger>
                 </Nav.Link>
             </Nav.Item>
         )
     }
 
-    function TabPaneItem({ eventKey, className, headerText, colorValue}) {
+    function TabPaneItem({eventKey, className, headerText, colorValue}) {
         return (
-            <Tab.Pane eventKey={eventKey} >
+            <Tab.Pane eventKey={eventKey}>
                 <div className="tab-body-header"><span>{headerText}</span>
-                    <span className="color-box" style={{ backgroundColor: colorValue}} onClick={() => handleClick(eventKey)}></span>
+                    <span className="color-box" style={{backgroundColor: colorValue}}
+                          onClick={() => handleClick(eventKey)}></span>
                 </div>
                 <Components visual={eventKey}/>
             </Tab.Pane>
         )
     }
-  return (
-      <div className="h-100">
-          <div className="label">Components</div>
-          <Tab.Container id="component-graph" defaultActiveKey={tabsData[0].eventKey}>
-              <div className="tabs-container">
-                  <Nav variant="pills" className="flex-column icon-nav">
-                      {tabsData.map(tab =>
-                          <TabItem
-                              key={tab.eventKey}
-                              eventKey={tab.eventKey}
-                              tooltip={tab.tooltip}
-                              iconSrc={tab.iconSrc}
-                          />
-                      )}
-                  </Nav>
-                  <Tab.Content>
-                      {tabsData.map(tab =>
-                        <div  key={tab.eventKey}>
-                          <TabPaneItem
-                              eventKey={tab.eventKey}
-                              className={tab.className}
-                              headerText={tab.headerText}
-                              colorValue = {tab.colorValue}
-                          />
-                        </div>
-                      )}
-                  </Tab.Content>
 
-              </div>
-          </Tab.Container>
-          <div className="photoshoppicker">
-              {isPickerVisible && (
-                  <PhotoshopPicker
-                      color={componentColor}
-                      onChangeComplete={handleOnChangeComplete}
-                      onCancel={handleCancel}
-                      onAccept={(color) => handleAccept(color)}
-                  />
-              )}
-          </div>
-      </div>
-  );
+    return (
+        <div className="h-100">
+            <div className="label">Components</div>
+            <Tab.Container id="component-graph" defaultActiveKey={tabsData[0].eventKey}>
+                <div className="tabs-container">
+                    <Nav variant="pills" className="flex-column icon-nav">
+                        {tabsData.map(tab =>
+                            <TabItem
+                                key={tab.eventKey}
+                                eventKey={tab.eventKey}
+                                tooltip={tab.tooltip}
+                                iconSrc={tab.iconSrc}
+                            />
+                        )}
+                    </Nav>
+                    <Tab.Content>
+                        {tabsData.map(tab =>
+                            <div key={tab.eventKey}>
+                                <TabPaneItem
+                                    eventKey={tab.eventKey}
+                                    className={tab.className}
+                                    headerText={tab.headerText}
+                                    colorValue={tab.colorValue}
+                                />
+                            </div>
+                        )}
+                    </Tab.Content>
+
+                </div>
+            </Tab.Container>
+            <div className="photoshoppicker">
+                {isPickerVisible && (
+                    <PhotoshopPicker
+                        color={componentColor}
+                        onChangeComplete={handleOnChangeComplete}
+                        onCancel={handleCancel}
+                        onAccept={(color) => handleAccept(color)}
+                    />
+                )}
+            </div>
+        </div>
+    );
 }
