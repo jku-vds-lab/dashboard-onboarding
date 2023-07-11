@@ -112,6 +112,7 @@ export async function depthFirstTraversalStrategy() {
   try {
     const group = createGroup();
     const groupTrav1 = [];
+    const groupTrav2 = [];
 
     const traversalElem1 = createTraversalElement("dashboard");
     traversalElem1.element = await getTraversalElement("dashboard");
@@ -131,15 +132,33 @@ export async function depthFirstTraversalStrategy() {
     traversalElemv11ia.categories = ["insight"];
     groupTrav1.push(traversalElemv11ia);
 
+    const traversalElemv112 = createTraversalElement(currentVisuals[2].type);
+    traversalElemv112.element = await getTraversalElement(
+      currentVisuals[0].name
+    );
+    traversalElemv112.categories = ["insight"];
+    groupTrav2.push(traversalElemv112);
+
+    const traversalElemv11ia2 = createTraversalElement(currentVisuals[3].type);
+    traversalElemv11ia2.element = await getTraversalElement(
+      currentVisuals[1].name
+    );
+    traversalElemv11ia2.categories = ["general"];
+    groupTrav2.push(traversalElemv11ia2);
+
     group.visuals.push(groupTrav1);
+    group.visuals.push(groupTrav2);
     group.type = groupType.all;
 
     const traversalElem4 = createTraversalElement("group");
     traversalElem4.element = group;
     trav.push(traversalElem4);
+
+    const traversalElem2 = createTraversalElement("globalFilter");
+    traversalElem2.element = await getTraversalElement("globalFilter");
+    trav.push(traversalElem2);
   } catch (error) {
     console.log("Error in testing", error);
   }
-  debugger;
   return trav;
 }

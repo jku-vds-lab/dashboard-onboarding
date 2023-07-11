@@ -307,7 +307,7 @@ export default function NodesCanvas(props: Props) {
 
       const position = {
         x: 0,
-        y: 50,
+        y: 0,
       };
 
       for (const { index, elem } of traversal.map(
@@ -319,34 +319,31 @@ export default function NodesCanvas(props: Props) {
 
         if (elem.element.id === "group") {
           const nodesWithinGroup: Node[] = [];
+          const visuals = elem.element.visuals;
 
-          if (elem.element?.visuals?.length > 0) {
-            console.log(elem.element?.visuals);
-
-            const groupVisuals = elem.element
-              .visuals[0] as Array<TraversalElement>;
-
-            groupVisuals.forEach((vis: TraversalElement) => {
-              console.log("Vis", vis);
-              const visTitle = getTitle(vis);
+          for(let i=0; i<visuals.length; i++){
+            for(let j=0; j<visuals[i].length; j++){
+              console.log("Vis", visuals[i][j]);
+              const visTitle = getTitle(visuals[i][j]);
               const visType = getType(visTitle);
               const newNode = defaultNode().getNode(
                 event,
                 visType,
-                getID(vis),
+                getID(visuals[i][j]),
                 "default",
-                getPositionForWholeTrav(position, index),
+                getPositionWithinGroup(i, j),
                 visTitle
               );
+
               nodesWithinGroup.push(newNode);
               setNodes((nds) => nds.concat(newNode));
-            });
+            }
           }
 
           const groupNodeObj = new GroupNode({
             nodes: nodesWithinGroup,
             id: "group " + groupId.id++,
-            position: { x: 0, y: 0 },
+            position: getPositionForWholeTrav(position, index),
             data: null,
           });
 
@@ -356,10 +353,6 @@ export default function NodesCanvas(props: Props) {
           nodesWithinGroup.forEach((node) => {
             node.parentNode = groupNode?.id;
             node.extent = "parent";
-            node.position = {
-              x: groupNode.position.x + 10,
-              y: groupNode.position.y + 10,
-            };
             node.draggable = true;
           });
         } else {
@@ -386,6 +379,18 @@ export default function NodesCanvas(props: Props) {
     const pos = {
       x: position.x,
       y: position.y + offset,
+    };
+    return pos;
+  }
+
+  function getPositionWithinGroup(xIndex: number, yIndex: number) {
+    let xOffset = 10;
+    let yOffset = 40;
+    xOffset = xOffset + (xIndex * 110);
+    yOffset = yOffset + (yIndex * 35);
+    const pos = {
+      x: xOffset,
+      y: yOffset,
     };
     return pos;
   }
