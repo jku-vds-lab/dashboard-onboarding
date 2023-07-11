@@ -2,7 +2,11 @@ import React from "react";
 import { useReactMediaRecorder } from "react-media-recorder";
 import { saveInfoVideo } from "../../onboarding/ts/helperFunctions";
 
-export default function RecordView() {
+interface Props{
+  setShowMediaOptions: any
+}
+
+export default function RecordView(props:Props) {
   const { status, startRecording, stopRecording, mediaBlobUrl, error } =
     useReactMediaRecorder({
       video: true,
@@ -11,6 +15,7 @@ export default function RecordView() {
     });
 
   const handleSave = async () => {
+    props.setShowMediaOptions(false);
     try {
       if (mediaBlobUrl) {
         const blobResponse = await fetch(mediaBlobUrl);
@@ -46,7 +51,7 @@ export default function RecordView() {
       }
 
       saveInfoVideo(
-        "C:\\Users\\Vaishali\\Desktop\\dashboard-onboarding-master\\dashboard-onboarding\\dashboard-onboarding\\uploads\\video.mp4",
+        " http://127.0.0.1:8000/upload-video/video.mp4",
         currentIdParts![0],
         [category],
         1

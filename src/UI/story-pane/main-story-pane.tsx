@@ -39,8 +39,6 @@ export default function StoryPane(props: Props) {
   const saveAnnotationChanges = async (e: any) => {
     const infos = [];
 
-    setShowMediaOptions(false);
-
     const list = (document.getElementById("textBox")! as HTMLTextAreaElement)
       .children[0];
     const listElems = list.children;
@@ -123,7 +121,7 @@ export default function StoryPane(props: Props) {
               Component description
               {showMediaOptions ? (
                 <div>
-                  <RecordView />
+                  <RecordView setShowMediaOptions={setShowMediaOptions}/>
                 </div>
               ) : (
                 <div
