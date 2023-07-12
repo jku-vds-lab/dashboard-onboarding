@@ -10,13 +10,14 @@ export default class GroupNode {
     this.groupNode = gNode;
   }
 
-  getGroupNode() {
+  getGroupNode(setPos: boolean, position: any) {
     let minX = 10000;
     let minY = 10000;
     let maxX = 0;
     let maxY = 0;
     let nodeWidth = 0;
     let nodeHeight = 0;
+    this.groupNode.nodes;
     this.groupNode.nodes.forEach((node: Node) => {
       if (node.position.x < minX) {
         minX = node.position.x;
@@ -30,14 +31,16 @@ export default class GroupNode {
       if (node.position.y > maxY) {
         maxY = node.position.y;
       }
-      nodeWidth = node.width as number;
-      nodeHeight = node.height as number;
     });
+
+    nodeWidth = parseInt(String(this.groupNode.nodes[0].style?.width!), 10);
+    nodeHeight = parseInt(String(this.groupNode.nodes[0].style?.height!), 10);
     let width = 0;
     let height = 0;
-    const offset = 40;
-    const minHeight = 70 + nodeHeight;
-    const minWidth = nodeWidth + offset;
+    const xOffset = 20;
+    const yOffset = 50;
+    const minHeight = yOffset + nodeHeight;
+    const minWidth = nodeWidth + xOffset;
 
     width = maxX - minX + minWidth;
     height = maxY - minY + minHeight;
@@ -45,7 +48,9 @@ export default class GroupNode {
       height = -height;
     }
 
-    const position = { x: minX - offset, y: minY - offset };
+    if(setPos){
+      position = { x: minX - xOffset, y: minY - yOffset };
+    }
 
     this.groupNode = {
       ...this.groupNode,

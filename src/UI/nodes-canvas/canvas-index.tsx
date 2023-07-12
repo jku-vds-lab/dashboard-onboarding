@@ -260,7 +260,7 @@ export default function NodesCanvas(props: Props) {
         position: { x: 0, y: 0 },
         data: null,
       });
-      const groupNode = groupNodeObj.getGroupNode();
+      const groupNode = groupNodeObj.getGroupNode(true, {x:0,y:0});
       setNodes((nds) => nds.concat(groupNode));
 
       if (!groupNode) {
@@ -343,11 +343,11 @@ export default function NodesCanvas(props: Props) {
           const groupNodeObj = new GroupNode({
             nodes: nodesWithinGroup,
             id: "group " + groupId.id++,
-            position: getPositionForWholeTrav(position, index),
+            position: {x:0,y:0},
             data: null,
           });
 
-          const groupNode = groupNodeObj.getGroupNode();
+          const groupNode = groupNodeObj.getGroupNode(false, getPositionForWholeTrav(position, index));
           setNodes((nds) => nds.concat(groupNode));
 
           nodesWithinGroup.forEach((node) => {
