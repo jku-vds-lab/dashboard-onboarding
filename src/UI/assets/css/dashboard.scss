@@ -458,11 +458,17 @@ $color-white: #f1f1f1;
   top: 15%;
   left: 5%;
   z-index: 1;
-  background: rgb(83, 83, 83) !important;
+
+  .photoshop-picker{
+    background: rgb(83, 83, 83) !important;
+  }
 
   .flexbox-fix div{
     border: none !important;
     box-shadow: none !important;
+  }
+  .flexbox-fix > div:nth-of-type(1){
+    background: rgb(83, 83, 83) !important;
   }
 
   input{

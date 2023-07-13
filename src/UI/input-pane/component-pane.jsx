@@ -1,5 +1,6 @@
 import Components from "./component-properties";
 import React, {useState, useEffect} from 'react';
+import Draggable from 'react-draggable';
 import {PhotoshopPicker} from 'react-color';
 import {Nav, Tab, OverlayTrigger, Tooltip} from 'react-bootstrap';
 
@@ -37,7 +38,7 @@ export default function ComponentPane() {
     /*let tab =  { eventKey: 'dashboard', tooltip: 'Dashboard', iconSrc: c_icon, className: 'dashboard', headerText: 'Dashboard',  colorVariable: '--dashboard-color', colorValue: '#4e91e9' };
     tabsData.push(tab);*/
 
-    for (let i = 0; i < allVisuals.length; i++) {
+    for (let i = 1; i < allVisuals.length; i++) {
         const tab = {};
         let visData = getVisData(allVisuals[i]);
         tab.eventKey = allVisuals[i].name;
@@ -45,8 +46,8 @@ export default function ComponentPane() {
         tab.iconSrc = visData[2];
         tab.className = visData[1];
         tab.headerText = visData[0] + " " + allVisuals[i].title;
-        tab.colorVariable = '--' + allVisuals[i].name + '-color';
-        tab.colorValue = '#4e91e9';
+        tab.colorVariable = visData[3];
+        tab.colorValue = visData[4];
         tabsData[i + 1] = tab;
     }
 
@@ -57,6 +58,7 @@ export default function ComponentPane() {
     const [isPickerVisible, setPickerVisible] = useState(false);
     const [componentColor, setComponentColor] = useState(tabsData.find(tab => tab.eventKey === selectedTab).colorValue);
 
+
     useEffect(() => {
         const root = document.documentElement;
         tabsData.forEach(tab => {
@@ -64,37 +66,41 @@ export default function ComponentPane() {
         });
     }, []);
 
-
     useEffect(() => {
         const root = document.documentElement;
         const selectedColorVariable = tabsData.find(tab => tab.eventKey === selectedTab).colorVariable;
         root.style.setProperty(selectedColorVariable, componentColor);
     }, [selectedTab, componentColor]);
+
     const handleClick = (eventKey) => {
+        const selectedTabData = tabsData.find((tab) => tab.eventKey === eventKey);
+        const selectedColor = selectedTabData ? selectedTabData.colorValue : '';
+
         setSelectedTab(eventKey);
-        const selectedColor = tabsData.find(tab => tab.eventKey === selectedTab).colorValue;
         setComponentColor(selectedColor);
         setPickerVisible(true);
     };
 
     const handleAccept = (color) => {
-        const selectedColorVariable = tabsData.find(tab => tab.eventKey === selectedTab).colorVariable;
-        console.log(selectedTab);
-        const updatedTabsData = tabsData.map(tab => {
+        const selectedTabData = tabsData.find((tab) => tab.eventKey === selectedTab);
+        const selectedColorVariable = selectedTabData ? selectedTabData.colorVariable : '';
+
+        const updatedTabsData = tabsData.map((tab) => {
             if (tab.eventKey === selectedTab) {
                 return {
                     ...tab,
-                    colorValue: componentColor
+                    colorValue: componentColor,
                 };
             }
             return tab;
         });
 
-
+        setComponentColor(color.hex);
         setTabsData(updatedTabsData);
         root.style.setProperty(selectedColorVariable, componentColor);
         setPickerVisible(false);
     };
+
     const handleOnChangeComplete = (color) => {
         setComponentColor(color.hex);
     };
@@ -109,6 +115,8 @@ export default function ComponentPane() {
         let icon = "";
         let type = "";
         let name = "";
+        let variable = "";
+        let color = "";
         const VisualType = visual.type;
         switch (VisualType) {
             case 'card':
@@ -116,39 +124,53 @@ export default function ComponentPane() {
                 name = "KPI";
                 type = "kpi";
                 icon = c_icon_3;
+                variable = '--kpi-color';
+                color = "#7570b3";
                 break;
             case 'slicer':
                 name = "Filter";
                 type = "filter";
                 icon = c_icon_2;
+                color = "#e7298a";
+                variable = '--filter-color';
                 break;
             case 'lineChart':
                 name = "Line Chart";
                 type = "lineChart";
                 icon = c_icon_5;
+                variable = '--line-chart-color';
+                color = "#d95f02";
                 break;
             case 'clusteredBarChart':
                 name = "Bar Chart";
                 type = "barChart";
                 icon = c_icon_6;
+                variable = '--bar-chart-color';
+                color = "#1b9e77";
                 break;
             case 'clusteredColumnChart':
                 name = "Column Chart";
                 type = "columnChart";
                 icon = c_icon_4;
+                variable = '--column-chart-color';
+                color = "#66a61e";
                 break;
             case 'lineClusteredColumnComboChart':
                 name = "Combo Chart";
                 type = "comboChart";
                 icon = c_icon_4;
+                variable = '--combo-chart-color';
+                color = "#EDB464";
                 break;
             default:
                 name = VisualType;
                 type = VisualType;
                 icon = c_icon_4;
+                variable = '--default-color';
+                color = "#545454";
                 break;
         }
-        return [name, type, icon];
+        return [name, type, icon, variable, color];
     }
 
     function TabItem({eventKey, tooltip, iconSrc}) {
@@ -170,16 +192,20 @@ export default function ComponentPane() {
         )
     }
 
-    function TabPaneItem({eventKey, className, headerText, colorValue}) {
+    function TabPaneItem({ eventKey, className, headerText, colorValue }) {
         return (
             <Tab.Pane eventKey={eventKey}>
-                <div className="tab-body-header"><span>{headerText}</span>
-                    <span className="color-box" style={{backgroundColor: colorValue}}
-                          onClick={() => handleClick(eventKey)}></span>
+                <div className="tab-body-header">
+                    <span>{headerText}</span>
+                    <span
+                        className="color-box"
+                        style={{ backgroundColor: colorValue }}
+                        onClick={() => handleClick(eventKey)}
+                    ></span>
                 </div>
-                <Components visual={eventKey}/>
+                <Components visual={eventKey} />
             </Tab.Pane>
-        )
+        );
     }
 
     return (
@@ -214,12 +240,16 @@ export default function ComponentPane() {
             </Tab.Container>
             <div className="photoshoppicker">
                 {isPickerVisible && (
-                    <PhotoshopPicker
-                        color={componentColor}
-                        onChangeComplete={handleOnChangeComplete}
-                        onCancel={handleCancel}
-                        onAccept={(color) => handleAccept(color)}
-                    />
+                    <Draggable handle=".picker-handle">
+                        <div className="picker-handle">
+                            <PhotoshopPicker
+                                color={componentColor}
+                                onChangeComplete={handleOnChangeComplete}
+                                onCancel={handleCancel}
+                                onAccept={handleAccept}
+                            />
+                        </div>
+                    </Draggable>
                 )}
             </div>
         </div>

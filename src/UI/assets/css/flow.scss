@@ -3,12 +3,12 @@ $bg-dark-1: rgb(83,83,83);
 $default-handle-color: rgb(158, 159, 160);
 $default-node-color: #545454;
 $dashboard-color: var(--dashboard-color);
-$line-chart-color: #d95f02;
-$bar-chart-color: #1b9e77;
-$kpi-color: #7570b3;
-$filter-color: #e7298a;
+$line-chart-color: var(--line-chart-color);
+$bar-chart-color: var(--bar-chart-color);
+$kpi-color: var(--kpi-color);
+$filter-color: var(--filter-color);
 $globalFilter-color: #e25757;
-$column-color: #66a61e;
+$column-color: var(--column-chart-color);
 $color-white: #f1f1f1;
 
 .empty{
@@ -222,7 +222,7 @@ div[data-id*="GlobalFilter"] {
     content: '';
     position: absolute;
     top:-1px;
-    left:-1px;
+    left:-2px;
     width: 7px;
     height: 30px;
     border-top-left-radius: 5px;
