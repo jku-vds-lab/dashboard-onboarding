@@ -67,6 +67,7 @@ export default function NodesCanvas(props: Props) {
 
   function createIntitialNodes() {
     const initialNodes: Node[] = [];
+    let prevNode;
     for (const { index, elem } of global.settings.traversalStrategy.map(
       (elem: TraversalElement, index: number) => ({ index, elem })
     )) {
@@ -77,10 +78,11 @@ export default function NodesCanvas(props: Props) {
         visType,
         getID(elem),
         "default",
-        getPositionForWholeTrav(position, index),
+        getPositionForWholeTrav(prevNode),
         visTitle
       );
       initialNodes.push(newNode);
+      prevNode = newNode;
     }
     return initialNodes;
   }
@@ -305,18 +307,11 @@ export default function NodesCanvas(props: Props) {
     try {
       setNodes([]);
 
-      const position = {
-        x: 0,
-        y: 0,
-      };
+      let prevNode;
 
       for (const { index, elem } of traversal.map(
         (elem: TraversalElement, index: number) => ({ index, elem })
       )) {
-        // skip for the group, only do it for the visuals
-        // build the group automatically, go inside the visuals, and check it for them individually
-        // the position of group should also be more,
-
         if (elem.element.id === "group") {
           const nodesWithinGroup: Node[] = [];
           const visuals = elem.element.visuals;
@@ -347,8 +342,9 @@ export default function NodesCanvas(props: Props) {
             data: null,
           });
 
-          const groupNode = groupNodeObj.getGroupNode(false, getPositionForWholeTrav(position, index));
+          const groupNode = groupNodeObj.getGroupNode(false, getPositionForWholeTrav(prevNode));
           setNodes((nds) => nds.concat(groupNode));
+          prevNode = groupNode;
 
           nodesWithinGroup.forEach((node) => {
             node.parentNode = groupNode?.id;
@@ -363,10 +359,11 @@ export default function NodesCanvas(props: Props) {
             visType,
             getID(elem),
             "default",
-            getPositionForWholeTrav(position, index),
+            getPositionForWholeTrav(prevNode),
             visTitle
           );
           setNodes((nds) => nds.concat(newNode));
+          prevNode = newNode;
         }
       }
     } catch (error) {
@@ -374,12 +371,21 @@ export default function NodesCanvas(props: Props) {
     }
   }
 
-  function getPositionForWholeTrav(position: any, index: number) {
-    const offset = index * 35;
-    const pos = {
-      x: position.x,
-      y: position.y + offset,
-    };
+  function getPositionForWholeTrav(prevNode: any) {
+    let pos = {
+      x: 0,
+      y: 0
+    }
+
+    if(prevNode){
+      const offset = 5;
+      const prevNodeHeight = parseInt(String(prevNode.style?.height!), 10);
+      pos = {
+        x: prevNode.position.x,
+        y: prevNode.position.y + prevNodeHeight + offset,
+      };
+    }
+
     return pos;
   }
 
