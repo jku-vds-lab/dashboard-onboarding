@@ -110,53 +110,61 @@ export async function depthFirstTraversalStrategy() {
   const trav = [];
   console.log("current visuals", currentVisuals);
   try {
-    const group = createGroup();
-    const groupTrav1 = [];
-    const groupTrav2 = [];
-
     const traversalElem1 = createTraversalElement("dashboard");
     traversalElem1.element = await getTraversalElement("dashboard");
     trav.push(traversalElem1);
 
-    const traversalElemv11 = createTraversalElement(currentVisuals[0].type);
-    traversalElemv11.element = await getTraversalElement(
-      currentVisuals[0].name
-    );
-    traversalElemv11.categories = ["general"];
-    groupTrav1.push(traversalElemv11);
-
-    const traversalElemv11ia = createTraversalElement(currentVisuals[1].type);
-    traversalElemv11ia.element = await getTraversalElement(
-      currentVisuals[1].name
-    );
-    traversalElemv11ia.categories = ["insight"];
-    groupTrav1.push(traversalElemv11ia);
-
-    const traversalElemv112 = createTraversalElement(currentVisuals[2].type);
-    traversalElemv112.element = await getTraversalElement(
-      currentVisuals[0].name
-    );
-    traversalElemv112.categories = ["insight"];
-    groupTrav2.push(traversalElemv112);
-
-    const traversalElemv11ia2 = createTraversalElement(currentVisuals[3].type);
-    traversalElemv11ia2.element = await getTraversalElement(
-      currentVisuals[1].name
-    );
-    traversalElemv11ia2.categories = ["general"];
-    groupTrav2.push(traversalElemv11ia2);
-
-    group.visuals.push(groupTrav1);
-    group.visuals.push(groupTrav2);
-    group.type = groupType.all;
-
-    const traversalElem4 = createTraversalElement("group");
-    traversalElem4.element = group;
-    trav.push(traversalElem4);
-
     const traversalElem2 = createTraversalElement("globalFilter");
     traversalElem2.element = await getTraversalElement("globalFilter");
     trav.push(traversalElem2);
+
+    const groupFilters = createGroup();
+    groupFilters.type = groupType.atLeastOne;
+    const groupGeneralVis = createGroup();
+    groupGeneralVis.type = groupType.atLeastOne;
+    const groupOtherVis = createGroup();
+    groupOtherVis.type = groupType.all;
+
+    for (const vis of global.currentVisuals) {
+      const groupTrav = [];
+      const categories = getStandartCategories(vis.type);
+
+      for (const category of categories) {
+        const traversalElem = createTraversalElement(vis.type);
+        traversalElem.element = await getTraversalElement(vis.name);
+        traversalElem.categories = [category];
+        groupTrav.push(traversalElem);
+      }
+      switch (vis.type) {
+        case "card":
+        case "multiRowCard":
+          groupGeneralVis.visuals.push(groupTrav);
+          break;
+        case "slicer":
+          groupFilters.visuals.push(groupTrav);
+          break;
+        default:
+          groupOtherVis.visuals.push(groupTrav);
+      }
+    }
+
+    if(groupFilters.visuals.length>0){
+      const traversalElem3 = createTraversalElement("group");
+      traversalElem3.element = groupFilters;
+      trav.push(traversalElem3);
+    }
+
+    if(groupGeneralVis.visuals.length>0){
+      const traversalElem4 = createTraversalElement("group");
+      traversalElem4.element = groupGeneralVis;
+      trav.push(traversalElem4);
+    }
+
+    if(groupOtherVis.visuals.length>0){
+      const traversalElem5 = createTraversalElement("group");
+      traversalElem5.element = groupOtherVis;
+      trav.push(traversalElem5);
+    }    
   } catch (error) {
     console.log("Error in testing", error);
   }
