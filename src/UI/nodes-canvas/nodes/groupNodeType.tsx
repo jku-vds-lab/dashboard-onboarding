@@ -36,7 +36,7 @@ export default function GroupNodeType(nodeData: any) {
             </Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
-        <div className="label">All</div>
+        <div className="label">{nodeData.data.traverse}</div>
       </div>
     </div>
   );

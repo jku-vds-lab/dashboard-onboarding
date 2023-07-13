@@ -10,7 +10,7 @@ export default class GroupNode {
     this.groupNode = gNode;
   }
 
-  getGroupNode(setPos: boolean, position: any) {
+  getGroupNode(setPos: boolean, position: any, groupType: any) {
     let minX = this.groupNode.nodes[0].position.x;
     let minY = this.groupNode.nodes[0].position.y;
     let maxX = this.groupNode.nodes[0].position.x;
@@ -60,7 +60,7 @@ export default class GroupNode {
       data: {
         title: "group node",
         type: "group",
-        traverse: "All",
+        traverse: groupType,
       },
       className: "dndnode node-group",
       style: { width: width, height: height },

@@ -12,6 +12,7 @@ import * as global from "../../onboarding/ts/globalVariables";
 import {
   TraversalElement,
   findTraversalVisual,
+  groupType,
 } from "../../onboarding/ts/traversal";
 
 // import ICustomNode from "./nodeTypes/ICustomNode";
@@ -262,7 +263,7 @@ export default function NodesCanvas(props: Props) {
         position: { x: 0, y: 0 },
         data: null,
       });
-      const groupNode = groupNodeObj.getGroupNode(true, {x:0,y:0});
+      const groupNode = groupNodeObj.getGroupNode(true, {x:0,y:0}, groupType.all);
       setNodes((nds) => nds.concat(groupNode));
 
       if (!groupNode) {
@@ -342,7 +343,7 @@ export default function NodesCanvas(props: Props) {
             data: null,
           });
 
-          const groupNode = groupNodeObj.getGroupNode(false, getPositionForWholeTrav(prevNode));
+        const groupNode = groupNodeObj.getGroupNode(false, getPositionForWholeTrav(prevNode), elem.element.type);
           setNodes((nds) => nds.concat(groupNode));
           prevNode = groupNode;
 
