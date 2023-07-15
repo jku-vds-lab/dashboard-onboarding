@@ -54,6 +54,7 @@ import {
 import { reportId } from "../../Config";
 
 export function addContainerOffset(cardHeight: number) {
+  const rect = document.getElementById("flexContainer")!.getBoundingClientRect();
   const pageOffset = parseInt(
     window.getComputedStyle(document.getElementById("flexContainer")!)
       .paddingTop
@@ -74,10 +75,10 @@ export function addContainerOffset(cardHeight: number) {
   const onboarding = document.getElementById("onboarding");
   if (onboarding) {
     global.setOnboardingOffset(
-      pageOffset + buttonHeaderHeight + reportOffsetTop
+      pageOffset + buttonHeaderHeight + reportOffsetTop + rect.top
     );
     const top =
-      global.globalCardTop + cardHeight + buttonHeaderHeight + reportOffsetTop;
+      global.globalCardTop + cardHeight + buttonHeaderHeight + reportOffsetTop + rect.top;
     onboarding.style.top = top + "px";
   }
 
