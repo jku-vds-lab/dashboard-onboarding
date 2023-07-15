@@ -361,7 +361,7 @@ export function createExplainGroupCard() {
 }
 
 function createExplainGroupText() {
-  const currentElement = traversalStrategy[currentId].element;
+  const currentElement = global.settings.traversalStrategy[currentId].element;
   let explaination =
     "Please click on one of the highlighted visualisations to get its explaination.";
 
@@ -405,11 +405,10 @@ export async function getTraversalElem(sNode: any) {
   };
   try {
     const idParts: string[] = sNode.id.split(" ");
-    let nodeId: string = sNode.id;
+    const nodeId = idParts[0];
     let nodeCat: string = "general";
-    if (idParts.length > 1) {
-      nodeId = idParts[0];
-      nodeCat = idParts[1].toLowerCase();
+    if (idParts.length > 2) {
+      nodeCat = idParts[2].toLowerCase();
     }
     traversalElem = createTraversalElement(sNode.data.type);
     traversalElem.element = await getTraversalElement(nodeId);
