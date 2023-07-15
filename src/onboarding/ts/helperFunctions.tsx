@@ -493,6 +493,9 @@ export async function getActivePage() {
   const page = pages.filter(function (page: { isActive: any }) {
     return page.isActive;
   })[0];
+  if(!page){
+    getActivePage();
+  }
   global.setPage(page);
 }
 
