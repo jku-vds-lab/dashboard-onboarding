@@ -406,6 +406,9 @@ export function createOnboarding() {
 }
 
 export function createOnboardingButtons() {
+  elements.removeElement("guidedTour");
+  elements.removeElement("dashboardExploration");
+
   let attributes = global.createButtonAttributes();
   attributes.id = "guidedTour";
   attributes.content = "Start Guided Tour";
