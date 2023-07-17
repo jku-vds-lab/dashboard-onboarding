@@ -7,8 +7,8 @@ $line-chart-color: var(--line-chart-color);
 $bar-chart-color: var(--bar-chart-color);
 $kpi-color: var(--kpi-color);
 $filter-color: var(--filter-color);
-$globalFilter-color: #e25757;
-$column-color: var(--column-chart-color);
+$globalFilter-color: var(--filter-color);
+$column-color: var(--combo-chart-color);
 $color-white: #f1f1f1;
 
 .empty{
@@ -185,18 +185,15 @@ div[data-id*="GlobalFilter"] {
 }
 
 .dndnode {
-  // padding: 4px;
-  // border: 1px solid #1a192b;
-  // margin-bottom: 10px;
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: grab;
-  background-color: #595959;
+  background-color: #D9D9D9;
+  color: #{$bg-dark-1};
   width: 130px;
   height: 30px;
   border-radius: 4px;
-  box-shadow: 0 0 4px #1a1717;
   font-size: small;
 }
 

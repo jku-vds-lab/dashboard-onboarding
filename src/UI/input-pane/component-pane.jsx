@@ -2,7 +2,9 @@ import Components from "./component-properties";
 import React, {useState, useEffect} from 'react';
 import Draggable from 'react-draggable';
 import {PhotoshopPicker} from 'react-color';
-import {Nav, Tab, OverlayTrigger, Tooltip} from 'react-bootstrap';
+import {Nav, Tab, OverlayTrigger, Tooltip, Button } from 'react-bootstrap';
+import Accordion from "react-bootstrap/Accordion";
+
 
 import "../assets/css/dashboard.scss";
 import icon from "../nodes-canvas/icon-1.svg";
@@ -13,6 +15,11 @@ import c_icon_4 from "../assets/img/icon-3.png";
 import c_icon_5 from "../assets/img/icon-2.png";
 import c_icon_6 from "../assets/img/icon-4.png";
 import {allVisuals} from "../../onboarding/ts/globalVariables";
+import RecordView from "../story-pane/main-record";
+import UploadVideo from "../story-pane/main-upload-video";
+import mediaIcon from "../assets/img/icon-7.png";
+import {FaCheck, FaUndo} from "react-icons/fa";
+import OpenAI from "../story-pane/main-open-ai";
 
 
 export default function ComponentPane() {
@@ -35,8 +42,6 @@ export default function ComponentPane() {
             colorValue: '#e7298a'
         }]);
 
-    /*let tab =  { eventKey: 'dashboard', tooltip: 'Dashboard', iconSrc: c_icon, className: 'dashboard', headerText: 'Dashboard',  colorVariable: '--dashboard-color', colorValue: '#4e91e9' };
-    tabsData.push(tab);*/
 
     for (let i = 1; i < allVisuals.length; i++) {
         const tab = {};
@@ -51,8 +56,6 @@ export default function ComponentPane() {
         tabsData[i + 1] = tab;
     }
 
-    /*let tab = { eventKey: 'globalFilters', tooltip: 'Global Filters', iconSrc: c_icon_2, className: 'globalFilters', headerText: 'Global Filters', colorVariable: '--filters-color', colorValue: '#e7298a' };
-    tabsData.push(tab);*/
 
     const [selectedTab, setSelectedTab] = useState('dashboard');
     const [isPickerVisible, setPickerVisible] = useState(false);
@@ -72,32 +75,33 @@ export default function ComponentPane() {
         root.style.setProperty(selectedColorVariable, componentColor);
     }, [selectedTab, componentColor]);
 
-    const handleClick = (eventKey) => {
-        const selectedTabData = tabsData.find((tab) => tab.eventKey === eventKey);
-        const selectedColor = selectedTabData ? selectedTabData.colorValue : '';
-
-        setSelectedTab(eventKey);
-        setComponentColor(selectedColor);
-        setPickerVisible(true);
+    const showPicker  = () => {
+        // Perform necessary actions on cancel
+        setPickerVisible(true); // Hide the PhotoshopPicker
     };
+
 
     const handleAccept = (color) => {
         const selectedTabData = tabsData.find((tab) => tab.eventKey === selectedTab);
         const selectedColorVariable = selectedTabData ? selectedTabData.colorVariable : '';
 
-        const updatedTabsData = tabsData.map((tab) => {
-            if (tab.eventKey === selectedTab) {
-                return {
-                    ...tab,
-                    colorValue: componentColor,
-                };
-            }
-            return tab;
+        setTabsData((prevTabsData) => {
+            return prevTabsData.map((tab) => {
+                if (tab.eventKey === selectedTab) {
+                    return {
+                        ...tab,
+                        colorValue: componentColor,
+                    };
+                }
+                return tab;
+            });
         });
-
-        setComponentColor(color.hex);
-        setTabsData(updatedTabsData);
+        console.log("HERE");
+        console.log(tabsData);
+        // Update the CSS variable using document.documentElement
+        const root = document.documentElement;
         root.style.setProperty(selectedColorVariable, componentColor);
+
         setPickerVisible(false);
     };
 
@@ -174,9 +178,15 @@ export default function ComponentPane() {
     }
 
     function TabItem({eventKey, tooltip, iconSrc}) {
+        const handleClick = () => {
+            setSelectedTab(eventKey);
+            const selectedTabData = tabsData.find((tab) => tab.eventKey === eventKey);
+            const selectedColor = selectedTabData ? selectedTabData.colorValue : '';
+            setComponentColor(selectedColor);
+        };
         return (
             <Nav.Item>
-                <Nav.Link eventKey={eventKey}>
+                <Nav.Link eventKey={eventKey} onClick={handleClick}>
                     <OverlayTrigger trigger="hover" placement="right" overlay={
                         <Tooltip>
                             {tooltip}
@@ -200,10 +210,21 @@ export default function ComponentPane() {
                     <span
                         className="color-box"
                         style={{ backgroundColor: colorValue }}
-                        onClick={() => handleClick(eventKey)}
+                        onClick={showPicker}
                     ></span>
                 </div>
-                <Components visual={eventKey} />
+                <Accordion className="component-accordion">
+                    <Accordion.Item eventKey="0">
+                        <Accordion.Button className="basic">General</Accordion.Button>
+                        <Accordion.Body>
+                            <Components visual={eventKey} />
+                        </Accordion.Body>
+                    </Accordion.Item>
+                </Accordion>
+
+
+
+
             </Tab.Pane>
         );
     }
