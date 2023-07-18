@@ -377,15 +377,17 @@ $color-white: #f1f1f1;
 
 .nav-pills.icon-nav .nav-link.active, .nav-pills.icon-nav .show > .nav-link{
   color: #f1f1f1;
-  /* background-color: #1E1F22;*/
   background-color: #2B2D30;
   border-color: rgba(75, 77, 71, 0.51);;
 }
 .nav-pills.icon-nav .nav-link{
   border: 1px solid rgba(75, 77, 71, 0.5);
   color: #f1f1f1;
-  /*background-color: #2B2D30;*/
   border-radius: 0;
+
+  img{
+    opacity:0.6;
+  }
 }
 .icon-tabs-container {
   max-width:52px !important;
