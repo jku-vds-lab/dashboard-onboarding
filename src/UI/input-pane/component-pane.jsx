@@ -4,6 +4,7 @@ import Draggable from 'react-draggable';
 import {PhotoshopPicker} from 'react-color';
 import {Nav, Tab, OverlayTrigger, Tooltip, Button } from 'react-bootstrap';
 import Accordion from "react-bootstrap/Accordion";
+import * as global from '../../onboarding/ts/globalVariables';
 
 
 import "../assets/css/dashboard.scss";
@@ -27,42 +28,33 @@ export default function ComponentPane() {
         eventKey: 'dashboard',
         tooltip: 'Dashboard',
         iconSrc: c_icon,
-        className: 'dashboard',
         headerText: 'Dashboard',
         colorVariable: '--dashboard-color',
-        colorValue: '#4e91e9'
+        colorValue: '#4e91e9',
+        components: [{
+            visualId: 'dashboard',
+            title: global.page.displayName
+        }]
     },
-        {
-            eventKey: 'globalFilters',
-            tooltip: 'Global Filters',
-            iconSrc: c_icon_2,
-            className: 'globalFilters',
-            headerText: 'Global Filters',
-            colorVariable: '--filters-color',
-            colorValue: '#e7298a'
-        }]);
-
-
-    for (let i = 1; i < allVisuals.length; i++) {
-        const tab = {};
-        let visData = getVisData(allVisuals[i]);
-        tab.eventKey = allVisuals[i].name;
-        tab.tooltip = visData[0];
-        tab.iconSrc = visData[2];
-        tab.className = visData[1];
-        tab.headerText = visData[0] + " " + allVisuals[i].title;
-        tab.colorVariable = visData[3];
-        tab.colorValue = visData[4];
-        tabsData[i + 1] = tab;
-    }
-
-
+    {
+        eventKey: 'filter',
+        tooltip: 'Filter',
+        iconSrc: c_icon_2,
+        headerText: 'Filter',
+        colorVariable: '--filter-color',
+        colorValue: '#e7298a',
+        components: [{
+            visualId: 'globalFilters',
+            title: 'Global Filters'
+        }]
+    }]);
     const [selectedTab, setSelectedTab] = useState('dashboard');
     const [isPickerVisible, setPickerVisible] = useState(false);
-    const [componentColor, setComponentColor] = useState(tabsData.find(tab => tab.eventKey === selectedTab).colorValue);
-
+    const [componentColor, setComponentColor] = useState(tabsData?'#4e91e9':tabsData.find(tab => tab.eventKey === selectedTab).colorValue);
 
     useEffect(() => {
+        getTabsDataOfVisuals();
+
         const root = document.documentElement;
         tabsData.forEach(tab => {
             root.style.setProperty(tab.colorVariable, tab.colorValue);
@@ -79,6 +71,35 @@ export default function ComponentPane() {
         // Perform necessary actions on cancel
         setPickerVisible(true); // Hide the PhotoshopPicker
     };
+
+    function getTabsDataOfVisuals(){
+        for (let i = 0; i < allVisuals.length; i++) {
+            let visData = getVisData(allVisuals[i]);
+            const existingTab = tabsData.find(tab => tab.eventKey === visData[1]);
+    
+            if(existingTab){
+                const newVis = {
+                    visualId: allVisuals[i].name,
+                    title: allVisuals[i].title
+                };
+                
+                existingTab.components.push(newVis);
+            } else {
+                const tab = {};
+                tab.eventKey = visData[1];
+                tab.tooltip = visData[0];
+                tab.iconSrc = visData[2];
+                tab.headerText = visData[0];
+                tab.colorVariable = visData[3];
+                tab.colorValue = visData[4];
+                tab.components = [{
+                    visualId: allVisuals[i].name,
+                    title: allVisuals[i].title
+                }]
+                tabsData.push(tab);
+            }
+        }
+    }
 
 
     const handleAccept = (color) => {
@@ -202,7 +223,7 @@ export default function ComponentPane() {
         )
     }
 
-    function TabPaneItem({ eventKey, className, headerText, colorValue }) {
+    function TabPaneItem({ eventKey, headerText, colorValue, components }) {
         return (
             <Tab.Pane eventKey={eventKey}>
                 <div className="tab-body-header">
@@ -214,12 +235,14 @@ export default function ComponentPane() {
                     ></span>
                 </div>
                 <Accordion className="component-accordion">
-                    <Accordion.Item eventKey="0">
-                        <Accordion.Button className="basic">General</Accordion.Button>
-                        <Accordion.Body>
-                            <Components visual={eventKey} />
-                        </Accordion.Body>
-                    </Accordion.Item>
+                    {components.map(component =>
+                        <Accordion.Item eventKey={component.visualId} key={component.visualId}>
+                            <Accordion.Button className="basic">{component.title}</Accordion.Button>
+                            <Accordion.Body>
+                                <Components visual={component.visualId} />
+                            </Accordion.Body>
+                        </Accordion.Item>
+                    )}
                 </Accordion>
 
 
@@ -249,9 +272,9 @@ export default function ComponentPane() {
                             <div key={tab.eventKey}>
                                 <TabPaneItem
                                     eventKey={tab.eventKey}
-                                    className={tab.className}
                                     headerText={tab.headerText}
                                     colorValue={tab.colorValue}
+                                    components={tab.components}
                                 />
                             </div>
                         )}
