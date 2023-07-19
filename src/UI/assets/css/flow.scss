@@ -79,7 +79,7 @@ div[data-id*="dashboard"] {
     background-color: #{$dashboard-color};
   }
   &:after{
-    background-image: url("../img/icon-3.png");
+    background-image: url("../img/icon-1.png");
   }
 }
 div[data-id*="GlobalFilter"] {
@@ -229,12 +229,12 @@ div[data-id*="GlobalFilter"] {
     content: '';
     position: absolute;
     top: 8px;
-    right: 4px;
-    width: 13px;
-    height: 12px;
+    right: 5px;
+    width: 10px;
+    height: 10px;
     background-size: contain;
     background-repeat: no-repeat;
-    opacity: 0.8;
+    opacity: 0.6;
   }
 }
 .react-flow__node.selected .node{
