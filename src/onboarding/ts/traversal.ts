@@ -192,7 +192,13 @@ export function createGroupOverlay() {
     currentElement.element.type === groupType.atLeastOne &&
     currentId !== global.settings.traversalStrategy.length - 1
   ) {
-    firstVisuals.push(global.settings.traversalStrategy[currentId + 1]);
+    if (isGroup(currentElement.element)) {
+      currentElement.element.visuals.forEach((trav) =>
+        firstVisuals.push(trav[0])
+      );
+    } else {
+      firstVisuals.push(global.settings.traversalStrategy[currentId + 1]);
+    }
   }
   createInformationCard("group", currentElement.count, firstVisuals, undefined);
 }
