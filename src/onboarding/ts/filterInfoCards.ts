@@ -24,7 +24,7 @@ export async function createFilterInfoCard(count: number){
         traversal = global.settings.traversalStrategy;
     }
 
-    const filterData = helpers.getDataWithId(traversal, "globalFilter", ["general", "interaction", "insight"], count);
+    const filterData = helpers.getDataWithId(traversal, "globalFilter", ["general"], count);
     if (!filterData) {
       return;
     }
@@ -40,7 +40,7 @@ export async function createFilterInfoCard(count: number){
 
 export function createFilterList(traversal: TraversalElement[], list: string | any[], parentId: string, count: number){
     document.getElementById("contentText")!.innerHTML = "";
-    const visualData = helpers.getDataWithId(traversal, "globalFilter", ["general", "interaction", "insight"], count);
+    const visualData = helpers.getDataWithId(traversal, "globalFilter", ["general"], count);
     if(!visualData){
         return;
     }
@@ -93,7 +93,7 @@ export function getFilterDescription(filter: Filter){
 export async function getFilterInfos(traversal: TraversalElement[], count: number){
     const filterInfos = await helpers.getFilterInfo();
 
-    const filterData = helpers.getDataWithId(traversal, "globalFilter", ["general", "interaction", "insight"], count);
+    const filterData = helpers.getDataWithId(traversal, "globalFilter", ["general"], count);
     if (!filterData) {
       return;
     }
@@ -124,14 +124,14 @@ export function removeFilterInfoCard(){
 export async function saveFilterChanges(newInfo: string[], count:number){
     const filterInfos = await helpers.getFilterInfo();
 
-    let  filterData = helpers.getDataWithId(global.settings.traversalStrategy, "globalFilter", ["general", "interaction", "insight"], count);
+    let  filterData = helpers.getDataWithId(global.settings.traversalStrategy, "globalFilter", ["general"], count);
     if (!filterData) {
         const traversalElem = createTraversalElement("");
         traversalElem.element = await getTraversalElement("globalFilter");
         traversalElem.count = count;
-        traversalElem.categories = ["general", "interaction", "insight"];
+        traversalElem.categories = ["general"];
         global.settings.traversalStrategy.push(traversalElem);
-        filterData = helpers.getDataWithId(global.settings.traversalStrategy, "globalFilter", ["general", "interaction", "insight"], count);
+        filterData = helpers.getDataWithId(global.settings.traversalStrategy, "globalFilter", ["general"], count);
     }
 
     for (let i = 0; i < newInfo.length; ++i) {
@@ -175,12 +175,12 @@ export async function resetFilterChanges(count: number){
         ul.appendChild(li);
     }
 
-    const filterData = helpers.getDataWithId(global.settings.traversalStrategy, "globalFilter", ["general", "interaction", "insight"], count);
+    const filterData = helpers.getDataWithId(global.settings.traversalStrategy, "globalFilter", ["general"], count);
     if (!filterData) {
         const traversalElem = createTraversalElement("");
         traversalElem.element = await getTraversalElement("globalFilter");
         traversalElem.count = count;
-        traversalElem.categories = ["general", "interaction", "insight"];
+        traversalElem.categories = ["general"];
         global.settings.traversalStrategy.push(traversalElem);
         return;
     }
@@ -204,7 +204,7 @@ export async function getFilterInfoInEditor(count: number){
 
     const filterInfos = await helpers.getFilterInfo();
 
-    const filterData = helpers.getDataWithId(global.settings.traversalStrategy, "globalFilter", ["general", "interaction", "insight"], count);
+    const filterData = helpers.getDataWithId(global.settings.traversalStrategy, "globalFilter", ["general"], count);
     if (!filterData) {
         infos = filterInfos;
     } else {

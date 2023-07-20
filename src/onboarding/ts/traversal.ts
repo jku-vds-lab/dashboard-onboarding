@@ -401,7 +401,7 @@ export async function getTraversalElem(sNode: any) {
   const traversalElem: TraversalElement = {
     element: "",
     categories: [],
-    count: 0,
+    count: 1,
   };
   try {
     const idParts: string[] = sNode.id.split(" ");
@@ -549,6 +549,10 @@ export function getStandartCategories(type: string) {
       break;
     case "slicer":
       categories = ["general", "interaction"];
+      break;
+    case "dashboard":
+    case "globalFilter":
+      categories = ["general"];
       break;
     default:
       categories = ["general", "interaction", "insight"];

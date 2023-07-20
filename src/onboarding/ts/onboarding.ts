@@ -281,11 +281,7 @@ export function createOverlayForVisuals(visuals: TraversalElement[]) {
           global.reportHeight!
         );
         style += "border: 5px solid lightgreen;";
-        createOverlay("globalFilter", style, visualInfo.count, [
-          "general",
-          "interaction",
-          "insight",
-        ]);
+        createOverlay("globalFilter", style, visualInfo.count, ["general"]);
         break;
       default:
         const visual = global.currentVisuals.find(
@@ -316,7 +312,7 @@ function createDashboardInfoOnButtonClick(count: number) {
   setCurrentId(
     findVisualIndexInTraversal(global.basicTraversal, "dashboard", count)
   );
-  const lookedAt = createLookedAtIds("dashboard", [], 1);
+  const lookedAt = createLookedAtIds("dashboard", ["general"], 1);
   updateLookedAt(lookedAt);
   createDashboardInfoCard(1);
 }

@@ -37,7 +37,11 @@ export function createDiv(attributes: { id: any; categories: string[], count: nu
                 removeOnboardingOverlay();
                 removeContainerOffset();
                 removeExplainGroupCard();
-                setCurrentId(findVisualIndexInTraversal(global.basicTraversal, attributes.id, attributes.count));
+                setCurrentId(findVisualIndexInTraversal(global.settings.traversalStrategy, attributes.id, attributes.count));
+                if(global.settings.traversalStrategy[currentId].element.id === "group"){
+                    const lookedAt = createLookedAtIds(attributes.id, attributes.categories, 1);
+                    updateLookedAt(lookedAt);
+                }
                 if(attributes.id === "globalFilter"){
                     createInformationCard("globalFilter", 1);
                 } else {

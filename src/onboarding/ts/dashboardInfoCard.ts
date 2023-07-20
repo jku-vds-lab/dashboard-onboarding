@@ -36,7 +36,7 @@ export function createDashboardInfoCard(count: number){
 function setDashboardTitle(traversal: TraversalElement[], dashboard: Dashboard, count:number){
     const title = dashboard.title.text;
 
-    const dashboardData = helpers.getDataWithId(traversal, "dashboard", ["general", "interaction", "insight"], count);
+    const dashboardData = helpers.getDataWithId(traversal, "dashboard", ["general"], count);
     if (!dashboardData) {
       return;
     }
@@ -59,7 +59,7 @@ function setDashboardTitle(traversal: TraversalElement[], dashboard: Dashboard, 
 
 function setDashboardInfos(traversal: TraversalElement[], count: number){
     document.getElementById("contentText")!.innerHTML = "";
-    const visualData = helpers.getDataWithId(traversal, "dashboard", ["general", "interaction", "insight"], count);
+    const visualData = helpers.getDataWithId(traversal, "dashboard", ["general"], count);
     if(!visualData){
         return;
     }
@@ -99,7 +99,7 @@ export function getDashboardInfos(traversal: TraversalElement[], count: number){
     const images = dashboardInfo[0];
     const infos = dashboardInfo[1];
 
-    const dashboardData = helpers.getDataWithId(traversal, "dashboard", ["general", "interaction", "insight"], count);
+    const dashboardData = helpers.getDataWithId(traversal, "dashboard", ["general"], count);
     if (!dashboardData) {
       return;
     }
@@ -142,14 +142,14 @@ export async function saveDashboardChanges(newInfo: string[], count: number){
     const dashboardInfo = getNewDashboardInfo(dashboard);
     const originalInfos = dashboardInfo[1];
 
-    let dashboardData = helpers.getDataWithId(global.settings.traversalStrategy, "dashboard", ["general", "interaction", "insight"], count);
+    let dashboardData = helpers.getDataWithId(global.settings.traversalStrategy, "dashboard", ["general"], count);
     if (!dashboardData) {
         const traversalElem = createTraversalElement("");
         traversalElem.element = await getTraversalElement("dashboard");
         traversalElem.count = count;
-        traversalElem.categories = ["general", "interaction", "insight"];
+        traversalElem.categories = ["general"];
         global.settings.traversalStrategy.push(traversalElem);
-        dashboardData = helpers.getDataWithId(global.settings.traversalStrategy, "dashboard", ["general", "interaction", "insight"], count);
+        dashboardData = helpers.getDataWithId(global.settings.traversalStrategy, "dashboard", ["general"], count);
     }
 
     for (let i = 0; i < newInfo.length; ++i) {
@@ -189,12 +189,12 @@ export async function resetDashboardChanges(count: number){
 
     await createInfoList(originalImages, originalInfos, "textBox", true);
 
-    const dashboardData = helpers.getDataWithId(global.settings.traversalStrategy, "dashboard", ["general", "interaction", "insight"], count);
+    const dashboardData = helpers.getDataWithId(global.settings.traversalStrategy, "dashboard", ["general"], count);
     if (!dashboardData) {
         const traversalElem = createTraversalElement("");
         traversalElem.element = await getTraversalElement("dashboard");
         traversalElem.count = count;
-        traversalElem.categories = ["general", "interaction", "insight"];
+        traversalElem.categories = ["general"];
         global.settings.traversalStrategy.push(traversalElem);
         return;
     }
@@ -222,7 +222,7 @@ export async function getDashboardInfoInEditor(count: number){
     const dashboardImages = dashboardInfo[0];
     const dashboardInfos = dashboardInfo[1];
 
-    const dashboardData = helpers.getDataWithId(global.settings.traversalStrategy, "dashboard", ["general", "interaction", "insight"], count);
+    const dashboardData = helpers.getDataWithId(global.settings.traversalStrategy, "dashboard", ["general"], count);
     if (!dashboardData) {
         images = dashboardImages;
         infos = dashboardInfos;
