@@ -234,7 +234,7 @@ export default function ComponentPane() {
                         onClick={showPicker}
                     ></span>
                 </div>
-                <Accordion className="component-accordion">
+                <Accordion alwaysOpen className="component-accordion">
                     {components.map(component =>
                         <Accordion.Item eventKey={component.visualId} key={component.visualId}>
                             <Accordion.Button className="basic">{component.title}</Accordion.Button>
@@ -253,7 +253,7 @@ export default function ComponentPane() {
     }
 
     return (
-        <div className="h-100">
+        <div className="h-100 overflow-hidden">
             <div className="label">Components</div>
             <Tab.Container id="component-graph" defaultActiveKey={tabsData[0].eventKey}>
                 <div className="tabs-container">
