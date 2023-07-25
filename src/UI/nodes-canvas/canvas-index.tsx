@@ -53,7 +53,6 @@ export default function NodesCanvas(props: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const reactFlowWrapper = useRef<HTMLInputElement>(null); // this could be the reason why we run into the initial worng position issue
   const [selectedNodes, setSelectedNodes] = useNodesState<null>([]);
-  const [groupId] = useState({ id: 1 });
   const [mousePosition, setMousePosition] = React.useState<MousePosition>({
     x: 0,
     y: 0,
@@ -230,7 +229,7 @@ export default function NodesCanvas(props: Props) {
       sameNodes = nodes.filter(node => node.id.split(" ")[0] + " " + node.id.split(" ")[1] === id);
       index = 2;
     } else {
-      sameNodes = nodes.filter(node => node.id.split(" ").length == 3 && node.id.split(" ")[0] === id);
+      sameNodes = nodes.filter(node => node.id.split(" ").length <4 && node.id.split(" ")[0] === id);
       
     }
 
@@ -329,9 +328,11 @@ export default function NodesCanvas(props: Props) {
         return;
       }
 
+      const count = getCount("group");
+
       const groupNodeObj = new GroupNode({
         nodes: selectedNodes,
-        id: "group " + groupId.id++,
+        id: "group " + count,
         position: { x: 0, y: 0 },
         data: null,
       });
@@ -367,7 +368,7 @@ export default function NodesCanvas(props: Props) {
     } catch (error) {
       console.log("Error", error);
     }
-  }, [groupId.id, nodes, selectedNodes, setNodes]);
+  }, [nodes, selectedNodes, setNodes]);
 
   useEffect(() => {
     if (props.trigger) {
