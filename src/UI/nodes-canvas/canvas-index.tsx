@@ -9,7 +9,7 @@ import { Node } from "reactflow";
 import "reactflow/dist/style.css";
 import "../assets/css/flow.scss";
 import * as global from "../../onboarding/ts/globalVariables";
-import { TraversalElement, findTraversalVisual } from "../../onboarding/ts/traversal";
+import { TraversalElement, findTraversalVisual, groupType } from "../../onboarding/ts/traversal";
 
 // import ICustomNode from "./nodeTypes/ICustomNode";
 import { ContextMenu } from "./context-menu";
@@ -50,20 +50,73 @@ export default function NodesCanvas(props: Props) {
 
   function createIntitialNodes(){
     const initialNodes: Node[] = [];
-    for(const { index, elem } of global.settings.traversalStrategy.map((elem:TraversalElement, index:number) => ({ index, elem }))){
-      const visTitle = getTitle(elem);
-      const visType = getType(visTitle);
-      const newNode = defaultNode().getNode(
-        event,
-        visType,
-        getID(elem),
-        "default",
-        getPositionForWholeTrav(position, index),
-        visTitle
-      );
-      initialNodes.push(newNode);
+    const createdNodes = createNodes();
+    for(const node of createdNodes){
+      initialNodes.push(node)
     }
     return initialNodes;
+  }
+
+  function createNodes(){
+    let groupId = 0;
+    const createdNodes: Node[] = [];
+    let prevNode;
+
+    for(const { index, elem } of global.settings.traversalStrategy.map((elem:TraversalElement, index:number) => ({ index, elem }))){
+      if (elem.element.id === "group") {
+        const nodesWithinGroup: Node[] = [];
+        const visuals = elem.element.visuals;
+
+        for(let i=0; i<visuals.length; i++){
+          for(let j=0; j<visuals[i].length; j++){
+            const visTitle = getTitle(visuals[i][j]);
+            const visType = getType(visTitle);
+            const newNode = defaultNode().getNode(
+              event,
+              visType,
+              getID(visuals[i][j]),
+              "default",
+              getPositionWithinGroup(i, j),
+              visTitle
+            );
+
+            nodesWithinGroup.push(newNode);
+            createdNodes.push(newNode);
+          }
+        }
+
+        const groupNodeObj = new GroupNode({
+          nodes: nodesWithinGroup,
+          id: "group " + groupId++,
+          position: {x:0,y:0},
+          data: null,
+        });
+
+        const groupNode = groupNodeObj.getGroupNode(false, getPositionForWholeTrav(prevNode), elem.element.type);
+        createdNodes.push(groupNode);
+        prevNode = groupNode;
+
+        nodesWithinGroup.forEach((node) => {
+          node.parentNode = groupNode?.id;
+          node.extent = "parent";
+          node.draggable = true;
+        });
+      } else {
+        const visTitle = getTitle(elem);
+        const visType = getType(visTitle);
+        const newNode = defaultNode().getNode(
+          event,
+          visType,
+          getID(elem),
+          "default",
+          getPositionForWholeTrav(prevNode),
+          visTitle
+        );
+        createdNodes.push(newNode);
+        prevNode = newNode;
+      }
+    }
+    return createdNodes;
   }
 
   const getPosition = useCallback(
@@ -242,7 +295,7 @@ export default function NodesCanvas(props: Props) {
         position: { x: 0, y: 0 },
         data: null,
       });
-      const groupNode = groupNodeObj.getGroupNode();
+      const groupNode = groupNodeObj.getGroupNode(true, {x:0,y:0}, groupType.all);
       setNodes((nds) => nds.concat(groupNode));
 
       if (!groupNode) {
@@ -287,33 +340,40 @@ export default function NodesCanvas(props: Props) {
 
   function buildTraversal(traversal: any){
     setNodes([]);
+    const createdNodes = createNodes();
 
-    const position = {
-        x: 0,
-        y: 50,
-    };
-
-    for(const { index, elem } of traversal.map((elem:TraversalElement, index:number) => ({ index, elem }))){
-        const visTitle = getTitle(elem);
-        const visType = getType(visTitle);
-        const newNode = defaultNode().getNode(
-          event,
-          visType,
-          getID(elem),
-          "default",
-          getPositionForWholeTrav(position, index),
-          visTitle
-        );
-        setNodes((nds) => nds.concat(newNode));
-    } 
+    for(const node of createdNodes){
+      setNodes((nds) => nds.concat(node));
+    }
 }
 
-function getPositionForWholeTrav(position:any, index:number){
-  const offset = index * 35; 
-  const pos = {
-    x: position.x,
-    y: position.y + offset,
+function getPositionForWholeTrav(prevNode: any) {
+  let pos = {
+    x: 0,
+    y: 0
   }
+
+  if(prevNode){
+    const offset = 5;
+    const prevNodeHeight = parseInt(String(prevNode.style?.height!), 10);
+    pos = {
+      x: prevNode.position.x,
+      y: prevNode.position.y + prevNodeHeight + offset,
+    };
+  }
+
+  return pos;
+}
+
+function getPositionWithinGroup(xIndex: number, yIndex: number) {
+  let xOffset = 10;
+  let yOffset = 40;
+  xOffset = xOffset + (xIndex * 110);
+  yOffset = yOffset + (yIndex * 35);
+  const pos = {
+    x: xOffset,
+    y: yOffset,
+  };
   return pos;
 }
 
