@@ -30,11 +30,13 @@ import RecordView from "./main-record";
 interface Props {
   mainTrigger: number;
   traversal: any;
+  setNodes: any;
 }
 
 export default function StoryPane(props: Props) {
   const [trigger, setTrigger] = useState(0);
   const [showMediaOptions, setShowMediaOptions] = useState(false);
+  const [nodes, setNodes] = useState([]);
 
   const saveAnnotationChanges = async (e: any) => {
     const infos = [];
@@ -90,21 +92,23 @@ export default function StoryPane(props: Props) {
   };
 
   useEffect(() => {
+    props.setNodes(nodes);
+
     if (props.mainTrigger) {
       console.log("q", props.traversal);
       buildTraversal();
     }
-  }, [props.mainTrigger, props.traversal]);
+  }, [props.mainTrigger, props.traversal, nodes]);
 
   const buildTraversal = () => {
     setTrigger((trigger) => trigger + 1);
   };
 
   return (
-    <div id="canvas-container" className="canvas-cont" style={{ flexGrow: 1 }}>
+    <div id="canvas-container" className="canvas-cont" style={{ flexGrow: 1, position: "relative" }}>
       <div className="flow">
         <ReactFlowProvider>
-          <NodesCanvas trigger={trigger} traversal={props.traversal} />
+          <NodesCanvas trigger={trigger} traversal={props.traversal} setNodesForSave={setNodes}/>
         </ReactFlowProvider>
       </div>
       <div id="annotation-box" className="accordion node-desc">

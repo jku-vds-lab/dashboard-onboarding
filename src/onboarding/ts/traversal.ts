@@ -346,16 +346,24 @@ export function removeExplainGroupCard() {
 }
 
 export function createExplainGroupCard() {
-  const style =
-    `overflow: auto;position:fixed;top:10px;left:50%;margin-left:` +
-    -(global.explainGroupCardWidth / 2) +
-    `px;width:` +
+  helpers.addContainerOffset(global.explainGroupCardHeight);
+
+  let style =
+    `overflow: auto;width:` +
     global.explainGroupCardWidth +
     `px;height:` +
     global.explainGroupCardHeight +
     `px;pointer-events:auto;border-radius:10px;background-color:lightsteelblue;z-index: 99 !important;`;
+  if(global.isEditor){
+    const flex = document.getElementById("flexContainer")!.getBoundingClientRect();
+    const onboarding = document.getElementById("onboarding")!.getBoundingClientRect();
+    style += `position:relative;top:` + -(onboarding.top - flex.top - global.globalCardTop) + `px;margin: 0 auto;`;
+  }else{
+    style += `position:fixed;top:` + global.globalCardTop + `px;left:50%;margin-left:` +
+    -(global.explainGroupCardWidth / 2) +
+    `px;`;
+  }
   helpers.createCard("explainGroupCard", style, "");
-  helpers.addContainerOffset(global.explainGroupCardHeight);
   helpers.createCloseButton(
     "closeButton",
     "closeButtonPlacementBig",
@@ -367,7 +375,7 @@ export function createExplainGroupCard() {
 }
 
 function createExplainGroupText() {
-  const currentElement = traversalStrategy[currentId].element;
+  const currentElement = global.settings.traversalStrategy[currentId].element;
   let explaination =
     "Please click on one of the highlighted visualisations to get its explaination.";
 

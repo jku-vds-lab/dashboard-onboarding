@@ -9,11 +9,7 @@ import { Node } from "reactflow";
 import "reactflow/dist/style.css";
 import "../assets/css/flow.scss";
 import * as global from "../../onboarding/ts/globalVariables";
-import {
-  TraversalElement,
-  findTraversalVisual,
-  groupType,
-} from "../../onboarding/ts/traversal";
+import { TraversalElement, findTraversalVisual, groupType } from "../../onboarding/ts/traversal";
 
 // import ICustomNode from "./nodeTypes/ICustomNode";
 import { ContextMenu } from "./context-menu";
@@ -252,6 +248,7 @@ export default function NodesCanvas(props: Props) {
           className: intersections.includes(n.id) ? "highlight" : "",
         }))
       );
+      props.setNodesForSave(nodes);
     },
     [getIntersectingNodes, setNodes]
   );
@@ -371,14 +368,17 @@ export default function NodesCanvas(props: Props) {
   }, [nodes, selectedNodes, setNodes]);
 
   useEffect(() => {
+    props.setNodesForSave(nodes);
+
     if (props.trigger) {
       console.log("q", props.traversal);
       buildTraversal(props.traversal);
     }
-  }, [props.trigger]);
+  }, [props.trigger, nodes]);
 
   function buildTraversal(traversal: any) {
     setNodes([]);
+    
     const createdNodes = createNodes(traversal);
 
     for(const node of createdNodes){
@@ -536,7 +536,6 @@ export default function NodesCanvas(props: Props) {
               { label: "Group", effect: addGroup },
             ]}
           ></ContextMenu>
-          <Traversal nodes={nodes} />
         </ReactFlow>
       </div>
     </div>

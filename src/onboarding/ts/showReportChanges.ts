@@ -14,7 +14,21 @@ export function showReportChanges(){
     createInteractionOverlay();
     createHintCard();
 
-    const style = `overflow: auto;position:fixed;top:10px;left:50%;margin-left:` + -(global.interactionCardWidth/2) + `px;width:`+ global.interactionCardWidth + `px;height:` + global.interactionCardHeight + `px;pointer-events:auto;border-radius:10px;background-color:lightsteelblue;z-index: 99 !important;`;
+    let style =
+    `overflow: auto;width:` +
+    global.explainGroupCardWidth +
+    `px;height:` +
+    global.explainGroupCardHeight +
+    `px;pointer-events:auto;border-radius:10px;background-color:lightsteelblue;z-index: 99 !important;`;
+  if(global.isEditor){
+    const flex = document.getElementById("flexContainer")!.getBoundingClientRect();
+    const onboarding = document.getElementById("onboarding")!.getBoundingClientRect();
+    style += `position:relative;top:` + -(onboarding.top - flex.top - global.globalCardTop) + `px;margin: 0 auto;`;
+  }else{
+    style += `position:fixed;top:` + global.globalCardTop + `px;left:50%;margin-left:` +
+    -(global.explainGroupCardWidth / 2) +
+    `px;`;
+  }
     helpers.createCard("showChangesCard", style, "");
 
     helpers.addContainerOffset(global.interactionCardHeight);

@@ -57,6 +57,8 @@ export let isLoaded: boolean = false;
 
 export let basicTraversal: TraversalElement[] = [];
 
+export let isEditor: boolean = false;
+
 export enum infoStatus {
   original = "original",
   changed = "changed",
@@ -380,6 +382,10 @@ export function setIsLoaded(newIsLoaded: boolean) {
 
 export function setBasicTraversal(newBasicTraversal: TraversalElement[]) {
   basicTraversal = newBasicTraversal;
+}
+
+export function setIsEditor(newIsEditor: boolean) {
+  isEditor = newIsEditor;
 }
 
 export function createDivAttributes() {

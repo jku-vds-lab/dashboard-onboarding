@@ -53,6 +53,7 @@ import {
 import { reportId } from "../../Config";
 
 export function addContainerOffset(cardHeight: number) {
+  const rect = document.getElementById("flexContainer")!.getBoundingClientRect();
   const pageOffset = parseInt(
     window.getComputedStyle(document.getElementById("flexContainer")!)
       .paddingTop
@@ -73,10 +74,10 @@ export function addContainerOffset(cardHeight: number) {
   const onboarding = document.getElementById("onboarding");
   if (onboarding) {
     global.setOnboardingOffset(
-      pageOffset + buttonHeaderHeight + reportOffsetTop
+      pageOffset + buttonHeaderHeight + reportOffsetTop + rect.top
     );
     const top =
-      global.globalCardTop + cardHeight + buttonHeaderHeight + reportOffsetTop;
+      global.globalCardTop + cardHeight + buttonHeaderHeight + reportOffsetTop + rect.top;
     onboarding.style.top = top + "px";
   }
 
@@ -404,6 +405,9 @@ export function createOnboarding() {
 }
 
 export function createOnboardingButtons() {
+  elements.removeElement("guidedTour");
+  elements.removeElement("dashboardExploration");
+
   let attributes = global.createButtonAttributes();
   attributes.id = "guidedTour";
   attributes.content = "Start Guided Tour";
@@ -492,6 +496,9 @@ export async function getActivePage() {
   const page = pages.filter(function (page: { isActive: any }) {
     return page.isActive;
   })[0];
+  if(!page){
+    getActivePage();
+  }
   global.setPage(page);
 }
 

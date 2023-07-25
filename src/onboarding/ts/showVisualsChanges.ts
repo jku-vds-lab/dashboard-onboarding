@@ -64,16 +64,16 @@ export async function getShowVisualChangesText(visual: any){
             break;
         case 'Line Clustered Column Combo Chart':
             visualChangeInfo += await getLineClusteredColumnComboChartChanges(visual);
-            visualChangeInfo += displayCanFilterInfo();
+            visualChangeInfo += displayAdditionalInfo();
             break;
         case 'Line Chart':
         case 'Clustered Column Chart':
             visualChangeInfo += await getChartChanges(visual, true);
-            visualChangeInfo += displayCanFilterInfo();
+            visualChangeInfo += displayAdditionalInfo();
             break;
         case 'Clustered Bar Chart':
             visualChangeInfo += await getChartChanges(visual, false);
-            visualChangeInfo += displayCanFilterInfo();
+            visualChangeInfo += displayAdditionalInfo();
             break;
         default:
             break;
@@ -82,6 +82,6 @@ export async function getShowVisualChangesText(visual: any){
     return visualChangeInfo;
 }
 
-function displayCanFilterInfo(){
-    return "<br>You can also change the report filters by selecting a new element of this visual.";
+function displayAdditionalInfo(){
+    return "<br>For some visuals the data is not filtered but highlighted. You can see the highlighted data of a visual in the tooltip.<br>You can also change the report filters by selecting a new element of this visual.";
 }
