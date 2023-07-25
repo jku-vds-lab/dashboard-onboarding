@@ -413,11 +413,16 @@ export async function getTraversalElem(sNode: any) {
     const idParts: string[] = sNode.id.split(" ");
     const nodeId: string = idParts[0];
     let nodeCat: string = "general";
-    if (idParts.length > 2) {
+    let count = 1;
+    if (idParts.length > 3) {
       nodeCat = idParts[1].toLowerCase();
+      count = parseInt(idParts[2]);
+    } else {
+      count = parseInt(idParts[1]);
     }
 
     traversalElem.element = await getTraversalElement(nodeId);
+    traversalElem.count = count;
     traversalElem.categories = [nodeCat];
   } catch (error) {
     console.log("Error in getTraversalElem", error);
@@ -438,6 +443,7 @@ export async function createTraversalOfNodes(
       } else {
         const travElem = createTraversalElement("group");
         travElem.element = await createTraversalOfGroupNodes(<IGroupNode>node);
+        travElem.count = parseInt(node.id.split(" ")[1]);
         trav.push(travElem);
       }
     }

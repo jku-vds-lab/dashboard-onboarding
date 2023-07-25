@@ -39,13 +39,13 @@ export function createDiv(attributes: { id: any; categories: string[], count: nu
                 removeExplainGroupCard();
                 setCurrentId(findVisualIndexInTraversal(global.settings.traversalStrategy, attributes.id, attributes.count));
                 if(global.settings.traversalStrategy[currentId].element.id === "group"){
-                    const lookedAt = createLookedAtIds(attributes.id, attributes.categories, 1);
+                    const lookedAt = createLookedAtIds(attributes.id, attributes.categories, attributes.count);
                     updateLookedAt(lookedAt);
                 }
                 if(attributes.id === "globalFilter"){
-                    createInformationCard("globalFilter", 1);
+                    createInformationCard("globalFilter", attributes.count);
                 } else {
-                    createInformationCard("visual", 1, undefined, attributes.id, attributes.categories);
+                    createInformationCard("visual", attributes.count, undefined, attributes.id, attributes.categories);
                 }
             }
         }  

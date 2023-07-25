@@ -53,7 +53,7 @@ export default function NodesCanvas(props: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const reactFlowWrapper = useRef<HTMLInputElement>(null); // this could be the reason why we run into the initial worng position issue
   const [selectedNodes, setSelectedNodes] = useNodesState<null>([]);
-  const [groupId] = useState({ id: 0 });
+  const [groupId] = useState({ id: 1 });
   const [mousePosition, setMousePosition] = React.useState<MousePosition>({
     x: 0,
     y: 0,
@@ -145,7 +145,7 @@ export default function NodesCanvas(props: Props) {
     (event) => {
       event.preventDefault();
 
-      const id = event.dataTransfer.getData("id");
+      let id = event.dataTransfer.getData("id");
       const type = event.dataTransfer.getData("nodeType");
       const visType = event.dataTransfer.getData("visType");
       const title = event.dataTransfer.getData("title");
@@ -154,6 +154,8 @@ export default function NodesCanvas(props: Props) {
       if (typeof type === "undefined" || !type) {
         return;
       }
+
+      id += " " + getCount(id);
 
       const position = getPosition(event);
 
@@ -168,8 +170,29 @@ export default function NodesCanvas(props: Props) {
 
       setNodes((nds) => nds.concat(newNode));
     },
-    [getPosition, defaultNode, setNodes]
+    [nodes, getPosition, defaultNode, setNodes]
   );
+
+  function getCount(id: string){
+    let count = 1;
+    let sameNodes;
+    let index = 1;
+
+    if(id.split(" ").length > 1){
+      sameNodes = nodes.filter(node => node.id.split(" ")[0] + " " + node.id.split(" ")[1] === id);
+      index = 2;
+    } else {
+      sameNodes = nodes.filter(node => node.id.split(" ").length == 3 && node.id.split(" ")[0] === id);
+      
+    }
+
+    if(sameNodes.length > 0){
+      const max = Math.max(...sameNodes.map(node => parseInt(node.id.split(" ")[index])));
+      count += max;
+    }
+
+    return count;
+  }
 
   const onNodeDragStart = useCallback(
     (event, node) => {
@@ -233,7 +256,7 @@ export default function NodesCanvas(props: Props) {
     [getPosition]
   );
 
-  const deleteNode = () => {
+  const deleteNode = useCallback(() => {
     if (nodeData?.type === "group") {
       setNodes((nodes) => nodes.filter((n) => n.parentNode !== nodeData.id));
       setNodes((nodes) => nodes.filter((n) => n.id !== nodeData.id));
@@ -241,7 +264,8 @@ export default function NodesCanvas(props: Props) {
       setNodes((nodes) => nodes.filter((n) => n.id !== nodeData.id));
     }
     setIsOpen(false);
-  };
+  },
+  [nodes]);
 
   const addGroup = useCallback(() => {
     try {
