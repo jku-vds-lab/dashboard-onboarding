@@ -16,11 +16,6 @@ import c_icon_4 from "../assets/img/icon-3.png";
 import c_icon_5 from "../assets/img/icon-2.png";
 import c_icon_6 from "../assets/img/icon-4.png";
 import {allVisuals} from "../../onboarding/ts/globalVariables";
-import RecordView from "../story-pane/main-record";
-import UploadVideo from "../story-pane/main-upload-video";
-import mediaIcon from "../assets/img/icon-7.png";
-import {FaCheck, FaUndo} from "react-icons/fa";
-import OpenAI from "../story-pane/main-open-ai";
 
 
 export default function ComponentPane() {

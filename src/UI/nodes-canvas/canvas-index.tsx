@@ -30,6 +30,7 @@ const nodeTypes = { group: GroupNodeType };
 interface Props {
   trigger: number;
   traversal: any;
+  setNodesForSave: any;
 }
 interface MousePosition {
   x: number;
