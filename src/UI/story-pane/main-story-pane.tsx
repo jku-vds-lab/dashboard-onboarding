@@ -10,15 +10,22 @@ import {
 import { ReactFlowProvider } from "reactflow";
 import NodesCanvas from "../nodes-canvas/canvas-index";
 import "../assets/css/dashboard.scss";
-import { editedTexts } from "../../onboarding/ts/globalVariables";
-import { resetVisualChanges } from "../../onboarding/ts/infoCards";
-import { resetDashboardChanges } from "../../onboarding/ts/dashboardInfoCard";
-import { resetFilterChanges } from "../../onboarding/ts/filterInfoCards";
+import {
+  resetVisualChanges,
+  saveVisualChanges,
+} from "../../onboarding/ts/infoCards";
+import {
+  resetDashboardChanges,
+  saveDashboardChanges,
+} from "../../onboarding/ts/dashboardInfoCard";
+import {
+  resetFilterChanges,
+  saveFilterChanges,
+} from "../../onboarding/ts/filterInfoCards";
 import mediaIcon from "../assets/img/icon-7.png";
 import OpenAI from "./main-open-ai";
 import { useEffect, useState } from "react";
 import RecordView from "./main-record";
-import UploadVideo from "./main-upload-video";
 
 interface Props {
   mainTrigger: number;
@@ -31,45 +38,37 @@ export default function StoryPane(props: Props) {
   const [showMediaOptions, setShowMediaOptions] = useState(false);
   const [nodes, setNodes] = useState([]);
 
-  const saveAnnotationChanges = (e: any) => {
-    console.log(e);
-    const value = (document.getElementById("textBox")! as HTMLTextAreaElement)
-      .value;
-    const nodeId = e.target.getAttribute("nodeId");
-    debugger;
-    const currentIdParts = nodeId?.split(" ");
-    const info = value.replaceAll(" \n", "<br>");
-    const currentNewInfos = info.split("\n");
+  const saveAnnotationChanges = async (e: any) => {
+    const infos = [];
 
-    let editedElem = null;
-    if (currentIdParts.length > 2) {
-      editedElem = editedTexts.find(
-        (edited) =>
-          edited.idParts[0] === currentIdParts[0] &&
-          edited.idParts[2] === currentIdParts[2]
-      );
-    } else {
-      editedElem = editedTexts.find(
-        (edited) => edited.idParts[0] === currentIdParts[0]
-      );
+    const list = (document.getElementById("textBox")! as HTMLTextAreaElement)
+      .children[0];
+    const listElems = list.children;
+
+    for (let i = 0; i < listElems.length; i++) {
+      infos.push(listElems[i].innerHTML);
     }
 
-    if (editedElem) {
-      editedElem.newInfos = currentNewInfos;
-    } else {
-      editedTexts.push({
-        newInfos: currentNewInfos,
-        idParts: currentIdParts,
-        count: 1,
-      });
+    const nodeId = e.target.getAttribute("nodeId");
+    const currentIdParts = nodeId?.split(" ");
+
+    //TODO update visuals with videos, saveInfoVideo(), when editor side is ready and we know when and with what to update
+
+    switch (currentIdParts[0]) {
+      case "dashboard":
+        await saveDashboardChanges(infos, 1);
+        break;
+      case "globalFilter":
+        await saveFilterChanges(infos, 1);
+        break;
+      default:
+        await saveVisualChanges(infos, currentIdParts, 1);
+        break;
     }
   };
 
   const resetAnnotationChanges = async () => {
-    let nodeId = document?.getElementById("textBox")?.getAttribute("nodeId");
-    if (!nodeId) {
-      nodeId = document?.getElementById("saveText")?.getAttribute("nodeId");
-    }
+    const nodeId = document?.getElementById("saveText")?.getAttribute("nodeId");
 
     const currentIdParts = nodeId?.split(" ");
     if (!currentIdParts) {
@@ -88,9 +87,9 @@ export default function StoryPane(props: Props) {
     }
   };
 
-  const addMediaOptions = () =>{
+  const addMediaOptions = () => {
     setShowMediaOptions(true);
-  }
+  };
 
   useEffect(() => {
     props.setNodes(nodes);
@@ -124,23 +123,25 @@ export default function StoryPane(props: Props) {
               aria-controls="collapseDesc"
             >
               Component description
-              { showMediaOptions? 
+              {showMediaOptions ? (
                 <div>
-                  <RecordView />
-                  <UploadVideo />
+                  <RecordView setShowMediaOptions={setShowMediaOptions}/>
                 </div>
-              :
-              <div className="btn btn-secondary btn-xs d-flex justify-content-center align-items-center" onClick={addMediaOptions}>
-                <img
-                className="me-2"
-                src={mediaIcon}
-                width="20px"
-                height="20px"
-                alt="Add media icon"
-                />
-                Add media
-              </div>
-              }
+              ) : (
+                <div
+                  className="btn btn-secondary btn-xs d-flex justify-content-center align-items-center"
+                  onClick={addMediaOptions}
+                >
+                  <img
+                    className="me-2"
+                    src={mediaIcon}
+                    width="20px"
+                    height="20px"
+                    alt="Add media icon"
+                  />
+                  Add media
+                </div>
+              )}
             </button>
           </h2>
           <div
@@ -150,12 +151,11 @@ export default function StoryPane(props: Props) {
             data-bs-parent="#annotation-box"
           >
             <div className="accordion-body">
-              <textarea
+              <div
                 id="textBox"
-                className="form-control"
-                rows={4}
-                // onChange={saveAnnotationChanges}
-              />
+                className="editable form-control"
+                contentEditable="true"
+              ></div>
               <div className="controls">
                 <div
                   className="btn btn-secondary btn-sm me-auto"
@@ -171,7 +171,7 @@ export default function StoryPane(props: Props) {
           </div>
         </div>
 
-        <OpenAI />
+        {/* <OpenAI /> */}
       </div>
     </div>
   );

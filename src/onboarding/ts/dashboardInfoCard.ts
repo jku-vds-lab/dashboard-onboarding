@@ -5,13 +5,10 @@ import { removeElement } from "./elements";
 import { disableAll } from "./disableArea";
 import Dashboard from "../../componentGraph/Dashboard";
 import { createInfoList } from "./visualInfo";
-import infoImg from "../assets/info.png";
-import layoutImg from "../assets/layout.png";
-import dataImg from "../assets/data.png";
-import bulletpointImg from "../assets/dot.png";
 import { createInfoCardButtons } from "./infoCards";
-import { TraversalElement, currentId } from "./traversal";
+import { TraversalElement, createTraversalElement, currentId } from "./traversal";
 import { replacer } from "../../componentGraph/ComponentGraph";
+import { getTraversalElement } from "./createSettings";
 
 export function createDashboardInfoCard(count: number){
     global.setShowsDashboardInfo(true);
@@ -39,7 +36,7 @@ export function createDashboardInfoCard(count: number){
 function setDashboardTitle(traversal: TraversalElement[], dashboard: Dashboard, count:number){
     const title = dashboard.title.text;
 
-    const dashboardData = helpers.getDataWithId(traversal, "dashboard", ["general", "interaction", "insight"], count);
+    const dashboardData = helpers.getDataWithId(traversal, "dashboard", ["general"], count);
     if (!dashboardData) {
       return;
     }
@@ -62,7 +59,7 @@ function setDashboardTitle(traversal: TraversalElement[], dashboard: Dashboard, 
 
 function setDashboardInfos(traversal: TraversalElement[], count: number){
     document.getElementById("contentText")!.innerHTML = "";
-    const visualData = helpers.getDataWithId(traversal, "dashboard", ["general", "interaction", "insight"], count);
+    const visualData = helpers.getDataWithId(traversal, "dashboard", ["general"], count);
     if(!visualData){
         return;
     }
@@ -74,18 +71,24 @@ function setDashboardInfos(traversal: TraversalElement[], count: number){
             attributes.style = "position: relative;padding-bottom: 56.25%;height: 0;";
             attributes.parentId = "contentText";
             elements.createDiv(attributes);
-            const videoAttributes = global.createYoutubeVideoAttributes();
+            const videoAttributes = global.createVideoAttributes();
             videoAttributes.id = "video";
-            videoAttributes.style = `position: absolute; top: 0; left: 0; width: 100%; height: 100%;`;
-            videoAttributes.src = visualData.videoURL; //"https://www.youtube.com/embed/V5sBTOhRuKY"
+            videoAttributes.width = "100%";
             videoAttributes.parentId = "videoContainer";
-            elements.createYoutubeVideo(videoAttributes);
+            elements.createVideo(videoAttributes);
+
+            const sourceAttributes = global.createSourceAttributes();
+            sourceAttributes.id = "source";
+            sourceAttributes.src = visualData.videoURL;
+            sourceAttributes.type = "video/mp4";
+            sourceAttributes.parentId = "video";
+            elements.createSource(sourceAttributes);
             break;
         default:
             const dashboardInfos = getDashboardInfos(traversal, count);
             
             if(dashboardInfos){
-                createInfoList(dashboardInfos[0], dashboardInfos[1], "contentText");
+                createInfoList(dashboardInfos[0], dashboardInfos[1], "contentText", false);
             }
     }
 }
@@ -96,7 +99,7 @@ export function getDashboardInfos(traversal: TraversalElement[], count: number){
     const images = dashboardInfo[0];
     const infos = dashboardInfo[1];
 
-    const dashboardData = helpers.getDataWithId(traversal, "dashboard", ["general", "interaction", "insight"], count);
+    const dashboardData = helpers.getDataWithId(traversal, "dashboard", ["general"], count);
     if (!dashboardData) {
       return;
     }
@@ -111,7 +114,7 @@ export function getDashboardInfos(traversal: TraversalElement[], count: number){
                 break;
             case global.infoStatus.changed:
             case global.infoStatus.added:
-                newImages.push(bulletpointImg);
+                newImages.push("dotImg");
                 newInfos.push(dashboardData.changedInfos[i]);
                 break;
             default:
@@ -128,23 +131,25 @@ export function removeDashboardInfoCard(){
 }
 
 export function getNewDashboardInfo(dashboard: Dashboard){
-    const images = [infoImg, dataImg, layoutImg];
+    const images = ["infoImg", "dataImg", "layoutImg"];
     const infos = [dashboard.purpose, dashboard.task, dashboard.layout];
 
     return [images, infos];
 }
 
-export function saveDashboardChanges(newInfo: string[], count: number){
+export async function saveDashboardChanges(newInfo: string[], count: number){
     const dashboard = global.componentGraph.dashboard;
     const dashboardInfo = getNewDashboardInfo(dashboard);
     const originalInfos = dashboardInfo[1];
 
-    const dashboardData = helpers.getDataWithId(global.settings.traversalStrategy, "dashboard", ["general", "interaction", "insight"], count);
+    let dashboardData = helpers.getDataWithId(global.settings.traversalStrategy, "dashboard", ["general"], count);
     if (!dashboardData) {
-        const editedElem = global.editedTexts.find(editedElem => editedElem.idParts[0] === "dashboard" && editedElem.count === count);
-        const index = global.editedTexts.indexOf(editedElem!);
-        global.editedTexts.splice(index, 1);
-      return;
+        const traversalElem = createTraversalElement("");
+        traversalElem.element = await getTraversalElement("dashboard");
+        traversalElem.count = count;
+        traversalElem.categories = ["general"];
+        global.settings.traversalStrategy.push(traversalElem);
+        dashboardData = helpers.getDataWithId(global.settings.traversalStrategy, "dashboard", ["general"], count);
     }
 
     for (let i = 0; i < newInfo.length; ++i) {
@@ -176,69 +181,71 @@ export function saveDashboardChanges(newInfo: string[], count: number){
 export async function resetDashboardChanges(count: number){
     const dashboard = global.componentGraph.dashboard;
     const dashboardInfo = getNewDashboardInfo(dashboard);
+    const originalImages = dashboardInfo[0];
     const originalInfos = dashboardInfo[1];
 
-    let info = originalInfos.join("\r\n");
-    info = info.replaceAll("<br>", " \n");
     const textBox = document.getElementById("textBox")! as HTMLTextAreaElement; 
-    textBox.value = info;
+    textBox.innerHTML = "";
 
-    const editedElem = global.editedTexts.find(editedElem => editedElem.idParts[0] === "dashboard" && editedElem.count === count);
-    const index = global.editedTexts.indexOf(editedElem!);
-    global.editedTexts.splice(index, 1);
+    await createInfoList(originalImages, originalInfos, "textBox", true);
 
-    const dashboardData = helpers.getDataWithId(global.settings.traversalStrategy, "dashboard", ["general", "interaction", "insight"], count);
+    const dashboardData = helpers.getDataWithId(global.settings.traversalStrategy, "dashboard", ["general"], count);
     if (!dashboardData) {
-      return;
+        const traversalElem = createTraversalElement("");
+        traversalElem.element = await getTraversalElement("dashboard");
+        traversalElem.count = count;
+        traversalElem.categories = ["general"];
+        global.settings.traversalStrategy.push(traversalElem);
+        return;
     }
 
-    for (let i = 0; i < dashboardData.infoStatus.length; ++i) {
-        if(i < originalInfos.length){        
-            dashboardData.infoStatus[i] = "original";
-            dashboardData.changedInfos[i] = "";
-        } else {
-            dashboardData.infoStatus.splice(i, 1);
-            dashboardData.changedInfos.splice(i, 1);
-        }
+    for (let i = 0; i < originalInfos.length; ++i) {      
+        dashboardData.infoStatus[i] = "original";
+        dashboardData.changedInfos[i] = "";
+    }
+
+    if(originalInfos.length < dashboardData.infoStatus.length){
+        const elemCount = dashboardData.infoStatus.length - originalInfos.length;
+        dashboardData.infoStatus.splice(originalInfos.length, elemCount);
+        dashboardData.changedInfos.splice(originalInfos.length, elemCount);
     }
 
     localStorage.setItem("settings", JSON.stringify(global.settings, replacer));
 }
 
-export function getDashboardInfoInEditor(count: number){
+export async function getDashboardInfoInEditor(count: number){
     let infos = [];
+    let images = [];
 
-    const editedElem = global.editedTexts.find(edited => edited.idParts[0] === "dashboard" && edited.idParts.length === 1);
-    
-    if(editedElem){
-        infos = editedElem.newInfos;
+    const dashboard = global.componentGraph.dashboard;
+    const dashboardInfo = getNewDashboardInfo(dashboard);
+    const dashboardImages = dashboardInfo[0];
+    const dashboardInfos = dashboardInfo[1];
+
+    const dashboardData = helpers.getDataWithId(global.settings.traversalStrategy, "dashboard", ["general"], count);
+    if (!dashboardData) {
+        images = dashboardImages;
+        infos = dashboardInfos;
     } else {
-        const dashboard = global.componentGraph.dashboard;
-        const dashboardInfo = getNewDashboardInfo(dashboard);
-        const dashboardInfos = dashboardInfo[1];
-
-        const dashboardData = helpers.getDataWithId(global.settings.traversalStrategy, "dashboard", ["general", "interaction", "insight"], count);
-        if (!dashboardData) {
-            infos = dashboardInfos;
-        } else {
-            for (let i = 0; i < dashboardData.infoStatus.length; ++i) {
-                switch(dashboardData.infoStatus[i]){
-                    case global.infoStatus.original:
-                        infos.push(dashboardInfos[i]);
-                        break;
-                    case global.infoStatus.changed:
-                    case global.infoStatus.added:
-                        infos.push(dashboardData.changedInfos[i]);
-                        break;
-                    default:
-                        break;
-                }
+        for (let i = 0; i < dashboardData.infoStatus.length; ++i) {
+            switch(dashboardData.infoStatus[i]){
+                case global.infoStatus.original:
+                    images.push(dashboardImages[i]);
+                    infos.push(dashboardInfos[i]);
+                    break;
+                case global.infoStatus.changed:
+                case global.infoStatus.added:
+                    images.push("dotImg");
+                    infos.push(dashboardData.changedInfos[i]);
+                    break;
+                default:
+                    break;
             }
         }
     }
 
-    let info = infos.join("\r\n");
-    info = info.replaceAll("<br>", " \n");
     const textBox = document.getElementById("textBox")! as HTMLTextAreaElement; 
-    textBox.value = info;
+    textBox.innerHTML = "";
+
+    await createInfoList(images, infos, "textBox", true);
 }

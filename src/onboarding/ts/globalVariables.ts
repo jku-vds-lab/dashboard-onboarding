@@ -53,8 +53,6 @@ export let posY: number | null = 0;
 export let placeholderElement: any;
 export let draggingStarted: boolean | null = false;
 
-export const editedTexts: editedText[] = [];
-
 export let isLoaded: boolean = false;
 
 export let basicTraversal: TraversalElement[] = [];
@@ -71,13 +69,7 @@ export enum infoStatus {
 export enum mediaType {
   video = "Video",
   text = "Text"
-}
-
-export interface editedText {
-  newInfos: string[];
-  idParts: string[];
-  count: number;
-}
+} 
 
 export interface ReportOffset {
   top: number;

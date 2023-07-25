@@ -6,7 +6,8 @@ import Filter from "../../componentGraph/Filter";
 import { removeElement } from "./elements";
 import { createInfoCardButtons } from "./infoCards";
 import { replacer } from "../../componentGraph/ComponentGraph";
-import { TraversalElement } from "./traversal";
+import { TraversalElement, createTraversalElement } from "./traversal";
+import { getTraversalElement } from "./createSettings";
 
 export async function createFilterInfoCard(count: number){
     createFilterDisabledArea();
@@ -23,7 +24,7 @@ export async function createFilterInfoCard(count: number){
         traversal = global.settings.traversalStrategy;
     }
 
-    const filterData = helpers.getDataWithId(traversal, "globalFilter", ["general", "interaction", "insight"], count);
+    const filterData = helpers.getDataWithId(traversal, "globalFilter", ["general"], count);
     if (!filterData) {
       return;
     }
@@ -39,7 +40,7 @@ export async function createFilterInfoCard(count: number){
 
 export function createFilterList(traversal: TraversalElement[], list: string | any[], parentId: string, count: number){
     document.getElementById("contentText")!.innerHTML = "";
-    const visualData = helpers.getDataWithId(traversal, "globalFilter", ["general", "interaction", "insight"], count);
+    const visualData = helpers.getDataWithId(traversal, "globalFilter", ["general"], count);
     if(!visualData){
         return;
     }
@@ -50,12 +51,18 @@ export function createFilterList(traversal: TraversalElement[], list: string | a
             attributes.style = "position: relative;padding-bottom: 56.25%;height: 0;";
             attributes.parentId = "contentText";
             elements.createDiv(attributes);
-            const videoAttributes = global.createYoutubeVideoAttributes();
+            const videoAttributes = global.createVideoAttributes();
             videoAttributes.id = "video";
-            videoAttributes.style = `position: absolute; top: 0; left: 0; width: 100%; height: 100%;`;
-            videoAttributes.src = visualData.videoURL; //"https://www.youtube.com/embed/V5sBTOhRuKY"
+            videoAttributes.width = "100%";
             videoAttributes.parentId = "videoContainer";
-            elements.createYoutubeVideo(videoAttributes);
+            elements.createVideo(videoAttributes);
+
+            const sourceAttributes = global.createSourceAttributes();
+            sourceAttributes.id = "source";
+            sourceAttributes.src = visualData.videoURL;
+            sourceAttributes.type = "video/mp4";
+            sourceAttributes.parentId = "video";
+            elements.createSource(sourceAttributes);
             break;
         default:
             const ul = document.createElement('ul');
@@ -86,7 +93,7 @@ export function getFilterDescription(filter: Filter){
 export async function getFilterInfos(traversal: TraversalElement[], count: number){
     const filterInfos = await helpers.getFilterInfo();
 
-    const filterData = helpers.getDataWithId(traversal, "globalFilter", ["general", "interaction", "insight"], count);
+    const filterData = helpers.getDataWithId(traversal, "globalFilter", ["general"], count);
     if (!filterData) {
       return;
     }
@@ -117,12 +124,14 @@ export function removeFilterInfoCard(){
 export async function saveFilterChanges(newInfo: string[], count:number){
     const filterInfos = await helpers.getFilterInfo();
 
-    const filterData = helpers.getDataWithId(global.settings.traversalStrategy, "globalFilter", ["general", "interaction", "insight"], count);
+    let  filterData = helpers.getDataWithId(global.settings.traversalStrategy, "globalFilter", ["general"], count);
     if (!filterData) {
-        const editedElem = global.editedTexts.find(editedElem => editedElem.idParts[0] === "globalFilter" && editedElem.count === count);
-        const index = global.editedTexts.indexOf(editedElem!);
-        global.editedTexts.splice(index, 1);
-      return;
+        const traversalElem = createTraversalElement("");
+        traversalElem.element = await getTraversalElement("globalFilter");
+        traversalElem.count = count;
+        traversalElem.categories = ["general"];
+        global.settings.traversalStrategy.push(traversalElem);
+        filterData = helpers.getDataWithId(global.settings.traversalStrategy, "globalFilter", ["general"], count);
     }
 
     for (let i = 0; i < newInfo.length; ++i) {
@@ -154,28 +163,37 @@ export async function saveFilterChanges(newInfo: string[], count:number){
 export async function resetFilterChanges(count: number){
     const filterInfos = await helpers.getFilterInfo();
 
-    let info = filterInfos.join("\r\n");
-    info = info.replaceAll("<br>", " \n");
     const textBox = document.getElementById("textBox")! as HTMLTextAreaElement; 
-    textBox.value = info;
+    textBox.innerHTML = "";
 
-    const editedElem = global.editedTexts.find(editedElem => editedElem.idParts[0] === "globalFilter" && editedElem.count === count);
-    const index = global.editedTexts.indexOf(editedElem!);
-    global.editedTexts.splice(index, 1);
+    const ul = document.createElement('ul');
+    document.getElementById("textBox")?.appendChild(ul);
 
-    const filterData = helpers.getDataWithId(global.settings.traversalStrategy, "globalFilter", ["general", "interaction", "insight"], count);
-    if (!filterData) {
-      return;
+    for (let i = 0; i < filterInfos.length; ++i) {
+        const li = document.createElement('li');
+        li.innerHTML =  filterInfos[i];
+        ul.appendChild(li);
     }
 
-    for (let i = 0; i < filterData.filterInfosStatus.length; ++i) {
-        if(i < filterInfos.length){        
-            filterData.filterInfosStatus[i] = "original";
-            filterData.changedFilterInfos[i] = "";
-        } else {
-            filterData.filterInfosStatus.splice(i, 1);
-            filterData.changedFilterInfos.splice(i, 1);
-        }
+    const filterData = helpers.getDataWithId(global.settings.traversalStrategy, "globalFilter", ["general"], count);
+    if (!filterData) {
+        const traversalElem = createTraversalElement("");
+        traversalElem.element = await getTraversalElement("globalFilter");
+        traversalElem.count = count;
+        traversalElem.categories = ["general"];
+        global.settings.traversalStrategy.push(traversalElem);
+        return;
+    }
+
+    for (let i = 0; i < filterInfos.length; ++i) {    
+        filterData.filterInfosStatus[i] = "original";
+        filterData.changedFilterInfos[i] = "";
+    }
+
+    if(filterInfos.length < filterData.filterInfosStatus.length){
+        const elemCount = filterData.filterInfosStatus.length - filterInfos.length;
+        filterData.filterInfosStatus.splice(filterInfos.length, elemCount);
+        filterData.changedFilterInfos.splice(filterInfos.length, elemCount);
     }
 
     localStorage.setItem("settings", JSON.stringify(global.settings, replacer));
@@ -184,35 +202,36 @@ export async function resetFilterChanges(count: number){
 export async function getFilterInfoInEditor(count: number){
     let infos = [];
 
-    const editedElem = global.editedTexts.find(edited => edited.idParts[0] === "globalFilter" && edited.idParts.length === 1);
-    
-    if(editedElem){
-        infos = editedElem.newInfos;
-    } else {
-        const filterInfos = await helpers.getFilterInfo();
+    const filterInfos = await helpers.getFilterInfo();
 
-        const filterData = helpers.getDataWithId(global.settings.traversalStrategy, "globalFilter", ["general", "interaction", "insight"], count);
-        if (!filterData) {
-            infos = filterInfos;
-        } else {
-            for (let i = 0; i < filterData.filterInfosStatus.length; ++i) {
-                switch(filterData.filterInfosStatus[i]){
-                    case global.infoStatus.original:
-                        infos.push(filterInfos[i]);
-                        break;
-                    case global.infoStatus.changed:
-                    case global.infoStatus.added:
-                        infos.push(filterData.changedFilterInfos[i]);
-                        break;
-                    default:
-                        break;
-                }
+    const filterData = helpers.getDataWithId(global.settings.traversalStrategy, "globalFilter", ["general"], count);
+    if (!filterData) {
+        infos = filterInfos;
+    } else {
+        for (let i = 0; i < filterData.filterInfosStatus.length; ++i) {
+            switch(filterData.filterInfosStatus[i]){
+                case global.infoStatus.original:
+                    infos.push(filterInfos[i]);
+                    break;
+                case global.infoStatus.changed:
+                case global.infoStatus.added:
+                    infos.push(filterData.changedFilterInfos[i]);
+                    break;
+                default:
+                    break;
             }
         }
     }
 
-    let info = infos.join("\r\n");
-    info = info.replaceAll("<br>", " \n");
     const textBox = document.getElementById("textBox")! as HTMLTextAreaElement; 
-    textBox.value = info;
+    textBox.innerHTML = "";
+
+    const ul = document.createElement('ul');
+    document.getElementById("textBox")?.appendChild(ul);
+
+    for (let i = 0; i < infos.length; ++i) {
+        const li = document.createElement('li');
+        li.innerHTML =  infos[i];
+        ul.appendChild(li);
+    }
 }

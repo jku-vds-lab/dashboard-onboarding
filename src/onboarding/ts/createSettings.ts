@@ -7,10 +7,13 @@ import {
   findTraversalVisual,
   Group,
   isGroup,
+  TraversalElement,
   traversalStrategy,
 } from "./traversal";
 import { VisualDescriptor } from "powerbi-client";
 import { reportId } from "../../Config";
+
+let visualIndex:number;
 
 export async function createSettings() {
   const settings = global.createSettingsObject();
@@ -18,7 +21,7 @@ export async function createSettings() {
   settings.interactionExample = setInteractionExampleInfo();
   settings.allVisuals = global.allVisuals.map((visual: VisualDescriptor) => {
     return visual.name;
-  })
+  });
   settings.reportId = reportId;
 
   global.setSettings(settings);
@@ -27,17 +30,22 @@ export async function createSettings() {
 
 export async function getTraversalElement(elem: any) {
   let traversalElement;
-  if (isGroup(elem)) {
-    const traversalGroupVisuals = await setGroup(elem);
-    elem.visuals = traversalGroupVisuals;
-    traversalElement = elem;
-  } else if (elem === "dashboard") {
-    traversalElement = setDashboardInfo();
-  } else if (elem === "globalFilter") {
-    traversalElement = await setFilterInfo();
-  } else {
-    traversalElement = await setVisualsInfo(elem);
+  try {
+    if (isGroup(elem)) {
+      const traversalGroupVisuals = await setGroup(elem);
+      elem.visuals = traversalGroupVisuals;
+      traversalElement = elem;
+    } else if (elem === "dashboard") {
+      traversalElement = setDashboardInfo();
+    } else if (elem === "globalFilter") {
+      traversalElement = await setFilterInfo();
+    } else {
+      traversalElement = await setVisualsInfo(elem);
+    }
+  } catch (error) {
+    console.log("Error in getTraversalElement", error);
   }
+
   return traversalElement;
 }
 
@@ -57,33 +65,46 @@ async function setTraversalStrategy() {
 }
 
 async function setGroup(elem: Group) {
-  const traversal = [];
+  const traversal: TraversalElement[][] = [];
   for (const trav of elem.visuals) {
-    const visuals = [];
+    const visuals: TraversalElement[] = [];
     for (const vis of trav) {
-      if (vis.element.id === "dashboard") {
-        const traversalElem = createTraversalElement("dashboard");
-        traversalElem.count = vis.count;
-        traversalElem.categories = vis.categories;
-        traversalElem.element = setDashboardInfo();
-        visuals.push(traversalElem);
-      } else if (vis.element.id === "globalFilter") {
-        const traversalElem = createTraversalElement("globalFilter");
-        traversalElem.count = vis.count;
-        traversalElem.categories = vis.categories;
-        traversalElem.element = await setFilterInfo();
-        visuals.push(traversalElem);
+      const i = traversal.findIndex(trav => getIndex(trav, vis)>-1);
+
+      if(i>-1 && visualIndex>-1){
+          traversal[i][visualIndex].categories.push(vis.categories[0]);
       } else {
-        const traversalElem = createTraversalElement("");
-        traversalElem.count = vis.count;
-        traversalElem.categories = vis.categories;
-        traversalElem.element = await setVisualsInfo(vis.element.id);
-        visuals.push(traversalElem);
+        if (vis.element.id === "dashboard") {
+          const traversalElem = createTraversalElement("dashboard");
+          traversalElem.count = vis.count;
+          traversalElem.categories = vis.categories;
+          traversalElem.element = setDashboardInfo();
+          visuals.push(traversalElem);
+        } else if (vis.element.id === "globalFilter") {
+          const traversalElem = createTraversalElement("globalFilter");
+          traversalElem.count = vis.count;
+          traversalElem.categories = vis.categories;
+          traversalElem.element = await setFilterInfo();
+          visuals.push(traversalElem);
+        } else {
+          const traversalElem = createTraversalElement("");
+          traversalElem.count = vis.count;
+          traversalElem.categories = vis.categories;
+          traversalElem.element = await setVisualsInfo(vis.element.id);
+          visuals.push(traversalElem);
+        }
       }
     }
-    traversal.push(visuals);
+    if(visuals.length>0){
+      traversal.push(visuals);
+    }
   }
   return traversal;
+}
+
+function getIndex(trav: TraversalElement[], vis: TraversalElement){
+  visualIndex = trav.findIndex(visual => visual.count === vis.count && visual.element.id === vis.element.id)
+  return visualIndex;
 }
 
 function setDashboardInfo() {
@@ -128,7 +149,6 @@ async function setVisualsInfo(id: string) {
 
     return settingsVisual;
   } catch (error) {
-    debugger;
     console.error(error);
   }
 }

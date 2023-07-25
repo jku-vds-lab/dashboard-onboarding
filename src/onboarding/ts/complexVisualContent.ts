@@ -1,17 +1,5 @@
 import * as helpers from "./helperFunctions";
 import * as global from "./globalVariables";
-import infoImg from "../assets/info.png";
-import yAxisImg from "../assets/y-axis.png";
-import xAxisImg from "../assets/x-axis.png";
-import legendImg from "../assets/legend.png";
-import barChartImg from "../assets/bar-chart.png";
-import lineGraphImg from "../assets/line-graph.png";
-import elemClickImg from "../assets/element-click.png";
-import axisClickImg from "../assets/axis-click.png";
-import legendClickImg from "../assets/legend-click.png";
-import dataImg from "../assets/data.png";
-import filterImg from "../assets/filter.png";
-import interactImg from "../assets/interact.png";
 
 export async function getLineClusteredColumnComboChartInfo(visual: any) {
     const CGVisual = global.componentGraph.dashboard.visualizations.find(vis => vis.id === visual.name); 
@@ -27,12 +15,12 @@ export async function getLineClusteredColumnComboChartInfo(visual: any) {
     const insightImages = [] as any[];
     const insightInfos = [] as string[];
         
-    generalImages.push(infoImg);
+    generalImages.push("infoImg");
     generalInfos.push(CGVisual?.description!);
 
     const dataString = helpers.dataToString(CGVisual?.data.attributes!);
     const channelString = helpers.dataToString(CGVisual?.visual_channel.channel!);
-    generalImages.push(dataImg);
+    generalImages.push("dataImg");
     generalInfos.push("It displayes " + dataString + ", they are encoded by " + channelString + ". The purpose of this chart is to " + CGVisual?.task + ".");
 
     if(columnData.length != 0){
@@ -47,7 +35,7 @@ export async function getLineClusteredColumnComboChartInfo(visual: any) {
             const dataString = helpers.dataToString(columnAttributs);
             barInfo += "Each " + axis + " has more than one bar. The bars of this chart represent " + dataString + ". They are distinguishable by their color.";
         }
-        generalImages.push(barChartImg);
+        generalImages.push("barChartImg");
         generalInfos.push(barInfo);
     }
 
@@ -63,14 +51,14 @@ export async function getLineClusteredColumnComboChartInfo(visual: any) {
             const dataString = helpers.dataToString(lineAttributs);
             lineInfo += "This chart has more than one line. The lines represent " + dataString + ". They are distinguishable by their color.<br>";
         }
-        generalImages.push(lineGraphImg);
+        generalImages.push("lineGraphImg");
         generalInfos.push(lineInfo);
     }
 
-    interactionImages.push(interactImg);
+    interactionImages.push("interactImg");
     interactionInfos.push(CGVisual?.interactions.description!);
 
-    interactionImages.push(elemClickImg);
+    interactionImages.push("elemClickImg");
     let interactionInfo = "When clicking on a " + CGVisual?.mark + " you can filter the report by " + axis + ".";
     if(CGVisual?.encoding.hasTooltip){
         interactionInfo += "</br>You can hover over a " + CGVisual?.mark + " to get detailed information about its data.";
@@ -78,27 +66,27 @@ export async function getLineClusteredColumnComboChartInfo(visual: any) {
     interactionInfos.push(interactionInfo);
 
     if(CGVisual?.encoding.xAxes[0].isVisible){
-        generalImages.push(xAxisImg);
+        generalImages.push("xAxisImg");
         generalInfos.push("The X-axis displayes the values of the " + axis + ".");
-        interactionImages.push(axisClickImg);
+        interactionImages.push("axisClickImg");
         interactionInfos.push("When clicking on one of the x-axis-labels you can filter the report by " + axis + ".");
     }
     if(CGVisual?.encoding.yAxes[0].isVisible){
         const dataAttributs = CGVisual?.encoding.yAxes.map(yAxis => yAxis.attribute);
         const dataString = helpers.dataToString(dataAttributs);
-        generalImages.push(yAxisImg);
+        generalImages.push("yAxisImg");
         generalInfos.push("The Y-axes display the values of the " + dataString + ".");
     }
     if(await helpers.isVisible(visual, "legend")){
-        generalImages.push(legendImg);
+        generalImages.push("legendImg");
         generalInfos.push("The legend displayes, which data is represented by a " + CGVisual?.mark + " of this chart. It also shows the corresponding color.");
-        interactionImages.push(legendClickImg);
+        interactionImages.push("legendClickImg");
         interactionInfos.push("When clicking on one of the labels in the legend you can filter the report by this data.");
     }
 
     const filterText = helpers.getLocalFilterText(CGVisual);
     if(filterText !== ""){
-        generalImages.push(filterImg);
+        generalImages.push("filterImg");
         generalInfos.push("This chart has the following filters:<br>" + filterText);
     }
 

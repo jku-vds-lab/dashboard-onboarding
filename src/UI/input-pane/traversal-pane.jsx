@@ -2,6 +2,7 @@ import React from "react";
 import Accordion from "react-bootstrap/Accordion";
 import Form from "react-bootstrap/Form";
 import { basicTraversalStrategy, depthFirstTraversalStrategy, martiniGlassTraversalStrategy } from "../../onboarding/ts/traversalStrategies";
+import { setProvenanceTraversalStrategy } from "../../Provenance/traversal_prov";
 import * as global from "../../onboarding/ts/globalVariables";
 import Dropdown from 'react-bootstrap/Dropdown';
 
@@ -31,6 +32,11 @@ export default function TraversalPane(props) {
     props.buildTraversal();
   }
 
+  async function createProvenanceTrav(){
+    const trav = await setProvenanceTraversalStrategy();
+    props.setTrav(trav);
+    props.buildTraversal();
+  }
 
   return (
     /*<Accordion defaultActiveKey={["0"]}>
@@ -63,6 +69,14 @@ export default function TraversalPane(props) {
                 label="Martini Glass"
                 className="check-button"
                 onClick={createMartiniGlassTrav}
+              />
+               <Form.Check
+                type="radio"
+                name="traversal"
+                id="provenance"
+                label="Provenance"
+                className="check-button"
+                onClick={createProvenanceTrav}
               />
             </div>
           </Form>

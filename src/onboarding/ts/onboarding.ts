@@ -58,6 +58,10 @@ export async function onLoadReport() {
   const trav = await basicTraversalStrategy();
   global.setBasicTraversal(trav);
 
+  // const trav = await setTestAllGroupsTraversalStrategy();
+  // console.log(trav);
+  // await updateTraversal(trav);
+
   helpers.createEditOnboardingButtons();
   helpers.createOnboardingButtons();
 
@@ -198,7 +202,9 @@ export function createOnboardingOverlay() {
   global.setHasOverlay(true);
   global.setInteractionMode(false);
 
-  if (findVisualIndexInTraversal(global.basicTraversal, "dashboard", 1) !== -1) {
+  if (
+    findVisualIndexInTraversal(global.basicTraversal, "dashboard", 1) !== -1
+  ) {
     const attributes = global.createButtonAttributes();
     attributes.id = "dashboardExplaination";
     attributes.content = "Dashboard Explaination";
@@ -213,7 +219,9 @@ export function createOnboardingOverlay() {
   }
 
   global.currentVisuals.forEach(function (visual: any) {
-    if (findVisualIndexInTraversal(global.basicTraversal, visual.name, 1) !== -1) {
+    if (
+      findVisualIndexInTraversal(global.basicTraversal, visual.name, 1) !== -1
+    ) {
       const style = helpers.getClickableStyle(
         visual.layout.y / reportDivisor,
         visual.layout.x / reportDivisor,
@@ -224,7 +232,9 @@ export function createOnboardingOverlay() {
     }
   });
 
-  if (findVisualIndexInTraversal(global.basicTraversal, "globalFilter", 1) !== -1) {
+  if (
+    findVisualIndexInTraversal(global.basicTraversal, "globalFilter", 1) !== -1
+  ) {
     const style = helpers.getClickableStyle(
       -global.settings.reportOffset.top,
       global.reportWidth!,
@@ -271,7 +281,7 @@ export function createOverlayForVisuals(visuals: TraversalElement[]) {
           global.reportHeight!
         );
         style += "border: 5px solid lightgreen;";
-        createOverlay("globalFilter", style, visualInfo.count, ["general", "interaction", "insight"]);
+        createOverlay("globalFilter", style, visualInfo.count, ["general"]);
         break;
       default:
         const visual = global.currentVisuals.find(
@@ -299,8 +309,10 @@ function createDashboardInfoOnButtonClick(count: number) {
   helpers.removeOnboardingOverlay();
   helpers.removeContainerOffset();
   removeExplainGroupCard();
-  setCurrentId(findVisualIndexInTraversal(global.basicTraversal, "dashboard", count));
-  const lookedAt = createLookedAtIds("dashboard", [], 1);
+  setCurrentId(
+    findVisualIndexInTraversal(global.basicTraversal, "dashboard", count)
+  );
+  const lookedAt = createLookedAtIds("dashboard", ["general"], 1);
   updateLookedAt(lookedAt);
   createDashboardInfoCard(1);
 }

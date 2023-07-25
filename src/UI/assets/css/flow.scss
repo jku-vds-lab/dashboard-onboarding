@@ -317,13 +317,23 @@ div[data-id*="GlobalFilter"] {
 }
 
 #recording{
-  position:relative;
+  // position:relative;
   margin-bottom: 5px;
+  align-items: center;
+  // margin-right: 5px;
 }
 
 #stopRecording{
-  position: absolute;
-  top: 0px; right: 0px
+  // position: absolute;
+  // top: 0px; right: 0px
+  margin-left: 5px;
+}
+
+#textBox{
+  color: white;
+  background-color: black;
+  overflow-y: scroll;
+  height: 150px;
 }
 
 
