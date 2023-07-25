@@ -112,10 +112,12 @@ export async function depthFirstTraversalStrategy() {
   try {
     const traversalElem1 = createTraversalElement("dashboard");
     traversalElem1.element = await getTraversalElement("dashboard");
+    traversalElem1.count = 1;
     trav.push(traversalElem1);
 
     const traversalElem2 = createTraversalElement("globalFilter");
     traversalElem2.element = await getTraversalElement("globalFilter");
+    traversalElem2.count = 1;
     trav.push(traversalElem2);
 
     const groupFilters = createGroup();
@@ -132,6 +134,7 @@ export async function depthFirstTraversalStrategy() {
       for (const category of categories) {
         const traversalElem = createTraversalElement(vis.type);
         traversalElem.element = await getTraversalElement(vis.name);
+        traversalElem.count = 1;
         traversalElem.categories = [category];
         groupTrav.push(traversalElem);
       }
@@ -150,18 +153,21 @@ export async function depthFirstTraversalStrategy() {
 
     if(groupFilters.visuals.length>0){
       const traversalElem3 = createTraversalElement("group");
+      traversalElem3.count = 1;
       traversalElem3.element = groupFilters;
       trav.push(traversalElem3);
     }
 
     if(groupGeneralVis.visuals.length>0){
       const traversalElem4 = createTraversalElement("group");
+      traversalElem4.count = 2;
       traversalElem4.element = groupGeneralVis;
       trav.push(traversalElem4);
     }
 
     if(groupOtherVis.visuals.length>0){
       const traversalElem5 = createTraversalElement("group");
+      traversalElem5.count = 3;
       traversalElem5.element = groupOtherVis;
       trav.push(traversalElem5);
     }    
