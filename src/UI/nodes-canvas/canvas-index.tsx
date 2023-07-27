@@ -369,13 +369,15 @@ export default function NodesCanvas(props: Props) {
   }, [nodes, selectedNodes, setNodes]);
 
   useEffect(() => {
-    props.setNodesForSave(nodes);
-
-    if (props.trigger) {
+   if (props.trigger) {
       console.log("q", props.traversal);
       buildTraversal(props.traversal);
     }
-  }, [props.trigger, nodes]);
+  }, [props.trigger]);
+
+  useEffect(() => {
+    props.setNodesForSave(nodes);
+  }, [ nodes]);
 
   function buildTraversal(traversal: any) {
     setNodes([]);
