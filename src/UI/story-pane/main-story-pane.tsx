@@ -92,13 +92,15 @@ export default function StoryPane(props: Props) {
   };
 
   useEffect(() => {
-    props.setNodes(nodes);
-
     if (props.mainTrigger) {
       console.log("q", props.traversal);
       buildTraversal();
     }
-  }, [props.mainTrigger, props.traversal, nodes]);
+  }, [props.mainTrigger, props.traversal]);
+
+  useEffect(() => {
+    props.setNodes(nodes);
+  }, [ nodes]);
 
   const buildTraversal = () => {
     setTrigger((trigger) => trigger + 1);
