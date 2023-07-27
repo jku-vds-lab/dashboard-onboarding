@@ -49,7 +49,7 @@ export async function depthFirstTraversalStrategyOriginal() {
   return trav;
 }
 
-export async function martiniGlassTraversalStrategyOriginal() {
+export async function martiniGlassTraversalStrategy() {
   const trav = [];
   const traversalElem = createTraversalElement("dashboard");
   traversalElem.element = await getTraversalElement("dashboard");
@@ -78,31 +78,6 @@ export async function martiniGlassTraversalStrategyOriginal() {
   const traversalElem1 = createTraversalElement("globalFilter");
   traversalElem1.element = await getTraversalElement("globalFilter");
   trav.push(traversalElem1);
-  return trav;
-}
-export async function martiniGlassTraversalStrategy() {
-  const trav = [];
-  try {
-    debugger;
-    const group = createGroup();
-    const groupTrav1 = [];
-
-    for (const vis of global.currentVisuals) {
-      const traversalElem = createTraversalElement(vis.type);
-      traversalElem.element = await getTraversalElement(vis.name);
-      traversalElem.categories = ["general"];
-      groupTrav1.push([traversalElem]);
-    }
-
-    group.visuals.push(groupTrav1);
-
-    const traversalElem4 = createTraversalElement("group");
-    traversalElem4.element = group;
-    trav.push(traversalElem4);
-  } catch (error) {
-    console.log("Error in Martini", error);
-  }
-
   return trav;
 }
 
