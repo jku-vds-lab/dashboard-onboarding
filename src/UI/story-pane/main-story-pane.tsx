@@ -39,31 +39,36 @@ export default function StoryPane(props: Props) {
   const [nodes, setNodes] = useState([]);
 
   const saveAnnotationChanges = async (e: any) => {
-    const infos = [];
+    try {
+      debugger;
+      const infos = [];
 
-    const list = (document.getElementById("textBox")! as HTMLTextAreaElement)
-      .children[0];
-    const listElems = list.children;
+      const list = (document.getElementById("textBox")! as HTMLTextAreaElement)
+        .children[0];
+      const listElems = list.children;
 
-    for (let i = 0; i < listElems.length; i++) {
-      infos.push(listElems[i].innerHTML);
-    }
+      for (let i = 0; i < listElems.length; i++) {
+        infos.push(listElems[i].innerHTML);
+      }
 
-    const nodeId = e.target.getAttribute("nodeId");
-    const currentIdParts = nodeId?.split(" ");
+      const nodeId = e.target.getAttribute("nodeId"); // why are we getting the node-id anyway? Can't we simply store the id and pass it in the function?
+      const currentIdParts = nodeId?.split(" ");
 
-    //TODO update visuals with videos, saveInfoVideo(), when editor side is ready and we know when and with what to update
+      //TODO update visuals with videos, saveInfoVideo(), when editor side is ready and we know when and with what to update
 
-    switch (currentIdParts[0]) {
-      case "dashboard":
-        await saveDashboardChanges(infos, 1);
-        break;
-      case "globalFilter":
-        await saveFilterChanges(infos, 1);
-        break;
-      default:
-        await saveVisualChanges(infos, currentIdParts, 1);
-        break;
+      switch (currentIdParts[0]) {
+        case "dashboard":
+          await saveDashboardChanges(infos, 1);
+          break;
+        case "globalFilter":
+          await saveFilterChanges(infos, 1);
+          break;
+        default:
+          await saveVisualChanges(infos, currentIdParts, 1);
+          break;
+      }
+    } catch (error) {
+      console.log("Error in saveAnnotatiionChanges", error);
     }
   };
 
@@ -100,17 +105,25 @@ export default function StoryPane(props: Props) {
 
   useEffect(() => {
     props.setNodes(nodes);
-  }, [ nodes]);
+  }, [nodes]);
 
   const buildTraversal = () => {
     setTrigger((trigger) => trigger + 1);
   };
 
   return (
-    <div id="canvas-container" className="canvas-cont" style={{ flexGrow: 1, position: "relative" }}>
+    <div
+      id="canvas-container"
+      className="canvas-cont"
+      style={{ flexGrow: 1, position: "relative" }}
+    >
       <div className="flow">
         <ReactFlowProvider>
-          <NodesCanvas trigger={trigger} traversal={props.traversal} setNodesForSave={setNodes}/>
+          <NodesCanvas
+            trigger={trigger}
+            traversal={props.traversal}
+            setNodesForSave={setNodes}
+          />
         </ReactFlowProvider>
       </div>
       <div id="annotation-box" className="accordion node-desc">
@@ -127,7 +140,7 @@ export default function StoryPane(props: Props) {
               Component description
               {showMediaOptions ? (
                 <div>
-                  <RecordView setShowMediaOptions={setShowMediaOptions}/>
+                  <RecordView setShowMediaOptions={setShowMediaOptions} />
                 </div>
               ) : (
                 <div

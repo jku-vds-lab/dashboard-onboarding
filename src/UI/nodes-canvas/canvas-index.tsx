@@ -9,7 +9,11 @@ import { Node } from "reactflow";
 import "reactflow/dist/style.css";
 import "../assets/css/flow.scss";
 import * as global from "../../onboarding/ts/globalVariables";
-import { TraversalElement, findTraversalVisual, groupType } from "../../onboarding/ts/traversal";
+import {
+  TraversalElement,
+  findTraversalVisual,
+  groupType,
+} from "../../onboarding/ts/traversal";
 
 // import ICustomNode from "./nodeTypes/ICustomNode";
 import { ContextMenu } from "./context-menu";
@@ -43,6 +47,7 @@ export default function NodesCanvas(props: Props) {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const initialNodes: Node[] = createIntitialNodes();
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+
   const [setReactFlowInstance] = useState<ReactFlowInstance>();
   const reactFlowInstance = useReactFlow();
   const { getIntersectingNodes } = useReactFlow();
@@ -65,23 +70,23 @@ export default function NodesCanvas(props: Props) {
   function createIntitialNodes() {
     const initialNodes: Node[] = [];
     const createdNodes = createNodes(global.settings.traversalStrategy);
-    for(const node of createdNodes){
-      initialNodes.push(node)
+    for (const node of createdNodes) {
+      initialNodes.push(node);
     }
     return initialNodes;
   }
 
-  function createNodes(traversal: TraversalElement[]){
+  function createNodes(traversal: TraversalElement[]) {
     const createdNodes: Node[] = [];
     let prevNode;
 
-    for(const elem of traversal){
+    for (const elem of traversal) {
       if (elem.element.id === "group") {
         const nodesWithinGroup: Node[] = [];
         const visuals = elem.element.visuals;
 
-        for(let i=0; i<visuals.length; i++){
-          for(let j=0; j<visuals[i].length; j++){
+        for (let i = 0; i < visuals.length; i++) {
+          for (let j = 0; j < visuals[i].length; j++) {
             const visTitle = getTitle(visuals[i][j]);
             const visType = getType(visTitle);
             const newNode = defaultNode().getNode(
@@ -101,11 +106,15 @@ export default function NodesCanvas(props: Props) {
         const groupNodeObj = new GroupNode({
           nodes: nodesWithinGroup,
           id: "group " + elem.count,
-          position: {x:0,y:0},
+          position: { x: 0, y: 0 },
           data: null,
         });
 
-        const groupNode = groupNodeObj.getGroupNode(false, getPositionForWholeTrav(prevNode), elem.element.type);
+        const groupNode = groupNodeObj.getGroupNode(
+          false,
+          getPositionForWholeTrav(prevNode),
+          elem.element.type
+        );
         createdNodes.push(groupNode);
         prevNode = groupNode;
 
@@ -160,6 +169,8 @@ export default function NodesCanvas(props: Props) {
 
       const fullNameArray = defaultNode().getFullNodeNameArray(event);
       const basicName = defaultNode().getBasicName(event);
+      // at this point, we know what the element was
+      // we just need to get it to the save annotation changes
 
       switch (basicName) {
         case "dashboard":
@@ -217,21 +228,26 @@ export default function NodesCanvas(props: Props) {
     [nodes, getPosition, defaultNode, setNodes]
   );
 
-  function getCount(id: string){
+  function getCount(id: string) {
     let count = 1;
     let sameNodes;
     let index = 1;
 
-    if(id.split(" ").length > 1){
-      sameNodes = nodes.filter(node => node.id.split(" ")[0] + " " + node.id.split(" ")[1] === id);
+    if (id.split(" ").length > 1) {
+      sameNodes = nodes.filter(
+        (node) => node.id.split(" ")[0] + " " + node.id.split(" ")[1] === id
+      );
       index = 2;
     } else {
-      sameNodes = nodes.filter(node => node.id.split(" ").length <4 && node.id.split(" ")[0] === id);
-      
+      sameNodes = nodes.filter(
+        (node) => node.id.split(" ").length < 4 && node.id.split(" ")[0] === id
+      );
     }
 
-    if(sameNodes.length > 0){
-      const max = Math.max(...sameNodes.map(node => parseInt(node.id.split(" ")[index])));
+    if (sameNodes.length > 0) {
+      const max = Math.max(
+        ...sameNodes.map((node) => parseInt(node.id.split(" ")[index]))
+      );
       count += max;
     }
 
@@ -309,8 +325,7 @@ export default function NodesCanvas(props: Props) {
       setNodes((nodes) => nodes.filter((n) => n.id !== nodeData.id));
     }
     setIsOpen(false);
-  },
-  [nodes]);
+  }, [nodes]);
 
   const addGroup = useCallback(() => {
     try {
@@ -334,7 +349,11 @@ export default function NodesCanvas(props: Props) {
         position: { x: 0, y: 0 },
         data: null,
       });
-      const groupNode = groupNodeObj.getGroupNode(true, {x:0,y:0}, groupType.all);
+      const groupNode = groupNodeObj.getGroupNode(
+        true,
+        { x: 0, y: 0 },
+        groupType.all
+      );
       setNodes((nds) => nds.concat(groupNode));
 
       if (!groupNode) {
@@ -369,7 +388,7 @@ export default function NodesCanvas(props: Props) {
   }, [nodes, selectedNodes, setNodes]);
 
   useEffect(() => {
-   if (props.trigger) {
+    if (props.trigger) {
       console.log("q", props.traversal);
       buildTraversal(props.traversal);
     }
@@ -377,14 +396,14 @@ export default function NodesCanvas(props: Props) {
 
   useEffect(() => {
     props.setNodesForSave(nodes);
-  }, [ nodes]);
+  }, [nodes]);
 
   function buildTraversal(traversal: any) {
     setNodes([]);
-    
+
     const createdNodes = createNodes(traversal);
 
-    for(const node of createdNodes){
+    for (const node of createdNodes) {
       setNodes((nds) => nds.concat(node));
     }
   }
@@ -392,10 +411,10 @@ export default function NodesCanvas(props: Props) {
   function getPositionForWholeTrav(prevNode: any) {
     let pos = {
       x: 0,
-      y: 0
-    }
-  
-    if(prevNode){
+      y: 0,
+    };
+
+    if (prevNode) {
       const offset = 5;
       const prevNodeHeight = parseInt(String(prevNode.style?.height!), 10);
       pos = {
@@ -409,8 +428,8 @@ export default function NodesCanvas(props: Props) {
   function getPositionWithinGroup(xIndex: number, yIndex: number) {
     let xOffset = 10;
     let yOffset = 40;
-    xOffset = xOffset + (xIndex * 110);
-    yOffset = yOffset + (yIndex * 35);
+    xOffset = xOffset + xIndex * 110;
+    yOffset = yOffset + yIndex * 35;
     const pos = {
       x: xOffset,
       y: yOffset,
