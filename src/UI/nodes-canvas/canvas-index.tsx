@@ -15,11 +15,7 @@ import {
   groupType,
 } from "../../onboarding/ts/traversal";
 
-// import ICustomNode from "./nodeTypes/ICustomNode";
 import { ContextMenu } from "./context-menu";
-
-import Traversal from "./traversal";
-
 import { getVisualInfoInEditor } from "../../onboarding/ts/infoCards";
 import { getDashboardInfoInEditor } from "../../onboarding/ts/dashboardInfoCard";
 import { getFilterInfoInEditor } from "../../onboarding/ts/filterInfoCards";
@@ -30,9 +26,8 @@ import DefaultNode from "./nodes/defaultNode";
 import React from "react";
 
 // redux starts
-import type { RootState } from "../redux/store";
-import { useSelector, useDispatch } from "react-redux";
-import { decrement, increment } from "../redux/nodeModalities";
+import { useDispatch } from "react-redux";
+import { increment } from "../redux/nodeModalities";
 // redux ends
 
 const nodeTypes = { group: GroupNodeType };
@@ -48,7 +43,6 @@ interface MousePosition {
 }
 export default function NodesCanvas(props: Props) {
   // redux starts
-  const nodeName = useSelector((state: RootState) => state.nodeModal.name);
   const dispatch = useDispatch();
   // redux  ends
 

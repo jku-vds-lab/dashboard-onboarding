@@ -29,8 +29,7 @@ import RecordView from "./main-record";
 
 // redux starts
 import type { RootState } from "../redux/store";
-import { useSelector, useDispatch } from "react-redux";
-import nodeModalities, { decrement, increment } from "../redux/nodeModalities";
+import { useSelector } from "react-redux";
 // redux ends
 
 interface Props {
@@ -45,16 +44,11 @@ export default function StoryPane(props: Props) {
   const [nodes, setNodes] = useState([]);
 
   // redux starts
-  const nodeName = useSelector((state: RootState) => state.nodeModal.name);
-  const dispatch = useDispatch();
+  const nodeName = useSelector((state: RootState) => state.nodeModal.fullName);
   // redux  ends
 
   const saveAnnotationChanges = async (e: any) => {
     try {
-      debugger;
-
-      console.log("Nodename is : ", nodeName);
-
       const infos = [];
 
       const list = (document.getElementById("textBox")! as HTMLTextAreaElement)
@@ -65,8 +59,7 @@ export default function StoryPane(props: Props) {
         infos.push(listElems[i].innerHTML);
       }
 
-      const nodeId = e.target.getAttribute("nodeId"); // why are we getting the node-id anyway? Can't we simply store the id and pass it in the function?
-      const currentIdParts = nodeId?.split(" ");
+      const currentIdParts = nodeName; // nodeId?.split(" "); // teseting this
 
       //TODO update visuals with videos, saveInfoVideo(), when editor side is ready and we know when and with what to update
 
@@ -78,7 +71,7 @@ export default function StoryPane(props: Props) {
           await saveFilterChanges(infos, 1);
           break;
         default:
-          await saveVisualChanges(infos, currentIdParts, 1);
+          //await saveVisualChanges(infos, currentIdParts, 1); // commented for testing
           break;
       }
     } catch (error) {
@@ -87,9 +80,7 @@ export default function StoryPane(props: Props) {
   };
 
   const resetAnnotationChanges = async () => {
-    const nodeId = document?.getElementById("saveText")?.getAttribute("nodeId");
-
-    const currentIdParts = nodeId?.split(" ");
+    const currentIdParts = nodeName;
     if (!currentIdParts) {
       return;
     }

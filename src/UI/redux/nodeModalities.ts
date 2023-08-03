@@ -1,21 +1,21 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
-import { Node } from "reactflow";
-import DefaultNode from "../nodes-canvas/nodes/defaultNode";
-
 import { mediaType } from "../../onboarding/ts/globalVariables";
+import { getDashboardInfoInEditor } from "../../onboarding/ts/dashboardInfoCard";
+import { getFilterInfoInEditor } from "../../onboarding/ts/filterInfoCards";
+import { getVisualInfoInEditor } from "../../onboarding/ts/infoCards";
 
 export interface NodeModalitiesState {
-  name: string;
-  content: string;
+  fullName: string[];
   media: mediaType;
+  content?: string;
   mediaStorage?: string;
 }
 
 const initialState: NodeModalitiesState = {
-  name: "",
-  content: "",
+  fullName: [],
   media: mediaType.text,
+  content: "",
   mediaStorage: "",
 };
 
@@ -24,14 +24,7 @@ export const NodeModalities = createSlice({
   initialState,
   reducers: {
     increment: (state, action: PayloadAction<any>) => {
-      debugger;
-      // Redux Toolkit allows us to write "mutating" logic in reducers. It
-      // doesn't actually mutate the state because it uses the Immer library,
-      // which detects changes to a "draft state" and produces a brand new
-      // immutable state based off those changes
-
       const container = document.getElementById("canvas-container");
-      debugger;
       const event = action.payload[0];
       const defaultNode = action.payload[1];
       event.target.classList.contains("react-flow__pane")
@@ -40,16 +33,28 @@ export const NodeModalities = createSlice({
 
       const fullNameArray = defaultNode().getFullNodeNameArray(event);
       const basicName = defaultNode().getBasicName(event);
-      state.name = basicName;
-      debugger;
-    },
-    decrement: (state) => {
-      state.name = "Old";
+      state.fullName = fullNameArray;
+
+      switch (basicName) {
+        case "dashboard":
+          getDashboardInfoInEditor(1);
+          break;
+        case "globalFilter":
+          // await getFilterInfoInEditor(1);
+          break;
+        case "group":
+          break;
+        default:
+          if (fullNameArray) {
+            // await getVisualInfoInEditor(fullNameArray, 1);
+          }
+          break;
+      }
     },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { increment, decrement } = NodeModalities.actions;
+export const { increment } = NodeModalities.actions;
 
 export default NodeModalities.reducer;
