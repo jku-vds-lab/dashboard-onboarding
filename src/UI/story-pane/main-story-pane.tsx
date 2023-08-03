@@ -47,7 +47,7 @@ export default function StoryPane(props: Props) {
   const nodeName = useSelector((state: RootState) => state.nodeModal.fullName);
   // redux  ends
 
-  const saveAnnotationChanges = async (e: any) => {
+  const saveAnnotationChanges = async () => {
     try {
       const infos = [];
 
@@ -59,7 +59,7 @@ export default function StoryPane(props: Props) {
         infos.push(listElems[i].innerHTML);
       }
 
-      const currentIdParts = nodeName; // nodeId?.split(" "); // teseting this
+      const currentIdParts = nodeName;
 
       //TODO update visuals with videos, saveInfoVideo(), when editor side is ready and we know when and with what to update
 
@@ -71,7 +71,7 @@ export default function StoryPane(props: Props) {
           await saveFilterChanges(infos, 1);
           break;
         default:
-          //await saveVisualChanges(infos, currentIdParts, 1); // commented for testing
+          await saveVisualChanges(infos, currentIdParts, 1);
           break;
       }
     } catch (error) {

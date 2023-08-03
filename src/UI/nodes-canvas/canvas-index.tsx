@@ -163,39 +163,6 @@ export default function NodesCanvas(props: Props) {
     [reactFlowInstance]
   );
 
-  const onClick = useCallback(
-    async (event) => {
-      // here we need to update the reactFlowWrapper and Instance
-
-      const container = document.getElementById("canvas-container");
-      event.target.classList.contains("react-flow__pane")
-        ? container?.classList.remove("show")
-        : container?.classList.add("show");
-
-      const fullNameArray = defaultNode().getFullNodeNameArray(event);
-      const basicName = defaultNode().getBasicName(event);
-      // at this point, we know what the element was
-      // we just need to get it to the save annotation changes
-
-      switch (basicName) {
-        case "dashboard":
-          getDashboardInfoInEditor(1);
-          break;
-        case "globalFilter":
-          await getFilterInfoInEditor(1);
-          break;
-        case "group":
-          break;
-        default:
-          if (fullNameArray) {
-            await getVisualInfoInEditor(fullNameArray, 1);
-          }
-          break;
-      }
-    },
-    [defaultNode]
-  );
-
   const onDragOver = useCallback((event) => {
     event.preventDefault();
     event.dataTransfer.dropEffect = "move";
@@ -541,7 +508,6 @@ export default function NodesCanvas(props: Props) {
           nodes={nodes}
           nodeTypes={nodeTypes}
           onDrop={onDrop}
-          // onClick={onClick}
           onClick={(event) => dispatch(increment([event, defaultNode]))}
           onDragOver={onDragOver}
           onNodesChange={onNodesChange}
