@@ -29,6 +29,12 @@ import GroupNodeType from "./nodes/groupNodeType";
 import DefaultNode from "./nodes/defaultNode";
 import React from "react";
 
+// redux starts
+import type { RootState } from "../redux/store";
+import { useSelector, useDispatch } from "react-redux";
+import { decrement, increment } from "../redux/nodeModalities";
+// redux ends
+
 const nodeTypes = { group: GroupNodeType };
 
 interface Props {
@@ -41,6 +47,11 @@ interface MousePosition {
   y: number;
 }
 export default function NodesCanvas(props: Props) {
+  // redux starts
+  const nodeName = useSelector((state: RootState) => state.nodeModal.name);
+  const dispatch = useDispatch();
+  // redux  ends
+
   const defaultNode = useCallback(() => {
     return new DefaultNode();
   }, []);
@@ -536,7 +547,8 @@ export default function NodesCanvas(props: Props) {
           nodes={nodes}
           nodeTypes={nodeTypes}
           onDrop={onDrop}
-          onClick={onClick}
+          // onClick={onClick}
+          onClick={(event) => dispatch(increment([event, defaultNode]))}
           onDragOver={onDragOver}
           onNodesChange={onNodesChange}
           onNodeDragStart={onNodeDragStart}

@@ -16,6 +16,8 @@ import "./onboarding/css/onboarding.scss";
 import "./UI/assets/css/dashboard.scss";
 import "./UI/assets/css/flow.scss";
 import "./App.css";
+import { store } from "./UI/redux/store";
+import { Provider } from "react-redux";
 
 // createRoot(document.getElementById('root')!).render(
 //   <BrowserRouter>
@@ -28,6 +30,8 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <BrowserRouter basename="/dashboard-onboarding">
-    <App />
+    <Provider store={store}>
+      <App />
+    </Provider>
   </BrowserRouter>
 );

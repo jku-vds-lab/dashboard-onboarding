@@ -27,6 +27,12 @@ import OpenAI from "./main-open-ai";
 import { useEffect, useState } from "react";
 import RecordView from "./main-record";
 
+// redux starts
+import type { RootState } from "../redux/store";
+import { useSelector, useDispatch } from "react-redux";
+import nodeModalities, { decrement, increment } from "../redux/nodeModalities";
+// redux ends
+
 interface Props {
   mainTrigger: number;
   traversal: any;
@@ -38,9 +44,17 @@ export default function StoryPane(props: Props) {
   const [showMediaOptions, setShowMediaOptions] = useState(false);
   const [nodes, setNodes] = useState([]);
 
+  // redux starts
+  const nodeName = useSelector((state: RootState) => state.nodeModal.name);
+  const dispatch = useDispatch();
+  // redux  ends
+
   const saveAnnotationChanges = async (e: any) => {
     try {
       debugger;
+
+      console.log("Nodename is : ", nodeName);
+
       const infos = [];
 
       const list = (document.getElementById("textBox")! as HTMLTextAreaElement)
