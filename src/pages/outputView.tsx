@@ -28,6 +28,7 @@ export let accessToken = "";
 let embedUrl = "";
 let reportContainer: HTMLElement;
 // let reportRef: React.Ref<HTMLDivElement>;
+// let isReportLoaded = false; // Flag to track initial report load
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface AppProps {}
@@ -73,7 +74,6 @@ class OutputView extends React.Component<AppProps, AppState> {
 
   // React function
   async componentDidMount(): Promise<void> {
-    // console.log("Main did mount");
     window.addEventListener("resize", onboarding.reloadOnboarding);
 
     if (this.state.reportRef !== null) {
@@ -138,11 +138,15 @@ class OutputView extends React.Component<AppProps, AppState> {
 
       // Triggers when a content schema is successfully loaded
       report.on("loaded", async function () {
+        // if (!isReportLoaded) {
+        console.log("--> triggers onload report within the ouptut view");
         global.setIsEditor(true);
         onboarding.onLoadReport();
         global.setIsLoaded(true);
+        // isReportLoaded = true;
         // console.log("Provectories report");
         // provectories(report);
+        // }
       });
 
       // Clear any other rendered handler events

@@ -1,24 +1,20 @@
 import React from "react";
-import {
-  FaArrowAltCircleUp,
-  FaCheck,
-  FaPencilAlt,
-  FaPeopleArrows,
-  FaPlus,
-  FaUndo,
-} from "react-icons/fa";
+import { FaCheck, FaUndo } from "react-icons/fa";
 import { ReactFlowProvider } from "reactflow";
 import NodesCanvas from "../nodes-canvas/canvas-index";
 import "../assets/css/dashboard.scss";
 import {
+  getVisualInfoInEditor,
   resetVisualChanges,
   saveVisualChanges,
 } from "../../onboarding/ts/infoCards";
 import {
+  getDashboardInfoInEditor,
   resetDashboardChanges,
   saveDashboardChanges,
 } from "../../onboarding/ts/dashboardInfoCard";
 import {
+  getFilterInfoInEditor,
   resetFilterChanges,
   saveFilterChanges,
 } from "../../onboarding/ts/filterInfoCards";
@@ -44,8 +40,38 @@ export default function StoryPane(props: Props) {
   const [nodes, setNodes] = useState([]);
 
   // redux starts
-  const nodeName = useSelector((state: RootState) => state.nodeModal.fullName);
+  const nodeFullName = useSelector(
+    (state: RootState) => state.nodeModal.fullName
+  );
+  const nodeBasicName = useSelector(
+    (state: RootState) => state.nodeModal.basicName
+  );
   // redux  ends
+
+  useEffect(() => {
+    async function fillTextBox() {
+      console.log("Trying to fill the box", nodeBasicName);
+      if (nodeFullName?.length > 0) {
+        switch (nodeBasicName) {
+          case "dashboard":
+            await getDashboardInfoInEditor(1);
+            break;
+          case "globalFilter":
+            getFilterInfoInEditor(1);
+            break;
+          case "group":
+            break;
+          default:
+            if (nodeFullName) {
+              await getVisualInfoInEditor(nodeFullName, 1);
+            }
+            break;
+        }
+      }
+    }
+
+    fillTextBox().catch(console.error);
+  }, [nodeBasicName, nodeFullName]);
 
   const saveAnnotationChanges = async () => {
     try {
@@ -59,7 +85,7 @@ export default function StoryPane(props: Props) {
         infos.push(listElems[i].innerHTML);
       }
 
-      const currentIdParts = nodeName;
+      const currentIdParts = nodeFullName;
 
       //TODO update visuals with videos, saveInfoVideo(), when editor side is ready and we know when and with what to update
 
@@ -80,7 +106,7 @@ export default function StoryPane(props: Props) {
   };
 
   const resetAnnotationChanges = async () => {
-    const currentIdParts = nodeName;
+    const currentIdParts = nodeFullName;
     if (!currentIdParts) {
       return;
     }
@@ -110,7 +136,7 @@ export default function StoryPane(props: Props) {
 
   useEffect(() => {
     props.setNodes(nodes);
-  }, [nodes]);
+  }, [nodes, props]);
 
   const buildTraversal = () => {
     setTrigger((trigger) => trigger + 1);
@@ -175,7 +201,9 @@ export default function StoryPane(props: Props) {
                 id="textBox"
                 className="editable form-control"
                 contentEditable="true"
-              ></div>
+              >
+                {/* This is where the text should go */}
+              </div>
               <div className="controls">
                 <div
                   className="btn btn-secondary btn-sm me-auto"

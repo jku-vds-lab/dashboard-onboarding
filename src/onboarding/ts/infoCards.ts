@@ -361,8 +361,6 @@ export async function getVisualInfoInEditor(idParts: string[], count: number) {
   });
   const visualInfos = await helpers.getVisualInfos(visual); // this waws the original await statement
 
-  //   const visualInfos = helpers.getVisualInfosWithoutAsync(visual);
-
   if (!visualData) {
     if (idParts.length > 2 && idParts[1] == "Insight") {
       images = visualInfos.insightImages;

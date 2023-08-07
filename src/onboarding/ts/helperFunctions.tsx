@@ -1022,25 +1022,6 @@ export async function getVisualInfos(visual: any) {
   return visualInfos;
 }
 
-export function getVisualInfosWithoutAsync(visual: any): any {
-  const visualInfos = {
-    generalImages: [] as any[],
-    generalInfos: [] as string[],
-    interactionImages: [] as any[],
-    interactionInfos: [] as string[],
-    insightImages: [] as any[],
-    insightInfos: [] as string[],
-  };
-  return getVisualInfos(visual)
-    .then((result) => {
-      return result;
-    })
-    .catch((error) => {
-      console.error("Error in async function:", error);
-      return visualInfos;
-    });
-}
-
 export async function getVisuals() {
   const visuals = await global.page.getVisuals();
   global.setVisuals(visuals);

@@ -223,6 +223,18 @@ export default function NodesCanvas(props: Props) {
     return count;
   }
 
+  const onClick = (event: any) => {
+    const container = document.getElementById("canvas-container");
+    event.target.classList.contains("react-flow__pane")
+      ? container?.classList.remove("show")
+      : container?.classList.add("show");
+
+    const fullNameArray = defaultNode().getFullNodeNameArray(event);
+    const basicName = defaultNode().getBasicName(event);
+
+    dispatch(increment([basicName, fullNameArray]));
+  };
+
   const onNodeDragStart = useCallback(
     (event, node) => {
       const intersections = getIntersectingNodes(node).map((n) => n.id);
@@ -505,7 +517,7 @@ export default function NodesCanvas(props: Props) {
           nodes={nodes}
           nodeTypes={nodeTypes}
           onDrop={onDrop}
-          onClick={(event) => dispatch(increment([event, defaultNode]))}
+          onClick={onClick}
           onDragOver={onDragOver}
           onNodesChange={onNodesChange}
           onNodeDragStart={onNodeDragStart}

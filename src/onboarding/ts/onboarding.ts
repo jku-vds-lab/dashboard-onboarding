@@ -40,36 +40,41 @@ import { replacer } from "../../componentGraph/ComponentGraph";
 import { basicTraversalStrategy } from "./traversalStrategies";
 
 export async function onLoadReport() {
-  await helpers.getActivePage();
-  await helpers.getVisuals();
-  for (const vis of global.allVisuals) {
-    const caps = await vis.getCapabilities();
-    // console.log(vis.type, caps);
-    for (const cap of caps.dataRoles) {
-      // console.log(cap.name, await vis.getDataFields(cap.name));
+  console.log("Report is loading");
+  try {
+    await helpers.getActivePage();
+    await helpers.getVisuals();
+    for (const vis of global.allVisuals) {
+      const caps = await vis.getCapabilities();
+      // console.log(vis.type, caps);
+      for (const cap of caps.dataRoles) {
+        // console.log(cap.name, await vis.getDataFields(cap.name));
+      }
     }
+    await helpers.createComponentGraph();
+    console.log(global.componentGraph);
+    await helpers.getSettings();
+
+    await helpers.handelNewReport();
+
+    const trav = await basicTraversalStrategy();
+    global.setBasicTraversal(trav);
+
+    // const trav = await setTestAllGroupsTraversalStrategy();
+    // console.log(trav);
+    // await updateTraversal(trav);
+
+    helpers.createEditOnboardingButtons();
+    helpers.createOnboardingButtons();
+
+    resize();
+
+    elements.addStylesheet("/onboarding/css/onboarding.css");
+
+    createGuidedTour();
+  } catch (error) {
+    console.log("Error on loading the report", error);
   }
-  await helpers.createComponentGraph();
-  console.log(global.componentGraph);
-  await helpers.getSettings();
-
-  await helpers.handelNewReport();
-
-  const trav = await basicTraversalStrategy();
-  global.setBasicTraversal(trav);
-
-  // const trav = await setTestAllGroupsTraversalStrategy();
-  // console.log(trav);
-  // await updateTraversal(trav);
-
-  helpers.createEditOnboardingButtons();
-  helpers.createOnboardingButtons();
-
-  resize();
-
-  elements.addStylesheet("/onboarding/css/onboarding.css");
-
-  createGuidedTour();
 }
 
 export async function onReloadReport() {
@@ -132,7 +137,7 @@ export async function startOnboardingAt(
   visual?: any,
   count?: number
 ) {
-  helpers.reloadOnboarding();
+  helpers.reloadOnboarding(); // Reload: Why is this needed?
 
   switch (type) {
     case "intro":

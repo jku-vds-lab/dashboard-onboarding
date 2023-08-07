@@ -89,7 +89,6 @@ class Onboarding extends React.Component<AppProps, AppState> {
 
   // React function
   async componentDidMount(): Promise<void> {
-    // console.log('Main did mount')
     window.addEventListener("resize", onboarding.reloadOnboarding);
 
     if (this.state.reportRef !== null) {
@@ -154,7 +153,9 @@ class Onboarding extends React.Component<AppProps, AppState> {
 
       // Triggers when a content schema is successfully loaded
       report.on("loaded", async function () {
+        console.log("Load the report");
         global.setIsEditor(false);
+        console.log("--> triggers onload report within the onboarding.tsx");
         onboarding.onLoadReport();
         global.setIsLoaded(true);
         // console.log('Provectories report')
@@ -166,6 +167,7 @@ class Onboarding extends React.Component<AppProps, AppState> {
 
       // Triggers when a content is successfully embedded in UI
       report.on("rendered", async function () {
+        console.log("Render the report");
         await onboarding.onReloadReport();
       });
 
