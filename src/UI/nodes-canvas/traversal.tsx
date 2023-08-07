@@ -28,7 +28,7 @@ export class TraversalOrder {
       this.allNodes.push(...this.defaultNodes);
       this.allNodes.push(...this.groupNodes);
       this.allNodes = this.allNodes.sort(this.compare);
-      console.log(this.defaultNodes);
+      // console.log(this.defaultNodes);
     } catch (error) {
       console.log("Error", error);
     }
@@ -109,7 +109,7 @@ export class TraversalOrder {
   async onClick(props: any) {
     try {
       const storyNodes = props.nodes;
-      
+
       if (storyNodes.length > 0) {
         this.defaultNodes = storyNodes.filter((sNode: any) => {
           if (sNode.type == "default") {
@@ -138,9 +138,11 @@ export default function Traversal(props: any) {
   const tOrder = new TraversalOrder();
 
   return (
-    <div id="traversal"
+    <div
+      id="traversal"
       className="btn btn-secondary btn-dark ms-2"
-      onClick={() => tOrder.onClick(props)}>
+      onClick={() => tOrder.onClick(props)}
+    >
       Save Traversal
     </div>
   );

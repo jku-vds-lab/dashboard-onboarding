@@ -127,8 +127,8 @@ export default function ComponentPane() {
         return tab;
       });
     });
-    console.log("HERE");
-    console.log(tabsData);
+    // console.log("HERE");
+    // console.log(tabsData);
     // Update the CSS variable using document.documentElement
     const root = document.documentElement;
     root.style.setProperty(selectedColorVariable, componentColor);

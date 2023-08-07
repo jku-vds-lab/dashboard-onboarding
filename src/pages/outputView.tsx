@@ -73,7 +73,7 @@ class OutputView extends React.Component<AppProps, AppState> {
 
   // React function
   async componentDidMount(): Promise<void> {
-    console.log("Main did mount");
+    // console.log("Main did mount");
     window.addEventListener("resize", onboarding.reloadOnboarding);
 
     if (this.state.reportRef !== null) {
@@ -94,11 +94,11 @@ class OutputView extends React.Component<AppProps, AppState> {
   }
 
   renderMyReport(): Report {
-    console.log("Render Report");
+    // console.log("Render Report");
     let report: any | Report = null;
 
     if (this.state.error.length) {
-      console.log("if error");
+      // console.log("if error");
       // Cleaning the report container contents and rendering the error message in multiple lines
       reportContainer.textContent = "";
       this.state.error.forEach((line) => {
@@ -108,7 +108,7 @@ class OutputView extends React.Component<AppProps, AppState> {
       console.log("Error", this.state.error);
     } else if (this.state.accessToken !== "" && this.state.embedUrl !== "") {
       // comment this condition
-      console.log("else if");
+      // console.log("else if");
       const embedConfiguration: IEmbedConfiguration = {
         type: "report",
         tokenType: models.TokenType.Aad,

@@ -44,9 +44,9 @@ export async function onLoadReport() {
   await helpers.getVisuals();
   for (const vis of global.allVisuals) {
     const caps = await vis.getCapabilities();
-    console.log(vis.type, caps);
+    // console.log(vis.type, caps);
     for (const cap of caps.dataRoles) {
-      console.log(cap.name, await vis.getDataFields(cap.name));
+      // console.log(cap.name, await vis.getDataFields(cap.name));
     }
   }
   await helpers.createComponentGraph();

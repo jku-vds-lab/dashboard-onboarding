@@ -11,7 +11,7 @@ interface ContextProps {
 
 export const ContextMenu = memo((props: ContextProps) => {
   const handleClick = () => {
-    console.log("Div clicked!");
+    // console.log("Div clicked!");
     // Perform any desired actions on mouse click
   };
   return props.isOpen ? (

@@ -63,7 +63,7 @@ export default function NodesCanvas(props: Props) {
   });
 
   const handleMouseClick = (event: React.MouseEvent<HTMLDivElement>) => {
-    console.log("Mouse click is called");
+    // console.log("Mouse click is called");
     const { clientX, clientY } = event;
 
     setMousePosition({ x: clientX, y: clientY });
@@ -240,12 +240,12 @@ export default function NodesCanvas(props: Props) {
   );
 
   const onNodeDragStop = (event: any, node: Node) => {
-    console.log("Node pos", node.position);
+    // console.log("Node pos", node.position);
 
     if (node.type == "group") {
       nodes.forEach((sNode) => {
         if (sNode.parentNode == node.id) {
-          console.log(sNode.positionAbsolute); // --> this is not getting updated
+          // console.log(sNode.positionAbsolute); // --> this is not getting updated
         }
       });
     }
@@ -349,8 +349,8 @@ export default function NodesCanvas(props: Props) {
         });
       });
 
-      console.log("Nodes", nodes);
-      console.log("Selected Nodes", selectedNodes);
+      // console.log("Nodes", nodes);
+      // console.log("Selected Nodes", selectedNodes);
     } catch (error) {
       console.log("Error", error);
     }
@@ -358,7 +358,7 @@ export default function NodesCanvas(props: Props) {
 
   useEffect(() => {
     if (props.trigger) {
-      console.log("q", props.traversal);
+      // console.log("q", props.traversal);
       buildTraversal(props.traversal);
     }
   }, [props.trigger]);

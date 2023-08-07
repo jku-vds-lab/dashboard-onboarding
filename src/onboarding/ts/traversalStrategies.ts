@@ -55,7 +55,7 @@ export async function martiniGlassTraversalStrategy() {
   traversalElem.element = await getTraversalElement("dashboard");
   trav.push(traversalElem);
   for (const vis of global.currentVisuals) {
-    console.log("Global", global);
+    // console.log("Global", global);
     const traversalElem2 = createTraversalElement(vis.type);
     traversalElem2.element = await getTraversalElement(vis.name);
     traversalElem2.categories = ["general"];
@@ -83,7 +83,7 @@ export async function martiniGlassTraversalStrategy() {
 
 export async function depthFirstTraversalStrategy() {
   const trav = [];
-  console.log("current visuals", currentVisuals);
+  // "current visuals", currentVisuals);
   try {
     const traversalElem1 = createTraversalElement("dashboard");
     traversalElem1.element = await getTraversalElement("dashboard");
@@ -126,26 +126,26 @@ export async function depthFirstTraversalStrategy() {
       }
     }
 
-    if(groupFilters.visuals.length>0){
+    if (groupFilters.visuals.length > 0) {
       const traversalElem3 = createTraversalElement("group");
       traversalElem3.count = 1;
       traversalElem3.element = groupFilters;
       trav.push(traversalElem3);
     }
 
-    if(groupGeneralVis.visuals.length>0){
+    if (groupGeneralVis.visuals.length > 0) {
       const traversalElem4 = createTraversalElement("group");
       traversalElem4.count = 2;
       traversalElem4.element = groupGeneralVis;
       trav.push(traversalElem4);
     }
 
-    if(groupOtherVis.visuals.length>0){
+    if (groupOtherVis.visuals.length > 0) {
       const traversalElem5 = createTraversalElement("group");
       traversalElem5.count = 3;
       traversalElem5.element = groupOtherVis;
       trav.push(traversalElem5);
-    }    
+    }
   } catch (error) {
     console.log("Error in testing", error);
   }
