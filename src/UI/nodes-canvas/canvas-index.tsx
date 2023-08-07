@@ -16,9 +16,6 @@ import {
 } from "../../onboarding/ts/traversal";
 
 import { ContextMenu } from "./context-menu";
-import { getVisualInfoInEditor } from "../../onboarding/ts/infoCards";
-import { getDashboardInfoInEditor } from "../../onboarding/ts/dashboardInfoCard";
-import { getFilterInfoInEditor } from "../../onboarding/ts/filterInfoCards";
 
 import GroupNode from "./nodes/groupNode";
 import GroupNodeType from "./nodes/groupNodeType";

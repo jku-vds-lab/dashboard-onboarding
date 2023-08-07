@@ -57,8 +57,7 @@ class OutputView extends React.Component<AppProps, AppState> {
     this.myReport = this.renderMyReport();
     return (
       <div className="container-fluid" id="flexContainer">
-        <div className="row" id="onboarding-header">
-        </div>
+        <div className="row" id="onboarding-header"></div>
         <div className="row">
           <div className="col-10" id="reportContainer">
             <div id="embed-container" ref={this.state.reportRef}>
@@ -142,8 +141,8 @@ class OutputView extends React.Component<AppProps, AppState> {
         global.setIsEditor(true);
         onboarding.onLoadReport();
         global.setIsLoaded(true);
-        console.log("Provectories report");
-        provectories(report);
+        // console.log("Provectories report");
+        // provectories(report);
       });
 
       // Clear any other rendered handler events

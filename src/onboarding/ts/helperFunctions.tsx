@@ -38,7 +38,10 @@ import { getFilterDescription } from "./filterInfoCards";
 import { IFilterColumnTarget, IFilterMeasureTarget } from "powerbi-models";
 import "powerbi-report-authoring";
 import { VisualDescriptor } from "powerbi-client";
-import ComponentGraph, { replacer, reviver } from "../../componentGraph/ComponentGraph";
+import ComponentGraph, {
+  replacer,
+  reviver,
+} from "../../componentGraph/ComponentGraph";
 import Filter from "../../componentGraph/Filter";
 import { exportData } from "../../Provenance/utils";
 import * as sizes from "./sizes";
@@ -53,7 +56,9 @@ import {
 import { reportId } from "../../Config";
 
 export function addContainerOffset(cardHeight: number) {
-  const rect = document.getElementById("flexContainer")!.getBoundingClientRect();
+  const rect = document
+    .getElementById("flexContainer")!
+    .getBoundingClientRect();
   const pageOffset = parseInt(
     window.getComputedStyle(document.getElementById("flexContainer")!)
       .paddingTop
@@ -77,7 +82,11 @@ export function addContainerOffset(cardHeight: number) {
       pageOffset + buttonHeaderHeight + reportOffsetTop + rect.top
     );
     const top =
-      global.globalCardTop + cardHeight + buttonHeaderHeight + reportOffsetTop + rect.top;
+      global.globalCardTop +
+      cardHeight +
+      buttonHeaderHeight +
+      reportOffsetTop +
+      rect.top;
     onboarding.style.top = top + "px";
   }
 
@@ -496,7 +505,7 @@ export async function getActivePage() {
   const page = pages.filter(function (page: { isActive: any }) {
     return page.isActive;
   })[0];
-  if(!page){
+  if (!page) {
     getActivePage();
   }
   global.setPage(page);
@@ -540,7 +549,11 @@ export function getDataOfInteractionVisual(visual: any) {
   return visualData;
 }
 
-export function getDataOfVisual(traversal: TraversalElement[], visual: any, count: number) {
+export function getDataOfVisual(
+  traversal: TraversalElement[],
+  visual: any,
+  count: number
+) {
   const traversalElements = traversal;
   let foundVisual;
   for (const elem of traversalElements) {
@@ -564,20 +577,37 @@ export function getDataOfVisual(traversal: TraversalElement[], visual: any, coun
   return foundVisual?.element;
 }
 
-export function getDataWithId(traversal: TraversalElement[], ID: string, categories: string[], count: number) {
+export function getDataWithId(
+  traversal: TraversalElement[],
+  ID: string,
+  categories: string[],
+  count: number
+) {
   const traversalElements = traversal;
   let foundVisual;
   for (const elem of traversalElements) {
     if (isGroup(elem.element)) {
       for (const groupTraversals of elem.element.visuals) {
         for (const groupElem of groupTraversals) {
-          if (groupElem.element.id === ID && groupElem.categories.every((category: string) => categories.includes(category)) && groupElem.count == count) {
+          if (
+            groupElem.element.id === ID &&
+            groupElem.categories.every((category: string) =>
+              categories.includes(category)
+            ) &&
+            groupElem.count == count
+          ) {
             foundVisual = groupElem;
           }
         }
       }
     } else {
-      if (elem.element.id === ID && elem.categories.every((category: string) => categories.includes(category)) && elem.count == count) {
+      if (
+        elem.element.id === ID &&
+        elem.categories.every((category: string) =>
+          categories.includes(category)
+        ) &&
+        elem.count == count
+      ) {
         foundVisual = elem;
       }
     }
@@ -650,7 +680,7 @@ export async function getFieldColumns(
   return columns;
 }
 
-export async function getFilterInfo() {
+export function getFilterInfo() {
   const filters = global.componentGraph.dashboard.global_filter.filters;
   const filterInfos = [];
   for (let i = 0; i < filters.length; ++i) {
@@ -992,6 +1022,25 @@ export async function getVisualInfos(visual: any) {
   return visualInfos;
 }
 
+export function getVisualInfosWithoutAsync(visual: any): any {
+  const visualInfos = {
+    generalImages: [] as any[],
+    generalInfos: [] as string[],
+    interactionImages: [] as any[],
+    interactionInfos: [] as string[],
+    insightImages: [] as any[],
+    insightInfos: [] as string[],
+  };
+  return getVisualInfos(visual)
+    .then((result) => {
+      return result;
+    })
+    .catch((error) => {
+      console.error("Error in async function:", error);
+      return visualInfos;
+    });
+}
+
 export async function getVisuals() {
   const visuals = await global.page.getVisuals();
   global.setVisuals(visuals);
@@ -1211,20 +1260,30 @@ export function getLocalFilterText(visual: any) {
   return filterText;
 }
 
-export function saveInfoVideo(url: string, visId:string, categories: string[], count: number){
-  const visData = getDataWithId(global.settings.traversalStrategy, visId, categories, count);
+export function saveInfoVideo(
+  url: string,
+  visId: string,
+  categories: string[],
+  count: number
+) {
+  const visData = getDataWithId(
+    global.settings.traversalStrategy,
+    visId,
+    categories,
+    count
+  );
   if (!visData) {
     return;
   }
 
   visData.mediaType = global.mediaType.video;
   visData.videoURL = url;
-  
+
   localStorage.setItem("settings", JSON.stringify(global.settings, replacer));
 }
 
-export async function handelNewReport(){
-  if(global.settings.reportId !== reportId){
+export async function handelNewReport() {
+  if (global.settings.reportId !== reportId) {
     await createSettings();
   }
 }

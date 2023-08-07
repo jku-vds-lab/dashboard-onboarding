@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { mediaType } from "../../onboarding/ts/globalVariables";
 import { getDashboardInfoInEditor } from "../../onboarding/ts/dashboardInfoCard";
@@ -17,6 +17,21 @@ const initialState: NodeModalitiesState = {
   media: mediaType.text,
   content: "",
   mediaStorage: "",
+};
+
+export const fetchData = (fullNameArray: any) => {
+
+  return async (dispatch: any) => {
+    dispatch({ type: "FETCH_DATA_START" });
+
+    try {
+      const response = await getVisualInfoInEditor(fullNameArray, 1);
+
+      dispatch({ type: "FETCH_DATA_SUCCESS", payload: response });
+    } catch (error) {
+      dispatch({ type: "FETCH_DATA_ERROR", payload: error });
+    }
+  };
 };
 
 export const NodeModalities = createSlice({
@@ -40,13 +55,16 @@ export const NodeModalities = createSlice({
           getDashboardInfoInEditor(1);
           break;
         case "globalFilter":
-          // await getFilterInfoInEditor(1);
+
+          getFilterInfoInEditor(1); // why was this awaited in the past?
           break;
         case "group":
           break;
         default:
           if (fullNameArray) {
-            // await getVisualInfoInEditor(fullNameArray, 1);
+
+            fetchData(fullNameArray);
+            //getVisualInfoInEditor(fullNameArray, 1);
           }
           break;
       }
