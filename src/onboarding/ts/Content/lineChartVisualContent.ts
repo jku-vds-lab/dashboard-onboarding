@@ -1,7 +1,10 @@
-import * as helpers from "./helperFunctions";
-import * as global from "./globalVariables";
+import * as helpers from "./../helperFunctions";
+import * as global from "./../globalVariables";
+import NoviceText from "./noviceText";
 
 export async function getLineChartInfo(visual: any) {
+  const noviceText = new NoviceText();
+
   const CGVisual = global.componentGraph.dashboard.visualizations.find(
     (vis) => vis.id === visual.name
   );
@@ -35,33 +38,15 @@ export async function getLineChartInfo(visual: any) {
   const channelString = helpers.dataToString(CGVisual?.visual_channel.channel!);
   generalImages.push("dataImg");
   generalInfos.push(
-    "It displays " +
-      dataString +
-      ", they are encoded by " +
-      channelString +
-      ". The purpose of this chart is to " +
-      CGVisual?.task +
-      "."
+    noviceText.purposeText("line", channelString, dataString, CGVisual?.task)
   );
 
   let lineInfo = "";
   if (axis) {
-    lineInfo +=
-      "The " +
-      CGVisual?.mark +
-      "s show the development of the " +
-      dataName +
-      " over the " +
-      axis +
-      ".<br>";
+    lineInfo += noviceText.axisText("line", CGVisual?.mark, dataName, axis);
   }
   if (legend) {
-    lineInfo +=
-      "Each " +
-      CGVisual?.mark +
-      " represents a different " +
-      legend +
-      ", they are distinguishable by their color.";
+    lineInfo += noviceText.legendText("line", CGVisual?.mark, legend);
   }
   generalImages.push("lineGraphImg");
   generalInfos.push(lineInfo);
@@ -69,20 +54,14 @@ export async function getLineChartInfo(visual: any) {
   interactionImages.push("interactImg");
   interactionInfos.push(CGVisual?.interactions.description!);
 
-  let interactionInfo =
-    "With clicking on a " + CGVisual?.mark + " you can filter the report by ";
-  if (axis && !legend) {
-    interactionInfo += axis + ".";
-  } else if (!axis && legend) {
-    interactionInfo += legend + ".";
-  } else {
-    interactionInfo += axis + " and " + legend + ".";
-  }
+  let interactionInfo = noviceText.interactionClickText(
+    "line",
+    axis,
+    legend,
+    CGVisual?.mark
+  );
   if (CGVisual?.encoding.hasTooltip) {
-    interactionInfo +=
-      "</br>You can hover over a " +
-      CGVisual?.mark +
-      " to get detailed information about its data.";
+    interactionInfo += noviceText.interactionHoverText("line", CGVisual?.mark);
   }
   interactionImages.push("elemClickImg");
   interactionInfos.push(interactionInfo);

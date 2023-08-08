@@ -29,7 +29,7 @@ import {
 } from "./showReportChanges";
 import { getCardInfo, getSlicerInfo } from "./basicVisualContent";
 import { getLineClusteredColumnComboChartInfo } from "./complexVisualContent";
-import { getLineChartInfo } from "./lineChartVisualContent";
+import { getLineChartInfo } from "./Content/lineChartVisualContent";
 import {
   getClusteredBarChartInfo,
   getClusteredColumnChartInfo,
