@@ -37,9 +37,15 @@ export async function getLineChartInfo(visual: any) {
   const dataString = helpers.dataToString(CGVisual?.data.attributes!);
   const channelString = helpers.dataToString(CGVisual?.visual_channel.channel!);
   generalImages.push("dataImg");
-  generalInfos.push(
-    noviceText.purposeText("line", channelString, dataString, CGVisual?.task)
+
+  const purposeText = await noviceText.purposeText(
+    "line",
+    channelString,
+    dataString,
+    CGVisual?.task
   );
+
+  generalInfos.push(purposeText);
 
   let lineInfo = "";
   if (axis) {

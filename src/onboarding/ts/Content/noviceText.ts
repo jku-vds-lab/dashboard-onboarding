@@ -1,3 +1,8 @@
+import OpenAI from "./chatGPT";
+interface FormBody {
+  prompt: string;
+  tokens: number;
+}
 export default class NoviceText {
   private articles = { the: "The ", a: "A ", an: "An " };
   private prepositions = {
@@ -44,8 +49,27 @@ export default class NoviceText {
     hoverAction: " for detailed information",
   };
 
-  purposeText(visual: string, channel: string, data: string, task?: string) {
+  async purposeText(
+    visual: string,
+    channel: string,
+    data: string,
+    task?: string
+  ) {
     let text = "";
+
+    const formBody: FormBody = { prompt: "Who is Zuckerberg", tokens: 20 };
+
+    const response = await fetch("http://127.0.0.1:8000/chat-completion", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formBody),
+    });
+
+    const dataddd = await response.json();
+    console.log("Chat generated successfully!", dataddd);
+
     switch (visual) {
       case "line":
         text =

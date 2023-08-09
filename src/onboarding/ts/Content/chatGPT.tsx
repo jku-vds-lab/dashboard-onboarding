@@ -1,13 +1,13 @@
-import { Configuration, OpenAIApi } from "openai";
+import { Configuration, OpenAIApi, CreateChatCompletionRequest } from "openai";
 
-export default function OpenAI() {
+export default async function OpenAI() {
+  let queryResult = "";
   const configuration = new Configuration({
-    organization: "org-UHILsVnnYBaXU6LsY8WtZjSU",
     apiKey: "",
   });
 
   const DEFAULT_PARAMS = {
-    model: "text-davinci-002",
+    model: "gpt-3.5-turbo",
     messages: [{ role: "user", content: "Say this is a test!" }],
     temperature: 0.7,
     max_tokens: 256,
@@ -16,7 +16,25 @@ export default function OpenAI() {
     presence_penalty: 0,
   };
 
+  // Delete it
+  delete configuration.baseOptions.headers["User-Agent"];
+
+  const api = new OpenAIApi(configuration);
+
   // const openai = new OpenAIApi(configuration);
+  // const chatCompletion: CreateChatCompletionRequest = {
+  //   model: "gpt-3.5-turbo",
+  //   messages: [
+  //     {
+  //       role: "system",
+  //       content:
+  //         "Explain a line chart. X-axis shows time, y-axis shows new hires",
+  //     },
+  //   ],
+  //   max_tokens: 20,
+  // };
+  // const response = await openai.createChatCompletion(chatCompletion);
+  // const queryResult = response.data;
 
   async function query(params = {}) {
     const params_ = { ...DEFAULT_PARAMS, ...params };
@@ -38,11 +56,12 @@ export default function OpenAI() {
 
   query()
     .then((result) => {
+      queryResult = result;
       console.log(result);
     })
     .catch((error) => {
       console.error(error);
     });
 
-  return <div></div>;
+  return queryResult;
 }

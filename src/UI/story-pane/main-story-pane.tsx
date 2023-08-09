@@ -19,7 +19,7 @@ import {
   saveFilterChanges,
 } from "../../onboarding/ts/filterInfoCards";
 import mediaIcon from "../assets/img/icon-7.png";
-import OpenAI from "../../onboarding/ts/Content/advancedText";
+import OpenAI from "../../onboarding/ts/Content/chatGPT";
 import { useEffect, useState } from "react";
 import RecordView from "./main-record";
 
