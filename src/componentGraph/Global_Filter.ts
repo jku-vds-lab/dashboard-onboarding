@@ -10,7 +10,7 @@ export default class Global_Filter {
     this.filters = [];
   }
 
-  async setGlobalFilter(){
+  async setGlobalFilter() {
     const globalFilters = await getPageFilters(page);
     for (const globalFilter of globalFilters) {
       const filter = new Filter();

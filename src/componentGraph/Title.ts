@@ -9,11 +9,11 @@ export default class Title {
     this.text = "";
   }
 
-  setTitle(visual: any){
+  setTitle(visual: any) {
     let title = "";
-    if(visual == null){
-      title = page.displayName
-    }else {
+    if (visual == null) {
+      title = page.displayName;
+    } else {
       title = getVisualTitle(visual);
     }
     this.text = title;

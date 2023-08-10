@@ -13,7 +13,7 @@ import {
 import { VisualDescriptor } from "powerbi-client";
 import { reportId } from "../../Config";
 
-let visualIndex:number;
+let visualIndex: number;
 
 export async function createSettings() {
   const settings = global.createSettingsObject();
@@ -69,10 +69,10 @@ async function setGroup(elem: Group) {
   for (const trav of elem.visuals) {
     const visuals: TraversalElement[] = [];
     for (const vis of trav) {
-      const i = traversal.findIndex(trav => getIndex(trav, vis)>-1);
+      const i = traversal.findIndex((trav) => getIndex(trav, vis) > -1);
 
-      if(i>-1 && visualIndex>-1){
-          traversal[i][visualIndex].categories.push(vis.categories[0]);
+      if (i > -1 && visualIndex > -1) {
+        traversal[i][visualIndex].categories.push(vis.categories[0]);
       } else {
         if (vis.element.id === "dashboard") {
           const traversalElem = createTraversalElement("dashboard");
@@ -95,15 +95,18 @@ async function setGroup(elem: Group) {
         }
       }
     }
-    if(visuals.length>0){
+    if (visuals.length > 0) {
       traversal.push(visuals);
     }
   }
   return traversal;
 }
 
-function getIndex(trav: TraversalElement[], vis: TraversalElement){
-  visualIndex = trav.findIndex(visual => visual.count === vis.count && visual.element.id === vis.element.id)
+function getIndex(trav: TraversalElement[], vis: TraversalElement) {
+  visualIndex = trav.findIndex(
+    (visual) =>
+      visual.count === vis.count && visual.element.id === vis.element.id
+  );
   return visualIndex;
 }
 

@@ -68,8 +68,8 @@ export enum infoStatus {
 
 export enum mediaType {
   video = "Video",
-  text = "Text"
-} 
+  text = "Text",
+}
 
 export interface ReportOffset {
   top: number;
@@ -150,8 +150,8 @@ export function createSettingsObject() {
     reportOffset: createReportOffset(),
     traversalStrategy: [] as TraversalElement[],
     interactionExample: createInteractionExample(),
-    allVisuals: [] as string [],
-    reportId: ""
+    allVisuals: [] as string[],
+    reportId: "",
   };
   return settings;
 }
@@ -530,7 +530,7 @@ export function createVideoAttributes() {
     id: "",
     width: "",
     controls: "true",
-    parentId: ""
+    parentId: "",
   };
 }
 
@@ -539,7 +539,7 @@ export function createSourceAttributes() {
     id: "",
     src: "",
     type: "",
-    parentId: ""
+    parentId: "",
   };
 }
 
@@ -548,6 +548,6 @@ export function createYoutubeVideoAttributes() {
     id: "",
     style: "",
     src: "",
-    parentId: ""
+    parentId: "",
   };
 }

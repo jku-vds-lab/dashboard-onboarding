@@ -1,18 +1,17 @@
-import Component from "./component";
+import Component from "./Component";
 
-class YAxis extends Component{
-  
-    constructor() {
-        super();
-    }
-
-    setYAxisData(value: string, isVisible: boolean){
-        super.setComponentData(value, isVisible);
-    }
-
-    getComponentDescriptionData(): string {
-        return "This Y-axis displays the values of " + this.attribute + ".";
-    }
+class YAxis extends Component {
+  constructor() {
+    super();
   }
-  
-  export default YAxis;
+
+  setYAxisData(value: string, isVisible: boolean) {
+    super.setComponentData(value, isVisible);
+  }
+
+  getComponentDescriptionData(): string {
+    return "This Y-axis displays the values of " + this.attribute + ".";
+  }
+}
+
+export default YAxis;

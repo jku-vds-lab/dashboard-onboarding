@@ -1,15 +1,15 @@
-import Data from "./Data"
-import Insight from "./Insight"
-import Title from "./Title"
-import Visual_Channel from "./Visual_Channel"
-import Interactions from "./interactions"
-import Encoding from "./encoding"
-import * as helper from "./helperFunctions"
-import Local_Filter from "./Local_Filter"
+import Data from "./Data";
+import Insight from "./Insight";
+import Title from "./Title";
+import Visual_Channel from "./Visual_Channel";
+import Interactions from "./Interactions";
+import Encoding from "./Encoding";
+import * as helper from "./helperFunctions";
+import Local_Filter from "./Local_Filter";
 
 // Visualization
 export default class Visualization {
-  id: string
+  id: string;
   type: string;
   task: string;
   description: string;
@@ -37,7 +37,7 @@ export default class Visualization {
     this.filters = new Local_Filter();
   }
 
-  async setVisualData(visual: any){
+  async setVisualData(visual: any) {
     this.id = visual.name;
     this.type = helper.toCamelCaseString(helper.getVisualType(visual));
     this.task = await helper.getVisualTask(visual);

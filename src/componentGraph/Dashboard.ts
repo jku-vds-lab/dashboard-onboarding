@@ -1,17 +1,17 @@
-import Title from "./Title"
-import Visualization from "./Visualization"
-import Global_Filter from "./Global_Filter"
-import { page, visuals } from "./ComponentGraph"
+import Title from "./Title";
+import Visualization from "./Visualization";
+import Global_Filter from "./Global_Filter";
+import { page, visuals } from "./ComponentGraph";
 
-// Dashboard 
+// Dashboard
 export default class Dashboard {
-  title: Title; 
+  title: Title;
   purpose: string;
-  task: string; 
-  layout: string; 
+  task: string;
+  layout: string;
   visualizations: Visualization[];
   global_filter: Global_Filter;
-  
+
   constructor() {
     this.title = new Title();
     this.purpose = "";
@@ -21,7 +21,7 @@ export default class Dashboard {
     this.global_filter = new Global_Filter();
   }
 
-  async setDashboardData(){
+  async setDashboardData() {
     this.title.setTitle(null);
     this.purpose = this.getPurposeData();
     this.task = this.getTaskData();
@@ -30,26 +30,35 @@ export default class Dashboard {
     this.layout = this.getLayoutData();
   }
 
-  getPurposeData(){
+  getPurposeData() {
     const pageTitle = page.displayName;
-    const defaultPurposeText = "The purpose of this dashboard is to allow an in-depth investigation of the " + pageTitle + " statistics."
+    const defaultPurposeText =
+      "The purpose of this dashboard is to allow an in-depth investigation of the " +
+      pageTitle +
+      " statistics.";
     return defaultPurposeText;
   }
 
-  getTaskData(){
+  getTaskData() {
     const pageTitle = page.displayName;
-    const defaultTaskText = "The task of this dashboard is to show the " + pageTitle + " statistics."
+    const defaultTaskText =
+      "The task of this dashboard is to show the " + pageTitle + " statistics.";
     return defaultTaskText;
   }
 
-  getLayoutData(){
+  getLayoutData() {
     const numberOfVisuals = visuals.length;
     const numberOfFilters = this.global_filter.filters.length;
-    const defaultLayoutText = "This dashboard consists of " + numberOfVisuals + " visuals and " + numberOfFilters + " global filters."
+    const defaultLayoutText =
+      "This dashboard consists of " +
+      numberOfVisuals +
+      " visuals and " +
+      numberOfFilters +
+      " global filters.";
     return defaultLayoutText;
   }
 
-  async getVisualsData(){
+  async getVisualsData() {
     for (const visual of visuals) {
       const visualisation = new Visualization();
       await visualisation.setVisualData(visual);
