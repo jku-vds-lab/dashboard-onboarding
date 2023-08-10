@@ -1,82 +1,83 @@
 import * as helpers from "./../helperFunctions";
 import * as global from "./../globalVariables";
 import NoviceText from "./noviceText";
+import BasicTextFormat from "./Format/basicTextFormat";
 
 export async function getLineChartInfo(visual: any) {
-  const noviceText = new NoviceText();
-
   const CGVisual = global.componentGraph.dashboard.visualizations.find(
     (vis) => vis.id === visual.name
   );
+  const chartType = "line";
+  const noviceText = new NoviceText();
   const axisValue = CGVisual?.encoding.xAxes[0];
-  let axis;
-  if (axisValue) {
-    axis = axisValue.attribute;
-  }
+  const axis = (axisValue && axisValue.attribute) || "";
   const legendValue = CGVisual?.encoding.legends[0];
-  let legend;
-  if (legendValue) {
-    legend = legendValue.attribute;
-  }
+  const legend = (legendValue && legendValue.attribute) || "";
   const dataValue = CGVisual?.encoding.yAxes[0];
-  let dataName;
-  if (dataValue) {
-    dataName = dataValue.attribute;
-  }
+  const dataName = (dataValue && dataValue.attribute) || "";
 
-  const generalImages = [];
-  const generalInfos = [];
-  const insightImages: any[] = [];
-  const insightInfos: string[] = [];
-  const interactionImages = [];
-  const interactionInfos = [];
+  const text: BasicTextFormat = {
+    generalImages: [],
+    generalInfos: [],
+    insightImages: [],
+    insightInfos: [],
+    interactionImages: [],
+    interactionInfos: [],
+  };
 
-  generalImages.push("infoImg");
-  generalInfos.push(CGVisual?.description!);
+  text.generalImages.push("infoImg");
+  text.generalInfos.push(CGVisual?.description!);
 
   const dataString = helpers.dataToString(CGVisual?.data.attributes!);
   const channelString = helpers.dataToString(CGVisual?.visual_channel.channel!);
-  generalImages.push("dataImg");
+  text.generalImages.push("dataImg");
 
-  const purposeText = await noviceText.purposeText(
-    "line",
+  const purposeText = noviceText.purposeText(
+    chartType,
     channelString,
     dataString,
     CGVisual?.task
   );
 
-  generalInfos.push(purposeText);
+  text.generalInfos.push(purposeText);
 
   let lineInfo = "";
   if (axis) {
-    lineInfo += noviceText.axisText("line", CGVisual?.mark, dataName, axis);
+    lineInfo += noviceText.axisText(chartType, CGVisual?.mark, dataName, axis);
   }
   if (legend) {
-    lineInfo += noviceText.legendText("line", CGVisual?.mark, legend);
+    lineInfo += noviceText.legendText(chartType, CGVisual?.mark, legend);
   }
-  generalImages.push("lineGraphImg");
-  generalInfos.push(lineInfo);
+  text.generalImages.push("lineGraphImg");
+  text.generalInfos.push(lineInfo);
 
-  interactionImages.push("interactImg");
-  interactionInfos.push(CGVisual?.interactions.description!);
+  // interaction
+
+  text.interactionImages.push("interactImg");
+  text.interactionInfos.push(CGVisual?.interactions.description!);
 
   let interactionInfo = noviceText.interactionClickText(
-    "line",
+    chartType,
     axis,
     legend,
     CGVisual?.mark
   );
   if (CGVisual?.encoding.hasTooltip) {
-    interactionInfo += noviceText.interactionHoverText("line", CGVisual?.mark);
+    interactionInfo += noviceText.interactionHoverText(
+      chartType,
+      CGVisual?.mark
+    );
   }
-  interactionImages.push("elemClickImg");
-  interactionInfos.push(interactionInfo);
+  text.interactionImages.push("elemClickImg");
+  text.interactionInfos.push(interactionInfo);
 
   if (axisValue && axisValue.isVisible) {
-    generalImages.push("xAxisImg");
-    generalInfos.push("The X-axis displays the values of the " + axis + ".");
-    interactionImages.push("axisClickImg");
-    interactionInfos.push(
+    text.generalImages.push("xAxisImg");
+    text.generalInfos.push(
+      "The X-axis displays the values of the " + axis + "."
+    );
+    text.interactionImages.push("axisClickImg");
+    text.interactionInfos.push(
       "When clicking on one of the x-axis-labels you can filter the report by " +
         axis +
         "."
@@ -84,21 +85,21 @@ export async function getLineChartInfo(visual: any) {
   }
 
   if (dataValue && dataValue.isVisible) {
-    generalImages.push("yAxisImg");
-    generalInfos.push(
+    text.generalImages.push("yAxisImg");
+    text.generalInfos.push(
       "The Y-axis displays the values of the " + dataName + "."
     );
   }
 
   if (legendValue && legendValue.isVisible) {
-    generalImages.push("legendImg");
-    generalInfos.push(
+    text.generalImages.push("legendImg");
+    text.generalInfos.push(
       "The legend displays the values of the " +
         legend +
         " and its corresponding color."
     );
-    interactionImages.push("legendClickImg");
-    interactionInfos.push(
+    text.interactionImages.push("legendClickImg");
+    text.interactionInfos.push(
       "When clicking on one of the labels in the legend you can filter the report by " +
         legend +
         "."
@@ -107,18 +108,13 @@ export async function getLineChartInfo(visual: any) {
 
   const filterText = helpers.getLocalFilterText(CGVisual);
   if (filterText !== "") {
-    generalImages.push("filterImg");
-    generalInfos.push("This chart has the following filters:<br>" + filterText);
+    text.generalImages.push("filterImg");
+    text.generalInfos.push(
+      "This chart has the following filters:<br>" + filterText
+    );
   }
 
-  return {
-    generalImages,
-    generalInfos,
-    interactionImages,
-    interactionInfos,
-    insightImages,
-    insightInfos,
-  };
+  return text;
 }
 
 export async function getLineChartInteractionExample(visual: any) {
