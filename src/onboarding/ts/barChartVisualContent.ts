@@ -53,7 +53,7 @@ export async function getClusteredBarAndColumnChartInfo(
   generalInfos.push(CGVisual?.description!);
 
   const dataString = helpers.dataToString(CGVisual?.data.attributes!);
-  const channelString = helpers.dataToString(CGVisual?.visual_channel.channel!);
+  const channelString = helpers.dataToString(CGVisual?.channel.channel!);
   generalImages.push("dataImg");
   generalInfos.push(
     "It displays " +

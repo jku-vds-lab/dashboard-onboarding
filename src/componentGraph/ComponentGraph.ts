@@ -1,12 +1,14 @@
 import Dashboard from "./Dashboard";
-import { Report, Page } from "powerbi-client";
+import { Report, Page, VisualDescriptor } from "powerbi-client";
 import { setComponentGraph } from "../onboarding/ts/globalVariables";
+import Visualization from "./Visualization";
+import { debug } from "util";
 
 export let report: Report;
 export let page: Page;
-export let visuals: any[];
+export let visuals: VisualDescriptor[];
 
-class ComponentGraph {
+export default class ComponentGraph {
   dashboard: Dashboard;
 
   constructor(newReport: Report, newPage: Page, newVisuals: any[]) {
@@ -25,8 +27,6 @@ class ComponentGraph {
     setComponentGraph(getComponentGraph());
   }
 }
-
-export default ComponentGraph;
 
 export function saveComponentGraph(graph: any) {
   localStorage.setItem("componentGraph", JSON.stringify(graph, replacer));

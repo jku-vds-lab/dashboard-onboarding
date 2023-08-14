@@ -681,7 +681,7 @@ export async function getFieldColumns(
 }
 
 export function getFilterInfo() {
-  const filters = global.componentGraph.dashboard.global_filter.filters;
+  const filters = global.componentGraph.dashboard.globalFilter.filters;
   const filterInfos = [];
   for (let i = 0; i < filters.length; ++i) {
     const filter = filters[i] as Filter;
@@ -1014,7 +1014,7 @@ export async function getVisualInfos(visual: any) {
   const CGVisual = global.componentGraph.dashboard.visualizations.find(
     (vis) => vis.id === visual.name
   );
-  const insights = CGVisual?.insight?.insights!;
+  const insights = CGVisual?.insights?.insights!;
   for (const insight of insights) {
     visualInfos.insightImages.push("lightbulbImg");
     visualInfos.insightInfos.push(insight);
@@ -1022,7 +1022,7 @@ export async function getVisualInfos(visual: any) {
   return visualInfos;
 }
 
-export async function getVisuals() {
+export async function getVisualsfromPowerBI() {
   const visuals = await global.page.getVisuals();
   global.setVisuals(visuals);
   sortVisuals();
@@ -1034,7 +1034,7 @@ export function getVisualTitle(visual: any) {
   const CGVisual = global.componentGraph.dashboard.visualizations.find(
     (vis) => vis.id === visual.name
   )!;
-  const title = CGVisual.title.text;
+  const title = CGVisual.title.title;
   if (title) {
     return title;
   } else {

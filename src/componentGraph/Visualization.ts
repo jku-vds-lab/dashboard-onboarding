@@ -1,26 +1,28 @@
 import Data from "./Data";
 import Insight from "./Insight";
 import Title from "./Title";
-import Visual_Channel from "./Visual_Channel";
+import VisualChannel from "./VisualChannel";
 import Interactions from "./Interactions";
 import Encoding from "./Encoding";
 import * as helper from "./helperFunctions";
-import Local_Filter from "./Local_Filter";
+import LocalFilter from "./LocalFilter";
+import { VisualDescriptor } from "powerbi-client";
+import { page, visuals } from "./ComponentGraph";
 
 // Visualization
 export default class Visualization {
   id: string;
   type: string;
   task: string;
+  data: Data;
   description: string;
   mark: string;
-  data: Data;
-  insight: Insight;
-  title: Title;
-  visual_channel: Visual_Channel;
-  interactions: Interactions;
   encoding: Encoding;
-  filters: Local_Filter;
+  title: Title;
+  channel: VisualChannel;
+  interactions: Interactions;
+  insights: Insight;
+  localFilters: LocalFilter;
 
   constructor() {
     this.id = "";
@@ -29,26 +31,76 @@ export default class Visualization {
     this.description = "";
     this.mark = "";
     this.data = new Data();
-    this.insight = new Insight();
+    this.insights = new Insight();
     this.title = new Title();
-    this.visual_channel = new Visual_Channel();
+    this.channel = new VisualChannel();
     this.interactions = new Interactions();
     this.encoding = new Encoding();
-    this.filters = new Local_Filter();
+    this.localFilters = new LocalFilter();
   }
 
-  async setVisualData(visual: any) {
-    this.id = visual.name;
-    this.type = helper.toCamelCaseString(helper.getVisualType(visual));
-    this.task = await helper.getVisualTask(visual);
-    this.description = await helper.getVisualDescription(visual);
-    this.mark = helper.getVisualMark(visual);
-    await this.data.setData(visual);
-    await this.insight.setInsight(visual);
-    this.title.setTitle(visual);
-    this.visual_channel.setChannel(visual);
-    await this.interactions.setInteractionData(visual);
-    await this.encoding.setEncodingData(visual);
-    await this.filters.setLocalFilter(visual);
+  async getVisualization(visual: VisualDescriptor) {
+    try {
+      await this.setVisualization(visual);
+    } catch (error) {
+      console.log("Error in getting Visuals Data", error);
+    }
+    return this;
+  }
+
+  async getVisualizations() {
+    const visualizations = new Array<Visualization>();
+    try {
+      const promises: Promise<any>[] = [];
+
+      for (const visual of visuals) {
+        promises.push(this.setVisualization(visual));
+      }
+      const results = await Promise.all(promises);
+      for (const result of results) {
+        visualizations.push(result);
+      }
+    } catch (error) {
+      console.log("Error in getting Visuals Data", error);
+    }
+    return visualizations;
+  }
+
+  // change from VisualDescriptor to Visualization
+  async setVisualization(visual: VisualDescriptor) {
+    try {
+      const visualization = new Visualization();
+      visualization.id = visual.name;
+      visualization.type = helper.toCamelCaseString(
+        helper.getVisualType(visual)
+      );
+      visualization.mark = helper.getVisualMark(visual);
+      visualization.title = helper.getVisualTitle(visual);
+
+      const results = await Promise.all([
+        helper.getVisualTask(visual),
+        helper.getVisualDescription(visual),
+        helper.getData(visual, []),
+        helper.getVisualInsight(visual),
+        helper.getVisualChannel(visual),
+        helper.getVisualInteractions(visual),
+        helper.getVisualEncoding(visual),
+        helper.getLocalFilter(visual),
+      ]);
+
+      if (results.length == 8) {
+        visualization.task = results[0];
+        visualization.description = results[1];
+        visualization.data = results[2];
+        visualization.insights = results[3];
+        visualization.channel = results[4];
+        visualization.interactions = results[5];
+        visualization.encoding = results[6];
+        visualization.localFilters = results[7];
+      }
+      return visualization;
+    } catch (error) {
+      console.log("Error in setting visual data", error);
+    }
   }
 }

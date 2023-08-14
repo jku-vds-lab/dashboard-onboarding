@@ -43,35 +43,28 @@ export async function onLoadReport() {
   console.log("Report is loading");
   try {
     await helpers.getActivePage();
-    await helpers.getVisuals();
-    for (const vis of global.allVisuals) {
-      const caps = await vis.getCapabilities();
-      // console.log(vis.type, caps);
-      for (const cap of caps.dataRoles) {
-        // console.log(cap.name, await vis.getDataFields(cap.name));
-      }
-    }
+    await helpers.getVisualsfromPowerBI();
     await helpers.createComponentGraph();
-    console.log(global.componentGraph);
-    await helpers.getSettings();
+    const results = await Promise.all([
+      helpers.getSettings(),
+      helpers.handelNewReport(),
+    ]);
 
-    await helpers.handelNewReport();
+    if (results.length > 0) {
+      const trav = await basicTraversalStrategy();
+      global.setBasicTraversal(trav);
 
-    const trav = await basicTraversalStrategy();
-    global.setBasicTraversal(trav);
+      helpers.createEditOnboardingButtons();
+      helpers.createOnboardingButtons();
 
-    // const trav = await setTestAllGroupsTraversalStrategy();
-    // console.log(trav);
-    // await updateTraversal(trav);
+      resize();
 
-    helpers.createEditOnboardingButtons();
-    helpers.createOnboardingButtons();
+      elements.addStylesheet("/onboarding/css/onboarding.css");
 
-    resize();
-
-    elements.addStylesheet("/onboarding/css/onboarding.css");
-
-    createGuidedTour();
+      createGuidedTour();
+    } else {
+      console.log("Promises unresolved");
+    }
   } catch (error) {
     console.log("Error on loading the report", error);
   }
@@ -82,7 +75,7 @@ export async function onReloadReport() {
   await helpers.getActivePage();
 
   if (global.page.name !== oldPage && global.page.displayName !== "Info") {
-    await helpers.getVisuals();
+    await helpers.getVisualsfromPowerBI();
     await createSettings();
     helpers.resizeEmbed(global.filterOpenedWidth);
   }

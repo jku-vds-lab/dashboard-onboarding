@@ -2,6 +2,22 @@ import * as helpers from "./../helperFunctions";
 import * as global from "./../globalVariables";
 import NoviceText from "./noviceText";
 import BasicTextFormat from "./Format/basicTextFormat";
+import Visualization from "../../../componentGraph/Visualization";
+import Data from "../../../componentGraph/Data";
+import Insight from "../../../componentGraph/Insight";
+import Title from "../../../componentGraph/Title";
+import VisualChannel from "../../../componentGraph/VisualChannel";
+import Interactions from "../../../componentGraph/Interactions";
+import Encoding from "../../../componentGraph/Encoding";
+import * as helper from "../../../componentGraph/helperFunctions";
+import LocalFilter from "../../../componentGraph/LocalFilter";
+
+// this should be a class extending Visualization class
+export default class LineChart extends Visualization {
+  constructor() {
+    super();
+  }
+}
 
 export async function getLineChartInfo(visual: any) {
   const CGVisual = global.componentGraph.dashboard.visualizations.find(
@@ -26,10 +42,11 @@ export async function getLineChartInfo(visual: any) {
   };
 
   text.generalImages.push("infoImg");
-  text.generalInfos.push(CGVisual?.description!);
+  // description for each visual can be added here
+  text.generalInfos.push("This element is a line chart.");
 
   const dataString = helpers.dataToString(CGVisual?.data.attributes!);
-  const channelString = helpers.dataToString(CGVisual?.visual_channel.channel!);
+  const channelString = helpers.dataToString(CGVisual?.channel.channel!);
   text.generalImages.push("dataImg");
 
   const purposeText = noviceText.purposeText(
@@ -54,7 +71,7 @@ export async function getLineChartInfo(visual: any) {
   // interaction
 
   text.interactionImages.push("interactImg");
-  text.interactionInfos.push(CGVisual?.interactions.description!);
+  // text.interactionInfos.push(CGVisual?.interactions.description!);
 
   let interactionInfo = noviceText.interactionClickText(
     chartType,
@@ -154,3 +171,28 @@ export async function getLineChartInteractionExample(visual: any) {
 
   return interactionInfo;
 }
+
+// getInteractionDescription() {
+//   const attributeString = dataToString(this.interactionAttributes);
+//   const chartNamesHighlighting = visuals
+//     .filter((vis) => this.interactionChartsHighlighting.includes(vis.name))
+//     .map((vis) => vis.title);
+//   const chartStringHighlighting = dataToString(chartNamesHighlighting);
+//   const chartNamesFiltering = visuals
+//     .filter((vis) => this.interactionChartsFiltering.includes(vis.name))
+//     .map((vis) => vis.title);
+//   const chartStringFiltering = dataToString(chartNamesFiltering);
+
+//   return (
+//     "This chart supports interactions on " +
+//     attributeString +
+//     ". Highlighting interactions on this chart will effect " +
+//     chartStringHighlighting +
+//     ". Filtering interactions on this chart will effect " +
+//     chartStringFiltering +
+//     "."
+//   );
+// }
+
+// import { dataToString } from "../onboarding/ts/helperFunctions";
+// import { visuals } from "./ComponentGraph";

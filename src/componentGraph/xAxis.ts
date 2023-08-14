@@ -1,16 +1,12 @@
-import Component from "./Component";
+import CommonProp from "./CommonProp";
 
-class XAxis extends Component {
+class XAxis extends CommonProp {
   constructor() {
     super();
   }
 
   setXAxisData(value: string, isVisible: boolean) {
     super.setComponentData(value, isVisible);
-  }
-
-  getComponentDescriptionData(): string {
-    return "This X-axis displays the values of " + this.attribute + ".";
   }
 }
 

@@ -50,7 +50,7 @@ function setDashboardTitle(
   dashboard: Dashboard,
   count: number
 ) {
-  const title = dashboard.title.text;
+  const title = dashboard.title.title;
 
   const dashboardData = helpers.getDataWithId(
     traversal,

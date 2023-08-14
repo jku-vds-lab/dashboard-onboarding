@@ -130,10 +130,11 @@ async function setVisualsInfo(id: string) {
     const visual = findTraversalVisual(id);
     const settingsVisual = global.createVisual();
     settingsVisual.id = visual.name;
+
     const CGVisual = global.componentGraph.dashboard.visualizations.find(
       (vis) => vis.id === visual.name
     )!;
-    settingsVisual.title = CGVisual.title.text;
+    settingsVisual.title = CGVisual.title.title;
 
     const visualInfos = await helpers.getVisualInfos(visual);
 
@@ -190,7 +191,7 @@ function setInteractionExampleInfo() {
         const settingsInteractableVisualCard =
           global.createInteractableVisualCard();
         settingsInteractableVisualCard.id = visual.name;
-        settingsInteractableVisualCard.title = CGVisual.title.text;
+        settingsInteractableVisualCard.title = CGVisual.title.title;
 
         settingsInteractableVisualCard.clickInfosStatus = null;
         settingsInteractableVisualCard.changedClickInfo = null;
@@ -204,7 +205,7 @@ function setInteractionExampleInfo() {
         const settingsInteractableVisualSlicer =
           global.createInteractableVisualSlicer();
         settingsInteractableVisualSlicer.id = visual.name;
-        settingsInteractableVisualSlicer.title = CGVisual.title.text;
+        settingsInteractableVisualSlicer.title = CGVisual.title.title;
 
         settingsInteractableVisualSlicer.clickInfosStatus = "origninal";
         settingsInteractableVisualSlicer.changedClickInfo = "";
@@ -218,7 +219,7 @@ function setInteractionExampleInfo() {
       default:
         const settingsInteractableVisual = global.createInteractableVisual();
         settingsInteractableVisual.id = visual.name;
-        settingsInteractableVisual.title = CGVisual.title.text;
+        settingsInteractableVisual.title = CGVisual.title.title;
 
         settingsInteractableVisual.clickInfosStatus = "original";
         settingsInteractableVisual.changedClickInfo = "";

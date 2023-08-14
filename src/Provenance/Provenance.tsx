@@ -4,7 +4,7 @@ import { ActionReturnType } from "@visdesignlab/trrack/dist/Types/Action";
 import { ProvVisCreator } from "@visdesignlab/trrack-vis";
 // import { ProvVisCreator } from "@trrack/vis-react";
 import { makeDeepCopy, toCamelCaseString } from "./utils";
-import Global_Filter from "../componentGraph/Global_Filter";
+import GlobalFilter from "../componentGraph/GlobalFilter";
 import {
   replacer,
   reviver,
@@ -50,8 +50,8 @@ let importedGraph: any = null;
 async function updateGraph(provenance: any, currentNode: any) {
   const componentGraph = makeDeepCopy(getComponentGraph());
   const oldComponentGraph = makeDeepCopy(componentGraph);
-  const newGlobalFilters = new Global_Filter();
-  newGlobalFilters.setGlobalFilter();
+  const newGlobalFilters = new GlobalFilter();
+  // newGlobalFilters.setGlobalFilter();
   componentGraph.dashboard.global_filter = newGlobalFilters;
   saveComponentGraph(componentGraph);
   const currentNodeState = provenance.getState(currentNode);
@@ -59,7 +59,7 @@ async function updateGraph(provenance: any, currentNode: any) {
   const vis_array = [];
   for (const vis of visuals) {
     const visualization = new Visualization();
-    await visualization.setVisualData(vis);
+    await visualization.setVisualization(vis);
     vis_array.push(visualization);
   }
   componentGraph.dashboard.visualizations = vis_array;

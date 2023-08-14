@@ -1,14 +1,10 @@
 import { getVisualChannel } from "./helperFunctions";
 
 // Visual Channel
-export default class Visual_Channel {
+export default class VisualChannel {
   channel: string[];
 
   constructor() {
     this.channel = [];
-  }
-
-  async setChannel(visual: any){
-    this.channel = await getVisualChannel(visual);
   }
 }

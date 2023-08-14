@@ -1,16 +1,12 @@
-import Component from "./Component";
+import CommonProp from "./CommonProp";
 
-class Value extends Component {
+class Value extends CommonProp {
   constructor() {
     super();
   }
 
   setValueData(value: string, isVisible: boolean) {
     super.setComponentData(value, isVisible);
-  }
-
-  getComponentDescriptionData(): string {
-    return "This visual displays the values of " + this.attribute + ".";
   }
 }
 

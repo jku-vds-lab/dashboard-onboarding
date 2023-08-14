@@ -1,16 +1,12 @@
-import Component from "./Component";
+import CommonProp from "./CommonProp";
 
-class Legend extends Component {
+class Legend extends CommonProp {
   constructor() {
     super();
   }
 
   setLegendData(value: string, isVisible: boolean) {
     super.setComponentData(value, isVisible);
-  }
-
-  getComponentDescriptionData(): string {
-    return "This legend displays the values of " + this.attribute + ".";
   }
 }
 

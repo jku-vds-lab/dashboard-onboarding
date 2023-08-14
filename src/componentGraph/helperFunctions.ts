@@ -5,6 +5,20 @@ import * as helper from "../onboarding/ts/helperFunctions";
 import { visuals } from "./ComponentGraph";
 import { exportData } from "../Provenance/utils";
 import * as global from "../onboarding/ts/globalVariables";
+import { page } from "./ComponentGraph";
+import Data from "./Data";
+import Insight from "./Insight";
+import Title from "./Title";
+import VisualChannel from "./VisualChannel";
+import Interactions from "./Interactions";
+import Encoding from "./Encoding";
+import XAxis from "./XAxis";
+import YAxis from "./YAxis";
+import Legend from "./Legend";
+import Value from "./Value";
+import { isVisible } from "../onboarding/ts/helperFunctions";
+import Filter from "./Filter";
+import LocalFilter from "./LocalFilter";
 
 /*
 Get encoding of the visualization
@@ -42,6 +56,68 @@ export async function getVisualAttributeMapper(
   return mapper;
 }
 
+
+export async function getVisualEncoding(visual: VisualDescriptor): Promise<Encoding> {
+  const attributes = await getVisualAttributeMapper(visual);
+  const visibility = await getVisibleObjects(visual);
+  const encoding = new Encoding();
+  encoding.hasTooltip = await isVisible(visual, "tooltip");
+  for (const key in attributes) {
+    const type = attributes[key];
+    switch (type) {
+      case "X-axis":
+        const xAxis = new XAxis();
+        xAxis.setXAxisData(key, visibility[0]);
+        encoding.xAxes.push(xAxis);
+        break;
+      case "Y-axis":
+      case "Column y-axis":
+      case "Line y-axis":
+        const yAxis = new YAxis();
+        yAxis.setYAxisData(key, visibility[1]);
+        yAxis.setType(type);
+        encoding.yAxes.push(yAxis);
+        break;
+      case "Legend":
+        const legend = new Legend();
+        legend.setLegendData(key, visibility[2]);
+        encoding.legends.push(legend);
+        break;
+      case "Field":
+      case "Fields":
+        const value = new Value();
+        value.setValueData(key, true);
+        encoding.values.push(value);
+        break;
+      default:
+        break;
+    }
+  }
+  return encoding;
+}
+
+async function getVisibleObjects(visual: any) {
+  const visibility = new Array<boolean>(3).fill(false);
+  const VisualType = visual.type;
+  switch (VisualType) {
+    case "clusteredBarChart":
+      visibility[0] = await isVisible(visual, "valueAxis");
+      visibility[1] = await isVisible(visual, "categoryAxis");
+      visibility[2] = await isVisible(visual, "legend");
+      break;
+    case "lineChart":
+    case "lineClusteredColumnComboChart":
+    case "clusteredColumnChart":
+      visibility[0] = await isVisible(visual, "categoryAxis");
+      visibility[1] = await isVisible(visual, "valueAxis");
+      visibility[2] = await isVisible(visual, "legend");
+      break;
+    default:
+      break;
+  }
+  return visibility;
+}
+
 /**
  * Takes string and returns multiple word string as one word camel case string
  * @param title String to be camel cased
@@ -65,8 +141,14 @@ export function getVisualType(visual: VisualDescriptor): string {
 Get title of the visualization
 @param visual (VisualDescriptor) (https://learn.microsoft.com/ru-ru/javascript/api/powerbi/powerbi-client/visualdescriptor.visualdescriptor)
 */
-export function getVisualTitle(visual: VisualDescriptor): string {
-  return visual.title;
+export function getVisualTitle(visual: VisualDescriptor): Title {
+  let title = "";
+  if (visual == null) {
+    title = page.displayName;
+  } else {
+    title = visual.title;
+  }
+  return { title };
 }
 
 /*
@@ -107,6 +189,10 @@ export async function getVisualDescription(
   }
   return description;
 }
+
+// export async function getData(visual: VisualDescriptor) {
+
+// }
 
 /*
 Get task of the visualization
@@ -249,6 +335,37 @@ export async function getVisualFilters(
   return FiltersCollectionArray;
 }
 
+export function getOperation(originalOperation: string){
+  let operation;
+  switch(originalOperation){
+    case "In":
+      operation = "Equal";
+      break;
+    case "NotIn":
+      operation = "Not Equal";
+      break;
+    default:
+      operation = originalOperation;
+  }
+  return operation;
+}
+
+export async function getLocalFilter(visual: VisualDescriptor): Promise<LocalFilter> {
+  const visualFilters = await getVisualFilters(visual);
+  const localFilters = new Array<Filter>;
+
+  for (const visualFilter of visualFilters) {
+    const filter = new Filter();
+
+    filter.attribute = <string>visualFilter?.attribute;
+    filter.values = <string[]>visualFilter?.values;
+    filter.operation = getOperation(<string>visualFilter?.operator);
+    localFilters.push(filter);
+  }
+
+  return {localFilters};
+}
+
 /*
 Get mark of the visualization
 @param visual (VisualDescriptor) (https://learn.microsoft.com/ru-ru/javascript/api/powerbi/powerbi-client/visualdescriptor.visualdescriptor)
@@ -287,8 +404,8 @@ Get visual channel of the visualization
 */
 export async function getVisualChannel(
   visual: VisualDescriptor
-): Promise<Array<string>> {
-  const visual_channel = [];
+): Promise<VisualChannel> {
+  const channel = [];
   const VisualType = visual.type;
   if (
     VisualType === "lineChart" ||
@@ -296,16 +413,16 @@ export async function getVisualChannel(
     VisualType === "clusteredColumnChart" ||
     VisualType === "lineClusteredColumnComboChart"
   ) {
-    visual_channel.push("position");
+    channel.push("position");
     const encoding = await getVisualAttributeMapper(visual);
     if (
       Object.values(encoding).includes("Legend") ||
       Object.values(encoding).includes("Column y-axis")
     ) {
-      visual_channel.push("color");
+      channel.push("color");
     }
   }
-  return visual_channel;
+  return { channel };
 }
 
 /*
@@ -314,7 +431,7 @@ Get insight of the visualization
 */
 export async function getVisualInsight(
   visual: VisualDescriptor
-): Promise<Array<string>> {
+): Promise<Insight> {
   const insights = new Array<string>();
   const VisualType = visual.type;
   switch (VisualType) {
@@ -339,7 +456,7 @@ export async function getVisualInsight(
       insights[0] = "This type of visual is not supported yet";
       break;
   }
-  return insights;
+  return { insights };
 }
 
 /*
@@ -348,19 +465,22 @@ Get interactions of the visualization
 */
 export async function getVisualInteractions(
   visual: VisualDescriptor
-): Promise<Record<string, string[]>> {
-  const interactions = {};
+): Promise<Interactions> {
+  const interaction = new Interactions();
 
-  interactions["interaction_attribute"] = await getVisualDataFields(visual);
+  interaction.interactionAttributes = await getVisualDataFields(visual);
 
   const crossInteractionVisuals = visuals.filter(
     (currentVisual) => currentVisual.name != visual.name
   );
-  interactions["interaction_charts"] = crossInteractionVisuals.map(
+  interaction.interactionChartsFiltering = crossInteractionVisuals.map(
     (currentVisual) => currentVisual.name
   );
 
-  return interactions;
+  interaction.interactionChartsHighlighting =
+    interaction.interactionChartsFiltering;
+
+  return interaction;
 }
 
 /*
@@ -533,7 +653,11 @@ export async function getHighestValue(
   return [max, highestCategory, highestAxis];
 }
 
-export async function getData(visual: any, categories: string[]) {
+export async function getData(
+  visual: VisualDescriptor,
+  categories: string[]
+): Promise<Data> {
+  const attributes = await getVisualDataFields(visual);
   const exportedData = await exportData(visual);
   if (!exportedData) {
     const CGVisual = global.componentGraph.dashboard.visualizations.find(
@@ -541,6 +665,7 @@ export async function getData(visual: any, categories: string[]) {
     );
     return CGVisual?.data.data;
   }
+
   const visualData = exportedData.data;
   const data = [];
 
@@ -577,7 +702,7 @@ export async function getData(visual: any, categories: string[]) {
     }
   }
 
-  return data;
+  return { attributes, data };
 }
 
 export async function getLineClusteredColumnComboChartInsights(
@@ -602,7 +727,7 @@ export async function getLineClusteredColumnComboChartInsights(
   }
 
   const value = await getSpecificDataPoint(
-    visualData,
+    visualData.data,
     "Category",
     allData[middelOfYValues],
     "Value",
@@ -610,13 +735,13 @@ export async function getLineClusteredColumnComboChartInsights(
     axisValues[middelOfXValues]
   );
   const highestCategory = await getHighestCategory(
-    visualData,
+    visualData.data,
     "Value",
     allData,
     "Category"
   );
   const highestValue = await getHighestValue(
-    visualData,
+    visualData.data,
     "Value",
     allData,
     "Category",
@@ -662,7 +787,7 @@ export async function getDefaultInsights(visual: any, insights: string[]) {
   }
 
   const value = await getSpecificDataPoint(
-    visualData,
+    visualData.data,
     legend,
     legendValues[middelOfLegendValues],
     dataName,
@@ -670,13 +795,13 @@ export async function getDefaultInsights(visual: any, insights: string[]) {
     axisValues[middelOfYValues]
   );
   const highestCategory = await getHighestCategory(
-    visualData,
+    visualData.data,
     dataName,
     legendValues,
     legend
   );
   const highestValue = await getHighestValue(
-    visualData,
+    visualData.data,
     dataName,
     legendValues,
     legend,

@@ -1,8 +1,11 @@
 import Title from "./Title";
-import Visualization from "./Visualization";
-import Global_Filter from "./Global_Filter";
+// import Visualization from "./Visualization";
+import GlobalFilter from "./GlobalFilter";
 import { page, visuals } from "./ComponentGraph";
-
+import { getOperation, getPageFilters } from "./helperFunctions";
+import Filter from "./Filter";
+import Visualization from "./Visualization";
+import { VisualDescriptor } from "powerbi-client";
 // Dashboard
 export default class Dashboard {
   title: Title;
@@ -10,7 +13,7 @@ export default class Dashboard {
   task: string;
   layout: string;
   visualizations: Visualization[];
-  global_filter: Global_Filter;
+  globalFilter: GlobalFilter;
 
   constructor() {
     this.title = new Title();
@@ -18,16 +21,32 @@ export default class Dashboard {
     this.task = "";
     this.layout = "";
     this.visualizations = [];
-    this.global_filter = new Global_Filter();
+    this.globalFilter = new GlobalFilter();
   }
 
   async setDashboardData() {
-    this.title.setTitle(null);
+    this.title = new Title();
     this.purpose = this.getPurposeData();
     this.task = this.getTaskData();
-    await this.getVisualsData();
-    await this.global_filter.setGlobalFilter();
+    const vis = new Visualization();
+    this.visualizations = await vis.getVisualizations();
+    this.globalFilter = await this.getGlobalFilter();
     this.layout = this.getLayoutData();
+  }
+
+  async getGlobalFilter(): Promise<GlobalFilter> {
+    this.globalFilter = new GlobalFilter();
+
+    const pageFilters = await getPageFilters(page);
+    for (const pageFilter of pageFilters) {
+      const filter = new Filter();
+      filter.attribute = <string>pageFilter?.attribute;
+      filter.values = <string[]>pageFilter?.values;
+      filter.operation = getOperation(<string>pageFilter?.operator);
+
+      this.globalFilter.filters.push(filter);
+    }
+    return this.globalFilter;
   }
 
   getPurposeData() {
@@ -48,7 +67,7 @@ export default class Dashboard {
 
   getLayoutData() {
     const numberOfVisuals = visuals.length;
-    const numberOfFilters = this.global_filter.filters.length;
+    const numberOfFilters = this.globalFilter.filters.length;
     const defaultLayoutText =
       "This dashboard consists of " +
       numberOfVisuals +
@@ -58,11 +77,29 @@ export default class Dashboard {
     return defaultLayoutText;
   }
 
-  async getVisualsData() {
-    for (const visual of visuals) {
-      const visualisation = new Visualization();
-      await visualisation.setVisualData(visual);
-      this.visualizations.push(visualisation);
-    }
-  }
+  // async getVisualsData() {
+  //   // why is this needed?
+  //   for (const visual of visuals) {
+  //     const visualisation = new Visualization();
+  //     await visualisation.setVisualData(visual);
+  //     this.visualizations.push(visualisation);
+  //   }
+  // }
+
+  // async getVisualsData() {
+  //   try {
+  //     const promises: Promise<any>[] = [];
+
+  //     for (const visual of visuals) {
+  //       const visualisation = new Visualization();
+  //       promises.push(visualisation.setVisualData(visual));
+  //     }
+  //     const results = await Promise.all(promises);
+  //     for (const result of results) {
+  //       this.visualizations.push(result);
+  //     }
+  //   } catch (error) {
+  //     console.log("Error in getting Visuals Data", error);
+  //   }
+  // }
 }

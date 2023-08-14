@@ -1,4 +1,4 @@
-import { Report, Page } from "powerbi-client";
+import { Report, Page, VisualDescriptor } from "powerbi-client";
 import ComponentGraph from "../../componentGraph/ComponentGraph";
 import { TraversalElement } from "./traversal";
 
@@ -311,7 +311,7 @@ export function setReport(newReport: Report) {
 export function setVisuals(newCurrentVisuals: any[]) {
   currentVisuals = newCurrentVisuals;
 }
-export function setAllVisuals(newAllVisuals: any[]) {
+export function setAllVisuals(newAllVisuals: VisualDescriptor[]) {
   allVisuals = newAllVisuals;
 }
 export function setPage(newPage: Page) {
