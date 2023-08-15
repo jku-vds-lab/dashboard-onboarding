@@ -54,6 +54,7 @@ import {
   isGroup,
 } from "./traversal";
 import { reportId } from "../../Config";
+import Visualization from "../../componentGraph/Visualization";
 
 export function addContainerOffset(cardHeight: number) {
   const rect = document
@@ -988,37 +989,42 @@ export async function getVisualInfos(visual: any) {
     insightImages: [] as any[],
     insightInfos: [] as string[],
   };
-  switch (type) {
-    case "Card":
-    case "Multi Row Card":
-      visualInfos = await getCardInfo(visual);
-      break;
-    case "Line Clustered Column Combo Chart":
-      visualInfos = await getLineClusteredColumnComboChartInfo(visual);
-      break;
-    case "Line Chart":
-      visualInfos = await getLineChartInfo(visual);
-      break;
-    case "Clustered Bar Chart":
-      visualInfos = await getClusteredBarChartInfo(visual);
-      break;
-    case "Clustered Column Chart":
-      visualInfos = await getClusteredColumnChartInfo(visual);
-      break;
-    case "Slicer":
-      visualInfos = await getSlicerInfo(visual);
-      break;
-    default:
-      break;
+  try {
+    switch (type) {
+      case "Card":
+      case "Multi Row Card":
+        visualInfos = await getCardInfo(visual);
+        break;
+      case "Line Clustered Column Combo Chart":
+        visualInfos = await getLineClusteredColumnComboChartInfo(visual);
+        break;
+      case "Line Chart":
+        visualInfos = await getLineChartInfo(visual);
+        break;
+      case "Clustered Bar Chart":
+        visualInfos = await getClusteredBarChartInfo(visual);
+        break;
+      case "Clustered Column Chart":
+        visualInfos = await getClusteredColumnChartInfo(visual);
+        break;
+      case "Slicer":
+        visualInfos = await getSlicerInfo(visual);
+        break;
+      default:
+        break;
+    }
+    const CGVisual = global.componentGraph.dashboard.visualizations.find(
+      (vis) => vis.id === visual.name
+    );
+    const insights = CGVisual?.insights?.insights!;
+    for (const insight of insights) {
+      visualInfos.insightImages.push("lightbulbImg");
+      visualInfos.insightInfos.push(insight);
+    }
+  } catch (error) {
+    console.log("Error in getVisualsInfo", error);
   }
-  const CGVisual = global.componentGraph.dashboard.visualizations.find(
-    (vis) => vis.id === visual.name
-  );
-  const insights = CGVisual?.insights?.insights!;
-  for (const insight of insights) {
-    visualInfos.insightImages.push("lightbulbImg");
-    visualInfos.insightInfos.push(insight);
-  }
+
   return visualInfos;
 }
 
@@ -1216,27 +1222,32 @@ export async function toggleFilter(open: boolean) {
   await global.report.updateSettings(newSettings);
 }
 
-export function getLocalFilterText(visual: any) {
-  const filters = visual?.filters.filters!;
-  const filterTexts = [];
-  for (const filter of filters) {
-    if (filter.operation !== "All") {
-      let valueText = dataToString(filter.values);
-      if (valueText !== "") {
-        valueText = " Its current value is " + valueText + ".";
+export function getLocalFilterText(visual: Visualization | undefined) {
+  let filterText = "";
+  try {
+    const filters = visual?.localFilters.localFilters!;
+    const filterTexts = [];
+    for (const filter of filters) {
+      if (filter.operation !== "All") {
+        let valueText = dataToString(filter.values);
+        if (valueText !== "") {
+          valueText = " Its current value is " + valueText + ".";
+        }
+        filterTexts.push(
+          "The operation " +
+            filter.operation +
+            " is execuded for " +
+            filter.attribute +
+            "." +
+            valueText +
+            "<br>"
+        );
       }
-      filterTexts.push(
-        "The operation " +
-          filter.operation +
-          " is execuded for " +
-          filter.attribute +
-          "." +
-          valueText +
-          "<br>"
-      );
     }
+    filterText = dataToStringNoConnection(filterTexts);
+  } catch (error) {
+    console.log("Error in getting local filter text", error);
   }
-  const filterText = dataToStringNoConnection(filterTexts);
 
   return filterText;
 }

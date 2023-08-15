@@ -153,7 +153,7 @@ async function setVisualsInfo(id: string) {
 
     return settingsVisual;
   } catch (error) {
-    console.error(error);
+    console.error("Error in setVisualsInfo", error);
   }
 }
 
