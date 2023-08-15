@@ -50,6 +50,7 @@ export default class LineChart extends Visualization {
     this.dataName = (this.dataValue && this.dataValue.attribute) || "";
 
     this.getGeneralInfo();
+    this.getInteractionInfo();
 
     return this.text;
   }

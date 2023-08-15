@@ -106,9 +106,13 @@ class OutputView extends React.Component<AppProps, AppState> {
         reportContainer.appendChild(document.createElement("br"));
       });
       console.log("Error", this.state.error);
-    } else if (this.state.accessToken !== "" && this.state.embedUrl !== "") {
-      // comment this condition
-      // console.log("else if");
+    } else if (
+      !global.isReportRendered &&
+      this.state.accessToken !== "" &&
+      this.state.embedUrl !== ""
+    ) {
+      global.setIsReportRendered(true);
+
       const embedConfiguration: IEmbedConfiguration = {
         type: "report",
         tokenType: models.TokenType.Aad,
@@ -138,15 +142,10 @@ class OutputView extends React.Component<AppProps, AppState> {
 
       // Triggers when a content schema is successfully loaded
       report.on("loaded", async function () {
-        // if (!isReportLoaded) {
         console.log("--> triggers onload report within the ouptut view");
         global.setIsEditor(true);
         onboarding.onLoadReport();
         global.setIsLoaded(true);
-        // isReportLoaded = true;
-        // console.log("Provectories report");
-        // provectories(report);
-        // }
       });
 
       // Clear any other rendered handler events
@@ -154,6 +153,7 @@ class OutputView extends React.Component<AppProps, AppState> {
 
       // Triggers when a content is successfully embedded in UI
       report.on("rendered", async function () {
+        console.log("--> Re-rendering the report within the output view");
         await onboarding.onReloadReport();
       });
 

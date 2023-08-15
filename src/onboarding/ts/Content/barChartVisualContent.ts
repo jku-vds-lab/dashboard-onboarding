@@ -42,6 +42,7 @@ export default class BarChart extends Visualization {
 
   async getClusteredBarChartInfo(visual: VisualDescriptor) {
     this.barChart = await this.getVisualization(visual);
+
     this.axisValue = this.barChart.encoding.xAxes[0];
     this.axis = this.barChart.encoding.yAxes[0]
       ? this.barChart.encoding.yAxes[0].attribute!
@@ -63,6 +64,7 @@ export default class BarChart extends Visualization {
   getGeneralInfo() {
     this.text.generalImages.push("infoImg");
     this.text.generalInfos.push("This element is a bar chart.");
+    debugger;
 
     const dataString = helpers.dataToString(this.barChart?.data.attributes!);
     const channelString = helpers.dataToString(this.barChart?.channel.channel!);
