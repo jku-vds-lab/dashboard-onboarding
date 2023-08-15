@@ -1,5 +1,6 @@
 import * as helpers from "./helperFunctions";
 import * as global from "./globalVariables";
+import { VisualDescriptor } from "powerbi-client";
 
 export async function getCardInfo(visual: any) {
   const CGVisual = global.componentGraph.dashboard.visualizations.find(
@@ -75,12 +76,7 @@ export async function getCardChanges(visual: any) {
   return visualInteractionInfo;
 }
 
-export async function getSlicerInfo(visual: any) {
-  const CGVisual = global.componentGraph.dashboard.visualizations.find(
-    (vis) => vis.id === visual.name
-  );
-  const filterName = CGVisual?.encoding.values[0];
-
+export function getSlicerInfo(visual: VisualDescriptor) {
   const generalImages = [];
   const generalInfos = [];
   const interactionImages = [];
@@ -88,38 +84,49 @@ export async function getSlicerInfo(visual: any) {
   const insightImages: any[] = [];
   const insightInfos: string[] = [];
 
-  generalImages.push("infoImg");
-  generalInfos.push(CGVisual?.description!);
-
-  if (filterName) {
-    generalImages.push("dataImg");
-    generalInfos.push(
-      "With this one you can filter by " +
-        filterName.attribute +
-        ". The purpose of this chart is to " +
-        CGVisual?.task +
-        "."
+  try {
+    const CGVisual = global.componentGraph.dashboard.visualizations.find(
+      (vis) => vis.id === visual.name
     );
-  }
+    const filterName = CGVisual?.encoding.values[0];
 
-  const filterText = helpers.getLocalFilterText(CGVisual);
-  if (filterText !== "") {
-    generalImages.push("filterImg");
-    generalInfos.push("This chart has the following filters:<br>" + filterText);
-  }
+    generalImages.push("infoImg");
+    generalInfos.push(CGVisual?.description!);
 
-  interactionImages.push("interactImg");
-  interactionInfos.push(CGVisual?.interactions.description!);
+    if (filterName) {
+      generalImages.push("dataImg");
+      generalInfos.push(
+        "With this one you can filter by " +
+          filterName.attribute +
+          ". The purpose of this chart is to " +
+          CGVisual?.task +
+          "."
+      );
+    }
 
-  if (filterName) {
-    interactionImages.push("elemClickImg");
-    interactionInfos.push(
-      "With clicking on a " +
-        CGVisual?.mark +
-        " you can filter the report by " +
-        filterName.attribute +
-        "."
-    );
+    const filterText = helpers.getLocalFilterText(CGVisual);
+    if (filterText !== "") {
+      generalImages.push("filterImg");
+      generalInfos.push(
+        "This chart has the following filters:<br>" + filterText
+      );
+    }
+
+    interactionImages.push("interactImg");
+    interactionInfos.push(CGVisual?.interactions.description!);
+
+    if (filterName) {
+      interactionImages.push("elemClickImg");
+      interactionInfos.push(
+        "With clicking on a " +
+          CGVisual?.mark +
+          " you can filter the report by " +
+          filterName.attribute +
+          "."
+      );
+    }
+  } catch (error) {
+    console.log("Error in getSlicerInfo", error);
   }
 
   return {
