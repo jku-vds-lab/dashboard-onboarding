@@ -3,135 +3,160 @@ import * as global from "./../globalVariables";
 import NoviceText from "./noviceText";
 import BasicTextFormat from "./Format/basicTextFormat";
 import Visualization from "../../../componentGraph/Visualization";
-import Data from "../../../componentGraph/Data";
-import Insight from "../../../componentGraph/Insight";
-import Title from "../../../componentGraph/Title";
-import VisualChannel from "../../../componentGraph/VisualChannel";
-import Interactions from "../../../componentGraph/Interactions";
-import Encoding from "../../../componentGraph/Encoding";
-import * as helper from "../../../componentGraph/helperFunctions";
-import LocalFilter from "../../../componentGraph/LocalFilter";
+import { VisualDescriptor } from "powerbi-client";
+import XAxis from "../../../componentGraph/XAxis";
+import Legend from "../../../componentGraph/Legend";
+import YAxis from "../../../componentGraph/YAxis";
 
-// this should be a class extending Visualization class
 export default class LineChart extends Visualization {
+  lineChart: Visualization;
+  text: BasicTextFormat;
+  noviceText: NoviceText;
+  axisValue: XAxis;
+  axis: string;
+  legendValue: Legend;
+  legend: string;
+  dataValue: YAxis;
+  dataName: string;
+
   constructor() {
     super();
+
+    this.text = {
+      generalImages: [],
+      generalInfos: [],
+      insightImages: [],
+      insightInfos: [],
+      interactionImages: [],
+      interactionInfos: [],
+    };
+    this.lineChart = new Visualization();
+    this.noviceText = new NoviceText();
+    this.axisValue = new XAxis();
+    this.axis = "";
+    this.legendValue = new Legend();
+    this.legend = "";
+    this.dataValue = new YAxis();
+    this.dataName = "";
   }
-}
 
-export async function getLineChartInfo(visual: any) {
-  const CGVisual = global.componentGraph.dashboard.visualizations.find(
-    (vis) => vis.id === visual.name
-  );
-  const chartType = "line";
-  const noviceText = new NoviceText();
-  const axisValue = CGVisual?.encoding.xAxes[0];
-  const axis = (axisValue && axisValue.attribute) || "";
-  const legendValue = CGVisual?.encoding.legends[0];
-  const legend = (legendValue && legendValue.attribute) || "";
-  const dataValue = CGVisual?.encoding.yAxes[0];
-  const dataName = (dataValue && dataValue.attribute) || "";
+  async getLineChartInfo(visual: VisualDescriptor) {
+    this.lineChart = await this.getVisualization(visual);
+    this.axisValue = this.lineChart.encoding.xAxes[0];
+    this.axis = this.axisValue && this.axisValue.attribute;
+    this.legendValue = this.lineChart?.encoding.legends[0];
+    this.legend = this.legendValue && this.legendValue.attribute;
+    this.dataValue = this.lineChart?.encoding.yAxes[0];
+    this.dataName = (this.dataValue && this.dataValue.attribute) || "";
 
-  const text: BasicTextFormat = {
-    generalImages: [],
-    generalInfos: [],
-    insightImages: [],
-    insightInfos: [],
-    interactionImages: [],
-    interactionInfos: [],
-  };
+    this.getGeneralInfo();
 
-  text.generalImages.push("infoImg");
-  // description for each visual can be added here
-  text.generalInfos.push("This element is a line chart.");
-
-  const dataString = helpers.dataToString(CGVisual?.data.attributes!);
-  const channelString = helpers.dataToString(CGVisual?.channel.channel!);
-  text.generalImages.push("dataImg");
-
-  const purposeText = noviceText.purposeText(
-    chartType,
-    channelString,
-    dataString,
-    CGVisual?.task
-  );
-
-  text.generalInfos.push(purposeText);
-
-  let lineInfo = "";
-  if (axis) {
-    lineInfo += noviceText.axisText(chartType, CGVisual?.mark, dataName, axis);
+    return this.text;
   }
-  if (legend) {
-    lineInfo += noviceText.legendText(chartType, CGVisual?.mark, legend);
-  }
-  text.generalImages.push("lineGraphImg");
-  text.generalInfos.push(lineInfo);
 
-  // interaction
+  getGeneralInfo() {
+    this.text.generalImages.push("infoImg");
+    this.text.generalInfos.push("This element is a line chart.");
 
-  text.interactionImages.push("interactImg");
-  // text.interactionInfos.push(CGVisual?.interactions.description!);
-
-  let interactionInfo = noviceText.interactionClickText(
-    chartType,
-    axis,
-    legend,
-    CGVisual?.mark
-  );
-  if (CGVisual?.encoding.hasTooltip) {
-    interactionInfo += noviceText.interactionHoverText(
-      chartType,
-      CGVisual?.mark
+    const dataString = helpers.dataToString(this.lineChart?.data.attributes!);
+    const channelString = helpers.dataToString(
+      this.lineChart?.channel.channel!
     );
-  }
-  text.interactionImages.push("elemClickImg");
-  text.interactionInfos.push(interactionInfo);
+    this.text.generalImages.push("dataImg");
 
-  if (axisValue && axisValue.isVisible) {
-    text.generalImages.push("xAxisImg");
-    text.generalInfos.push(
-      "The X-axis displays the values of the " + axis + "."
+    const purposeText = this.noviceText.purposeText(
+      this.lineChart.type,
+      channelString,
+      dataString,
+      this.lineChart?.task
     );
-    text.interactionImages.push("axisClickImg");
-    text.interactionInfos.push(
-      "When clicking on one of the x-axis-labels you can filter the report by " +
-        axis +
-        "."
-    );
-  }
 
-  if (dataValue && dataValue.isVisible) {
-    text.generalImages.push("yAxisImg");
-    text.generalInfos.push(
-      "The Y-axis displays the values of the " + dataName + "."
-    );
-  }
+    this.text.generalInfos.push(purposeText);
 
-  if (legendValue && legendValue.isVisible) {
-    text.generalImages.push("legendImg");
-    text.generalInfos.push(
-      "The legend displays the values of the " +
-        legend +
-        " and its corresponding color."
-    );
-    text.interactionImages.push("legendClickImg");
-    text.interactionInfos.push(
-      "When clicking on one of the labels in the legend you can filter the report by " +
-        legend +
-        "."
-    );
+    let lineInfo = "";
+    if (this.axis) {
+      lineInfo += this.noviceText.axisText(
+        this.lineChart.type,
+        this.lineChart?.mark,
+        this.dataName,
+        this.axis
+      );
+    }
+    if (this.legend) {
+      lineInfo += this.noviceText.legendText(
+        this.lineChart.type,
+        this.lineChart?.mark,
+        this.legend
+      );
+    }
+    this.text.generalImages.push("lineGraphImg");
+    this.text.generalInfos.push(lineInfo);
   }
 
-  const filterText = helpers.getLocalFilterText(CGVisual);
-  if (filterText !== "") {
-    text.generalImages.push("filterImg");
-    text.generalInfos.push(
-      "This chart has the following filters:<br>" + filterText
+  getInteractionInfo() {
+    this.text.interactionImages.push("interactImg");
+    // text.interactionInfos.push(CGVisual?.interactions.description!); // this should be the function down there
+
+    let interactionInfo = this.noviceText.interactionClickText(
+      this.lineChart.type,
+      this.axis,
+      this.legend,
+      this.lineChart?.mark
     );
+    if (this.lineChart?.encoding.hasTooltip) {
+      interactionInfo += this.noviceText.interactionHoverText(
+        this.lineChart.type,
+        this.lineChart?.mark
+      );
+    }
+    this.text.interactionImages.push("elemClickImg");
+    this.text.interactionInfos.push(interactionInfo);
+
+    if (this.axisValue && this.axisValue.isVisible) {
+      this.text.generalImages.push("xAxisImg");
+      this.text.generalInfos.push(
+        "The X-axis displays the values of the " + this.axis + "."
+      );
+      this.text.interactionImages.push("axisClickImg");
+      this.text.interactionInfos.push(
+        "When clicking on one of the x-axis-labels you can filter the report by " +
+          this.axis +
+          "."
+      );
+    }
+
+    if (this.dataValue && this.dataValue.isVisible) {
+      this.text.generalImages.push("yAxisImg");
+      this.text.generalInfos.push(
+        "The Y-axis displays the values of the " + this.dataName + "."
+      );
+    }
+
+    if (this.legendValue && this.legendValue.isVisible) {
+      this.text.generalImages.push("legendImg");
+      this.text.generalInfos.push(
+        "The legend displays the values of the " +
+          this.legend +
+          " and its corresponding color."
+      );
+      this.text.interactionImages.push("legendClickImg");
+      this.text.interactionInfos.push(
+        "When clicking on one of the labels in the legend you can filter the report by " +
+          this.legend +
+          "."
+      );
+    }
+
+    const filterText = helpers.getLocalFilterText(this.lineChart);
+    if (filterText !== "") {
+      this.text.generalImages.push("filterImg");
+      this.text.generalInfos.push(
+        "This chart has the following filters:<br>" + filterText
+      );
+    }
   }
 
-  return text;
+  getInsightInfo() {}
 }
 
 export async function getLineChartInteractionExample(visual: any) {
@@ -172,6 +197,7 @@ export async function getLineChartInteractionExample(visual: any) {
   return interactionInfo;
 }
 
+// this was originally a part of Interactions.ts
 // getInteractionDescription() {
 //   const attributeString = dataToString(this.interactionAttributes);
 //   const chartNamesHighlighting = visuals

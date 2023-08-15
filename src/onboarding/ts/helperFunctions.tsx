@@ -29,7 +29,7 @@ import {
 } from "./showReportChanges";
 import { getCardInfo, getSlicerInfo } from "./basicVisualContent";
 import { getLineClusteredColumnComboChartInfo } from "./complexVisualContent";
-import { getLineChartInfo } from "./Content/lineChartVisualContent";
+import LineChart from "./Content/lineChartVisualContent";
 import {
   getClusteredBarChartInfo,
   getClusteredColumnChartInfo,
@@ -55,6 +55,8 @@ import {
 } from "./traversal";
 import { reportId } from "../../Config";
 import Visualization from "../../componentGraph/Visualization";
+import BarChart from "./Content/barChartVisualContent";
+import ColumnChart from "./Content/columnChartVisualContent";
 
 export function addContainerOffset(cardHeight: number) {
   const rect = document
@@ -999,13 +1001,16 @@ export async function getVisualInfos(visual: any) {
         visualInfos = await getLineClusteredColumnComboChartInfo(visual);
         break;
       case "Line Chart":
-        visualInfos = await getLineChartInfo(visual);
+        const lineChart = new LineChart();
+        visualInfos = await lineChart.getLineChartInfo(visual);
         break;
       case "Clustered Bar Chart":
-        visualInfos = await getClusteredBarChartInfo(visual);
+        const barChart = new BarChart();
+        visualInfos = await barChart.getClusteredBarChartInfo(visual);
         break;
       case "Clustered Column Chart":
-        visualInfos = await getClusteredColumnChartInfo(visual);
+        const columnChart = new ColumnChart();
+        visualInfos = await columnChart.getClusteredColumnChartInfo(visual);
         break;
       case "Slicer":
         visualInfos = await getSlicerInfo(visual);
