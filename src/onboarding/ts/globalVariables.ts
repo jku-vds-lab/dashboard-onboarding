@@ -59,8 +59,6 @@ export let basicTraversal: TraversalElement[] = [];
 
 export let isEditor: boolean = false;
 
-export let isReportRendered: boolean = false;
-
 export enum infoStatus {
   original = "original",
   changed = "changed",
@@ -250,10 +248,6 @@ export function createInteractionExample() {
     nextVisualHint: "",
     visuals: [] as InteractionVisual[],
   };
-}
-
-export function setIsReportRendered(status: boolean) {
-  isReportRendered = status;
 }
 
 export function setFilterOpenedWidth(newFilterOpenedWidth: number) {

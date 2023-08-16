@@ -44,7 +44,7 @@ async def upload_video(video: UploadFile = File(...)):
 
 @app.post("/chat-completion")
 async def chat_completion(model_values: ModelValues = Body(...)):
-    os.environ['OPENAI_API_KEY'] = '' #key goes here
+    os.environ['OPENAI_API_KEY'] = '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' #key goes here
     openai.api_key = os.environ.get('OPENAI_API_KEY')
     openai.Model.list()
     response = openai.ChatCompletion.create(

@@ -40,12 +40,13 @@ export default class Visualization {
   }
 
   async getVisualization(visual: VisualDescriptor) {
+    let visualization = new Visualization();
     try {
-      await this.setVisualization(visual);
+      visualization = await this.setVisualization(visual);
     } catch (error) {
       console.log("Error in getting Visuals Data", error);
     }
-    return this;
+    return visualization;
   }
 
   async getVisualizations() {
@@ -54,7 +55,7 @@ export default class Visualization {
       const promises: Promise<any>[] = [];
 
       for (const visual of visuals) {
-        promises.push(this.setVisualization(visual));
+        promises.push(this.getVisualization(visual));
       }
       const results = await Promise.all(promises);
       for (const result of results) {
@@ -68,8 +69,8 @@ export default class Visualization {
 
   // change from VisualDescriptor to Visualization
   async setVisualization(visual: VisualDescriptor) {
+    const visualization = new Visualization();
     try {
-      const visualization = new Visualization();
       visualization.id = visual.name;
       visualization.type = helper.toCamelCaseString(
         helper.getVisualType(visual)
@@ -98,9 +99,9 @@ export default class Visualization {
         visualization.encoding = results[6];
         visualization.localFilters = results[7];
       }
-      return visualization;
     } catch (error) {
       console.log("Error in setting visual data", error);
     }
+    return visualization;
   }
 }

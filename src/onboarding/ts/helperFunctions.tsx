@@ -1159,15 +1159,19 @@ export function removeOnboardingOverlay() {
 }
 
 export function resizeEmbed(filterWidth: number) {
-  document.getElementById(
-    "embed-container"
-  )!.style.cssText = `top:0px;left:0px;width:${
-    global.reportWidth! + filterWidth
-  }px;height:${
-    global.reportHeight! +
-    global.settings.reportOffset.top +
-    global.footerHeight
-  }px;`;
+  try {
+    document.getElementById(
+      "embed-container"
+    )!.style.cssText = `top:0px;left:0px;width:${
+      global.reportWidth! + filterWidth
+    }px;height:${
+      global.reportHeight! +
+      global.settings.reportOffset.top +
+      global.footerHeight
+    }px;`;
+  } catch (error) {
+    console.log("Error in resizeEmbed", error);
+  }
 }
 
 export function saveIntInput(inputId: string) {

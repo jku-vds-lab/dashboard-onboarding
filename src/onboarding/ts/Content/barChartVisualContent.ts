@@ -64,7 +64,6 @@ export default class BarChart extends Visualization {
   getGeneralInfo() {
     this.text.generalImages.push("infoImg");
     this.text.generalInfos.push("This element is a bar chart.");
-    debugger;
 
     const dataString = helpers.dataToString(this.barChart?.data.attributes!);
     const channelString = helpers.dataToString(this.barChart?.channel.channel!);

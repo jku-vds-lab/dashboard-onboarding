@@ -39,7 +39,7 @@ import {
 import { replacer } from "../../componentGraph/ComponentGraph";
 import { basicTraversalStrategy } from "./traversalStrategies";
 
-export async function onLoadReport() {
+export async function onLoadReport(isMainPage: boolean) {
   console.log("Report is loading");
   try {
     await helpers.getActivePage();
@@ -50,34 +50,35 @@ export async function onLoadReport() {
       helpers.handelNewReport(),
     ]);
 
-    if (results.length > 0) {
+    if (results.length > 0 && isMainPage) {
       const trav = await basicTraversalStrategy();
       global.setBasicTraversal(trav);
 
       helpers.createEditOnboardingButtons();
       helpers.createOnboardingButtons();
-
-      resize();
-
-      elements.addStylesheet("/onboarding/css/onboarding.css");
-
-      createGuidedTour();
-    } else {
-      console.log("Promises unresolved");
     }
+
+    resize(isMainPage);
+    elements.addStylesheet("/onboarding/css/onboarding.css");
+
+    createGuidedTour();
   } catch (error) {
     console.log("Error on loading the report", error);
   }
 }
 
 export async function onReloadReport() {
-  const oldPage = global.page.name;
-  await helpers.getActivePage();
+  try {
+    const oldPage = global.page.name;
+    await helpers.getActivePage();
 
-  if (global.page.name !== oldPage && global.page.displayName !== "Info") {
-    await helpers.getVisualsfromPowerBI();
-    await createSettings();
-    helpers.resizeEmbed(global.filterOpenedWidth);
+    if (global.page.name !== oldPage && global.page.displayName !== "Info") {
+      await helpers.getVisualsfromPowerBI();
+      await createSettings();
+      helpers.resizeEmbed(global.filterOpenedWidth);
+    }
+  } catch (error) {
+    console.log("Erron reloading the report", error);
   }
 }
 
@@ -93,8 +94,8 @@ export async function onDataSelected(event: { detail: { dataPoints: any[] } }) {
   }
 }
 
-export async function reloadOnboarding() {
-  await resize();
+export async function reloadOnboarding(isMainPage: boolean) {
+  await resize(isMainPage);
   await reloadOnboardingAt();
 }
 

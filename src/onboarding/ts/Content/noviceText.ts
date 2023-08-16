@@ -48,8 +48,8 @@ export default class NoviceText {
     hoverAction: " for detailed information",
   };
 
-  async sendRequestToGPT() {
-    const formBody: FormBody = { prompt: "Who is Zuckerberg", tokens: 20 };
+  async sendRequestToGPT(prompt: string) {
+    const formBody: FormBody = { prompt: prompt, tokens: 20 };
 
     const response = await fetch("http://127.0.0.1:8000/chat-completion", {
       method: "POST",
@@ -65,70 +65,50 @@ export default class NoviceText {
 
   purposeText(visual: string, channel: string, data: string, task?: string) {
     let text = "";
+    text =
+      this.pronouns.it +
+      this.actions.displays +
+      data +
+      this.actions.encoded +
+      this.prepositions.by +
+      channel +
+      this.punctuations.dot +
+      this.lineBreak +
+      this.articles.the +
+      this.actions.purpose +
+      this.verbs.is +
+      task +
+      this.punctuations.dot +
+      this.lineBreak;
 
-    switch (visual) {
-      case "line":
-        text =
-          this.pronouns.it +
-          this.actions.displays +
-          data +
-          this.actions.encoded +
-          this.prepositions.by +
-          channel +
-          this.punctuations.dot +
-          this.lineBreak +
-          this.articles.the +
-          this.actions.purpose +
-          this.verbs.is +
-          task +
-          this.punctuations.dot +
-          this.lineBreak;
-        break;
-
-      default:
-        break;
-    }
     return text;
   }
 
   axisText(visual: string, mark?: string, dataName?: string, axis?: string) {
     let text = "";
-    switch (visual) {
-      case "line":
-        text =
-          this.articles.the +
-          mark +
-          this.axisInfo.line +
-          dataName +
-          this.prepositions.over +
-          this.articles.the.toLocaleLowerCase() +
-          axis +
-          this.punctuations.dot +
-          this.lineBreak;
-        break;
-
-      default:
-        break;
-    }
+    text =
+      this.articles.the +
+      mark +
+      this.axisInfo.line +
+      dataName +
+      this.prepositions.over +
+      this.articles.the.toLocaleLowerCase() +
+      axis +
+      this.punctuations.dot +
+      this.lineBreak;
     return text;
   }
 
   legendText(visual: string, mark?: string, legend?: string) {
     let text = "";
-    switch (visual) {
-      case "line":
-        text =
-          mark +
-          this.legendInfo.mark +
-          legend +
-          this.legendInfo.legend +
-          this.punctuations.dot +
-          this.lineBreak;
-        break;
+    text =
+      mark +
+      this.legendInfo.mark +
+      legend +
+      this.legendInfo.legend +
+      this.punctuations.dot +
+      this.lineBreak;
 
-      default:
-        break;
-    }
     return text;
   }
 
@@ -139,39 +119,29 @@ export default class NoviceText {
     mark?: string
   ) {
     let text = "";
-    switch (visual) {
-      case "line":
-        text =
-          this.interactionInfo.click +
-          mark +
-          this.interactionInfo.clickAction +
-          axis +
-          this.punctuations.comma;
-        legend + this.punctuations.dot + this.lineBreak;
-        break;
 
-      default:
-        break;
-    }
+    text =
+      this.interactionInfo.click +
+      mark +
+      this.interactionInfo.clickAction +
+      axis +
+      this.punctuations.comma;
+    legend + this.punctuations.dot + this.lineBreak;
+
     return text;
   }
 
   interactionHoverText(visual: string, mark?: string) {
     let text = "";
-    switch (visual) {
-      case "line":
-        text =
-          this.lineBreak +
-          this.interactionInfo.hover +
-          mark +
-          this.interactionInfo.hoverAction +
-          this.punctuations.dot +
-          this.lineBreak;
-        break;
 
-      default:
-        break;
-    }
+    text =
+      this.lineBreak +
+      this.interactionInfo.hover +
+      mark +
+      this.interactionInfo.hoverAction +
+      this.punctuations.dot +
+      this.lineBreak;
+
     return text;
   }
 }

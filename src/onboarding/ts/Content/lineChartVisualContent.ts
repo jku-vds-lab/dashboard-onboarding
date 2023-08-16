@@ -42,6 +42,7 @@ export default class LineChart extends Visualization {
 
   async getLineChartInfo(visual: VisualDescriptor) {
     this.lineChart = await this.getVisualization(visual);
+
     this.axisValue = this.lineChart.encoding.xAxes[0];
     this.axis = this.axisValue && this.axisValue.attribute;
     this.legendValue = this.lineChart?.encoding.legends[0];
