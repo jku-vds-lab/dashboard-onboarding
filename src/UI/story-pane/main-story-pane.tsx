@@ -64,6 +64,7 @@ export default function StoryPane(props: Props) {
           default:
             if (nodeFullName) {
               await getVisualInfoInEditor(nodeFullName, 1);
+              // await getVisualDescInEditor(nodeFullName);
             }
             break;
         }

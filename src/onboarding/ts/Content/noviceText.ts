@@ -78,8 +78,8 @@ export default class NoviceText {
       this.actions.purpose +
       this.verbs.is +
       task +
-      this.punctuations.dot +
-      this.lineBreak;
+      this.punctuations.dot;
+    // this.lineBreak;
 
     return text;
   }

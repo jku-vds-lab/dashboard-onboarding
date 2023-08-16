@@ -34,6 +34,7 @@ import { textSize } from "./sizes";
 import { replacer } from "../../componentGraph/ComponentGraph";
 import { image } from "d3";
 import { getTraversalElement } from "./createSettings";
+import BasicTextFormat from "./Content/Format/basicTextFormat";
 
 export async function createInfoCard(
   visual: any,
@@ -324,7 +325,6 @@ export function previousInGroup() {
     visual.count
   );
   updateLookedAt(lookedAt);
-
   if (currentElement.id === "dashboard") {
     createInformationCard("dashboard", visual.count);
   } else if (currentElement.id === "globalFilter") {
@@ -340,6 +340,46 @@ export function previousInGroup() {
   }
 }
 
+// basic visual description viewer in editor
+// export async function getVisualDescInEditor(nodeFullName: string[]) {
+//   try {
+//     let visualInfos: BasicTextFormat = {
+//       generalImages: [],
+//       generalInfos: [],
+//       interactionImages: [],
+//       interactionInfos: [],
+//       insightImages: [],
+//       insightInfos: [],
+//     };
+
+//     const textBox = document.getElementById("textBox")! as HTMLTextAreaElement;
+//     textBox.innerHTML = "";
+
+//     if (nodeFullName) {
+//       const visual = global.allVisuals.find(function (visual) {
+//         return visual.name == nodeFullName[0];
+//       });
+
+//       visualInfos = await helpers.getVisualInfos(visual);
+//     }
+
+//     if (nodeFullName.includes("Interaction")) {
+//     } else if (nodeFullName.includes("Insight")) {
+//     } else {
+//       // this is general
+//       await createInfoList(
+//         visualInfos.generalImages,
+//         visualInfos.generalInfos,
+//         "textBox",
+//         true
+//       );
+//     }
+//   } catch (error) {
+//     console.log("Error in getting basic visual description in editor", error);
+//   }
+// }
+
+// perhaps this is for handline multiple nodes in a visual
 export async function getVisualInfoInEditor(idParts: string[], count: number) {
   let infos = [];
   let images = [];
@@ -359,7 +399,7 @@ export async function getVisualInfoInEditor(idParts: string[], count: number) {
   const visual = global.allVisuals.find(function (visual) {
     return visual.name == idParts[0];
   });
-  const visualInfos = await helpers.getVisualInfos(visual); // this waws the original await statement
+  const visualInfos = await helpers.getVisualInfos(visual); // this was the original await statement
 
   if (!visualData) {
     if (idParts.length > 2 && idParts[1] == "Insight") {

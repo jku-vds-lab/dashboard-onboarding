@@ -73,26 +73,30 @@ export default class LineChart extends Visualization {
       this.lineChart?.task
     );
 
+    this.text.generalImages.push("dataImg");
     this.text.generalInfos.push(purposeText);
 
-    let lineInfo = "";
     if (this.axis) {
-      lineInfo += this.noviceText.axisText(
+      const axisText = this.noviceText.axisText(
         this.lineChart.type,
         this.lineChart?.mark,
         this.dataName,
         this.axis
       );
+      this.text.generalImages.push("lineGraphImg");
+      this.text.generalInfos.push(axisText);
     }
     if (this.legend) {
-      lineInfo += this.noviceText.legendText(
+      const legendText = this.noviceText.legendText(
         this.lineChart.type,
         this.lineChart?.mark,
         this.legend
       );
+      this.text.generalImages.push("lineGraphImg");
+      this.text.generalInfos.push(legendText);
     }
-    this.text.generalImages.push("lineGraphImg");
-    this.text.generalInfos.push(lineInfo);
+
+    console.log("this is text", this.text.generalInfos);
   }
 
   getInteractionInfo() {
@@ -156,6 +160,7 @@ export default class LineChart extends Visualization {
         "This chart has the following filters:<br>" + filterText
       );
     }
+    debugger;
   }
 
   getInsightInfo() {}

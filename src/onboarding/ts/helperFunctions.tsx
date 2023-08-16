@@ -57,6 +57,7 @@ import { reportId } from "../../Config";
 import Visualization from "../../componentGraph/Visualization";
 import BarChart from "./Content/barChartVisualContent";
 import ColumnChart from "./Content/columnChartVisualContent";
+import BasicTextFormat from "./Content/Format/basicTextFormat";
 
 export function addContainerOffset(cardHeight: number) {
   const rect = document
@@ -981,15 +982,17 @@ export function getVisualIndex(name: string) {
   return index;
 }
 
-export async function getVisualInfos(visual: any) {
+export async function getVisualInfos(
+  visual: VisualDescriptor
+): Promise<BasicTextFormat> {
   const type = getTypeName(visual);
-  let visualInfos = {
-    generalImages: [] as any[],
-    generalInfos: [] as string[],
-    interactionImages: [] as any[],
-    interactionInfos: [] as string[],
-    insightImages: [] as any[],
-    insightInfos: [] as string[],
+  let visualInfos: BasicTextFormat = {
+    generalImages: [],
+    generalInfos: [],
+    interactionImages: [],
+    interactionInfos: [],
+    insightImages: [],
+    insightInfos: [],
   };
   try {
     switch (type) {
