@@ -50,7 +50,7 @@ export default function StoryPane(props: Props) {
 
   useEffect(() => {
     async function fillTextBox() {
-      console.log("Trying to fill the box", nodeBasicName);
+      // console.log("Trying to fill the box", nodeBasicName);
       if (nodeFullName?.length > 0) {
         switch (nodeBasicName) {
           case "dashboard":

@@ -155,7 +155,6 @@ export default class MyReport extends React.Component<AppProps, AppState> {
     nextContext: any
   ): boolean {
     if (this.state.accessToken == nextState.accessToken) {
-      console.log("The component will not update");
       return false;
     }
     return true;
