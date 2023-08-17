@@ -7,7 +7,7 @@ import {
   getVisualInfoInEditor,
   resetVisualChanges,
   saveVisualChanges,
-} from "../../onboarding/ts/infoCards";
+} from "../../onboarding/ts/Content/saveAndFetchContent";
 import {
   getDashboardInfoInEditor,
   resetDashboardChanges,

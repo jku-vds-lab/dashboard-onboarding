@@ -28,11 +28,11 @@ export let reportHeight: number;
 export let settings: Settings;
 export let componentGraph: ComponentGraph;
 export let report: Report;
-export let currentVisuals: any[];
-export let allVisuals: any[];
+export let currentVisuals: VisualDescriptor[];
+export let allVisuals: VisualDescriptor[];
 export let page: Page;
 export let selectedTargets: Target[];
-export let interactionSelectedVisual: any;
+export let interactionSelectedVisual: VisualDescriptor;
 
 export let explorationMode = false;
 export let isGuidedTour = false;
@@ -310,7 +310,7 @@ export function setComponentGraph(newComponentGraph: ComponentGraph) {
 export function setReport(newReport: Report) {
   report = newReport;
 }
-export function setVisuals(newCurrentVisuals: any[]) {
+export function setVisuals(newCurrentVisuals: VisualDescriptor[]) {
   currentVisuals = newCurrentVisuals;
 }
 export function setAllVisuals(newAllVisuals: VisualDescriptor[]) {

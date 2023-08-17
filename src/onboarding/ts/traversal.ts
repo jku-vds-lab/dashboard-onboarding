@@ -16,6 +16,7 @@ import { replacer } from "../../componentGraph/ComponentGraph";
 import { getTraversalElement } from "./createSettings";
 import { IDefaultNode } from "../../UI/nodes-canvas/nodes/defaultNode";
 import GroupNode, { IGroupNode } from "../../UI/nodes-canvas/nodes/groupNode";
+import { VisualDescriptor } from "powerbi-client";
 
 export let traversalStrategy: TraversalElement[] = [];
 export const lookedAtInGroup = createLookedAtInGroup();
@@ -135,7 +136,9 @@ export function createInformationCard(
       break;
     case "visual":
       createInfoCard(
-        global.allVisuals.find((vis) => vis.name === visualId),
+        <VisualDescriptor>(
+          global.allVisuals.find((vis) => vis.name === visualId)
+        ),
         count,
         categories!
       );

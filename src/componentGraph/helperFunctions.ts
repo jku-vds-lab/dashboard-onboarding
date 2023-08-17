@@ -96,7 +96,7 @@ export async function getVisualEncoding(visual: VisualDescriptor): Promise<Encod
   return encoding;
 }
 
-async function getVisibleObjects(visual: any) {
+async function getVisibleObjects(visual: VisualDescriptor) {
   const visibility = new Array<boolean>(3).fill(false);
   const VisualType = visual.type;
   switch (VisualType) {
@@ -706,7 +706,7 @@ export async function getData(
 }
 
 export async function getLineClusteredColumnComboChartInsights(
-  visual: any,
+  visual: VisualDescriptor,
   insights: string[]
 ) {
   const axis = await helper.getFieldColumn(visual, "Category");
@@ -771,7 +771,7 @@ export async function getLineClusteredColumnComboChartInsights(
     ".";
 }
 
-export async function getDefaultInsights(visual: any, insights: string[]) {
+export async function getDefaultInsights(visual: VisualDescriptor, insights: string[]) {
   const axes = await helper.getFieldColumns(visual, "Category");
   const axisValues = await helper.getSpecificDataInfo(visual, axes[0]);
   const dataName = await helper.getFieldMeasure(visual, "Y");

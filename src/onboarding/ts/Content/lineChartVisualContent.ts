@@ -162,7 +162,7 @@ export default class LineChart extends Visualization {
   getInsightInfo() {}
 }
 
-export async function getLineChartInteractionExample(visual: any) {
+export async function getLineChartInteractionExample(visual: VisualDescriptor) {
   const CGVisual = global.componentGraph.dashboard.visualizations.find(
     (vis) => vis.id === visual.name
   );

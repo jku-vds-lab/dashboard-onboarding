@@ -72,8 +72,10 @@ export default function NodesCanvas(props: Props) {
   function createIntitialNodes() {
     const initialNodes: Node[] = [];
     const createdNodes = createNodes(global.settings.traversalStrategy);
-    for (const node of createdNodes) {
-      initialNodes.push(node);
+    if (createdNodes) {
+      for (const node of createdNodes) {
+        initialNodes.push(node);
+      }
     }
     return initialNodes;
   }
@@ -90,6 +92,9 @@ export default function NodesCanvas(props: Props) {
         for (let i = 0; i < visuals.length; i++) {
           for (let j = 0; j < visuals[i].length; j++) {
             const visTitle = getTitle(visuals[i][j]);
+            if (!visTitle) {
+              return;
+            }
             const visType = getType(visTitle);
             const newNode = defaultNode().getNode(
               event,
@@ -127,6 +132,9 @@ export default function NodesCanvas(props: Props) {
         });
       } else {
         const visTitle = getTitle(elem);
+        if (!visTitle) {
+          return;
+        }
         const visType = getType(visTitle);
         const newNode = defaultNode().getNode(
           event,
@@ -386,9 +394,10 @@ export default function NodesCanvas(props: Props) {
     setNodes([]);
 
     const createdNodes = createNodes(traversal);
-
-    for (const node of createdNodes) {
-      setNodes((nds) => nds.concat(node));
+    if (createdNodes) {
+      for (const node of createdNodes) {
+        setNodes((nds) => nds.concat(node));
+      }
     }
   }
 
@@ -458,6 +467,9 @@ export default function NodesCanvas(props: Props) {
 
       default:
         const vis = findTraversalVisual(elem.element.id);
+        if (!vis) {
+          return;
+        }
         visTitle = createNodeTitle(vis?.type);
         const itemLength = checkDuplicateComponents(vis?.type);
         if (itemLength > 1) {

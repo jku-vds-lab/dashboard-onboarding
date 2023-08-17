@@ -1,7 +1,8 @@
 import * as helpers from "./helperFunctions";
 import * as global from "./globalVariables";
+import { VisualDescriptor } from "powerbi-client";
 
-export async function getLineChartInfo(visual: any) {
+export async function getLineChartInfo(visual: VisualDescriptor) {
   const CGVisual = global.componentGraph.dashboard.visualizations.find(
     (vis) => vis.id === visual.name
   );
@@ -136,7 +137,7 @@ export async function getLineChartInfo(visual: any) {
   };
 }
 
-export async function getLineChartInteractionExample(visual: any) {
+export async function getLineChartInteractionExample(visual: VisualDescriptor) {
   const CGVisual = global.componentGraph.dashboard.visualizations.find(
     (vis) => vis.id === visual.name
   );

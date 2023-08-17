@@ -11,6 +11,7 @@ import {
 import { getLineChartInteractionExample } from "./Content/lineChartVisualContent";
 import { getLineClusteredColumnComboChartInteractionExample } from "./complexVisualContent";
 import { findCurrentTraversalVisual } from "./traversal";
+import { VisualDescriptor } from "powerbi-client";
 
 export function startInteractionExample() {
   global.setInteractionMode(true);
@@ -21,7 +22,7 @@ export function startInteractionExample() {
   }
 }
 
-export async function createInteractionCard(visual: any) {
+export async function createInteractionCard(visual: VisualDescriptor) {
   disable.disableFrame();
   disable.createDisabledArea(visual);
 
@@ -66,7 +67,7 @@ export async function createInteractionCard(visual: any) {
   await createInteractionInfo(visual);
 }
 
-async function createInteractionInfo(visual: any) {
+async function createInteractionInfo(visual: VisualDescriptor) {
   const visualData = helpers.getDataOfInteractionVisual(visual);
   let interactionInfo;
 
@@ -92,7 +93,7 @@ async function createInteractionInfo(visual: any) {
   document.getElementById("contentText")!.innerHTML = interactionInfo;
 }
 
-export async function getInteractionText(visual: any) {
+export async function getInteractionText(visual: VisualDescriptor) {
   const type = helpers.getTypeName(visual);
   let interactionInfo;
 

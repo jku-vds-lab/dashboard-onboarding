@@ -2,7 +2,7 @@ import * as helpers from "./helperFunctions";
 import * as global from "./globalVariables";
 import { VisualDescriptor } from "powerbi-client";
 
-export async function getCardInfo(visual: any) {
+export async function getCardInfo(visual: VisualDescriptor) {
   const CGVisual = global.componentGraph.dashboard.visualizations.find(
     (vis) => vis.id === visual.name
   );
@@ -53,7 +53,7 @@ export async function getCardInfo(visual: any) {
   };
 }
 
-export async function getCardChanges(visual: any) {
+export async function getCardChanges(visual: VisualDescriptor) {
   const CGVisual = global.componentGraph.dashboard.visualizations.find(
     (vis) => vis.id === visual.name
   );

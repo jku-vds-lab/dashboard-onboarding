@@ -38,6 +38,7 @@ import {
 } from "./traversal";
 import { replacer } from "../../componentGraph/ComponentGraph";
 import { basicTraversalStrategy } from "./traversalStrategies";
+import { VisualDescriptor } from "powerbi-client";
 
 export async function onLoadReport(isMainPage: boolean) {
   console.log("Report is loading");
@@ -219,15 +220,20 @@ export function createOnboardingOverlay() {
     elements.createButton(attributes);
   }
 
-  global.currentVisuals.forEach(function (visual: any) {
+  global.currentVisuals.forEach(function (visual: VisualDescriptor) {
     if (
       findVisualIndexInTraversal(global.basicTraversal, visual.name, 1) !== -1
     ) {
+      const visualLayoutX = visual.layout.x ?? 0;
+      const visualLayoutY = visual.layout.y ?? 0;
+      const visualLayoutWidth = visual.layout.width ?? 0;
+      const visualLayoutHeight = visual.layout.height ?? 0;
+
       const style = helpers.getClickableStyle(
-        visual.layout.y / reportDivisor,
-        visual.layout.x / reportDivisor,
-        visual.layout.width / reportDivisor,
-        visual.layout.height / reportDivisor
+        visualLayoutY / reportDivisor,
+        visualLayoutX / reportDivisor,
+        visualLayoutWidth / reportDivisor,
+        visualLayoutHeight / reportDivisor
       );
       createOverlay(visual.name, style, 1, getStandartCategories(visual.type));
     }
@@ -286,13 +292,21 @@ export function createOverlayForVisuals(visuals: TraversalElement[]) {
         break;
       default:
         const visual = global.currentVisuals.find(
-          (vis: any) => vis.name === visualInfo.element.id
+          (vis: VisualDescriptor) => vis.name === visualInfo.element.id
         );
+        if (!visual) {
+          return;
+        }
+
+        const visualLayoutX = visual.layout.x ?? 0;
+        const visualLayoutY = visual.layout.y ?? 0;
+        const visualLayoutWidth = visual.layout.width ?? 0;
+        const visualLayoutHeight = visual.layout.height ?? 0;
         style = helpers.getClickableStyle(
-          visual.layout.y / reportDivisor,
-          visual.layout.x / reportDivisor,
-          visual.layout.width / reportDivisor,
-          visual.layout.height / reportDivisor
+          visualLayoutY / reportDivisor,
+          visualLayoutX / reportDivisor,
+          visualLayoutWidth / reportDivisor,
+          visualLayoutHeight / reportDivisor
         );
         style += "border: 5px solid lightgreen;";
         createOverlay(

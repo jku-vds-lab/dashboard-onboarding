@@ -383,7 +383,7 @@ export function createEnableButton(parentId: string) {
 
 export async function createInteractionExampleButton(
   parentId: string,
-  visual: any
+  visual: VisualDescriptor
 ) {
   if (!(await getVisualData(visual))) {
     return;
@@ -544,7 +544,7 @@ export function getCloseFunction() {
   }
 }
 
-export function getDataOfInteractionVisual(visual: any) {
+export function getDataOfInteractionVisual(visual: VisualDescriptor) {
   const visualsData = global.settings.interactionExample.visuals;
   const visualData = visualsData.find(function (data) {
     return data.id == visual.name;
@@ -555,7 +555,7 @@ export function getDataOfInteractionVisual(visual: any) {
 
 export function getDataOfVisual(
   traversal: TraversalElement[],
-  visual: any,
+  visual: VisualDescriptor,
   count: number
 ) {
   const traversalElements = traversal;
@@ -588,7 +588,12 @@ export function getDataWithId(
   count: number
 ) {
   const traversalElements = traversal;
-  let foundVisual;
+
+  let foundVisual: TraversalElement = {
+    element: null,
+    categories: [],
+    count: 0,
+  };
   for (const elem of traversalElements) {
     if (isGroup(elem.element)) {
       for (const groupTraversals of elem.element.visuals) {
@@ -616,6 +621,7 @@ export function getDataWithId(
       }
     }
   }
+  console.log("Found Visual", foundVisual);
   return foundVisual?.element;
 }
 
@@ -734,7 +740,7 @@ export function getGeneralInteractionInfo(
 }
 
 export async function getInteractionExampleChangedInfo(
-  visual: any,
+  visual: VisualDescriptor,
   visualData: global.InteractionVisual
 ) {
   const changedInfoStatus = visualData.interactionChangedInfosStatus;
@@ -756,7 +762,9 @@ export async function getInteractionExampleChangedInfo(
   return changedInfo;
 }
 
-export async function getInteractionExampleChangesText(visual: any) {
+export async function getInteractionExampleChangesText(
+  visual: VisualDescriptor
+) {
   let visualChangeInfo = `You can see that this visual was filtered by "Filter".<br>`;
 
   const type = getTypeName(visual);
@@ -798,7 +806,7 @@ export function getInteractionExampleGeneralInfo() {
 }
 
 export async function getInteractionExampleInteractionInfo(
-  visual: any,
+  visual: VisualDescriptor,
   visualData: global.InteractionVisual
 ) {
   const clickInfoStatus = visualData.clickInfosStatus;
@@ -861,7 +869,10 @@ export async function getSettings() {
   }
 }
 
-export async function getSpecificDataInfo(visual: any, dataName: string) {
+export async function getSpecificDataInfo(
+  visual: VisualDescriptor,
+  dataName: string
+) {
   const dataMap = await getVisualData(visual);
   if (!dataMap || !dataName) {
     return [];
@@ -895,33 +906,47 @@ export function getTargetInteractionFilter(target: string) {
 }
 
 export function getVisualCardPos(
-  visual: any,
+  visual: VisualDescriptor,
   cardWidth: number,
   offset: number
 ) {
-  const leftDistance = visual.layout.x / sizes.reportDivisor;
-  const rightX = leftDistance + visual.layout.width / sizes.reportDivisor;
-  const rightDistance = global.reportWidth! - rightX;
-
   const position = {
     x: 0,
     y: 0,
     pos: "",
   };
 
-  if (rightDistance > leftDistance || leftDistance < global.infoCardWidth) {
-    position.x = offset + rightX;
-    position.pos = "right";
-  } else {
-    position.x = leftDistance - offset - cardWidth;
-    position.pos = "left";
+  try {
+    if (!visual) {
+      return position;
+    }
+    if (!visual.layout) {
+      return position;
+    }
+    const visualLayoutX = visual.layout.x ?? 0;
+    const visualLayoutY = visual.layout.y ?? 0;
+    const visualLayoutWidth = visual.layout.width ?? 0;
+
+    const leftDistance = visualLayoutX / sizes.reportDivisor;
+    const rightX = leftDistance + visualLayoutWidth / sizes.reportDivisor;
+    const rightDistance = global.reportWidth! - rightX;
+
+    if (rightDistance > leftDistance || leftDistance < global.infoCardWidth) {
+      position.x = offset + rightX;
+      position.pos = "right";
+    } else {
+      position.x = leftDistance - offset - cardWidth;
+      position.pos = "left";
+    }
+    position.y = offset + visualLayoutY / sizes.reportDivisor;
+  } catch (error) {
+    console.log("Error in getVisualCardPos()", error);
   }
-  position.y = offset + visual.layout.y / sizes.reportDivisor;
 
   return position;
 }
 
-export async function getVisualData(visual: any) {
+export async function getVisualData(visual: VisualDescriptor) {
   const exportedData = await exportData(visual);
   if (!exportedData) {
     return "exportError";
@@ -948,7 +973,10 @@ export async function getVisualData(visual: any) {
   return visualDataMap;
 }
 
-export async function getDataRange(visual: any, categorie: string) {
+export async function getDataRange(
+  visual: VisualDescriptor,
+  categorie: string
+) {
   const data = await getVisualData(visual);
   if (!data || data === "exportError") {
     return null;
@@ -1048,7 +1076,7 @@ export async function getVisualsfromPowerBI() {
   global.setAllVisuals(global.currentVisuals);
 }
 
-export function getVisualTitle(visual: any) {
+export function getVisualTitle(visual: VisualDescriptor) {
   const CGVisual = global.componentGraph.dashboard.visualizations.find(
     (vis) => vis.id === visual.name
   )!;
@@ -1060,7 +1088,7 @@ export function getVisualTitle(visual: any) {
   }
 }
 
-export function getTypeName(visual: any) {
+export function getTypeName(visual: VisualDescriptor) {
   let typeName = visual.type.replaceAll(/([A-Z])/g, " $1").trim();
   typeName = firstLetterToUpperCase(typeName);
   return typeName;
@@ -1195,12 +1223,16 @@ export function saveIntInput(inputId: string) {
 
 function sortVisuals() {
   global.currentVisuals.sort(function (a, b) {
-    if (a.layout.x < b.layout.x) {
+    const aLayoutX = a.layout.x ?? 0;
+    const aLayoutY = a.layout.y ?? 0;
+    const bLayoutX = b.layout.x ?? 0;
+    const bLayoutY = b.layout.y ?? 0;
+    if (aLayoutX < bLayoutX) {
       return -1;
-    } else if (a.layout.x > b.layout.x) {
+    } else if (aLayoutX > bLayoutX) {
       return 1;
     } else {
-      if (a.layout.y < b.layout.y) {
+      if (aLayoutY < bLayoutY) {
         return -1;
       } else {
         return 1;

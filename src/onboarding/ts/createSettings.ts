@@ -128,7 +128,11 @@ function setDashboardInfo() {
 async function setVisualsInfo(id: string) {
   try {
     const visual = findTraversalVisual(id);
+    if (!visual) {
+      return;
+    }
     const settingsVisual = global.createVisual();
+
     settingsVisual.id = visual.name;
 
     const CGVisual = global.componentGraph.dashboard.visualizations.find(
