@@ -851,10 +851,14 @@ export async function createComponentGraph() {
 }
 
 export async function getSettings() {
-  if (localStorage.getItem("settings") == null) {
-    await createSettings();
+  try {
+    if (localStorage.getItem("settings") == null) {
+      await createSettings();
+    }
+    global.setSettings(JSON.parse(localStorage.getItem("settings")!, reviver));
+  } catch (error) {
+    console.log("Error in getSettings()", error);
   }
-  global.setSettings(JSON.parse(localStorage.getItem("settings")!, reviver));
 }
 
 export async function getSpecificDataInfo(visual: any, dataName: string) {

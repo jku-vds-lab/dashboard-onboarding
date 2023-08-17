@@ -55,7 +55,6 @@ export async function martiniGlassTraversalStrategy() {
   traversalElem.element = await getTraversalElement("dashboard");
   trav.push(traversalElem);
   for (const vis of global.currentVisuals) {
-    // console.log("Global", global);
     const traversalElem2 = createTraversalElement(vis.type);
     traversalElem2.element = await getTraversalElement(vis.name);
     traversalElem2.categories = ["general"];

@@ -73,7 +73,6 @@ export default class LineChart extends Visualization {
       this.lineChart?.task
     );
 
-    this.text.generalImages.push("dataImg");
     this.text.generalInfos.push(purposeText);
 
     if (this.axis) {
@@ -95,8 +94,6 @@ export default class LineChart extends Visualization {
       this.text.generalImages.push("lineGraphImg");
       this.text.generalInfos.push(legendText);
     }
-
-    console.log("this is text", this.text.generalInfos);
   }
 
   getInteractionInfo() {
@@ -160,7 +157,6 @@ export default class LineChart extends Visualization {
         "This chart has the following filters:<br>" + filterText
       );
     }
-    debugger;
   }
 
   getInsightInfo() {}

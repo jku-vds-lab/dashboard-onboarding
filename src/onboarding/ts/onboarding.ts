@@ -42,15 +42,17 @@ import { basicTraversalStrategy } from "./traversalStrategies";
 export async function onLoadReport(isMainPage: boolean) {
   console.log("Report is loading");
   try {
+    if (global.isFirstTimeLoading) {
+      console.log("Local Storage Cleared!");
+      localStorage.clear();
+      global.setIsFirstTimeLoading(false);
+    }
     await helpers.getActivePage();
     await helpers.getVisualsfromPowerBI();
     await helpers.createComponentGraph();
-    const results = await Promise.all([
-      helpers.getSettings(),
-      helpers.handelNewReport(),
-    ]);
+    await helpers.getSettings();
 
-    if (results.length > 0 && isMainPage) {
+    if (isMainPage) {
       const trav = await basicTraversalStrategy();
       global.setBasicTraversal(trav);
 

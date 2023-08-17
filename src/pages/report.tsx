@@ -110,11 +110,7 @@ export default class MyReport extends React.Component<AppProps, AppState> {
 
         const isMainPage = this.props.isMainPage;
         report.on("loaded", async function () {
-          console.log("Load the report");
           global.setIsEditor(false);
-          console.log(
-            "Call onLoadReport method from the onboarding.ts to set traversal strategies"
-          );
           onboarding.onLoadReport(isMainPage);
           global.setIsLoaded(true);
         });
@@ -122,7 +118,6 @@ export default class MyReport extends React.Component<AppProps, AppState> {
         report.off("rendered");
 
         report.on("rendered", async function () {
-          console.log("Render the report");
           await onboarding.onReloadReport();
         });
 

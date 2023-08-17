@@ -59,6 +59,8 @@ export let basicTraversal: TraversalElement[] = [];
 
 export let isEditor: boolean = false;
 
+export let isFirstTimeLoading: boolean = true;
+
 export enum infoStatus {
   original = "original",
   changed = "changed",
@@ -388,6 +390,9 @@ export function setIsEditor(newIsEditor: boolean) {
   isEditor = newIsEditor;
 }
 
+export function setIsFirstTimeLoading(status: boolean) {
+  isFirstTimeLoading = status;
+}
 export function createDivAttributes() {
   return {
     id: "",
