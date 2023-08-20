@@ -1,6 +1,6 @@
 import * as helpers from "./../helperFunctions";
 import * as global from "./../globalVariables";
-import NoviceText from "./noviceText";
+import NoviceText from "./beginnerText";
 import BasicTextFormat from "./Format/basicTextFormat";
 import Visualization from "../../../componentGraph/Visualization";
 import { VisualDescriptor } from "powerbi-client";

@@ -1,7 +1,7 @@
 import * as helpers from "./../helperFunctions";
 import * as global from "./../globalVariables";
-import NoviceText from "./noviceText";
-import BasicTextFormat from "./Format/basicTextFormat";
+import Beginner from "./beginnerText";
+import BasicTextFormat, { UserLevel } from "./Format/basicTextFormat";
 import Visualization from "../../../componentGraph/Visualization";
 import { VisualDescriptor } from "powerbi-client";
 import XAxis from "../../../componentGraph/XAxis";
@@ -9,17 +9,18 @@ import Legend from "../../../componentGraph/Legend";
 import YAxis from "../../../componentGraph/YAxis";
 
 export default class LineChart extends Visualization {
-  lineChart: Visualization;
+  chart: Visualization;
   text: BasicTextFormat;
-  noviceText: NoviceText;
+  beginnerText: Beginner;
   axisValue: XAxis;
   axis: string;
   legendValue: Legend;
   legend: string;
   dataValue: YAxis;
   dataName: string;
+  userLevel: UserLevel;
 
-  constructor() {
+  constructor(userLevel?: UserLevel) {
     super();
 
     this.text = {
@@ -30,96 +31,62 @@ export default class LineChart extends Visualization {
       interactionImages: [],
       interactionInfos: [],
     };
-    this.lineChart = new Visualization();
-    this.noviceText = new NoviceText();
+    this.chart = new Visualization();
+    this.beginnerText = new Beginner();
     this.axisValue = new XAxis();
     this.axis = "";
     this.legendValue = new Legend();
     this.legend = "";
     this.dataValue = new YAxis();
     this.dataName = "";
+    this.userLevel = userLevel ?? UserLevel.Beginner;
   }
 
   async getLineChartInfo(visual: VisualDescriptor) {
-    this.lineChart = await this.getVisualization(visual);
+    this.chart = await this.getVisualization(visual);
 
-    this.axisValue = this.lineChart.encoding.xAxes[0];
+    this.axisValue = this.chart.encoding.xAxes[0];
     this.axis = this.axisValue && this.axisValue.attribute;
-    this.legendValue = this.lineChart?.encoding.legends[0];
+    this.legendValue = this.chart?.encoding.legends[0];
     this.legend = this.legendValue && this.legendValue.attribute;
-    this.dataValue = this.lineChart?.encoding.yAxes[0];
+    this.dataValue = this.chart?.encoding.yAxes[0];
     this.dataName = (this.dataValue && this.dataValue.attribute) || "";
 
-    this.getGeneralInfo();
-    this.getInteractionInfo();
+    this.text = this.beginnerText.getBeginnerText("line", this);
+
+    // this.getGeneralInfo();
+    // this.getInteractionInfo();
 
     return this.text;
   }
 
-  getGeneralInfo() {
-    this.text.generalImages.push("infoImg");
-    this.text.generalInfos.push("This element is a line chart.");
+  //   Line Chart shows the trend of New Hires over the Month.
+  // Each line represents a different FPDesc distinguished by color.
+  // The legend displays the values of the FPDesc and its corresponding color.
+  // This chart has the following filters:
 
-    const dataString = helpers.dataToString(this.lineChart?.data.attributes!);
-    const channelString = helpers.dataToString(
-      this.lineChart?.channel.channel!
-    );
-    this.text.generalImages.push("dataImg");
-
-    const purposeText = this.noviceText.purposeText(
-      this.lineChart.type,
-      channelString,
-      dataString,
-      this.lineChart?.task
-    );
-
-    this.text.generalInfos.push(purposeText);
-
-    if (this.axis) {
-      const axisText = this.noviceText.axisText(
-        this.lineChart.type,
-        this.lineChart?.mark,
-        this.dataName,
-        this.axis
-      );
-      this.text.generalImages.push("lineGraphImg");
-      this.text.generalInfos.push(axisText);
-    }
-    if (this.legend) {
-      const legendText = this.noviceText.legendText(
-        this.lineChart.type,
-        this.lineChart?.mark,
-        this.legend
-      );
-      this.text.generalImages.push("lineGraphImg");
-      this.text.generalInfos.push(legendText);
-    }
-  }
+  // Line Chart shows the trend of New Hires over the Month.
 
   getInteractionInfo() {
     this.text.interactionImages.push("interactImg");
     // text.interactionInfos.push(CGVisual?.interactions.description!); // this should be the function down there
 
-    let interactionInfo = this.noviceText.interactionClickText(
-      this.lineChart.type,
+    let interactionInfo = this.beginnerText.interactionClickText(
+      this.chart.type,
       this.axis,
       this.legend,
-      this.lineChart?.mark
+      this.chart?.mark
     );
-    if (this.lineChart?.encoding.hasTooltip) {
-      interactionInfo += this.noviceText.interactionHoverText(
-        this.lineChart.type,
-        this.lineChart?.mark
+    if (this.chart?.encoding.hasTooltip) {
+      interactionInfo += this.beginnerText.interactionHoverText(
+        this.chart.type,
+        this.chart?.mark
       );
     }
     this.text.interactionImages.push("elemClickImg");
     this.text.interactionInfos.push(interactionInfo);
 
     if (this.axisValue && this.axisValue.isVisible) {
-      this.text.generalImages.push("xAxisImg");
-      this.text.generalInfos.push(
-        "The X-axis displays the values of the " + this.axis + "."
-      );
       this.text.interactionImages.push("axisClickImg");
       this.text.interactionInfos.push(
         "When clicking on one of the x-axis-labels you can filter the report by " +
@@ -136,12 +103,6 @@ export default class LineChart extends Visualization {
     }
 
     if (this.legendValue && this.legendValue.isVisible) {
-      this.text.generalImages.push("legendImg");
-      this.text.generalInfos.push(
-        "The legend displays the values of the " +
-          this.legend +
-          " and its corresponding color."
-      );
       this.text.interactionImages.push("legendClickImg");
       this.text.interactionInfos.push(
         "When clicking on one of the labels in the legend you can filter the report by " +
@@ -150,7 +111,7 @@ export default class LineChart extends Visualization {
       );
     }
 
-    const filterText = helpers.getLocalFilterText(this.lineChart);
+    const filterText = helpers.getLocalFilterText(this.chart);
     if (filterText !== "") {
       this.text.generalImages.push("filterImg");
       this.text.generalInfos.push(

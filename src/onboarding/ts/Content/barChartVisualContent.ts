@@ -1,6 +1,6 @@
 import * as helpers from "./../helperFunctions";
 import * as global from "./../globalVariables";
-import NoviceText from "./noviceText";
+import Beginner from "./beginnerText";
 import BasicTextFormat from "./Format/basicTextFormat";
 import Visualization from "../../../componentGraph/Visualization";
 import { VisualDescriptor } from "powerbi-client";
@@ -9,9 +9,9 @@ import Legend from "../../../componentGraph/Legend";
 import YAxis from "../../../componentGraph/YAxis";
 
 export default class BarChart extends Visualization {
-  barChart: Visualization;
+  chart: Visualization;
   text: BasicTextFormat;
-  noviceText: NoviceText;
+  beginnerText: Beginner;
   axisValue: XAxis;
   axis: string;
   legendValue: Legend;
@@ -30,8 +30,8 @@ export default class BarChart extends Visualization {
       interactionImages: [],
       interactionInfos: [],
     };
-    this.barChart = new Visualization();
-    this.noviceText = new NoviceText();
+    this.chart = new Visualization();
+    this.beginnerText = new Beginner();
     this.axisValue = new XAxis();
     this.axis = "";
     this.legendValue = new Legend();
@@ -41,83 +41,48 @@ export default class BarChart extends Visualization {
   }
 
   async getClusteredBarChartInfo(visual: VisualDescriptor) {
-    this.barChart = await this.getVisualization(visual);
+    this.chart = await this.getVisualization(visual);
 
-    this.axisValue = this.barChart.encoding.xAxes[0];
-    this.axis = this.barChart.encoding.yAxes[0]
-      ? this.barChart.encoding.yAxes[0].attribute!
+    this.axisValue = this.chart.encoding.xAxes[0];
+    this.axis = this.chart.encoding.yAxes[0]
+      ? this.chart.encoding.yAxes[0].attribute!
       : "";
-    this.legendValue = this.barChart?.encoding.legends[0];
-    this.legend = this.barChart.encoding.legends[0]
-      ? this.barChart.encoding.legends[0].attribute
-      : "";
-
-    this.dataName = this.barChart.encoding.xAxes[0]
-      ? this.barChart.encoding.xAxes[0].attribute!
+    this.legendValue = this.chart?.encoding.legends[0];
+    this.legend = this.chart.encoding.legends[0]
+      ? this.chart.encoding.legends[0].attribute
       : "";
 
-    this.getGeneralInfo();
+    this.dataName = this.chart.encoding.xAxes[0]
+      ? this.chart.encoding.xAxes[0].attribute!
+      : "";
+
+    // this.getGeneralInfo();
+    this.text = this.beginnerText.getBeginnerText("bar", this);
+    this.getInteractionInfo();
 
     return this.text;
-  }
-
-  getGeneralInfo() {
-    this.text.generalImages.push("infoImg");
-    this.text.generalInfos.push("This element is a bar chart.");
-
-    const dataString = helpers.dataToString(this.barChart?.data.attributes!);
-    const channelString = helpers.dataToString(this.barChart?.channel.channel!);
-    this.text.generalImages.push("dataImg");
-
-    const purposeText = this.noviceText.purposeText(
-      this.barChart.type,
-      channelString,
-      dataString,
-      this.barChart?.task
-    );
-
-    this.text.generalInfos.push(purposeText);
-
-    let barInfo = "";
-    if (this.axis) {
-      barInfo += this.noviceText.axisText(
-        this.barChart.type,
-        this.barChart?.mark,
-        this.dataName,
-        this.axis
-      );
-    }
-    if (this.legend) {
-      barInfo += this.noviceText.legendText(
-        this.barChart.type,
-        this.barChart?.mark,
-        this.legend
-      );
-    }
-    this.text.generalImages.push("barGraphImg");
-    this.text.generalInfos.push(barInfo);
   }
 
   getInteractionInfo() {
     this.text.interactionImages.push("interactImg");
     // text.interactionInfos.push(CGVisual?.interactions.description!); // this should be the function down there
 
-    let interactionInfo = this.noviceText.interactionClickText(
-      this.barChart.type,
+    let interactionInfo = this.beginnerText.interactionClickText(
+      this.chart.type,
       this.axis,
       this.legend,
-      this.barChart?.mark
+      this.chart?.mark
     );
-    if (this.barChart?.encoding.hasTooltip) {
-      interactionInfo += this.noviceText.interactionHoverText(
-        this.barChart.type,
-        this.barChart?.mark
+    if (this.chart?.encoding.hasTooltip) {
+      interactionInfo += this.beginnerText.interactionHoverText(
+        this.chart.type,
+        this.chart?.mark
       );
     }
     this.text.interactionImages.push("elemClickImg");
     this.text.interactionInfos.push(interactionInfo);
 
-    if (this.axis && this.barChart.encoding.yAxes[0].isVisible) {
+    if (this.axis && this.chart.encoding.yAxes[0].isVisible) {
       this.text.generalImages.push("yAxisImg");
       this.text.generalInfos.push(
         "The Y-axis displays the values of the " + this.axis + "."
@@ -151,7 +116,7 @@ export default class BarChart extends Visualization {
       );
     }
 
-    const filterText = helpers.getLocalFilterText(this.barChart);
+    const filterText = helpers.getLocalFilterText(this.chart);
     if (filterText !== "") {
       this.text.generalImages.push("filterImg");
       this.text.generalInfos.push(

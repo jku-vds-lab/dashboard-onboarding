@@ -1284,7 +1284,7 @@ export function getLocalFilterText(visual: Visualization | undefined) {
         filterTexts.push(
           "The operation " +
             filter.operation +
-            " is execuded for " +
+            " is executed for " +
             filter.attribute +
             "." +
             valueText +

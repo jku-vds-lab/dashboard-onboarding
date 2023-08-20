@@ -1,8 +1,22 @@
+import Visualization from "../../../componentGraph/Visualization";
+import BasicTextFormat from "./Format/basicTextFormat";
+import * as helpers from "./../helperFunctions";
+import LineChart from "./lineChartVisualContent";
+import BarChart from "./barChartVisualContent";
+
 interface FormBody {
   prompt: string;
   tokens: number;
 }
-export default class NoviceText {
+export default class Beginner {
+  text: BasicTextFormat = {
+    generalImages: [],
+    generalInfos: [],
+    insightImages: [],
+    insightInfos: [],
+    interactionImages: [],
+    interactionInfos: [],
+  };
   private articles = { the: "The ", a: "A ", an: "An " };
   private prepositions = {
     by: " by ",
@@ -73,13 +87,7 @@ export default class NoviceText {
       this.prepositions.by +
       channel +
       this.punctuations.dot +
-      this.lineBreak +
-      this.articles.the +
-      this.actions.purpose +
-      this.verbs.is +
-      task +
-      this.punctuations.dot;
-    // this.lineBreak;
+      this.lineBreak;
 
     return text;
   }
@@ -143,5 +151,57 @@ export default class NoviceText {
       this.lineBreak;
 
     return text;
+  }
+  getBeginnerText(visualType: string, visual: LineChart | BarChart) {
+    this.text.generalImages.push("infoImg");
+    this.text.generalInfos.push("This element is a " + visualType + " chart.");
+
+    const dataString = helpers.dataToString(visual.chart.data.attributes!);
+    const channelString = helpers.dataToString(visual.chart.channel.channel!);
+    this.text.generalImages.push("dataImg");
+
+    const purposeText = this.purposeText(
+      visualType,
+      channelString,
+      dataString,
+      visual?.task
+    );
+
+    this.text.generalInfos.push(purposeText);
+    if (visual.axis) {
+      const axisText = this.axisText(
+        visualType,
+        visual.chart?.mark,
+        visual.dataName,
+        visual.axis
+      );
+      this.text.generalImages.push(visualType + "GraphImg");
+      this.text.generalInfos.push(axisText);
+      this.text.generalImages.push("xAxisImg");
+      this.text.generalInfos.push(
+        "The X-axis displays the values of the " + visual.axis + "."
+      );
+    }
+    this.text.generalImages.push("yAxisImg");
+    this.text.generalInfos.push(
+      "The Y-axis displays the values of the " + visual.dataName + "."
+    );
+
+    if (visual.legend) {
+      const legendText = this.legendText(
+        visualType,
+        visual.chart.mark,
+        visual.legend
+      );
+      this.text.generalImages.push(visualType + "GraphImg");
+      this.text.generalInfos.push(legendText);
+      this.text.generalImages.push("legendImg");
+      this.text.generalInfos.push(
+        "The legend displays the values of the " +
+          visual.legend +
+          " and its corresponding color."
+      );
+    }
+    return this.text;
   }
 }
