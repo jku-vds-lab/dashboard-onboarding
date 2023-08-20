@@ -24,8 +24,6 @@ import type { RootState } from "../redux/store";
 import { useSelector } from "react-redux";
 // redux ends
 
-let globalText = "";
-
 interface Props {
   mainTrigger: number;
   traversal: any;
@@ -77,11 +75,12 @@ export default function StoryPane(props: Props) {
   const saveAnnotationChanges = async () => {
     try {
       const infos = [];
-      debugger;
-      const list1 = document.getElementById("textBox")! as HTMLTextAreaElement;
-      globalText = list1.innerHTML;
-      const list = list1.children[0];
-      const listElems = list.children;
+      const textBox = document.getElementById(
+        "textBox"
+      )! as HTMLTextAreaElement;
+      const globalText = textBox.innerHTML;
+      const child = textBox.children[0];
+      const listElems = child.children;
 
       for (let i = 0; i < listElems.length; i++) {
         infos.push(listElems[i].innerHTML);
