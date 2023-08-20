@@ -5,6 +5,223 @@ import { createTraversalElement } from "./../traversal";
 import { replacer } from "../../../componentGraph/ComponentGraph";
 import { getTraversalElement } from "./../createSettings";
 import { VisualDescriptor } from "powerbi-client";
+import BasicTextFormat from "./Format/basicTextFormat";
+
+export default class SaveAndFetchContent {
+  private type: string;
+  private visualData: global.SettingsVisual;
+  private infos: Array<string>;
+  private images: Array<string>;
+
+  private visFullName: string[];
+  private categories: string[];
+
+  constructor(type: string, visFullName: string[]) {
+    this.type = type;
+    this.visFullName = visFullName;
+    this.visualData = {
+      id: "",
+      mediaType: global.mediaType.text,
+      videoURL: "",
+      title: "",
+      disabled: false,
+      generalInfosStatus: [],
+      interactionInfosStatus: [],
+      insightInfosStatus: [],
+      changedGeneralInfos: [],
+      changedInteractionInfos: [],
+      changedInsightInfos: [],
+    };
+    this.categories = [];
+    this.infos = [];
+    this.images = [];
+  }
+
+  private isInteraction(): boolean {
+    if (this.visFullName.includes("Interaction")) {
+      return true;
+    }
+    return false;
+  }
+
+  private isInsight(): boolean {
+    if (this.visFullName.includes("Insight")) {
+      return true;
+    }
+    return false;
+  }
+
+  private setCategories() {
+    const isVisInteraction = this.isInteraction();
+    const isVisInsight = this.isInsight();
+    this.categories = [];
+
+    if (isVisInteraction) {
+      this.categories.push("interaction");
+    }
+    if (isVisInsight) {
+      this.categories.push("insight");
+    }
+
+    if (!(isVisInsight || isVisInteraction)) {
+      this.categories.push("general");
+    }
+  }
+
+  private async addElementToTraversalStrategy(visName: string, count: number) {
+    const traversalElem = createTraversalElement("");
+    traversalElem.element = await getTraversalElement(visName);
+    traversalElem.count = count;
+    traversalElem.categories = this.categories;
+    global.settings.traversalStrategy.push(traversalElem);
+  }
+
+  private async getOriginalVisualInfos() {
+    try {
+      const visual = global.currentVisuals.find(
+        (vis) => vis.name === this.visFullName[0]
+      );
+      if (!visual) {
+        console.log("No original vis found");
+        return;
+      }
+      const visualInfos = await helpers.getVisualInfos(visual);
+
+      if (this.isInteraction()) {
+        this.images = visualInfos.insightImages;
+        this.infos = visualInfos.insightInfos;
+      } else if (this.isInsight()) {
+        this.images = visualInfos.interactionImages;
+        this.infos = visualInfos.interactionInfos;
+      } else {
+        this.images = visualInfos.generalImages;
+        this.infos = visualInfos.generalInfos;
+      }
+    } catch (error) {
+      console.log("Error in getOriginalVisualInfos()", error);
+    }
+  }
+
+  async saveVisualInfo(
+    newInfo: string[],
+    test: any,
+    visFullName: string[],
+    count: number
+  ) {
+    try {
+      localStorage.setItem(visFullName.toString(), JSON.stringify(test));
+      // this.setCategories();
+
+      // this.visualData = helpers.getDataWithId(
+      //   global.settings.traversalStrategy,
+      //   visFullName[0],
+      //   this.categories,
+      //   count
+      // );
+
+      // if (!this.visualData) {
+      //   await this.addElementToTraversalStrategy(visFullName[0], count);
+      //   this.visualData = helpers.getDataWithId(
+      //     global.settings.traversalStrategy,
+      //     visFullName[0],
+      //     this.categories,
+      //     count
+      //   );
+      // }
+
+      // await this.getOriginalVisualInfos();
+
+      // if (this.isInsight()) {
+      //   if (newInfo == null || newInfo.length == 0) {
+      //     this.visualData.insightInfosStatus;
+      //   }
+      // }
+
+      // // here I need to show test in the html box
+      // const textBox = document.getElementById(
+      //   "textBox"
+      // )! as HTMLTextAreaElement;
+      // textBox.innerHTML = test;
+      // localStorage.setItem("settings", JSON.stringify(global.settings, replacer));
+    } catch (error) {
+      console.log("Error in saveVisualInfo()", error);
+    }
+  }
+
+  async getVisualDescInEditor() {
+    try {
+      let visualInfos: BasicTextFormat = {
+        generalImages: [],
+        generalInfos: [],
+        interactionImages: [],
+        interactionInfos: [],
+        insightImages: [],
+        insightInfos: [],
+      };
+
+      const textBox = document.getElementById(
+        "textBox"
+      )! as HTMLTextAreaElement;
+      textBox.innerHTML = "";
+      const textInStorage = localStorage.getItem(this.visFullName.toString());
+      if (textInStorage) {
+        const textBox = document.getElementById(
+          "textBox"
+        )! as HTMLTextAreaElement;
+        textBox.innerHTML = textInStorage;
+      } else {
+        const visual = global.allVisuals.find((visual) => {
+          return visual.name == this.visFullName[0];
+        });
+
+        if (!visual) {
+          return;
+        }
+
+        visualInfos = await helpers.getVisualInfos(visual);
+        await createInfoList(
+          visualInfos.generalImages,
+          visualInfos.generalInfos,
+          "textBox",
+          true
+        );
+      }
+      // const textBox = document.getElementById(
+      //   "textBox"
+      // )! as HTMLTextAreaElement;
+      // if (test != "") {
+      //   textBox.innerHTML = test;
+      // } else {
+      //   textBox.innerHTML = "";
+      //   if (this.visFullName) {
+      //     const visual = global.allVisuals.find((visual) => {
+      //       return visual.name == this.visFullName[0];
+      //     });
+
+      //     if (!visual) {
+      //       return;
+      //     }
+
+      //     visualInfos = await helpers.getVisualInfos(visual);
+      //   }
+
+      //   if (this.isInteraction()) {
+      //   } else if (this.isInsight()) {
+      //   } else {
+      //     // this is general
+      //     await createInfoList(
+      //       visualInfos.generalImages,
+      //       visualInfos.generalInfos,
+      //       "textBox",
+      //       true
+      //     );
+      //   }
+      // }
+    } catch (error) {
+      console.log("Error in getting basic visual description in editor", error);
+    }
+  }
+}
 
 // basic visual description viewer in editor
 // export async function getVisualDescInEditor(nodeFullName: string[]) {
@@ -44,13 +261,14 @@ import { VisualDescriptor } from "powerbi-client";
 //     console.log("Error in getting basic visual description in editor", error);
 //   }
 // }
-
+/*
 function retrieveVisualInfoFromStorage(
   visualFullName: string[],
+  visualInfos: BasicTextFormat,
   count: number
 ) {
-  // let infos = [];
-  // let images = [];
+  const infos = [];
+  const images = [];
 
   try {
     const categories = [];
@@ -66,56 +284,59 @@ function retrieveVisualInfoFromStorage(
       count
     );
 
-    // if (visualFullName.length > 2 && visualFullName[1] == "Insight") {
-    //   for (let i = 0; i < visualData.insightInfosStatus.length; ++i) {
-    //     switch (visualData.insightInfosStatus[i]) {
-    //       case global.infoStatus.original:
-    //         images.push(visualInfos.insightImages[i]);
-    //         infos.push(visualInfos.insightInfos[i]);
-    //         break;
-    //       case global.infoStatus.changed:
-    //       case global.infoStatus.added:
-    //         images.push("dotImg");
-    //         infos.push(visualData.changedInsightInfos[i]);
-    //         break;
-    //       default:
-    //         break;
-    //     }
-    //   }
-    // } else if (visualFullName.length > 2 && visualFullName[1] == "Interaction") {
-    //   for (let i = 0; i < visualData.interactionInfosStatus.length; ++i) {
-    //     switch (visualData.interactionInfosStatus[i]) {
-    //       case global.infoStatus.original:
-    //         images.push(visualInfos.interactionImages[i]);
-    //         infos.push(visualInfos.interactionInfos[i]);
-    //         break;
-    //       case global.infoStatus.changed:
-    //       case global.infoStatus.added:
-    //         images.push("dotImg");
-    //         infos.push(visualData.changedInteractionInfos[i]);
-    //         break;
-    //       default:
-    //         break;
-    //     }
-    //   }
-    // } else {
-    //   for (let i = 0; i < visualData.generalInfosStatus.length; ++i) {
-    //     switch (visualData.generalInfosStatus[i]) {
-    //       case global.infoStatus.original:
-    //         images.push(visualInfos.generalImages[i]);
-    //         infos.push(visualInfos.generalInfos[i]);
-    //         break;
-    //       case global.infoStatus.changed:
-    //       case global.infoStatus.added:
-    //         images.push("dotImg");
-    //         infos.push(visualData.changedGeneralInfos[i]);
-    //         break;
-    //       default:
-    //         break;
-    //     }
-    //   }
-    // }
-    return visualData;
+    if (visualFullName.length > 2 && visualFullName[1] == "Insight") {
+      for (let i = 0; i < visualData.insightInfosStatus.length; ++i) {
+        switch (visualData.insightInfosStatus[i]) {
+          case global.infoStatus.original:
+            images.push(visualInfos.insightImages[i]);
+            infos.push(visualInfos.insightInfos[i]);
+            break;
+          case global.infoStatus.changed:
+          case global.infoStatus.added:
+            images.push("dotImg");
+            infos.push(visualData.changedInsightInfos[i]);
+            break;
+          default:
+            break;
+        }
+      }
+    } else if (
+      visualFullName.length > 2 &&
+      visualFullName[1] == "Interaction"
+    ) {
+      for (let i = 0; i < visualData.interactionInfosStatus.length; ++i) {
+        switch (visualData.interactionInfosStatus[i]) {
+          case global.infoStatus.original:
+            images.push(visualInfos.interactionImages[i]);
+            infos.push(visualInfos.interactionInfos[i]);
+            break;
+          case global.infoStatus.changed:
+          case global.infoStatus.added:
+            images.push("dotImg");
+            infos.push(visualData.changedInteractionInfos[i]);
+            break;
+          default:
+            break;
+        }
+      }
+    } else {
+      for (let i = 0; i < visualData.generalInfosStatus.length; ++i) {
+        switch (visualData.generalInfosStatus[i]) {
+          case global.infoStatus.original:
+            images.push(visualInfos.generalImages[i]);
+            infos.push(visualInfos.generalInfos[i]);
+            break;
+          case global.infoStatus.changed:
+          case global.infoStatus.added:
+            images.push("dotImg");
+            infos.push(visualData.changedGeneralInfos[i]);
+            break;
+          default:
+            break;
+        }
+      }
+    }
+    // return ;
   } catch (error) {
     console.log("Error in retrieveVisualInfoFromStorage()", error);
   }
@@ -134,9 +355,12 @@ export async function getVisualInfoInEditor(
   const visual = global.allVisuals.find(function (visual) {
     return visual.name == visualFullName[0];
   });
-  const visualInfos = await helpers.getVisualInfos(<VisualDescriptor>visual); // this was the original await statement
-
-  const visualData = retrieveVisualInfoFromStorage(visualFullName, count);
+  const visualInfos = await helpers.getVisualInfos(<VisualDescriptor>visual);
+  const visualData = retrieveVisualInfoFromStorage(
+    visualFullName,
+    visualInfos,
+    count
+  );
 
   if (!visualData) {
     if (visualFullName.length > 2 && visualFullName[1] == "Insight") {
@@ -384,3 +608,4 @@ export async function resetVisualChanges(idParts: string[], count: number) {
 
   localStorage.setItem("settings", JSON.stringify(global.settings, replacer));
 }
+*/

@@ -1,10 +1,10 @@
 export default interface BasicTextFormat {
-  generalImages: Array<any>;
-  generalInfos: Array<any>;
-  insightImages: Array<any>;
-  insightInfos: string[];
-  interactionImages: Array<any>;
-  interactionInfos: Array<any>;
+  generalImages: Array<string>;
+  generalInfos: Array<string>;
+  insightImages: Array<string>;
+  insightInfos: Array<string>;
+  interactionImages: Array<string>;
+  interactionInfos: Array<string>;
 }
 
 export enum UserLevel {

@@ -25,7 +25,7 @@ export let traversalInGroupIndex = 0;
 export let visualInGroupIndex = 0;
 
 export interface TraversalElement {
-  element: any;
+  element: any; // TO BE FIXED
   categories: string[];
   count: number;
 }
@@ -33,7 +33,7 @@ export interface TraversalElement {
 export interface Group {
   id: string;
   type: groupType;
-  visuals: any[];
+  visuals: any[]; // TO BE FIXED
 }
 
 export interface LookedAtInGroup {

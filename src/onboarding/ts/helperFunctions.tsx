@@ -622,7 +622,7 @@ export function getDataWithId(
     }
   }
   console.log("Found Visual", foundVisual);
-  return foundVisual?.element;
+  return foundVisual?.element; //as global.SettingsVisual;
 }
 
 function getDisabledStyle(

@@ -3,11 +3,7 @@ import { FaCheck, FaUndo } from "react-icons/fa";
 import { ReactFlowProvider } from "reactflow";
 import NodesCanvas from "../nodes-canvas/canvas-index";
 import "../assets/css/dashboard.scss";
-import {
-  getVisualInfoInEditor,
-  resetVisualChanges,
-  saveVisualChanges,
-} from "../../onboarding/ts/Content/saveAndFetchContent";
+import SaveAndFetchContent from "./../../onboarding/ts/Content/saveAndFetchContent"; // should be moved close to story pane
 import {
   getDashboardInfoInEditor,
   resetDashboardChanges,
@@ -27,6 +23,8 @@ import * as global from "../../onboarding/ts/globalVariables";
 import type { RootState } from "../redux/store";
 import { useSelector } from "react-redux";
 // redux ends
+
+let globalText = "";
 
 interface Props {
   mainTrigger: number;
@@ -48,6 +46,8 @@ export default function StoryPane(props: Props) {
   );
   // redux  ends
 
+  const visInfo = new SaveAndFetchContent("line", nodeFullName);
+
   useEffect(() => {
     async function fillTextBox() {
       // console.log("Trying to fill the box", nodeBasicName);
@@ -63,7 +63,7 @@ export default function StoryPane(props: Props) {
             break;
           default:
             if (nodeFullName) {
-              await getVisualInfoInEditor(nodeFullName, 1);
+              await visInfo.getVisualDescInEditor();
               // await getVisualDescInEditor(nodeFullName);
             }
             break;
@@ -77,9 +77,10 @@ export default function StoryPane(props: Props) {
   const saveAnnotationChanges = async () => {
     try {
       const infos = [];
-
-      const list = (document.getElementById("textBox")! as HTMLTextAreaElement)
-        .children[0];
+      debugger;
+      const list1 = document.getElementById("textBox")! as HTMLTextAreaElement;
+      globalText = list1.innerHTML;
+      const list = list1.children[0];
       const listElems = list.children;
 
       for (let i = 0; i < listElems.length; i++) {
@@ -98,7 +99,7 @@ export default function StoryPane(props: Props) {
           await saveFilterChanges(infos, 1);
           break;
         default:
-          await saveVisualChanges(infos, currentIdParts, 1);
+          await visInfo.saveVisualInfo(infos, globalText, currentIdParts, 1);
           break;
       }
     } catch (error) {
@@ -119,7 +120,7 @@ export default function StoryPane(props: Props) {
         await resetFilterChanges(1);
         break;
       default:
-        await resetVisualChanges(currentIdParts, 1);
+        // await resetVisualChanges(currentIdParts, 1);
         break;
     }
   };
