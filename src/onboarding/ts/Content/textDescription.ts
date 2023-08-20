@@ -1,6 +1,6 @@
 import Visualization from "../../../componentGraph/Visualization";
 import BasicTextFormat from "./Format/basicTextFormat";
-import * as helpers from "./../helperFunctions";
+import * as helpers from "../helperFunctions";
 import LineChart from "./lineChartVisualContent";
 import BarChart from "./barChartVisualContent";
 
@@ -8,7 +8,7 @@ interface FormBody {
   prompt: string;
   tokens: number;
 }
-export default class Beginner {
+export default class TextDescription {
   text: BasicTextFormat = {
     generalImages: [],
     generalInfos: [],
@@ -201,6 +201,59 @@ export default class Beginner {
           visual.legend +
           " and its corresponding color."
       );
+    }
+
+    const filterText = helpers.getLocalFilterText(visual.chart);
+    if (filterText !== "") {
+      this.text.generalImages.push("filterImg");
+      this.text.generalInfos.push(
+        "This chart has the following filters:<br>" + filterText
+      );
+    }
+    return this.text;
+  }
+
+  getIntermediateText(visualType: string, visual: LineChart | BarChart) {
+    if (visual.axis) {
+      const axisText = this.axisText(
+        visualType,
+        visual.chart?.mark,
+        visual.dataName,
+        visual.axis
+      );
+      this.text.generalImages.push(visualType + "GraphImg");
+      this.text.generalInfos.push(axisText);
+      this.text.generalImages.push("xAxisImg");
+      this.text.generalInfos.push("X-axis: " + visual.axis + ".");
+    }
+    this.text.generalImages.push("yAxisImg");
+    this.text.generalInfos.push("Y-axis: " + visual.dataName + ".");
+
+    if (visual.legend) {
+      this.text.generalImages.push("legendImg");
+      this.text.generalInfos.push("Legend value:  " + visual.legend);
+    }
+
+    const filterText = helpers.getLocalFilterText(visual.chart);
+    if (filterText !== "") {
+      this.text.generalImages.push("filterImg");
+      this.text.generalInfos.push(
+        "This chart has the following filters:<br>" + filterText
+      );
+    }
+    return this.text;
+  }
+
+  getAdvancedText(visualType: string, visual: LineChart | BarChart) {
+    if (visual.axis) {
+      const axisText = this.axisText(
+        visualType,
+        visual.chart?.mark,
+        visual.dataName,
+        visual.axis
+      );
+      this.text.generalImages.push(visualType + "GraphImg");
+      this.text.generalInfos.push(axisText);
     }
     return this.text;
   }

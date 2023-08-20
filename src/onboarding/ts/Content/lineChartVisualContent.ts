@@ -1,6 +1,6 @@
 import * as helpers from "./../helperFunctions";
 import * as global from "./../globalVariables";
-import Beginner from "./beginnerText";
+import TextDescription from "./textDescription";
 import BasicTextFormat, { UserLevel } from "./Format/basicTextFormat";
 import Visualization from "../../../componentGraph/Visualization";
 import { VisualDescriptor } from "powerbi-client";
@@ -11,7 +11,7 @@ import YAxis from "../../../componentGraph/YAxis";
 export default class LineChart extends Visualization {
   chart: Visualization;
   text: BasicTextFormat;
-  beginnerText: Beginner;
+  textDescription: TextDescription;
   axisValue: XAxis;
   axis: string;
   legendValue: Legend;
@@ -32,7 +32,7 @@ export default class LineChart extends Visualization {
       interactionInfos: [],
     };
     this.chart = new Visualization();
-    this.beginnerText = new Beginner();
+    this.textDescription = new TextDescription();
     this.axisValue = new XAxis();
     this.axis = "";
     this.legendValue = new Legend();
@@ -52,11 +52,9 @@ export default class LineChart extends Visualization {
     this.dataValue = this.chart?.encoding.yAxes[0];
     this.dataName = (this.dataValue && this.dataValue.attribute) || "";
 
-    this.text = this.beginnerText.getBeginnerText("line", this);
-
-    // this.getGeneralInfo();
-    // this.getInteractionInfo();
-
+    //this.text = this.textDescription.getBeginnerText("line", this);
+    // this.text = this.textDescription.getIntermediateText("line", this);
+    this.text = this.textDescription.getAdvancedText("line", this);
     return this.text;
   }
 
@@ -71,14 +69,14 @@ export default class LineChart extends Visualization {
     this.text.interactionImages.push("interactImg");
     // text.interactionInfos.push(CGVisual?.interactions.description!); // this should be the function down there
 
-    let interactionInfo = this.beginnerText.interactionClickText(
+    let interactionInfo = this.textDescription.interactionClickText(
       this.chart.type,
       this.axis,
       this.legend,
       this.chart?.mark
     );
     if (this.chart?.encoding.hasTooltip) {
-      interactionInfo += this.beginnerText.interactionHoverText(
+      interactionInfo += this.textDescription.interactionHoverText(
         this.chart.type,
         this.chart?.mark
       );
