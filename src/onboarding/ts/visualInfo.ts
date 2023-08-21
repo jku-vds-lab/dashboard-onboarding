@@ -1,4 +1,5 @@
-import * as helpers from "./helperFunctions";
+import * as helpers from "./../../componentGraph/helperFunctions";
+import * as helper from "./helperFunctions";
 import * as global from "./globalVariables";
 import * as elements from "./elements";
 import * as info from "./visualInfo";
@@ -108,7 +109,7 @@ export async function createTabsWithContent(
       "interactionTab",
       false
     );
-    helpers.createInteractionExampleButton("interactionTab", visual);
+    helper.createInteractionExampleButton("interactionTab", visual);
   }
 
   if (categories.includes("insight")) {

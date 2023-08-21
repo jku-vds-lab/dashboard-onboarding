@@ -7,8 +7,6 @@ import * as helper from "../../../componentGraph/helperFunctions";
 import * as global from "./../globalVariables";
 
 export default class InteractionDescription {
-  // from line chart
-
   text: BasicTextFormat = {
     generalImages: [],
     generalInfos: [],
