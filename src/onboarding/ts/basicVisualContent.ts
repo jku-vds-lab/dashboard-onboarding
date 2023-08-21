@@ -1,4 +1,4 @@
-import * as helpers from "./helperFunctions";
+import * as helper from "./../../componentGraph/helperFunctions";
 import * as global from "./globalVariables";
 import { VisualDescriptor } from "powerbi-client";
 
@@ -20,7 +20,7 @@ export async function getCardInfo(visual: VisualDescriptor) {
 
   let dataText = "";
   for (const dataName of dataNames) {
-    const dataValue = await helpers.getSpecificDataInfo(
+    const dataValue = await helper.getSpecificDataInfo(
       visual,
       dataName.attribute
     );
@@ -37,7 +37,7 @@ export async function getCardInfo(visual: VisualDescriptor) {
     "The purpose of this chart is to " + CGVisual?.task + "." + dataText
   );
 
-  const filterText = helpers.getLocalFilterText(CGVisual);
+  const filterText = helper.getLocalFilterText(CGVisual);
   if (filterText !== "") {
     generalImages.push("filterImg");
     generalInfos.push("This chart has the following filters:<br>" + filterText);
@@ -61,7 +61,7 @@ export async function getCardChanges(visual: VisualDescriptor) {
 
   let visualInteractionInfo = "";
   for (const dataName of dataNames) {
-    const dataValue = await helpers.getSpecificDataInfo(
+    const dataValue = await helper.getSpecificDataInfo(
       visual,
       dataName.attribute
     );
@@ -104,7 +104,7 @@ export function getSlicerInfo(visual: VisualDescriptor) {
       );
     }
 
-    const filterText = helpers.getLocalFilterText(CGVisual);
+    const filterText = helper.getLocalFilterText(CGVisual);
     if (filterText !== "") {
       generalImages.push("filterImg");
       generalInfos.push(
@@ -139,24 +139,6 @@ export function getSlicerInfo(visual: VisualDescriptor) {
   };
 }
 
-export async function getSlicerInteractionExample(visual: any) {
-  const CGVisual = global.componentGraph.dashboard.visualizations.find(
-    (vis) => vis.id === visual.name
-  );
-  const filterName = CGVisual?.encoding.values[0]!;
-  const dataValues = await helpers.getSpecificDataInfo(
-    visual,
-    filterName.attribute
-  );
-
-  const middelOfDataValues = Math.floor(dataValues.length / 2);
-
-  const interactionInfo =
-    "Please click on the list element " + dataValues[middelOfDataValues] + ".";
-
-  return interactionInfo;
-}
-
 export async function getChartChanges(visual: any, isVertical: boolean) {
   const CGVisual = global.componentGraph.dashboard.visualizations.find(
     (vis) => vis.id === visual.name
@@ -176,8 +158,8 @@ export async function getChartChanges(visual: any, isVertical: boolean) {
     axis = CGVisual?.encoding.xAxes[0].attribute!;
     dataName = CGVisual?.encoding.yAxes[0].attribute!;
   }
-  const axisValues = await helpers.getSpecificDataInfo(visual, axis);
-  const legendValues = await helpers.getSpecificDataInfo(
+  const axisValues = await helper.getSpecificDataInfo(visual, axis);
+  const legendValues = await helper.getSpecificDataInfo(
     visual,
     legendAttribute
   );

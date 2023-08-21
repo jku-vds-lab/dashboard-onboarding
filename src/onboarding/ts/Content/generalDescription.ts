@@ -1,14 +1,15 @@
 import Visualization from "../../../componentGraph/Visualization";
 import BasicTextFormat from "./Format/basicTextFormat";
-import * as helpers from "../helperFunctions";
 import LineChart from "./lineChartVisualContent";
 import BarChart from "./barChartVisualContent";
+import { VisualDescriptor } from "powerbi-client";
+import * as helper from "../../../componentGraph/helperFunctions";
 
 interface FormBody {
   prompt: string;
   tokens: number;
 }
-export default class TextDescription {
+export default class GeneralDescription {
   text: BasicTextFormat = {
     generalImages: [],
     generalInfos: [],
@@ -53,13 +54,6 @@ export default class TextDescription {
   private legendInfo = {
     mark: " represent a different ",
     legend: " distinguished by color",
-  };
-
-  private interactionInfo = {
-    click: "By clicking on ",
-    clickAction: " you can filter the report by ",
-    hover: "You can hover over ",
-    hoverAction: " for detailed information",
   };
 
   async sendRequestToGPT(prompt: string) {
@@ -120,44 +114,12 @@ export default class TextDescription {
     return text;
   }
 
-  interactionClickText(
-    visual: string,
-    axis?: string,
-    legend?: string,
-    mark?: string
-  ) {
-    let text = "";
-
-    text =
-      this.interactionInfo.click +
-      mark +
-      this.interactionInfo.clickAction +
-      axis +
-      this.punctuations.comma;
-    legend + this.punctuations.dot + this.lineBreak;
-
-    return text;
-  }
-
-  interactionHoverText(visual: string, mark?: string) {
-    let text = "";
-
-    text =
-      this.lineBreak +
-      this.interactionInfo.hover +
-      mark +
-      this.interactionInfo.hoverAction +
-      this.punctuations.dot +
-      this.lineBreak;
-
-    return text;
-  }
-  getBeginnerText(visualType: string, visual: LineChart | BarChart) {
+  getBeginnerVisDesc(visualType: string, visual: LineChart | BarChart) {
     this.text.generalImages.push("infoImg");
-    this.text.generalInfos.push("This element is a " + visualType + " chart.");
+    this.text.generalInfos.push(visual.description);
 
-    const dataString = helpers.dataToString(visual.chart.data.attributes!);
-    const channelString = helpers.dataToString(visual.chart.channel.channel!);
+    const dataString = helper.dataToString(visual.chart.data.attributes!);
+    const channelString = helper.dataToString(visual.chart.channel.channel!);
     this.text.generalImages.push("dataImg");
 
     const purposeText = this.purposeText(
@@ -203,7 +165,7 @@ export default class TextDescription {
       );
     }
 
-    const filterText = helpers.getLocalFilterText(visual.chart);
+    const filterText = helper.getLocalFilterText(visual.chart);
     if (filterText !== "") {
       this.text.generalImages.push("filterImg");
       this.text.generalInfos.push(
@@ -213,7 +175,7 @@ export default class TextDescription {
     return this.text;
   }
 
-  getIntermediateText(visualType: string, visual: LineChart | BarChart) {
+  getIntermediateVisDesc(visualType: string, visual: LineChart | BarChart) {
     if (visual.axis) {
       const axisText = this.axisText(
         visualType,
@@ -234,7 +196,7 @@ export default class TextDescription {
       this.text.generalInfos.push("Legend value:  " + visual.legend);
     }
 
-    const filterText = helpers.getLocalFilterText(visual.chart);
+    const filterText = helper.getLocalFilterText(visual.chart);
     if (filterText !== "") {
       this.text.generalImages.push("filterImg");
       this.text.generalInfos.push(
@@ -244,7 +206,7 @@ export default class TextDescription {
     return this.text;
   }
 
-  getAdvancedText(visualType: string, visual: LineChart | BarChart) {
+  getAdvancedVisDesc(visualType: string, visual: LineChart | BarChart) {
     if (visual.axis) {
       const axisText = this.axisText(
         visualType,
@@ -257,4 +219,10 @@ export default class TextDescription {
     }
     return this.text;
   }
+
+  // get beginner, intermediate and advanced insight information
+
+  // interaction information always stays the same
+
+  // all text should be here and not in helper functions, not anywhere else. Max within the vis. But no where else.
 }

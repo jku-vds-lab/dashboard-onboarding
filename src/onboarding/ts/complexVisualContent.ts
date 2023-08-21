@@ -1,4 +1,4 @@
-import * as helpers from "./helperFunctions";
+import * as helpers from "./../../componentGraph/helperFunctions";
 import * as global from "./globalVariables";
 
 export async function getLineClusteredColumnComboChartInfo(visual: any) {
@@ -147,58 +147,6 @@ export async function getLineClusteredColumnComboChartInfo(visual: any) {
   };
 }
 
-export async function getLineClusteredColumnComboChartInteractionExample(
-  visual: any
-) {
-  const CGVisual = global.componentGraph.dashboard.visualizations.find(
-    (vis) => vis.id === visual.name
-  );
-  const axis = CGVisual?.encoding.xAxes[0].attribute;
-  const axisValues = await helpers.getSpecificDataInfo(visual, axis!);
-  const data = CGVisual?.encoding.yAxes;
-  const columnData = data?.filter((yAxis) => yAxis.type === "Column y-axis")!;
-  const lineData = data?.filter((yAxis) => yAxis.type === "Line y-axis")!;
-
-  const middelOfAxisValues = Math.floor(axisValues.length / 2);
-
-  let interactionInfo;
-  if (lineData.length != 0 && columnData.length == 0) {
-    interactionInfo = "Please click on the line";
-    if (axisValues && lineData) {
-      interactionInfo +=
-        " representing " +
-        lineData[0].attribute +
-        " at the area of " +
-        axisValues[middelOfAxisValues] +
-        ".";
-    } else if (axisValues) {
-      interactionInfo +=
-        " at the area of " + axisValues[middelOfAxisValues] + ".";
-    } else if (lineData.length == 0) {
-      interactionInfo += " representing " + lineData[0].attribute + ".";
-    } else {
-      interactionInfo += ".";
-    }
-  } else {
-    interactionInfo = "Please click on the bar representing the ";
-    if (axisValues && columnData.length != 0) {
-      interactionInfo +=
-        columnData[0].attribute +
-        " for " +
-        axisValues[middelOfAxisValues] +
-        ".";
-    } else if (axisValues) {
-      interactionInfo += " data for " + axisValues[middelOfAxisValues] + ".";
-    } else if (columnData.length != 0) {
-      interactionInfo += columnData[0].attribute + ".";
-    } else {
-      interactionInfo += ".";
-    }
-  }
-
-  return interactionInfo;
-}
-
 export async function getLineClusteredColumnComboChartChanges(visual: any) {
   const CGVisual = global.componentGraph.dashboard.visualizations.find(
     (vis) => vis.id === visual.name
@@ -220,7 +168,7 @@ export async function getLineClusteredColumnComboChartChanges(visual: any) {
   const allAttributs = dataArray.map((yAxis) => yAxis.attribute);
   const allDataString = helpers.dataToString(allAttributs);
 
-  let visualInteractionInfo = helpers.getGeneralInteractionInfo(
+  let visualInteractionInfo = getGeneralInteractionInfo(
     additionalFilters,
     allDataString
   );
@@ -229,6 +177,28 @@ export async function getLineClusteredColumnComboChartChanges(visual: any) {
     visualInteractionInfo += helpers.getTargetInteractionFilter(axis);
   }
   visualInteractionInfo += ".";
+
+  return visualInteractionInfo;
+}
+export function getGeneralInteractionInfo(
+  additionalFilters: global.Target[],
+  filterString: string
+) {
+  let visualInteractionInfo = "The highlighted data includes ";
+
+  if (additionalFilters.length != 0) {
+    let dataString = "";
+    for (let i = 0; i < additionalFilters.length; i++) {
+      dataString +=
+        additionalFilters[i].target.column + " " + additionalFilters[i].equals;
+      if (i != additionalFilters.length - 1) {
+        dataString += " and ";
+      }
+    }
+    visualInteractionInfo += " the " + filterString + " of " + dataString;
+  } else {
+    visualInteractionInfo += "all " + filterString;
+  }
 
   return visualInteractionInfo;
 }

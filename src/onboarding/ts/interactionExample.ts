@@ -3,15 +3,9 @@ import * as helpers from "./helperFunctions";
 import * as global from "./globalVariables";
 import * as disable from "./disableArea";
 import * as elements from "./elements";
-import { getSlicerInteractionExample } from "./basicVisualContent";
-import {
-  getBarChartInteractionExample,
-  getColumnChartInteractionExample,
-} from "./barChartVisualContent";
-import { getLineChartInteractionExample } from "./Content/lineChartVisualContent";
-import { getLineClusteredColumnComboChartInteractionExample } from "./complexVisualContent";
 import { findCurrentTraversalVisual } from "./traversal";
 import { VisualDescriptor } from "powerbi-client";
+import InteractionDescription from "./Content/interactionDescription";
 
 export function startInteractionExample() {
   global.setInteractionMode(true);
@@ -23,6 +17,7 @@ export function startInteractionExample() {
 }
 
 export async function createInteractionCard(visual: VisualDescriptor) {
+  const interactionDesc = new InteractionDescription();
   disable.disableFrame();
   disable.createDisabledArea(visual);
 
@@ -64,61 +59,7 @@ export async function createInteractionCard(visual: VisualDescriptor) {
   );
   helpers.createCardButtons("cardButtons", "", "", "back to visual");
 
-  await createInteractionInfo(visual);
-}
-
-async function createInteractionInfo(visual: VisualDescriptor) {
-  const visualData = helpers.getDataOfInteractionVisual(visual);
-  let interactionInfo;
-
-  switch (visualData?.clickInfosStatus) {
-    case global.infoStatus.original:
-      interactionInfo = await getInteractionText(visual);
-      break;
-    case global.infoStatus.changed:
-    case global.infoStatus.added:
-      interactionInfo = visualData.changedClickInfo;
-      break;
-    default:
-      interactionInfo =
-        "Please click on an element of the visualization to filter the report.";
-      break;
-  }
-
-  if (!interactionInfo) {
-    interactionInfo =
-      "Please click on an element of the visualization to filter the report.";
-  }
-
-  document.getElementById("contentText")!.innerHTML = interactionInfo;
-}
-
-export async function getInteractionText(visual: VisualDescriptor) {
-  const type = helpers.getTypeName(visual);
-  let interactionInfo;
-
-  switch (type) {
-    case "Line Clustered Column Combo Chart":
-      interactionInfo =
-        await getLineClusteredColumnComboChartInteractionExample(visual);
-      break;
-    case "Line Chart":
-      interactionInfo = await getLineChartInteractionExample(visual);
-      break;
-    case "Clustered Bar Chart":
-      interactionInfo = await getBarChartInteractionExample(visual);
-      break;
-    case "Clustered Column Chart":
-      interactionInfo = await getColumnChartInteractionExample(visual);
-      break;
-    case "Slicer":
-      interactionInfo = await getSlicerInteractionExample(visual);
-      break;
-    default:
-      break;
-  }
-
-  return interactionInfo;
+  await interactionDesc.createInteractionInfo(visual);
 }
 
 export function removeInteractionCard() {

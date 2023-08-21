@@ -18,7 +18,6 @@ import {
 import { createSettings } from "./createSettings";
 // import { addVisualTextarea } from "./listOfVisuals";
 import {
-  getInteractionText,
   removeInteractionCard,
   startInteractionExample,
 } from "./interactionExample";
@@ -27,37 +26,24 @@ import {
   removeShowChangesCard,
   showReportChanges,
 } from "./showReportChanges";
-import { getCardInfo, getSlicerInfo } from "./basicVisualContent";
-import { getLineClusteredColumnComboChartInfo } from "./complexVisualContent";
-import LineChart from "./Content/lineChartVisualContent";
-import {
-  getClusteredBarChartInfo,
-  getClusteredColumnChartInfo,
-} from "./barChartVisualContent";
-import { getFilterDescription } from "./filterInfoCards";
-import { IFilterColumnTarget, IFilterMeasureTarget } from "powerbi-models";
+
 import "powerbi-report-authoring";
 import { VisualDescriptor } from "powerbi-client";
 import ComponentGraph, {
   replacer,
   reviver,
 } from "../../componentGraph/ComponentGraph";
-import Filter from "../../componentGraph/Filter";
+
 import { exportData } from "../../Provenance/utils";
 import * as sizes from "./sizes";
 import {
-  TraversalElement,
   createGroupOverlay,
-  createInformationCard,
   findCurrentTraversalVisual,
   findCurrentTraversalVisualIndex,
-  isGroup,
 } from "./traversal";
 import { reportId } from "../../Config";
 import Visualization from "../../componentGraph/Visualization";
-import BarChart from "./Content/barChartVisualContent";
-import ColumnChart from "./Content/columnChartVisualContent";
-import BasicTextFormat from "./Content/Format/basicTextFormat";
+import * as helper from "../../componentGraph/helperFunctions";
 
 export function addContainerOffset(cardHeight: number) {
   const rect = document
@@ -228,11 +214,6 @@ export function createCardButtons(
         buttonAttributes.content = "Next";
         buttonAttributes.function = nextInGroup;
         break;
-      // case "save":
-      //     buttonAttributes.id = "saveButton";
-      //     buttonAttributes.content = "Save";
-      //     buttonAttributes.function = saveOnboardingChanges;
-      //     break;
       case "back to group":
         buttonAttributes.id = "backToGroupButton";
         buttonAttributes.content = "Next";
@@ -328,14 +309,6 @@ export function createDisableButton(parentId: string) {
 export function createEditOnboardingButtons() {
   const editButton = document.getElementById("editOnboarding");
   editButton?.removeAttribute("hidden");
-  //     const attributes = global.createButtonAttributes();
-  //     attributes.id = "editOnboarding";
-  //     attributes.content = "Edit Dashboard Onboarding";
-  //     attributes.style =  global.onboardingButtonStyle;
-  //     attributes.classes = "col-2 " + global.darkOutlineButtonClass;
-  //     attributes.function = createOnboardingEditing;
-  //     attributes.parentId = "onboarding-header";
-  //     elements.createButton(attributes);
 }
 
 export function createEnableButton(parentId: string) {
@@ -346,46 +319,11 @@ export function createEnableButton(parentId: string) {
   attributes.parentId = parentId;
   elements.createButton(attributes);
 }
-
-// export function createInfoForm(infoType: string, visualID: string, Infos: string | any[]){
-//     const infoTitle = firstLetterToUpperCase(infoType);
-
-//     const labelAttributes = global.createLabelAttributes();
-//     labelAttributes.id = infoType + "InfosLabel" + visualID;
-//     labelAttributes.for = infoType + "InfosTextarea" + visualID;
-//     labelAttributes.style = "display: block;margin-left: 10px;";
-//     labelAttributes.content = infoTitle + " Information:";
-//     labelAttributes.parentId = "collapseForm" + visualID;
-//     elements.createLabel(labelAttributes);
-
-//     for (let i = 0; i < Infos.length; ++i) {
-//         const Info = Infos[i].replaceAll("<br>", '\r\n');
-//         const textareaAttributes = global.createTextareaAttributes();
-//         textareaAttributes.id = i + infoType+ "InfosTextarea" + visualID;
-//         textareaAttributes.class = infoType+ "Infos" + visualID;
-//         textareaAttributes.value = Info;
-//         textareaAttributes.style = "display: block;width: 95%;margin-bottom: 5px;margin-left: 10px;background-color: lightsteelblue;";
-//         textareaAttributes.parentId = "collapseForm" + visualID;
-//         elements.createTextarea(textareaAttributes, false);
-//     }
-
-//     const addButtonAttributes = global.createButtonAttributes();
-//     addButtonAttributes.id = "add"+ infoTitle + "Info" + visualID;
-//     addButtonAttributes.content = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/></svg> Add`;
-//     addButtonAttributes.style =  "margin: auto;display: block;";
-//     addButtonAttributes.classes = global.darkOutlineButtonClass;
-//     addButtonAttributes.function = function(){
-//         addVisualTextarea(infoType, visualID);
-//     };
-//     addButtonAttributes.parentId = "collapseForm" + visualID;
-//     elements.createButton(addButtonAttributes);
-// }
-
 export async function createInteractionExampleButton(
   parentId: string,
   visual: VisualDescriptor
 ) {
-  if (!(await getVisualData(visual))) {
+  if (!(await helper.getVisualData(visual))) {
     return;
   }
   elements.removeElement("interactionExample");
@@ -402,6 +340,14 @@ export async function createInteractionExampleButton(
   elements.createButton(attributes);
 }
 
+function getDisabledStyle(
+  top: number,
+  left: number,
+  width: number,
+  height: number
+) {
+  return `position:absolute;pointer-events:none;top:${top}px;left:${left}px;width:${width}px;height:${height}px;`;
+}
 export function createOnboarding() {
   const style = getDisabledStyle(
     global.containerPaddingTop,
@@ -460,34 +406,6 @@ export function createTitleForm(ID: string, title: string) {
   elements.createInput(inputAttributes);
 }
 
-export function dataToString(dataArray: string | any[]) {
-  let dataString = "";
-  for (let i = 0; i < dataArray.length; i++) {
-    if (dataArray[i].length != 0) {
-      dataString += dataArray[i];
-      if (i == dataArray.length - 2) {
-        dataString += " and ";
-      } else if (i != dataArray.length - 1) {
-        dataString += ", ";
-      }
-    }
-  }
-  return dataString;
-}
-
-export function dataToStringNoConnection(dataArray: string | any[]) {
-  let dataString = "";
-  for (let i = 0; i < dataArray.length; i++) {
-    if (dataArray[i].length != 0) {
-      dataString += dataArray[i];
-      if (i != dataArray.length - 1) {
-        dataString += " ";
-      }
-    }
-  }
-  return dataString;
-}
-
 function endExplorationMode() {
   elements.removeElement("dashboardExplaination");
   global.setExplorationMode(false);
@@ -497,11 +415,6 @@ function endExplorationMode() {
     return;
   }
   button.innerHTML = "Start Dashboard Exploration";
-}
-
-export function firstLetterToUpperCase(str: string) {
-  str = str.charAt(0).toUpperCase() + str.slice(1);
-  return str;
 }
 
 export async function getActivePage() {
@@ -544,163 +457,6 @@ export function getCloseFunction() {
   }
 }
 
-export function getDataOfInteractionVisual(visual: VisualDescriptor) {
-  const visualsData = global.settings.interactionExample.visuals;
-  const visualData = visualsData.find(function (data) {
-    return data.id == visual.name;
-  });
-
-  return visualData;
-}
-
-export function getDataOfVisual(
-  traversal: TraversalElement[],
-  visual: VisualDescriptor,
-  count: number
-) {
-  const traversalElements = traversal;
-  let foundVisual;
-  for (const elem of traversalElements) {
-    if (isGroup(elem.element)) {
-      for (const groupTraversals of elem.element.visuals) {
-        for (const groupElem of groupTraversals) {
-          if (
-            groupElem.element.id === visual.name &&
-            groupElem.count == count
-          ) {
-            foundVisual = groupElem;
-          }
-        }
-      }
-    } else {
-      if (elem.element.id === visual.name && elem.count == count) {
-        foundVisual = elem;
-      }
-    }
-  }
-  return foundVisual?.element;
-}
-
-export function getDataWithId(
-  traversal: TraversalElement[],
-  ID: string,
-  categories: string[],
-  count: number
-) {
-  const traversalElements = traversal;
-
-  let foundVisual: TraversalElement = {
-    element: null,
-    categories: [],
-    count: 0,
-  };
-  for (const elem of traversalElements) {
-    if (isGroup(elem.element)) {
-      for (const groupTraversals of elem.element.visuals) {
-        for (const groupElem of groupTraversals) {
-          if (
-            groupElem.element.id === ID &&
-            groupElem.categories.every((category: string) =>
-              categories.includes(category)
-            ) &&
-            groupElem.count == count
-          ) {
-            foundVisual = groupElem;
-          }
-        }
-      }
-    } else {
-      if (
-        elem.element.id === ID &&
-        elem.categories.every((category: string) =>
-          categories.includes(category)
-        ) &&
-        elem.count == count
-      ) {
-        foundVisual = elem;
-      }
-    }
-  }
-  console.log("Found Visual", foundVisual);
-  return foundVisual?.element; //as global.SettingsVisual;
-}
-
-function getDisabledStyle(
-  top: number,
-  left: number,
-  width: number,
-  height: number
-) {
-  return `position:absolute;pointer-events:none;top:${top}px;left:${left}px;width:${width}px;height:${height}px;`;
-}
-
-export async function getFieldColumn(
-  visual: VisualDescriptor,
-  fieldName: string
-) {
-  let column = "";
-  const fields = (await visual.getDataFields(
-    fieldName
-  )) as IFilterColumnTarget[];
-  if (fields.length != 0) {
-    column = fields[0].column;
-  }
-  return column;
-}
-
-export async function getFieldMeasure(
-  visual: VisualDescriptor,
-  fieldName: string
-) {
-  let measure = "";
-  const fields = (await visual.getDataFields(
-    fieldName
-  )) as IFilterMeasureTarget[];
-  if (fields.length != 0) {
-    measure = fields[0].measure;
-  }
-  return measure;
-}
-
-export async function getFieldMeasures(
-  visual: VisualDescriptor,
-  fieldName: string
-) {
-  const measures = [];
-  const fields = (await visual.getDataFields(
-    fieldName
-  )) as IFilterMeasureTarget[];
-  for (let i = 0; i < fields.length; i++) {
-    measures.push(fields[i].measure);
-  }
-  return measures;
-}
-
-export async function getFieldColumns(
-  visual: VisualDescriptor,
-  fieldName: string
-) {
-  const columns = [];
-  const fields = (await visual.getDataFields(
-    fieldName
-  )) as IFilterColumnTarget[];
-  for (let i = 0; i < fields.length; i++) {
-    columns.push(fields[i].column);
-  }
-  return columns;
-}
-
-export function getFilterInfo() {
-  const filters = global.componentGraph.dashboard.globalFilter.filters;
-  const filterInfos = [];
-  for (let i = 0; i < filters.length; ++i) {
-    const filter = filters[i] as Filter;
-    filterInfos.push(getFilterDescription(filter));
-  }
-
-  return filterInfos;
-}
-
 export function getElementWidth(element: HTMLElement) {
   let elementWidth = element.clientWidth;
   const computedStyle = getComputedStyle(element);
@@ -714,29 +470,6 @@ export function getGeneralInfoInteractionExampleText() {
   let generalInfo = `Can you see how the whole report changed?<br>All the visualizations were filtered by "all report filters".<br>You can now click on one of the cards or graphs to get detailed information about its changes.`;
   generalInfo = generalInfo.replaceAll("<br>", "\r\n");
   return generalInfo;
-}
-
-export function getGeneralInteractionInfo(
-  additionalFilters: global.Target[],
-  filterString: string
-) {
-  let visualInteractionInfo = "The highlighted data includes ";
-
-  if (additionalFilters.length != 0) {
-    let dataString = "";
-    for (let i = 0; i < additionalFilters.length; i++) {
-      dataString +=
-        additionalFilters[i].target.column + " " + additionalFilters[i].equals;
-      if (i != additionalFilters.length - 1) {
-        dataString += " and ";
-      }
-    }
-    visualInteractionInfo += " the " + filterString + " of " + dataString;
-  } else {
-    visualInteractionInfo += "all " + filterString;
-  }
-
-  return visualInteractionInfo;
 }
 
 export async function getInteractionExampleChangedInfo(
@@ -789,45 +522,6 @@ export async function getInteractionExampleChangesText(
   return visualChangeInfo;
 }
 
-export function getInteractionExampleGeneralInfo() {
-  const generalInfo = global.settings.interactionExample.generalInfoStatus;
-  switch (generalInfo) {
-    case global.infoStatus.original:
-      return getGeneralInfoInteractionExampleText();
-    case global.infoStatus.changed:
-    case global.infoStatus.added:
-      return global.settings.interactionExample.changedGeneralInfo.replaceAll(
-        "<br>",
-        "\r\n"
-      );
-    default:
-      return "";
-  }
-}
-
-export async function getInteractionExampleInteractionInfo(
-  visual: VisualDescriptor,
-  visualData: global.InteractionVisual
-) {
-  const clickInfoStatus = visualData.clickInfosStatus;
-  let interactionInfo;
-  switch (clickInfoStatus) {
-    case global.infoStatus.original:
-      interactionInfo = await getInteractionText(visual);
-      interactionInfo = interactionInfo?.replaceAll("<br>", "\r\n");
-      break;
-    case global.infoStatus.changed:
-    case global.infoStatus.added:
-      interactionInfo = visualData.changedClickInfo;
-      break;
-    default:
-      interactionInfo = "";
-      break;
-  }
-
-  return interactionInfo;
-}
-
 export function getNextVisual() {
   let nextVisual;
   const visuals = global.currentVisuals.filter(function (visual) {
@@ -867,29 +561,6 @@ export async function getSettings() {
   } catch (error) {
     console.log("Error in getSettings()", error);
   }
-}
-
-export async function getSpecificDataInfo(
-  visual: VisualDescriptor,
-  dataName: string
-) {
-  const dataMap = await getVisualData(visual);
-  if (!dataMap || !dataName) {
-    return [];
-  }
-
-  if (dataMap === "exportError") {
-    const dataPoints = [];
-    const data = global.componentGraph.dashboard.visualizations.find(
-      (vis) => vis.id === visual.name
-    )!.data.data;
-    for (const map of data) {
-      dataPoints.push(map.get(dataName));
-    }
-    return dataPoints;
-  }
-
-  return dataMap.get(dataName) ?? [];
 }
 
 export function getTargetInteractionFilter(target: string) {
@@ -946,126 +617,11 @@ export function getVisualCardPos(
   return position;
 }
 
-export async function getVisualData(visual: VisualDescriptor) {
-  const exportedData = await exportData(visual);
-  if (!exportedData) {
-    return "exportError";
-  }
-  const visualData = exportedData.data;
-  const headers = visualData.slice(0, visualData.indexOf("\r")).split(",");
-  const rows = visualData.slice(visualData.indexOf("\n") + 1).split(/\r?\n/);
-  rows.pop();
-  const visualDataMap = new Map<string, string[]>();
-  for (let i = 0; i < rows.length; i++) {
-    const values = rows[i].split(",");
-    for (let j = 0; j < headers.length; j++) {
-      const dataArray = visualDataMap.get(headers[j]) ?? [];
-      dataArray.push(values[j]);
-      visualDataMap.set(headers[j], dataArray);
-    }
-  }
-
-  for (let i = 0; i < headers.length; i++) {
-    const dataArray = visualDataMap.get(headers[i]) ?? [];
-    visualDataMap.set(headers[i], dataArray);
-  }
-
-  return visualDataMap;
-}
-
-export async function getDataRange(
-  visual: VisualDescriptor,
-  categorie: string
-) {
-  const data = await getVisualData(visual);
-  if (!data || data === "exportError") {
-    return null;
-  }
-
-  let dataPoints = data.get(categorie);
-  if (!dataPoints) {
-    return null;
-  }
-
-  let numberArray: number[] = [];
-  if (!isNaN(Number(dataPoints[0]))) {
-    numberArray = dataPoints.map((str: string) => {
-      return Number(str);
-    });
-  }
-
-  for (let i = 0; i < dataPoints.length; i++) {
-    const intArray = [];
-    intArray.push(Math.min(...numberArray));
-    intArray.push(Math.max(...numberArray));
-    numberArray = intArray;
-    dataPoints = numberArray.map((num: number) => {
-      return num.toString();
-    });
-  }
-
-  return dataPoints;
-}
-
 export function getVisualIndex(name: string) {
   const index = global.currentVisuals.findIndex(function (visual) {
     return visual.name == name;
   });
   return index;
-}
-
-export async function getVisualInfos(
-  visual: VisualDescriptor
-): Promise<BasicTextFormat> {
-  const type = getTypeName(visual);
-  let visualInfos: BasicTextFormat = {
-    generalImages: [],
-    generalInfos: [],
-    interactionImages: [],
-    interactionInfos: [],
-    insightImages: [],
-    insightInfos: [],
-  };
-  try {
-    switch (type) {
-      case "Card":
-      case "Multi Row Card":
-        visualInfos = await getCardInfo(visual);
-        break;
-      case "Line Clustered Column Combo Chart":
-        visualInfos = await getLineClusteredColumnComboChartInfo(visual);
-        break;
-      case "Line Chart":
-        const lineChart = new LineChart();
-        visualInfos = await lineChart.getLineChartInfo(visual);
-        break;
-      case "Clustered Bar Chart":
-        const barChart = new BarChart();
-        visualInfos = await barChart.getClusteredBarChartInfo(visual);
-        break;
-      case "Clustered Column Chart":
-        const columnChart = new ColumnChart();
-        visualInfos = await columnChart.getClusteredColumnChartInfo(visual);
-        break;
-      case "Slicer":
-        visualInfos = await getSlicerInfo(visual);
-        break;
-      default:
-        break;
-    }
-    const CGVisual = global.componentGraph.dashboard.visualizations.find(
-      (vis) => vis.id === visual.name
-    );
-    const insights = CGVisual?.insights?.insights!;
-    for (const insight of insights) {
-      visualInfos.insightImages.push("lightbulbImg");
-      visualInfos.insightInfos.push(insight);
-    }
-  } catch (error) {
-    console.log("Error in getVisualsInfo", error);
-  }
-
-  return visualInfos;
 }
 
 export async function getVisualsfromPowerBI() {
@@ -1076,53 +632,16 @@ export async function getVisualsfromPowerBI() {
   global.setAllVisuals(global.currentVisuals);
 }
 
-export function getVisualTitle(visual: VisualDescriptor) {
-  const CGVisual = global.componentGraph.dashboard.visualizations.find(
-    (vis) => vis.id === visual.name
-  )!;
-  const title = CGVisual.title.title;
-  if (title) {
-    return title;
-  } else {
-    return getTypeName(visual);
-  }
-}
-
+// remove this and find a better way for checking visual type
 export function getTypeName(visual: VisualDescriptor) {
   let typeName = visual.type.replaceAll(/([A-Z])/g, " $1").trim();
   typeName = firstLetterToUpperCase(typeName);
   return typeName;
 }
-
-export async function isVisible(
-  visual: VisualDescriptor,
-  selectorObject: string
-) {
-  if (selectorObject === "") {
-    return true;
-  }
-  const selector = {
-    objectName: selectorObject,
-    propertyName: "visible",
-  };
-  const visible = await visual.getProperty(selector);
-  if (visible.value) {
-    return true;
-  } else {
-    return false;
-  }
+export function firstLetterToUpperCase(str: string) {
+  str = str.charAt(0).toUpperCase() + str.slice(1);
+  return str;
 }
-
-// export function orderSettingsVisuals(allVisuals: any[]){
-//     const visDatas = global.settings.visuals;
-//     global.settings.visuals = [];
-//     for (const visual of allVisuals) {
-//         const visData = visDatas.filter(function (element) {
-//             return element.id === visual.name;
-//         });
-//         global.settings.visuals.push(visData[0]);
-//     }
-// }
 
 export function recreateInteractionExampleButton() {
   const interactionButton = document.getElementById("interactionExample");
@@ -1268,62 +787,4 @@ export async function toggleFilter(open: boolean) {
   }
 
   await global.report.updateSettings(newSettings);
-}
-
-export function getLocalFilterText(visual: Visualization | undefined) {
-  let filterText = "";
-  try {
-    const filters = visual?.localFilters.localFilters!;
-    const filterTexts = [];
-    for (const filter of filters) {
-      if (filter.operation !== "All") {
-        let valueText = dataToString(filter.values);
-        if (valueText !== "") {
-          valueText = " Its current value is " + valueText + ".";
-        }
-        filterTexts.push(
-          "The operation " +
-            filter.operation +
-            " is executed for " +
-            filter.attribute +
-            "." +
-            valueText +
-            "<br>"
-        );
-      }
-    }
-    filterText = dataToStringNoConnection(filterTexts);
-  } catch (error) {
-    console.log("Error in getting local filter text", error);
-  }
-
-  return filterText;
-}
-
-export function saveInfoVideo(
-  url: string,
-  visId: string,
-  categories: string[],
-  count: number
-) {
-  const visData = getDataWithId(
-    global.settings.traversalStrategy,
-    visId,
-    categories,
-    count
-  );
-  if (!visData) {
-    return;
-  }
-
-  visData.mediaType = global.mediaType.video;
-  visData.videoURL = url;
-
-  localStorage.setItem("settings", JSON.stringify(global.settings, replacer));
-}
-
-export async function handelNewReport() {
-  if (global.settings.reportId !== reportId) {
-    await createSettings();
-  }
 }

@@ -1,5 +1,3 @@
-import { getVisualInteractions } from "./helperFunctions";
-
 export default class Interactions {
   interactionAttributes: string[];
   interactionChartsHighlighting: string[];

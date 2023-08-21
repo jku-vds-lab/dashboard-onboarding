@@ -1,4 +1,4 @@
-import * as helpers from "./../helperFunctions";
+import * as helpers from "./../../../componentGraph/helperFunctions";
 import * as global from "./../globalVariables";
 import { createInfoList } from "./../visualInfo";
 import BasicTextFormat from "./Format/basicTextFormat";
