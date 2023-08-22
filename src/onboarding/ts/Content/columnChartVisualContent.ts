@@ -9,7 +9,7 @@ import Legend from "../../../componentGraph/Legend";
 import YAxis from "../../../componentGraph/YAxis";
 
 export default class ColumnChart extends Visualization {
-  barChart: Visualization;
+  chart: Visualization;
   text: BasicTextFormat;
   noviceText: NoviceText;
   axisValue: YAxis;
@@ -30,7 +30,7 @@ export default class ColumnChart extends Visualization {
       interactionImages: [],
       interactionInfos: [],
     };
-    this.barChart = new Visualization();
+    this.chart = new Visualization();
     this.noviceText = new NoviceText();
     this.axisValue = new YAxis();
     this.axis = "";
@@ -41,18 +41,18 @@ export default class ColumnChart extends Visualization {
   }
 
   async getClusteredColumnChartInfo(visual: VisualDescriptor) {
-    this.barChart = await this.getVisualization(visual);
-    this.axisValue = this.barChart.encoding.yAxes[0];
-    this.axis = this.barChart.encoding.xAxes[0]
-      ? this.barChart.encoding.xAxes[0].attribute!
+    this.chart = await this.getVisualization(visual);
+    this.axisValue = this.chart.encoding.yAxes[0];
+    this.axis = this.chart.encoding.xAxes[0]
+      ? this.chart.encoding.xAxes[0].attribute!
       : "";
-    this.legendValue = this.barChart?.encoding.legends[0];
-    this.legend = this.barChart.encoding.legends[0]
-      ? this.barChart.encoding.legends[0].attribute
+    this.legendValue = this.chart?.encoding.legends[0];
+    this.legend = this.chart.encoding.legends[0]
+      ? this.chart.encoding.legends[0].attribute
       : "";
 
-    this.dataName = this.barChart.encoding.yAxes[0]
-      ? this.barChart.encoding.yAxes[0].attribute!
+    this.dataName = this.chart.encoding.yAxes[0]
+      ? this.chart.encoding.yAxes[0].attribute!
       : "";
 
     this.getGeneralInfo();
@@ -64,15 +64,15 @@ export default class ColumnChart extends Visualization {
     this.text.generalImages.push("infoImg");
     this.text.generalInfos.push("This element is a column chart.");
 
-    const dataString = helpers.dataToString(this.barChart?.data.attributes!);
-    const channelString = helpers.dataToString(this.barChart?.channel.channel!);
+    const dataString = helpers.dataToString(this.chart?.data.attributes!);
+    const channelString = helpers.dataToString(this.chart?.channel.channel!);
     this.text.generalImages.push("dataImg");
 
     const purposeText = this.noviceText.purposeText(
-      this.barChart.type,
+      this.chart.type,
       channelString,
       dataString,
-      this.barChart?.task
+      this.chart?.task
     );
 
     this.text.generalInfos.push(purposeText);
@@ -80,16 +80,16 @@ export default class ColumnChart extends Visualization {
     let barInfo = "";
     if (this.axis) {
       barInfo += this.noviceText.axisText(
-        this.barChart.type,
-        this.barChart?.mark,
+        this.chart.type,
+        this.chart?.mark,
         this.dataName,
         this.axis
       );
     }
     if (this.legend) {
       barInfo += this.noviceText.legendText(
-        this.barChart.type,
-        this.barChart?.mark,
+        this.chart.type,
+        this.chart?.mark,
         this.legend
       );
     }
@@ -102,21 +102,21 @@ export default class ColumnChart extends Visualization {
     // text.interactionInfos.push(CGVisual?.interactions.description!); // this should be the function down there
 
     let interactionInfo = this.noviceText.interactionClickText(
-      this.barChart.type,
+      this.chart.type,
       this.axis,
       this.legend,
-      this.barChart?.mark
+      this.chart?.mark
     );
-    if (this.barChart?.encoding.hasTooltip) {
+    if (this.chart?.encoding.hasTooltip) {
       interactionInfo += this.noviceText.interactionHoverText(
-        this.barChart.type,
-        this.barChart?.mark
+        this.chart.type,
+        this.chart?.mark
       );
     }
     this.text.interactionImages.push("elemClickImg");
     this.text.interactionInfos.push(interactionInfo);
 
-    if (this.axis && this.barChart.encoding.xAxes[0].isVisible) {
+    if (this.axis && this.chart.encoding.xAxes[0].isVisible) {
       this.text.generalImages.push("xAxisImg");
       this.text.generalInfos.push(
         "The X-axis displays the values of the " + this.axis + "."
