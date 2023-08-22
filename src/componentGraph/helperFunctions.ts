@@ -396,6 +396,8 @@ export async function getVisualInfos(
       default:
         break;
     }
+
+    // bad practice should not be here
     const CGVisual = global.componentGraph.dashboard.visualizations.find(
       (vis) => vis.id === visual.name
     );
