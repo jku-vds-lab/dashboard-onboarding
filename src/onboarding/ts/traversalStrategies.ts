@@ -2,14 +2,10 @@ import { getTraversalElement } from "./createSettings";
 import {
   createGroup,
   createTraversalElement,
-  createTraversalOfGroupNodes,
   getStandartCategories,
-  getTraversalElem,
   groupType,
 } from "./traversal";
 import * as global from "./globalVariables";
-import { currentVisuals } from "./globalVariables";
-import { IGroupNode } from "../../UI/nodes-canvas/nodes/groupNode";
 
 export async function basicTraversalStrategy() {
   const trav = [];

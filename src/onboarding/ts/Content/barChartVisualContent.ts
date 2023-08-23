@@ -1,12 +1,10 @@
-import * as helpers from "./../helperFunctions";
-import * as global from "./../globalVariables";
 import GeneralDescription from "./generalDescription";
 import BasicTextFormat from "./Format/basicTextFormat";
 import Visualization from "../../../componentGraph/Visualization";
 import { VisualDescriptor } from "powerbi-client";
-import XAxis from "../../../componentGraph/XAxis";
-import Legend from "../../../componentGraph/Legend";
-import YAxis from "../../../componentGraph/YAxis";
+import XAxis from "../../../componentGraph/xAxis";
+import Legend from "../../../componentGraph/legend";
+import YAxis from "../../../componentGraph/yAxis";
 import { getSpecificDataInfo } from "../../../componentGraph/helperFunctions";
 
 export default class BarChart extends Visualization {

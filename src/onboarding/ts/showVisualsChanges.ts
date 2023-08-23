@@ -5,9 +5,11 @@ import { getCardChanges, getChartChanges } from "./basicVisualContent";
 import { getLineClusteredColumnComboChartChanges } from "./complexVisualContent";
 import { showReportChanges } from "./showReportChanges";
 import { VisualDescriptor } from "powerbi-client";
+import { dataToString, getData } from "../../componentGraph/helperFunctions";
+import { getStandartCategories } from "./traversal";
 
 export async function showVisualChanges(selectedVisual: VisualDescriptor) {
-  const visualData = helpers.getDataOfInteractionVisual(selectedVisual);
+  const visualData = getData(selectedVisual, getStandartCategories(selectedVisual.type));
 
   if (
     visualData &&
@@ -67,7 +69,7 @@ export async function showVisualChanges(selectedVisual: VisualDescriptor) {
 }
 
 async function createShowVisualChangesInfo(visual: VisualDescriptor) {
-  const visualData = helpers.getDataOfInteractionVisual(visual);
+  const visualData = getData(visual, getStandartCategories(visual.type));
   let visualChangeInfo;
 
   switch (visualData?.interactionChangedInfosStatus) {
@@ -88,28 +90,27 @@ async function createShowVisualChangesInfo(visual: VisualDescriptor) {
 
 export async function getShowVisualChangesText(visual: VisualDescriptor) {
   const allTargets = global.selectedTargets.map(({ equals }) => equals);
-  const allTargetsString = helpers.dataToString(allTargets);
+  const allTargetsString = dataToString(allTargets);
   let visualChangeInfo =
     "You can see that this visual was filtered by " +
     allTargetsString +
     ".<br>";
 
-  const type = helpers.getTypeName(visual);
-  switch (type) {
-    case "Card":
-    case "Multi Row Card":
+  switch (visual.type) {
+    case "card":
+    case "multiRowCard":
       visualChangeInfo += await getCardChanges(visual);
       break;
-    case "Line Clustered Column Combo Chart":
+    case "lineClusteredColumnComboChart":
       visualChangeInfo += await getLineClusteredColumnComboChartChanges(visual);
       visualChangeInfo += displayAdditionalInfo();
       break;
-    case "Line Chart":
-    case "Clustered Column Chart":
+    case "lineChart":
+    case "clusteredColumnChart":
       visualChangeInfo += await getChartChanges(visual, true);
       visualChangeInfo += displayAdditionalInfo();
       break;
-    case "Clustered Bar Chart":
+    case "clusteredBarChart":
       visualChangeInfo += await getChartChanges(visual, false);
       visualChangeInfo += displayAdditionalInfo();
       break;

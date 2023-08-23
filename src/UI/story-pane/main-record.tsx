@@ -1,6 +1,6 @@
 import React from "react";
 import { useReactMediaRecorder } from "react-media-recorder";
-import { saveInfoVideo } from "../../onboarding/ts/helperFunctions";
+import { saveInfoVideo } from "../../componentGraph/helperFunctions";
 
 interface Props{
   setShowMediaOptions: any

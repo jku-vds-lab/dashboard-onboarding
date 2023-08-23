@@ -15,7 +15,7 @@ import * as global from "./globalVariables";
 import { replacer } from "../../componentGraph/ComponentGraph";
 import { getTraversalElement } from "./createSettings";
 import { IDefaultNode } from "../../UI/nodes-canvas/nodes/defaultNode";
-import GroupNode, { IGroupNode } from "../../UI/nodes-canvas/nodes/groupNode";
+import { IGroupNode } from "../../UI/nodes-canvas/nodes/groupNode";
 import { VisualDescriptor } from "powerbi-client";
 
 export let traversalStrategy: TraversalElement[] = [];

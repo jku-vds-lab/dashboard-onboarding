@@ -1,6 +1,3 @@
-import { VisualDescriptor } from "powerbi-client";
-import { getSpecificDataInfo } from "../../../componentGraph/helperFunctions";
-import { allVisuals } from "../globalVariables";
 import BarChart from "./barChartVisualContent";
 import ColumnChart from "./columnChartVisualContent";
 import LineChart from "./lineChartVisualContent";

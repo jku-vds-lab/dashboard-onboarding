@@ -5,7 +5,7 @@ import * as disable from "./disableArea";
 import * as elements from "./elements";
 import { findCurrentTraversalVisual } from "./traversal";
 import { VisualDescriptor } from "powerbi-client";
-import InteractionDescription from "./Content/interactionDescription";
+import InteractionExampleDescription from "./Content/interactionExampleDescription";
 
 export function startInteractionExample() {
   global.setInteractionMode(true);
@@ -17,7 +17,7 @@ export function startInteractionExample() {
 }
 
 export async function createInteractionCard(visual: VisualDescriptor) {
-  const interactionDesc = new InteractionDescription();
+  const interactionDesc = new InteractionExampleDescription();
   disable.disableFrame();
   disable.createDisabledArea(visual);
 
@@ -59,7 +59,7 @@ export async function createInteractionCard(visual: VisualDescriptor) {
   );
   helpers.createCardButtons("cardButtons", "", "", "back to visual");
 
-  await interactionDesc.createInteractionInfo(visual);
+  await interactionDesc.getInteractionInfo(visual);
 }
 
 export function removeInteractionCard() {

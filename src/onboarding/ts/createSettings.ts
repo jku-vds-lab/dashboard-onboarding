@@ -185,13 +185,12 @@ function setInteractionExampleInfo() {
     "Can you see how this visual changed?";
 
   for (const visual of global.currentVisuals) {
-    const type = helpers.getTypeName(visual);
     const CGVisual = global.componentGraph.dashboard.visualizations.find(
       (vis) => vis.id === visual.name
     )!;
-    switch (type) {
-      case "Card":
-      case "Multi Row Card":
+    switch (visual.type) {
+      case "card":
+      case "multiRowCard":
         const settingsInteractableVisualCard =
           global.createInteractableVisualCard();
         settingsInteractableVisualCard.id = visual.name;
@@ -205,7 +204,7 @@ function setInteractionExampleInfo() {
 
         settingsInteractionExample.visuals.push(settingsInteractableVisualCard);
         break;
-      case "Slicer":
+      case "slicer":
         const settingsInteractableVisualSlicer =
           global.createInteractableVisualSlicer();
         settingsInteractableVisualSlicer.id = visual.name;

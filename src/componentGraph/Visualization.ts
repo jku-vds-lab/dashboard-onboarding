@@ -2,19 +2,18 @@ import Data from "./Data";
 import Insight from "./Insight";
 import Title from "./Title";
 import VisualChannel from "./VisualChannel";
-import Interactions from "./Interactions";
-import Encoding from "./Encoding";
+import Interactions from "./interactions";
+import Encoding from "./encoding";
 import * as helper from "./helperFunctions";
 import LocalFilter from "./LocalFilter";
 import { VisualDescriptor } from "powerbi-client";
-import { page, visuals } from "./ComponentGraph";
-import { exportData } from "../Provenance/utils";
-import * as global from "../onboarding/ts/globalVariables";
-import XAxis from "./XAxis";
-import YAxis from "./YAxis";
-import Legend from "./Legend";
-import Value from "./Value";
+import { page, visuals } from "./ComponentGraph";;
+import XAxis from "./xAxis";
+import YAxis from "./yAxis";
+import Legend from "./legend";
+import Value from "./value";
 import Filter from "./Filter";
+
 export default class Visualization {
   id: string;
   type: string;
@@ -84,7 +83,7 @@ export default class Visualization {
       visualization.description = this.getVisualDescription(visual);
 
       const results = await Promise.all([
-        this.getData(visual, []),
+        helper.getData(visual, []),
         this.getVisualChannel(visual),
         this.getVisualEncoding(visual),
         this.getLocalFilter(visual),
@@ -355,82 +354,6 @@ export default class Visualization {
     } else {
       return false;
     }
-  }
-
-  async getData(visual: VisualDescriptor, categories: string[]): Promise<Data> {
-    const attributes = await this.getVisualDataFields(visual);
-    const exportedData = await exportData(visual);
-    if (!exportedData) {
-      const CGVisual = global.componentGraph.dashboard.visualizations.find(
-        (vis) => vis.id === visual.name
-      );
-      return CGVisual?.data.data;
-    }
-
-    const visualData = exportedData.data;
-    const data = [];
-
-    const headers = visualData.slice(0, visualData.indexOf("\r")).split(",");
-    const rows = visualData.slice(visualData.indexOf("\n") + 1).split(/\r?\n/);
-    rows.pop();
-
-    if (categories.length > 0) {
-      for (const row of rows) {
-        const values = row.split(",");
-        for (const category of categories) {
-          const rowData = new Map<string, string>();
-          for (let i = 0; i < headers.length; i++) {
-            if (categories.includes(headers[i])) {
-              if (headers[i] === category) {
-                rowData.set("Category", category);
-                rowData.set("Value", values[i]);
-              }
-            } else {
-              rowData.set(headers[i], values[i]);
-            }
-          }
-          data.push(rowData);
-        }
-      }
-    } else {
-      for (const row of rows) {
-        const values = row.split(",");
-        const rowData = new Map<string, string>();
-        for (let i = 0; i < headers.length; i++) {
-          rowData.set(headers[i], values[i]);
-        }
-        data.push(rowData);
-      }
-    }
-
-    return { attributes, data };
-  }
-
-  async getVisualDataFields(visual: VisualDescriptor): Promise<Array<string>> {
-    const DataFields: Array<string> = [];
-
-    if (visual.getCapabilities) {
-      const capabilities = await visual.getCapabilities();
-      if (capabilities.dataRoles) {
-        await Promise.all(
-          capabilities.dataRoles.map(async (role) => {
-            const dataFields = await visual.getDataFields(role.name);
-            if (dataFields.length > 0) {
-              await Promise.all(
-                dataFields.map(async (d, idx) => {
-                  const attribute = await visual.getDataFieldDisplayName(
-                    role.name,
-                    idx
-                  );
-                  DataFields.push(attribute);
-                })
-              );
-            }
-          })
-        );
-      }
-    }
-    return DataFields;
   }
 
   async getLocalFilter(visual: VisualDescriptor): Promise<LocalFilter> {

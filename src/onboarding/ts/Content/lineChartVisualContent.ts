@@ -1,12 +1,11 @@
 import * as helpers from "./../../../componentGraph/helperFunctions";
-import * as global from "./../globalVariables";
 import GeneralDescription from "./generalDescription";
 import BasicTextFormat, { UserLevel } from "./Format/basicTextFormat";
 import Visualization from "../../../componentGraph/Visualization";
 import { VisualDescriptor } from "powerbi-client";
-import XAxis from "../../../componentGraph/XAxis";
-import Legend from "../../../componentGraph/Legend";
-import YAxis from "../../../componentGraph/YAxis";
+import XAxis from "../../../componentGraph/xAxis";
+import Legend from "../../../componentGraph/legend";
+import YAxis from "../../../componentGraph/yAxis";
 
 export default class LineChart extends Visualization {
   chart: Visualization;

@@ -14,6 +14,7 @@ import LineChart from "../onboarding/ts/Content/lineChartVisualContent";
 import BarChart from "../onboarding/ts/Content/barChartVisualContent";
 import ColumnChart from "../onboarding/ts/Content/columnChartVisualContent";
 import { TraversalElement, isGroup } from "../onboarding/ts/traversal";
+import Data from "./Data";
 
 /*
 Get encoding of the visualization
@@ -224,6 +225,82 @@ export async function getSpecificDataInfo(
   }
 
   return dataMap.get(dataName) ?? [];
+}
+
+export async function getData(visual: VisualDescriptor, categories: string[]): Promise<Data> {
+  const attributes = await getVisualDataFields(visual);
+  const exportedData = await exportData(visual);
+  if (!exportedData) {
+    const CGVisual = global.componentGraph.dashboard.visualizations.find(
+      (vis) => vis.id === visual.name
+    );
+    return CGVisual?.data.data;
+  }
+
+  const visualData = exportedData.data;
+  const data = [];
+
+  const headers = visualData.slice(0, visualData.indexOf("\r")).split(",");
+  const rows = visualData.slice(visualData.indexOf("\n") + 1).split(/\r?\n/);
+  rows.pop();
+
+  if (categories.length > 0) {
+    for (const row of rows) {
+      const values = row.split(",");
+      for (const category of categories) {
+        const rowData = new Map<string, string>();
+        for (let i = 0; i < headers.length; i++) {
+          if (categories.includes(headers[i])) {
+            if (headers[i] === category) {
+              rowData.set("Category", category);
+              rowData.set("Value", values[i]);
+            }
+          } else {
+            rowData.set(headers[i], values[i]);
+          }
+        }
+        data.push(rowData);
+      }
+    }
+  } else {
+    for (const row of rows) {
+      const values = row.split(",");
+      const rowData = new Map<string, string>();
+      for (let i = 0; i < headers.length; i++) {
+        rowData.set(headers[i], values[i]);
+      }
+      data.push(rowData);
+    }
+  }
+
+  return { attributes, data };
+}
+
+async function getVisualDataFields(visual: VisualDescriptor): Promise<Array<string>> {
+  const DataFields: Array<string> = [];
+
+  if (visual.getCapabilities) {
+    const capabilities = await visual.getCapabilities();
+    if (capabilities.dataRoles) {
+      await Promise.all(
+        capabilities.dataRoles.map(async (role) => {
+          const dataFields = await visual.getDataFields(role.name);
+          if (dataFields.length > 0) {
+            await Promise.all(
+              dataFields.map(async (d, idx) => {
+                const attribute = await visual.getDataFieldDisplayName(
+                  role.name,
+                  idx
+                );
+                DataFields.push(attribute);
+              })
+            );
+          }
+        })
+      );
+    }
+  }
+  return DataFields;
 }
 
 export function getDataWithId(
