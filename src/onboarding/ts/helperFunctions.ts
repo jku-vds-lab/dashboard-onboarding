@@ -14,9 +14,7 @@ import {
   createDashboardExploration,
   createOnboardingOverlay,
 } from "./onboarding";
-//import { saveOnboardingChanges } from "./authorMode";
 import { createSettings } from "./createSettings";
-// import { addVisualTextarea } from "./listOfVisuals";
 import {
   removeInteractionCard,
   startInteractionExample,
@@ -30,19 +28,15 @@ import {
 import "powerbi-report-authoring";
 import { VisualDescriptor } from "powerbi-client";
 import ComponentGraph, {
-  replacer,
   reviver,
 } from "../../componentGraph/ComponentGraph";
 
-import { exportData } from "../../Provenance/utils";
 import * as sizes from "./sizes";
 import {
   createGroupOverlay,
   findCurrentTraversalVisual,
   findCurrentTraversalVisualIndex,
 } from "./traversal";
-import { reportId } from "../../Config";
-import Visualization from "../../componentGraph/Visualization";
 import * as helper from "../../componentGraph/helperFunctions";
 
 export function addContainerOffset(cardHeight: number) {
@@ -281,44 +275,11 @@ export function createCloseButton(
   elements.createButton(buttonAttributes);
 }
 
-export function createCollapseButton(Id: string, parentId: string) {
-  const buttonAttributes = global.createButtonAttributes();
-  buttonAttributes.id = Id;
-  buttonAttributes.content = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down mb-1" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>`;
-  buttonAttributes.style = "padding-top: 0px;padding-bottom: 0px;";
-  buttonAttributes.classes = "btn " + Id + " positionRight";
-  buttonAttributes.parentId = parentId;
-  elements.createButton(buttonAttributes);
-
-  const collapseButton = document.getElementById(Id);
-  collapseButton?.setAttribute("data-bs-toggle", "collapse");
-  collapseButton?.setAttribute("data-bs-target", "#collapseForm" + parentId);
-  collapseButton?.setAttribute("aria-expanded", "false");
-  collapseButton?.setAttribute("aria-controls", "collapseForm" + parentId);
-}
-
-export function createDisableButton(parentId: string) {
-  const attributes = global.createButtonAttributes();
-  attributes.style = "padding-top: 0px;padding-bottom: 0px;";
-  attributes.classes = "btn disableVisualButton";
-  attributes.content = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye mb-2" viewBox="0 0 16 16"><path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"/><path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/></svg>`;
-  attributes.parentId = parentId;
-  elements.createButton(attributes);
-}
-
 export function createEditOnboardingButtons() {
   const editButton = document.getElementById("editOnboarding");
   editButton?.removeAttribute("hidden");
 }
 
-export function createEnableButton(parentId: string) {
-  const attributes = global.createButtonAttributes();
-  attributes.style = "padding-top: 0px;padding-bottom: 0px;";
-  attributes.classes = "btn disableVisualButton";
-  attributes.content = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-slash mb-2" viewBox="0 0 16 16"><path d="M13.359 11.238C15.06 9.72 16 8 16 8s-3-5.5-8-5.5a7.028 7.028 0 0 0-2.79.588l.77.771A5.944 5.944 0 0 1 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.134 13.134 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755-.165.165-.337.328-.517.486l.708.709z"/><path d="M11.297 9.176a3.5 3.5 0 0 0-4.474-4.474l.823.823a2.5 2.5 0 0 1 2.829 2.829l.822.822zm-2.943 1.299.822.822a3.5 3.5 0 0 1-4.474-4.474l.823.823a2.5 2.5 0 0 0 2.829 2.829z"/><path d="M3.35 5.47c-.18.16-.353.322-.518.487A13.134 13.134 0 0 0 1.172 8l.195.288c.335.48.83 1.12 1.465 1.755C4.121 11.332 5.881 12.5 8 12.5c.716 0 1.39-.133 2.02-.36l.77.772A7.029 7.029 0 0 1 8 13.5C3 13.5 0 8 0 8s.939-1.721 2.641-3.238l.708.709zm10.296 8.884-12-12 .708-.708 12 12-.708.708z"/></svg>`;
-  attributes.parentId = parentId;
-  elements.createButton(attributes);
-}
 export async function createInteractionExampleButton(
   parentId: string,
   visual: VisualDescriptor
@@ -388,24 +349,6 @@ export function createOnboardingButtons() {
   elements.createButton(attributes);
 }
 
-export function createTitleForm(ID: string, title: string) {
-  const labelAttributes = global.createLabelAttributes();
-  labelAttributes.id = "titleLabel" + ID;
-  labelAttributes.for = "titleInput" + ID;
-  labelAttributes.style = "margin-left: 10px;margin-right: 10px;";
-  labelAttributes.content = "Title:";
-  labelAttributes.parentId = "collapseForm" + ID;
-  elements.createLabel(labelAttributes);
-
-  const inputAttributes = global.createInputAttributes();
-  inputAttributes.id = "titleInput" + ID;
-  inputAttributes.type = "string";
-  inputAttributes.value = title;
-  inputAttributes.style = "margin-right: 20px;background-color:lightsteelblue;";
-  inputAttributes.parentId = "collapseForm" + ID;
-  elements.createInput(inputAttributes);
-}
-
 function endExplorationMode() {
   elements.removeElement("dashboardExplaination");
   global.setExplorationMode(false);
@@ -466,62 +409,6 @@ export function getElementWidth(element: HTMLElement) {
   return elementWidth;
 }
 
-export function getGeneralInfoInteractionExampleText() {
-  let generalInfo = `Can you see how the whole report changed?<br>All the visualizations were filtered by "all report filters".<br>You can now click on one of the cards or graphs to get detailed information about its changes.`;
-  generalInfo = generalInfo.replaceAll("<br>", "\r\n");
-  return generalInfo;
-}
-
-export async function getInteractionExampleChangedInfo(
-  visual: VisualDescriptor,
-  visualData: global.InteractionVisual
-) {
-  const changedInfoStatus = visualData.interactionChangedInfosStatus;
-  let changedInfo;
-  switch (changedInfoStatus) {
-    case global.infoStatus.original:
-      changedInfo = await getInteractionExampleChangesText(visual);
-      changedInfo = changedInfo.replaceAll("<br>", "\r\n");
-      break;
-    case global.infoStatus.changed:
-    case global.infoStatus.added:
-      changedInfo = visualData.changedInteractionChangedInfo;
-      break;
-    default:
-      changedInfo = "";
-      break;
-  }
-
-  return changedInfo;
-}
-
-export async function getInteractionExampleChangesText(
-  visual: VisualDescriptor
-) {
-  let visualChangeInfo = `You can see that this visual was filtered by "Filter".<br>`;
-
-  const type = getTypeName(visual);
-
-  switch (type) {
-    case "Card":
-    case "Multi Row Card":
-      visualChangeInfo += `The displayed data is now "DataValue".`;
-      break;
-    case "Line Clustered Column Combo Chart":
-    case "Line Chart":
-    case "Clustered Bar Chart":
-    case "clusteredColumnChart":
-      visualChangeInfo += `The highlighted data includes "AllHighlitedData".`;
-      visualChangeInfo +=
-        "<br>You can also change the report filters by selecting a new element of this visual.";
-      break;
-    default:
-      break;
-  }
-
-  return visualChangeInfo;
-}
-
 export function getNextVisual() {
   let nextVisual;
   const visuals = global.currentVisuals.filter(function (visual) {
@@ -536,11 +423,6 @@ export function getNextVisual() {
     nextVisual = visuals[index + 1];
   }
   return nextVisual;
-}
-
-export function getNotSupportedInfo() {
-  const defaultInfo = "Sadly we do not support this type of visual :(";
-  document.getElementById("contentText")!.innerHTML = defaultInfo;
 }
 
 export async function createComponentGraph() {
@@ -561,19 +443,6 @@ export async function getSettings() {
   } catch (error) {
     console.log("Error in getSettings()", error);
   }
-}
-
-export function getTargetInteractionFilter(target: string) {
-  let visualInteractionInfo = "";
-  const filter = global.selectedTargets.filter(function (data) {
-    return data.target.column == target;
-  });
-  if (filter.length == 0) {
-    visualInteractionInfo += " for all " + target + "s";
-  } else {
-    visualInteractionInfo += " for " + filter[0].equals;
-  }
-  return visualInteractionInfo;
 }
 
 export function getVisualCardPos(
@@ -630,17 +499,6 @@ export async function getVisualsfromPowerBI() {
   sortVisuals();
   removeDesignVisuals();
   global.setAllVisuals(global.currentVisuals);
-}
-
-// remove this and find a better way for checking visual type
-export function getTypeName(visual: VisualDescriptor) {
-  let typeName = visual.type.replaceAll(/([A-Z])/g, " $1").trim();
-  typeName = firstLetterToUpperCase(typeName);
-  return typeName;
-}
-export function firstLetterToUpperCase(str: string) {
-  str = str.charAt(0).toUpperCase() + str.slice(1);
-  return str;
 }
 
 export function recreateInteractionExampleButton() {
@@ -726,18 +584,6 @@ export function resizeEmbed(filterWidth: number) {
   } catch (error) {
     console.log("Error in resizeEmbed", error);
   }
-}
-
-export function saveIntInput(inputId: string) {
-  let value;
-  const input = document.getElementById(inputId) as HTMLInputElement | null;
-  if (!input?.value) {
-    value = 0;
-  } else {
-    value = parseInt(input?.value);
-  }
-
-  return value;
 }
 
 function sortVisuals() {
