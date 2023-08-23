@@ -64,17 +64,7 @@ export default class InteractionExampleDescription {
     }
 
     
-  async getInteractionInfo(visual: LineChart | BarChart | ColumnChart) { //TODO add slicer and use interactionElementText function for it
-    const visualization: VisualDescriptor | undefined = allVisuals.find((vis) => {
-        return vis.name === visual.id;
-    });
-    if(!visualization){
-        return this.interactionElementText(visual.dataName);
-    }
-
-    const axisValues = await getSpecificDataInfo(visualization, visual.axis);
-    const legendValues = await getSpecificDataInfo(visualization, visual.legend);
-    
-    return this.interactionText(visual.chart.mark, visual.dataName, axisValues, legendValues);
+  async getInteractionInfo(visual: LineChart | BarChart | ColumnChart) { //TODO add slicer and use interactionElementText function for it    
+    return this.interactionText(visual.chart.mark, visual.dataName, visual.axisValues, visual.legendValues);
   }
 }
