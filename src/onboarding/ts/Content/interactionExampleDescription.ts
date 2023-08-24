@@ -1,6 +1,8 @@
 import BarChart from "./barChartVisualContent";
 import ColumnChart from "./columnChartVisualContent";
+import ComboChart from "./comboChartVisualContent";
 import LineChart from "./lineChartVisualContent";
+import Slicer from "./slicerVisualContent";
 
 export default class InteractionExampleDescription {
     private interactionInfo = {
@@ -61,7 +63,12 @@ export default class InteractionExampleDescription {
     }
 
     
-  async getInteractionInfo(visual: LineChart | BarChart | ColumnChart) { //TODO add slicer and use interactionElementText function for it    
-    return this.interactionText(visual.chart.mark, visual.dataName, visual.axisValues, visual.legendValues);
+  async getInteractionInfo(visualType: string, visual: LineChart | BarChart | ColumnChart | ComboChart | Slicer) {   
+    switch(visualType){
+        case "slicer":
+          break;
+        default:
+            return this.interactionText(visual.chart.mark, visual.dataName, visual.axisValues, visual.legendValues);
+      } 
   }
 }

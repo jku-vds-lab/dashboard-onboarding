@@ -3,6 +3,10 @@ import LineChart from "./lineChartVisualContent";
 import BarChart from "./barChartVisualContent";
 import * as helper from "../../../componentGraph/helperFunctions";
 import Filter from "../../../componentGraph/Filter";
+import ColumnChart from "./columnChartVisualContent";
+import ComboChart from "./comboChartVisualContent";
+import Card from "./cardVisualContent";
+import Slicer from "./slicerVisualContent";
 
 interface FormBody {
   prompt: string;
@@ -193,101 +197,128 @@ export default class GeneralDescription {
     return text;
   }
 
-  getBeginnerVisDesc(visualType: string, visual: LineChart | BarChart) {
-    this.text.generalImages.push("infoImg");
-    this.text.generalInfos.push(visual.description);
-
-    const dataString = helper.dataToString(visual.chart.data.attributes!);
-    const channelString = helper.dataToString(visual.chart.channel.channel!);
-
-    const generalText = this.generalText(channelString, dataString);
-    const purposeText = this.purposeText(visual?.task);
-
-    this.text.generalImages.push("dataImg");
-    this.text.generalInfos.push(generalText + purposeText);
-
-    let markText = "";
-    if (visual.axis) {
-      markText += this.markAxisText(visual.chart?.mark, visual.dataName, visual.axis);
-      this.text.generalImages.push("xAxisImg");
-      this.text.generalInfos.push(this.axisText(this.components.xAxis, visual.axis));
-    }
-
-    if(visual.dataName){
-      this.text.generalImages.push("yAxisImg");
-      this.text.generalInfos.push(this.axisText(this.components.yAxis, visual.dataName));
-    }
-
-    if (visual.legend) {
-      markText += this.markLegendText(visual.chart.mark, visual.legend);
-      this.text.generalImages.push("legendImg");
-      this.text.generalInfos.push(this.legendText(visual.legend));
-    }
-
-    this.text.generalImages.push(visualType + "GraphImg");
-    this.text.generalInfos.push(markText);
-
-
-    const filterText = this.filterText(visual.localFilters.localFilters);
-    if (filterText !== "") {
-      this.text.generalImages.push("filterImg");
-      this.text.generalInfos.push(
-        this.filterInfo.general + filterText
-      );
-    }
-    return this.text;
-  }
-
-  getIntermediateVisDesc(visualType: string, visual: LineChart | BarChart) {
-    let markText = "";
-    if (visual.axis) {
-      markText += this.markAxisText(
-        visual.chart?.mark,
-        visual.dataName,
-        visual.axis
-      );
-      this.text.generalImages.push("xAxisImg");
-      this.text.generalInfos.push(this.components.xAxis + this.punctuations.colon + visual.axis + this.punctuations.dot);
-    }
-    if(visual.dataName){
-      this.text.generalImages.push("yAxisImg");
-      this.text.generalInfos.push(this.components.yAxis + this.punctuations.colon + visual.dataName + this.punctuations.dot);
-    }
-
-    if (visual.legend) {
-      markText += this.markLegendText(visual.chart.mark, visual.legend);
-      this.text.generalImages.push("legendImg");
-      this.text.generalInfos.push(helper.firstLetterToUpperCase(this.components.legend) + this.punctuations.colon + visual.legend + this.punctuations.dot);
-    }
-
-    this.text.generalImages.push(visualType + "GraphImg");
-    this.text.generalInfos.push(markText);
-
-    const filterText = this.filterText(visual.localFilters.localFilters);
-    if (filterText !== "") {
-      this.text.generalImages.push("filterImg");
-      this.text.generalInfos.push(
-        this.filterInfo.general + filterText
-      );
+  getBeginnerVisDesc(visualType: string, visual: LineChart | BarChart | ColumnChart | ComboChart | Card | Slicer) {
+    switch(visualType){
+      case "card":
+        break;
+      case "slicer":
+        break;
+      case "combo":
+        break;
+      default:
+        this.text.generalImages.push("infoImg");
+        this.text.generalInfos.push(visual.description);
+    
+        const dataString = helper.dataToString(visual.chart.data.attributes!);
+        const channelString = helper.dataToString(visual.chart.channel.channel!);
+    
+        const generalText = this.generalText(channelString, dataString);
+        const purposeText = this.purposeText(visual?.task);
+    
+        this.text.generalImages.push("dataImg");
+        this.text.generalInfos.push(generalText + purposeText);
+    
+        let markText = "";
+        if (visual.axis) {
+          markText += this.markAxisText(visual.chart?.mark, visual.dataName, visual.axis);
+          this.text.generalImages.push("xAxisImg");
+          this.text.generalInfos.push(this.axisText(this.components.xAxis, visual.axis));
+        }
+    
+        if(visual.dataName){
+          this.text.generalImages.push("yAxisImg");
+          this.text.generalInfos.push(this.axisText(this.components.yAxis, visual.dataName));
+        }
+    
+        if (visual.legend) {
+          markText += this.markLegendText(visual.chart.mark, visual.legend);
+          this.text.generalImages.push("legendImg");
+          this.text.generalInfos.push(this.legendText(visual.legend));
+        }
+    
+        this.text.generalImages.push(visualType + "GraphImg");
+        this.text.generalInfos.push(markText);
+    
+    
+        const filterText = this.filterText(visual.localFilters.localFilters);
+        if (filterText !== "") {
+          this.text.generalImages.push("filterImg");
+          this.text.generalInfos.push(
+            this.filterInfo.general + filterText
+          );
+        }
     }
     return this.text;
   }
 
-  getAdvancedVisDesc(visualType: string, visual: LineChart | BarChart) {
-    let markText = "";
-    if (visual.axis) {
-      markText += this.markAxisText(
-        visual.chart?.mark,
-        visual.dataName,
-        visual.axis
-      );
-    }
-    if(visual.legend){
-      markText += this.markLegendText(visual.chart.mark, visual.legend);
-    }
+  getIntermediateVisDesc(visualType: string, visual: LineChart | BarChart | ColumnChart | ComboChart | Card | Slicer) {
+    switch(visualType){
+      case "card":
+        break;
+      case "slicer":
+        break;
+      case "combo":
+        break;
+      default:
+        let markText = "";
+      if (visual.axis) {
+        markText += this.markAxisText(
+          visual.chart?.mark,
+          visual.dataName,
+          visual.axis
+        );
+        this.text.generalImages.push("xAxisImg");
+        this.text.generalInfos.push(this.components.xAxis + this.punctuations.colon + visual.axis + this.punctuations.dot);
+      }
+      if(visual.dataName){
+        this.text.generalImages.push("yAxisImg");
+        this.text.generalInfos.push(this.components.yAxis + this.punctuations.colon + visual.dataName + this.punctuations.dot);
+      }
 
-    this.text.generalImages.push(visualType + "GraphImg");
-    this.text.generalInfos.push(markText);
+      if (visual.legend) {
+        markText += this.markLegendText(visual.chart.mark, visual.legend);
+        this.text.generalImages.push("legendImg");
+        this.text.generalInfos.push(helper.firstLetterToUpperCase(this.components.legend) + this.punctuations.colon + visual.legend + this.punctuations.dot);
+      }
+
+      this.text.generalImages.push(visualType + "GraphImg");
+      this.text.generalInfos.push(markText);
+
+      const filterText = this.filterText(visual.localFilters.localFilters);
+      if (filterText !== "") {
+        this.text.generalImages.push("filterImg");
+        this.text.generalInfos.push(
+          this.filterInfo.general + filterText
+        );
+      }
+    }
+    return this.text;
+  }
+
+  getAdvancedVisDesc(visualType: string, visual: LineChart | BarChart | ColumnChart | ComboChart | Card | Slicer) {
+    switch(visualType){
+      case "card":
+        break;
+      case "slicer":
+        break;
+      case "combo":
+        break;
+      default:
+        let markText = "";
+        if (visual.axis) {
+          markText += this.markAxisText(
+            visual.chart?.mark,
+            visual.dataName,
+            visual.axis
+          );
+        }
+        if(visual.legend){
+          markText += this.markLegendText(visual.chart.mark, visual.legend);
+        }
+
+        this.text.generalImages.push(visualType + "GraphImg");
+        this.text.generalInfos.push(markText);
+    }
     return this.text;
   }
 

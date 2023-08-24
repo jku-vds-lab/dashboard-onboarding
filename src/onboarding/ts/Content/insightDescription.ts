@@ -88,20 +88,30 @@ export default class InsightDescription {
     return text;
   }
   
-  getInsightInfo(visual: LineChart | BarChart | ColumnChart) {
-    const value = helper.getSpecificDataPoint (visual.data.data, visual.legend, visual.legendValues[Math.floor(visual.legendValues.length / 2)], visual.dataName, visual.axis, visual.axisValues[Math.floor(visual.axisValues.length / 2)]);
-    this.text.insightImages.push("lightbulbImg");
-    this.text.insightInfos.push(this.insightExampleText(value!, visual.dataName, visual.axisValues, visual.legendValues));
+  getInsightInfo(visualType: string, visual: LineChart | BarChart | ColumnChart | ComboChart | Card) {
+    switch(visualType){
+      case "card":
+        const value = helper.getSpecificDataPoint (visual.data.data, visual.legend, visual.legendValues[Math.floor(visual.legendValues.length / 2)], visual.dataName, visual.axis, visual.axisValues[Math.floor(visual.axisValues.length / 2)]);
+        this.text.insightImages.push("lightbulbImg");
+        this.text.insightInfos.push(this.insightExampleText(value!, visual.dataName, visual.axisValues, visual.legendValues));
+        break;
+      case "combo":
+        break;
+      default:
+        const value = helper.getSpecificDataPoint (visual.data.data, visual.legend, visual.legendValues[Math.floor(visual.legendValues.length / 2)], visual.dataName, visual.axis, visual.axisValues[Math.floor(visual.axisValues.length / 2)]);
+        this.text.insightImages.push("lightbulbImg");
+        this.text.insightInfos.push(this.insightExampleText(value!, visual.dataName, visual.axisValues, visual.legendValues));
 
-    const highestValueArray = helper.getHighestValue(visual.data.data, visual.dataName, visual.legendValues, visual.legend, visual.axis, visual.axisValues);
-    const highestValue = highestValueArray[0];
-    this.text.insightImages.push("lightbulbImg");
-    this.text.insightInfos.push(this.insightHighestValueText(highestValue, visual.dataName, highestValueArray , visual.legend));
+        const highestValueArray = helper.getHighestValue(visual.data.data, visual.dataName, visual.legendValues, visual.legend, visual.axis, visual.axisValues);
+        const highestValue = highestValueArray[0];
+        this.text.insightImages.push("lightbulbImg");
+        this.text.insightInfos.push(this.insightHighestValueText(highestValue, visual.dataName, highestValueArray , visual.legend));
 
-    if(visual.legend){
-      const highestCategory = helper.getHighestCategory(visual.data.data, visual.dataName, visual.legendValues, visual.legend);
-      this.text.insightImages.push("lightbulbImg");
-      this.text.insightInfos.push(this.insightHighestCategoryText(highestCategory));
+        if(visual.legend){
+          const highestCategory = helper.getHighestCategory(visual.data.data, visual.dataName, visual.legendValues, visual.legend);
+          this.text.insightImages.push("lightbulbImg");
+          this.text.insightInfos.push(this.insightHighestCategoryText(highestCategory));
+        }
     }
   }
 }

@@ -2,6 +2,8 @@ import BasicTextFormat from "./Format/basicTextFormat";
 import LineChart from "./lineChartVisualContent";
 import BarChart from "./barChartVisualContent";
 import ColumnChart from "./columnChartVisualContent";
+import ComboChart from "./comboChartVisualContent";
+import Slicer from "./slicerVisualContent";
 
 export default class InteractionDescription {
   text: BasicTextFormat = {
@@ -108,31 +110,38 @@ export default class InteractionDescription {
     return text;
   }
 
-  getInteractionInfo(visual: LineChart | BarChart | ColumnChart, isHorizontal: boolean) { //TODO add slicer and only display click information for slicer
-    let interactionInfo = this.interactionClickText(
-      visual.chart?.mark,
-      visual.axis,
-      visual.legend
-    );
-
-    if (visual.chart?.encoding.hasTooltip) {
-      interactionInfo += this.interactionHoverText(
-        visual.chart?.mark
-      );
-    }
-
-    this.text.interactionImages.push("elemClickImg");
-    this.text.interactionInfos.push(interactionInfo);
-
-    if (visual.axisValue && visual.axisValue.isVisible) {
-      const axis = isHorizontal? this.components.xAxis : this.components.yAxis;
-      this.text.interactionImages.push("axisClickImg");
-      this.text.interactionInfos.push(this.interactionClickAxisText(axis, visual.axis));
-    }
-
-    if (visual.legendValue && visual.legendValue.isVisible) {
-      this.text.interactionImages.push("legendClickImg");
-      this.text.interactionInfos.push(this.interactionClickLegendText(visual.legend));
+  getInteractionInfo(visualType:string, visual: LineChart | BarChart | ColumnChart | ComboChart | Slicer, isHorizontal: boolean) { //TODO add slicer and only display click information for slicer
+    switch(visualType){
+      case "slicer":
+        break;
+      case "combo":
+        break;
+      default:
+        let interactionInfo = this.interactionClickText(
+          visual.chart?.mark,
+          visual.axis,
+          visual.legend
+        );
+    
+        if (visual.chart?.encoding.hasTooltip) {
+          interactionInfo += this.interactionHoverText(
+            visual.chart?.mark
+          );
+        }
+    
+        this.text.interactionImages.push("elemClickImg");
+        this.text.interactionInfos.push(interactionInfo);
+    
+        if (visual.axisValue && visual.axisValue.isVisible) {
+          const axis = isHorizontal? this.components.xAxis : this.components.yAxis;
+          this.text.interactionImages.push("axisClickImg");
+          this.text.interactionInfos.push(this.interactionClickAxisText(axis, visual.axis));
+        }
+    
+        if (visual.legendValue && visual.legendValue.isVisible) {
+          this.text.interactionImages.push("legendClickImg");
+          this.text.interactionInfos.push(this.interactionClickLegendText(visual.legend));
+        }
     }
   }
 }
