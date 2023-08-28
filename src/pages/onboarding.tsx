@@ -22,22 +22,6 @@ export default function Onboarding() {
             Edit Dashboard Onboarding
           </button>
         </Link>
-        <Link
-          to="/userLevel"
-          id="userLevel"
-          className="col-2"
-          style={{ margin: "10px", padding: "0px" }}
-          hidden
-        >
-          <button
-            id="userLevel"
-            type="button"
-            className={`onboardingButton + ${global.darkOutlineButtonClass}`}
-            style={{ width: "100%" }}
-          >
-            Set User Level
-          </button>
-        </Link>
         <div className="row">
           <div className="col-10" id="reportContainer">
             <MyReport isMainPage={true} />
