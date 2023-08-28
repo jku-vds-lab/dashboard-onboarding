@@ -34,7 +34,7 @@ export default function MainLayout() {
         <TraversalPane buildTraversal={buildTraversal} setTrav={setTrav} />
         <div>
           <Traversal nodes={nodes} />
-          <Link to="/userLevel">
+          <Link to="/">
             <div className="btn btn-secondary btn-dark ms-2">
               Publish Onboarding
             </div>

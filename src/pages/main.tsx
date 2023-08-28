@@ -10,7 +10,6 @@ const Main = () => {
     <Routes>
       <Route path="/" element={<Home />}></Route>
       <Route path="/editor" element={<Editor />}></Route>
-      <Route path="/userLevel" element={<UserLevel />}></Route>
     </Routes>
   );
 };
