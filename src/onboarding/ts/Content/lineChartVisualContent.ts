@@ -6,6 +6,7 @@ import { VisualDescriptor } from "powerbi-client";
 import XAxis from "../../../componentGraph/XAxis";
 import Legend from "../../../componentGraph/Legend";
 import YAxis from "../../../componentGraph/YAxis";
+import { ExpertiseLevel, Level } from "../../../UI/redux/expertise";
 
 export default class LineChart extends Visualization {
   chart: Visualization;
@@ -43,7 +44,10 @@ export default class LineChart extends Visualization {
     this.dataName = "";
   }
 
-  async getLineChartInfo(visual: VisualDescriptor) {
+  async getLineChartInfo(
+    visual: VisualDescriptor,
+    expertiseLevel: ExpertiseLevel
+  ) {
     this.chart = await this.getVisualization(visual);
 
     this.axisValue = this.chart.encoding.xAxes[0];
@@ -61,9 +65,13 @@ export default class LineChart extends Visualization {
     this.dataValue = this.chart?.encoding.yAxes[0];
     this.dataName = (this.dataValue && this.dataValue.attribute) || "";
 
-    this.text = this.textDescription.getBeginnerVisDesc("line", this);
-    // this.text = this.textDescription.getIntermediateVisDesc("line", this);
-    // this.text = this.textDescription.getAdvancedVisDesc("line", this);
+    if (expertiseLevel.Vis == Level.Low) {
+      this.text = this.textDescription.getBeginnerVisDesc("line", this);
+    } else if (expertiseLevel.Vis == Level.Medium) {
+      this.text = this.textDescription.getIntermediateVisDesc("line", this);
+    } else {
+      this.text = this.textDescription.getAdvancedVisDesc("line", this);
+    }
     return this.text;
   }
 

@@ -2,6 +2,7 @@ import * as helpers from "./../../../componentGraph/helperFunctions";
 import * as global from "./../globalVariables";
 import { createInfoList } from "./../visualInfo";
 import BasicTextFormat from "./Format/basicTextFormat";
+import { ExpertiseLevel } from "../../../UI/redux/expertise";
 
 export default class SaveAndFetchContent {
   private type: string;
@@ -46,7 +47,7 @@ export default class SaveAndFetchContent {
     }
   }
 
-  async getVisualDescInEditor() {
+  async getVisualDescInEditor(expertiseLevel: ExpertiseLevel) {
     try {
       let visualInfos: BasicTextFormat = {
         generalImages: [],
@@ -76,7 +77,7 @@ export default class SaveAndFetchContent {
           return;
         }
 
-        visualInfos = await helpers.getVisualInfos(visual);
+        visualInfos = await helpers.getVisualInfos(visual, expertiseLevel);
         await createInfoList(
           visualInfos.generalImages,
           visualInfos.generalInfos,

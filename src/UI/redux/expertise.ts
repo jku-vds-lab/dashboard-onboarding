@@ -21,14 +21,15 @@ export const Expertise = createSlice({
   name: "expertise",
   initialState,
   reducers: {
-    increment: (state, action: PayloadAction<ExpertiseLevel>) => {
+    decrement: (state, action: PayloadAction<ExpertiseLevel>) => {
       state.Domain = action.payload.Domain;
       state.Vis = action.payload.Vis;
+      console.log("decrement state expertise", state, "action", action);
     },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { increment } = Expertise.actions;
+export const { decrement } = Expertise.actions;
 
 export default Expertise.reducer;

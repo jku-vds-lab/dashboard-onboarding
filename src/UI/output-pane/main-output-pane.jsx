@@ -10,7 +10,7 @@ import {
 } from "react-hook-resize-panel";
 import OutputView from "../../pages/outputView";
 import { reloadOnboarding } from "../../onboarding/ts/onboarding";
-import UserLevel from "../../pages/userLevel";
+import UserLevel from "./userLevel";
 
 export default function OutputPane() {
   return (

@@ -240,9 +240,6 @@ export default function NodesCanvas(props: Props) {
     const fullNameArray = defaultNode().getFullNodeNameArray(event);
     const basicName = defaultNode().getBasicName(event);
 
-    // global.setLastClickedElementFullName(fullNameArray);
-    // global.setLastClickedElementBasicName(basicName);
-
     dispatch(increment([basicName, fullNameArray]));
   };
 

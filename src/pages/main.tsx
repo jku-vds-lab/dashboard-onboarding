@@ -4,7 +4,7 @@ import { Routes, Route } from "react-router-dom";
 
 import Editor from "./editor";
 import Home from "./home";
-import UserLevel from "./userLevel";
+import UserLevel from "../UI/output-pane/userLevel";
 const Main = () => {
   return (
     <Routes>

@@ -13,6 +13,7 @@ import ColumnChart from "../onboarding/ts/Content/columnChartVisualContent";
 import ComboChart from "../onboarding/ts/Content/comboChartVisualContent";
 import { TraversalElement, isGroup } from "../onboarding/ts/traversal";
 import Data from "./Data";
+import { ExpertiseLevel, Level } from "../UI/redux/expertise";
 /*
 Get encoding of the visualization
 @param visual (VisualDescriptor) (https://learn.microsoft.com/ru-ru/javascript/api/powerbi/powerbi-client/visualdescriptor.visualdescriptor)
@@ -355,7 +356,8 @@ export function firstLetterToUpperCase(str: string) {
 }
 
 export async function getVisualInfos(
-  visual: VisualDescriptor
+  visual: VisualDescriptor,
+  expertiseLevel: ExpertiseLevel = { Domain: Level.Medium, Vis: Level.Medium }
 ): Promise<BasicTextFormat> {
   const type = visual.type;
   let visualInfos: BasicTextFormat = {
@@ -379,11 +381,14 @@ export async function getVisualInfos(
         break;
       case "lineChart":
         const lineChart = new LineChart();
-        visualInfos = await lineChart.getLineChartInfo(visual);
+        visualInfos = await lineChart.getLineChartInfo(visual, expertiseLevel);
         break;
       case "clusteredBarChart":
         const barChart = new BarChart();
-        visualInfos = await barChart.getClusteredBarChartInfo(visual);
+        visualInfos = await barChart.getClusteredBarChartInfo(
+          visual,
+          expertiseLevel
+        );
         break;
       case "clusteredColumnChart":
         const columnChart = new ColumnChart();

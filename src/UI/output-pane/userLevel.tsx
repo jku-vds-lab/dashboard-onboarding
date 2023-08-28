@@ -1,12 +1,10 @@
 import React, { useState } from "react";
-import "./../onboarding/css/userLevel.css";
+import "./../assets/css/userLevel.css";
 import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import {
-  increment,
-  ExpertiseLevel,
-  Level,
-} from "../onboarding/ts/Content/redux/expertise";
+import { ExpertiseLevel, Level } from "../redux/expertise";
+
+import { decrement } from "../redux/expertise";
 interface CellProps {
   isSelected: boolean;
   onClick: () => void;
@@ -42,7 +40,7 @@ function UserLevel() {
     if (xIndex == 1) {
       expertise.Domain = Level.Medium;
     }
-    if (xIndex == 0) {
+    if (xIndex == 2) {
       expertise.Domain = Level.High;
     }
 
@@ -52,43 +50,39 @@ function UserLevel() {
     if (yIndex == 1) {
       expertise.Vis = Level.Medium;
     }
-    if (yIndex == 0) {
+    if (yIndex == 2) {
       expertise.Vis = Level.High;
     }
 
-    dispatch(increment(expertise));
+    console.log("Dispatch expertise", expertise);
+    dispatch(decrement(expertise));
   };
 
   const xAxisLabels = ["Domain Expertise: Low", "Medium", "High"];
   const yAxisLabels = ["Vis Expertise: Low", "Medium", "High"];
 
   return (
-    <div className="userLevel">
-      <Link to="/">
-        <div className="btn btn-secondary btn-dark ms-2">Launch Onboarding</div>
-      </Link>
-      <div className="matrix">
-        <div className="labels-row">
-          <div className="empty-label"></div>
-          {xAxisLabels.map((label, index) => (
-            <div className="axis-label" key={index}>
-              {label}
-            </div>
-          ))}
-        </div>
-        {Array.from({ length: 3 }, (_, yIndex) => (
-          <div className="row" key={yIndex}>
-            <div className="axis-label">{yAxisLabels[yIndex]}</div>
-            {Array.from({ length: 3 }, (_, xIndex) => (
-              <Cell
-                key={`${xIndex}-${yIndex}`}
-                isSelected={xIndex === selectedX && yIndex === selectedY}
-                onClick={() => handleCellClick(xIndex, yIndex)}
-              />
-            ))}
+    <div className="matrix">
+      <div className="labels-row">
+        <div className="empty-label"></div>
+        {xAxisLabels.map((label, index) => (
+          <div className="axis-label" key={index}>
+            {label}
           </div>
         ))}
       </div>
+      {Array.from({ length: 3 }, (_, yIndex) => (
+        <div className="row" key={yIndex}>
+          <div className="axis-label">{yAxisLabels[yIndex]}</div>
+          {Array.from({ length: 3 }, (_, xIndex) => (
+            <Cell
+              key={`${xIndex}-${yIndex}`}
+              isSelected={xIndex === selectedX && yIndex === selectedY}
+              onClick={() => handleCellClick(xIndex, yIndex)}
+            />
+          ))}
+        </div>
+      ))}
     </div>
   );
 }

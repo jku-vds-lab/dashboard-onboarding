@@ -44,6 +44,11 @@ export default function StoryPane(props: Props) {
   );
   // redux  ends
 
+  // redux starts for expertise level
+  const expertiseLevel = useSelector((state: RootState) => state.expertise);
+  console.log("Expertise level", expertiseLevel);
+  // redux ends for expertise level
+
   const visInfo = new SaveAndFetchContent("line", nodeFullName);
 
   useEffect(() => {
@@ -61,7 +66,7 @@ export default function StoryPane(props: Props) {
             break;
           default:
             if (nodeFullName) {
-              await visInfo.getVisualDescInEditor();
+              await visInfo.getVisualDescInEditor(expertiseLevel);
               // await getVisualDescInEditor(nodeFullName);
             }
             break;

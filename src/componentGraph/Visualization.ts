@@ -193,7 +193,6 @@ export default class Visualization {
 
   getVisualMark(visual: VisualDescriptor): string {
     let mark = "";
-    debugger;
     const VisualType = visual.type;
     switch (VisualType) {
       case "card":

@@ -6,6 +6,7 @@ import XAxis from "../../../componentGraph/XAxis";
 import Legend from "../../../componentGraph/Legend";
 import YAxis from "../../../componentGraph/YAxis";
 import { getSpecificDataInfo } from "../../../componentGraph/helperFunctions";
+import { ExpertiseLevel, Level } from "../../../UI/redux/expertise";
 
 export default class BarChart extends Visualization {
   chart: Visualization;
@@ -43,7 +44,10 @@ export default class BarChart extends Visualization {
     this.dataName = "";
   }
 
-  async getClusteredBarChartInfo(visual: VisualDescriptor) {
+  async getClusteredBarChartInfo(
+    visual: VisualDescriptor,
+    expertiseLevel: ExpertiseLevel
+  ) {
     this.chart = await this.getVisualization(visual);
 
     this.axisValue = this.chart.encoding.xAxes[0];
@@ -66,9 +70,13 @@ export default class BarChart extends Visualization {
       ? this.chart.encoding.xAxes[0].attribute!
       : "";
 
-    //this.text = this.textDescription.getBeginnerText("bar", this);
-    // this.text = this.textDescription.getIntermediateText("bar", this);
-    this.text = this.textDescription.getAdvancedVisDesc("bar", this);
+    if (expertiseLevel.Vis == Level.Low) {
+      this.text = this.textDescription.getBeginnerVisDesc("bar", this);
+    } else if (expertiseLevel.Vis == Level.Medium) {
+      this.text = this.textDescription.getIntermediateVisDesc("bar", this);
+    } else {
+      this.text = this.textDescription.getAdvancedVisDesc("bar", this);
+    }
     return this.text;
   }
   getInsightInfo() {}
