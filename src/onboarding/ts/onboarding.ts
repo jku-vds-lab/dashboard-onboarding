@@ -18,25 +18,17 @@ import { reportDivisor, resize, textSize } from "./sizes";
 import { createFilterInfoCard, removeFilterInfoCard } from "./filterInfoCards";
 import { showVisualChanges } from "./showVisualsChanges";
 import {
-  createExplainGroupCard,
   createLookedAtIds,
-  currentId,
   findCurrentTraversalCount,
   findCurrentTraversalVisual,
-  findTraversalVisual,
   findVisualIndexInTraversal,
   getCurrentTraversalElementType,
   getStandartCategories,
-  isGroup,
-  lookedAtInGroup,
   removeExplainGroupCard,
   setCurrentId,
   TraversalElement,
-  traversalStrategy,
   updateLookedAt,
-  updateTraversal,
 } from "./traversal";
-import { replacer } from "../../componentGraph/ComponentGraph";
 import { basicTraversalStrategy } from "./traversalStrategies";
 import { VisualDescriptor } from "powerbi-client";
 

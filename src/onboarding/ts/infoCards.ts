@@ -21,6 +21,7 @@ import {
 } from "./traversal";
 
 import { VisualDescriptor } from "powerbi-client";
+import { getDataWithId } from "../../componentGraph/helperFunctions";
 
 export async function createInfoCard(
   visual: VisualDescriptor,
@@ -69,7 +70,7 @@ export async function createInfoCard(
     traversal = global.settings.traversalStrategy;
   }
 
-  const visualData = helpers.getDataWithId(
+  const visualData = getDataWithId(
     traversal,
     visual.name,
     categories,

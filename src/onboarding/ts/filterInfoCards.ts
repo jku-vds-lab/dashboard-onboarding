@@ -1,4 +1,5 @@
-import * as helpers from "./helperFunctions";
+import * as helpers from "../../componentGraph/helperFunctions";
+import * as onboardingHelpers from "./helperFunctions";
 import * as global from "./globalVariables";
 import * as elements from "./elements";
 import { createFilterDisabledArea, removeFrame } from "./disableArea";
@@ -12,19 +13,19 @@ import { getTraversalElement } from "./createSettings";
 export async function createFilterInfoCard(count: number) {
   createFilterDisabledArea();
 
-  const style = helpers.getCardStyle(
+  const style = onboardingHelpers.getCardStyle(
     global.infoCardMargin,
     global.reportWidth! - global.infoCardMargin - global.infoCardWidth,
     global.infoCardWidth,
     ""
   );
-  helpers.createCard("filterInfoCard", style, "rectLeftBig");
+  onboardingHelpers.createCard("filterInfoCard", style, "rectLeftBig");
 
-  helpers.createCloseButton(
+  onboardingHelpers.createCloseButton(
     "closeButton",
     "closeButtonPlacementBig",
     "",
-    helpers.getCloseFunction(),
+    onboardingHelpers.getCloseFunction(),
     "filterInfoCard"
   );
 
@@ -45,7 +46,7 @@ export async function createFilterInfoCard(count: number) {
     return;
   }
 
-  helpers.createCardContent(
+  onboardingHelpers.createCardContent(
     filterData.title,
     filterData.generalInformation,
     "filterInfoCard"

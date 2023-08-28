@@ -1,8 +1,6 @@
 import Dashboard from "./Dashboard";
 import { Report, Page, VisualDescriptor } from "powerbi-client";
 import { setComponentGraph } from "../onboarding/ts/globalVariables";
-import Visualization from "./Visualization";
-import { debug } from "util";
 
 export let report: Report;
 export let page: Page;

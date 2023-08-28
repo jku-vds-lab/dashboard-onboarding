@@ -5,6 +5,7 @@ import * as elements from "./elements";
 import { removeInteractionCard } from "./interactionExample";
 import { reportDivisor } from "./sizes";
 import { VisualDescriptor } from "powerbi-client";
+import { dataToString } from "../../componentGraph/helperFunctions";
 
 export function showReportChanges() {
   disable.removeFrame();
@@ -84,7 +85,7 @@ function createShowReportChangesInfo() {
 
 export function getShowReportChangesText() {
   const allTargets = global.selectedTargets.map(({ equals }) => equals);
-  const allTargetsString = helpers.dataToString(allTargets);
+  const allTargetsString = dataToString(allTargets);
   return (
     "Can you see how the whole report changed?<br>All the visualizations were filtered by " +
     allTargetsString +

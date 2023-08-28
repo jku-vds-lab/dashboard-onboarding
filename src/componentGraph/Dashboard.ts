@@ -5,7 +5,7 @@ import { page, visuals } from "./ComponentGraph";
 import { getOperation, getPageFilters } from "./helperFunctions";
 import Filter from "./Filter";
 import Visualization from "./Visualization";
-import { VisualDescriptor } from "powerbi-client";
+
 // Dashboard
 export default class Dashboard {
   title: Title;

@@ -1,10 +1,8 @@
 import * as global from "./globalVariables";
 import { getVisualIndex, removeContainerOffset, removeOnboardingOverlay } from "./helperFunctions";
-import { createFilterInfoCard } from "./filterInfoCards";
-import { createInfoCard } from "./infoCards";
 import { removeHintCard, removeShowChangesCard } from "./showReportChanges";
 import { showVisualChanges } from "./showVisualsChanges";
-import { createInformationCard, createLookedAtIds, createLookedAtInGroup, currentId, findCurrentTraversalCount, findElementInTraversal, findVisualIndexInTraversal, getCurrentTraversalElementType, isGroup, lookedAtInGroup, removeExplainGroupCard, setCurrentId, traversalStrategy, updateLookedAt } from "./traversal";
+import { createInformationCard, createLookedAtIds, currentId, findVisualIndexInTraversal, removeExplainGroupCard, setCurrentId, updateLookedAt } from "./traversal";
 
 export function addStylesheet(URL: string){
     const style = document.createElement('link');

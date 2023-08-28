@@ -1,10 +1,8 @@
-import Visualization from "../../../componentGraph/Visualization";
 import BasicTextFormat from "./Format/basicTextFormat";
 import LineChart from "./lineChartVisualContent";
 import BarChart from "./barChartVisualContent";
-import { Visual, VisualDescriptor } from "powerbi-client";
 import * as helper from "../../../componentGraph/helperFunctions";
-import * as global from "./../globalVariables";
+import ColumnChart from "./columnChartVisualContent";
 
 export default class InsightDescription {
   text: BasicTextFormat = {
@@ -16,186 +14,104 @@ export default class InsightDescription {
     interactionInfos: [],
   };
 
-  // /*
-  // Get insight of the visualization
-  // @param visual (VisualDescriptor) (https://learn.microsoft.com/ru-ru/javascript/api/powerbi/powerbi-client/visualdescriptor.visualdescriptor)
-  // */
-  // export async function getVisualInsight(
-  //   visual: VisualDescriptor
-  // ): Promise<Insight> {
-  //   const insights = new Array<string>();
-  //   const VisualType = visual.type;
-  //   switch (VisualType) {
-  //     case "card":
-  //     case "multiRowCard":
-  //       const dataName = await getFieldMeasure(visual, "Values");
-  //       const dataValue = await getSpecificDataInfo(visual, dataName);
-  //       insights[0] =
-  //         "You can see that the value of " + dataName + " is " + dataValue + ".";
-  //       break;
-  //     case "slicer":
-  //       break;
-  //     case "lineClusteredColumnComboChart":
-  //       await getLineClusteredColumnComboChartInsights(visual, insights);
-  //       break;
-  //     case "lineChart":
-  //     case "clusteredBarChart":
-  //     case "clusteredColumnChart":
-  //       await getDefaultInsights(visual, insights);
-  //       break;
-  //     default:
-  //       insights[0] = "This type of visual is not supported yet";
-  //       break;
-  //   }
-  //   return { insights };
-  // }
+  private insightInfo = {
+    value: "A value of ",
+    measured: " was measured for ",
+    highest: "The highest value of ",
+    average: "On average ",
+    highestCategory: " has higher values than any other category."
+  };
 
-  // export async function getLineClusteredColumnComboChartInsights(
-  //   visual: VisualDescriptor,
-  //   insights: string[]
-  // ) {
-  //   const axis = await getFieldColumn(visual, "Category");
-  //   const axisValues = await getSpecificDataInfo(visual, axis);
-  //   const columnSeries = await getFieldMeasures(visual, "Series");
-  //   const columnValues = await getFieldMeasures(visual, "Y");
-  //   const lineValues = await getFieldMeasures(visual, "Y2");
+  private prepositions = {
+      and: " and ",
+      space: " "
+  };
 
-  //   const columnData = columnSeries.concat(columnValues);
-  //   const allData = columnData.concat(lineValues);
+  private punctuations = {
+      dot: ".",
+  };
 
-  //   const middelOfXValues = Math.floor(axisValues.length / 2);
-  //   const middelOfYValues = Math.floor(allData.length / 2);
+  private lineBreak = "<br>";
 
-  //   const visualData = await getData(visual, allData);
-  //   if (!visualData) {
-  //     return;
-  //   }
+  insightExampleText(
+    value: string | number,
+    dataName: string,
+    axisValues: string[],
+    legendValues?: string[]
+  ) {
+    let text = "";
 
-  //   const value = await getSpecificDataPoint(
-  //     visualData.data,
-  //     "Category",
-  //     allData[middelOfYValues],
-  //     "Value",
-  //     axis,
-  //     axisValues[middelOfXValues]
-  //   );
-  //   const highestCategory = await getHighestCategory(
-  //     visualData.data,
-  //     "Value",
-  //     allData,
-  //     "Category"
-  //   );
-  //   const highestValue = await getHighestValue(
-  //     visualData.data,
-  //     "Value",
-  //     allData,
-  //     "Category",
-  //     axis,
-  //     axisValues
-  //   );
+    text = this.insightInfo.value +
+    value + this.prepositions.space +
+    dataName + this.insightInfo.measured+
+    axisValues[Math.floor(axisValues.length / 2)];
 
-  //   insights[0] =
-  //     "A value of " +
-  //     value +
-  //     " " +
-  //     allData[middelOfYValues] +
-  //     " was measured for " +
-  //     axisValues[middelOfXValues] +
-  //     ".";
-  //   insights[1] =
-  //     "On average " +
-  //     highestCategory +
-  //     " has higher values than any other category.";
-  //   insights[2] =
-  //     "The highest value " +
-  //     highestValue[0] +
-  //     " was measured for " +
-  //     highestValue[1] +
-  //     " and " +
-  //     highestValue[2] +
-  //     ".";
-  // }
+    if(legendValues){
+      text += this.prepositions.and + legendValues[Math.floor(legendValues.length / 2)];
+    }
 
-  // export async function getDefaultInsights(visual: VisualDescriptor, insights: string[]) {
-  //   const axes = await getFieldColumns(visual, "Category");
-  //   const axisValues = await getSpecificDataInfo(visual, axes[0]);
-  //   const dataName = await getFieldMeasure(visual, "Y");
-  //   const legend = await getFieldColumn(visual, "Series");
-  //   const legendValues = await getSpecificDataInfo(visual, legend);
+    text += this.punctuations.dot + this.lineBreak;
 
-  //   const middelOfYValues = Math.floor(axisValues.length / 2);
-  //   const middelOfLegendValues = Math.floor(legendValues.length / 2);
+    return text;
+  }
 
-  //   const visualData = await getData(visual, []);
-  //   if (!visualData) {
-  //     return;
-  //   }
+  insightHighestValueText(
+    highestValue: string | number,
+    dataName: string,
+    dataCategory: (string|number)[],
+    legend?: string,
+  ) {
+    let text = "";
 
-  //   const value = await getSpecificDataPoint(
-  //     visualData.data,
-  //     legend,
-  //     legendValues[middelOfLegendValues],
-  //     dataName,
-  //     axes[0],
-  //     axisValues[middelOfYValues]
-  //   );
-  //   const highestCategory = await getHighestCategory(
-  //     visualData.data,
-  //     dataName,
-  //     legendValues,
-  //     legend
-  //   );
-  //   const highestValue = await getHighestValue(
-  //     visualData.data,
-  //     dataName,
-  //     legendValues,
-  //     legend,
-  //     axes[0],
-  //     axisValues
-  //   );
+    text = this.insightInfo.highest +
+    highestValue + this.prepositions.space +
+    dataName + this.insightInfo.measured+
+    dataCategory[0];
 
-  //   if (legend === "") {
-  //     insights[0] =
-  //       "A value of " +
-  //       value +
-  //       " " +
-  //       dataName +
-  //       " was measured for " +
-  //       axisValues[middelOfYValues] +
-  //       ".";
-  //     insights[1] =
-  //       "The highest value of " +
-  //       highestValue[0] +
-  //       " " +
-  //       dataName +
-  //       " was measured for " +
-  //       highestValue[1] +
-  //       ".";
-  //   } else {
-  //     insights[0] =
-  //       "A value of " +
-  //       value +
-  //       " " +
-  //       dataName +
-  //       " was measured for " +
-  //       axisValues[middelOfYValues] +
-  //       " and " +
-  //       legendValues[middelOfLegendValues] +
-  //       ".";
-  //     insights[1] =
-  //       "On average " +
-  //       highestCategory +
-  //       " has higher values than any other category.";
-  //     insights[2] =
-  //       "The highest value of " +
-  //       highestValue[0] +
-  //       " " +
-  //       dataName +
-  //       " was measured for " +
-  //       highestValue[1] +
-  //       " and " +
-  //       highestValue[2] +
-  //       ".";
-  //   }
-  // }
+    if(legend){
+      text += this.prepositions.and + dataCategory[1];
+    }
+
+    text += this.punctuations.dot + this.lineBreak;
+
+    return text;
+  }
+
+  insightHighestCategoryText(highestCategory: string) {
+    let text = "";
+
+    text = this.insightInfo.average + 
+    highestCategory +
+    this.insightInfo.highestCategory +
+    this.punctuations.dot + this.lineBreak;
+
+    return text;
+  }
+  
+  getInsightInfo(visualType: string, visual: LineChart | BarChart | ColumnChart | ComboChart | Card) {
+    switch(visualType){
+      case "card":
+        const value = helper.getSpecificDataPoint (visual.data.data, visual.legend, visual.legendValues[Math.floor(visual.legendValues.length / 2)], visual.dataName, visual.axis, visual.axisValues[Math.floor(visual.axisValues.length / 2)]);
+        this.text.insightImages.push("lightbulbImg");
+        this.text.insightInfos.push(this.insightExampleText(value!, visual.dataName, visual.axisValues, visual.legendValues));
+        break;
+      case "combo":
+        break;
+      default:
+        const value = helper.getSpecificDataPoint (visual.data.data, visual.legend, visual.legendValues[Math.floor(visual.legendValues.length / 2)], visual.dataName, visual.axis, visual.axisValues[Math.floor(visual.axisValues.length / 2)]);
+        this.text.insightImages.push("lightbulbImg");
+        this.text.insightInfos.push(this.insightExampleText(value!, visual.dataName, visual.axisValues, visual.legendValues));
+
+        const highestValueArray = helper.getHighestValue(visual.data.data, visual.dataName, visual.legendValues, visual.legend, visual.axis, visual.axisValues);
+        const highestValue = highestValueArray[0];
+        this.text.insightImages.push("lightbulbImg");
+        this.text.insightInfos.push(this.insightHighestValueText(highestValue, visual.dataName, highestValueArray , visual.legend));
+
+        if(visual.legend){
+          const highestCategory = helper.getHighestCategory(visual.data.data, visual.dataName, visual.legendValues, visual.legend);
+          this.text.insightImages.push("lightbulbImg");
+          this.text.insightInfos.push(this.insightHighestCategoryText(highestCategory));
+        }
+    }
+  }
 }

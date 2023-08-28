@@ -7,7 +7,7 @@ import Legend from "../../../componentGraph/legend";
 import YAxis from "../../../componentGraph/yAxis";
 import { getSpecificDataInfo } from "../../../componentGraph/helperFunctions";
 
-export default class BarChart extends Visualization {
+export default class ComboChart extends Visualization {
   chart: Visualization;
   text: BasicTextFormat;
   textDescription: GeneralDescription;
@@ -17,8 +17,13 @@ export default class BarChart extends Visualization {
   legendValue: Legend;
   legend: string;
   legendValues: string[];
-  dataValue: YAxis;
-  dataName: string;
+  dataNames: YAxis[];
+  columnName: YAxis[];
+  columnAxis: string;
+  columnValues: string[];
+  lineName: YAxis[];
+  lineAxis: string;
+  lineValues: string[];
 
   constructor() {
     super();
@@ -39,18 +44,23 @@ export default class BarChart extends Visualization {
     this.legendValue = new Legend();
     this.legend = "";
     this.legendValues = [];
-    this.dataValue = new YAxis();
-    this.dataName = "";
+    this.dataNames = [];
+    this.columnName = [];
+    this.columnAxis = "";
+    this.columnValues = [];
+    this.lineName = [];
+    this.lineAxis = "";
+    this.lineValues = [];
   }
 
-  async getClusteredBarChartInfo(visual: VisualDescriptor) {
+  async getLineClusteredColumnComboChartInfo(visual: VisualDescriptor) {
     this.chart = await this.getVisualization(visual);
 
     this.axisValue = this.chart.encoding.xAxes[0];
-    this.axis = this.chart.encoding.yAxes[0]
-      ? this.chart.encoding.yAxes[0].attribute!
+    this.axis = this.chart.encoding.xAxes[0]
+      ? this.chart.encoding.xAxes[0].attribute!
       : "";
-    this.axisValues = this.chart.encoding.yAxes[0]
+    this.axisValues = this.chart.encoding.xAxes[0]
       ? await getSpecificDataInfo(visual, this.axis)
       : [];
     
@@ -62,14 +72,25 @@ export default class BarChart extends Visualization {
       ? await getSpecificDataInfo(visual, this.legend)
       : [];
 
-    this.dataName = this.chart.encoding.xAxes[0]
-      ? this.chart.encoding.xAxes[0].attribute!
+    this.dataNames = this.chart.encoding.yAxes;
+    this.columnName = this.dataNames?.filter(yAxis => yAxis.type === "Column y-axis")!;
+    this.lineName = this.dataNames?.filter(yAxis => yAxis.type === "Line y-axis")!;
+    this.columnAxis = this.columnName[0]
+      ? this.columnName[0].attribute!
       : "";
+    this.columnValues = this.columnName[0]
+      ? await getSpecificDataInfo(visual, this.columnAxis)
+      : [];
+    this.lineAxis = this.lineName[0]
+      ? this.lineName[0].attribute!
+      : "";
+    this.lineValues = this.lineName[0]
+      ? await getSpecificDataInfo(visual, this.lineAxis)
+      : [];
 
-    //this.text = this.textDescription.getBeginnerText("bar", this);
-    // this.text = this.textDescription.getIntermediateText("bar", this);
-    this.text = this.textDescription.getAdvancedVisDesc("bar", this);
+    //this.text = this.textDescription.getBeginnerText("combo", this);
+    // this.text = this.textDescription.getIntermediateText("combo", this);
+    this.text = this.textDescription.getAdvancedVisDesc("combo", this);
     return this.text;
   }
-  getInsightInfo() {}
 }

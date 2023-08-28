@@ -1,4 +1,5 @@
-import * as helpers from "./helperFunctions";
+import * as helpers from "../../componentGraph/helperFunctions";
+import * as onboardingHelpers from "./helperFunctions";
 import * as global from "./globalVariables";
 import * as elements from "./elements";
 import { removeElement } from "./elements";
@@ -19,15 +20,15 @@ export function createDashboardInfoCard(count: number) {
   disableAll();
 
   const style =
-    helpers.getCardStyle(global.introCardMargin, 0, global.introCardWidth, "") +
+  onboardingHelpers.getCardStyle(global.introCardMargin, 0, global.introCardWidth, "") +
     `right:0;margin:auto;`;
-  helpers.createCard("dashboardInfoCard", style, "");
+    onboardingHelpers.createCard("dashboardInfoCard", style, "");
 
-  helpers.createCloseButton(
+    onboardingHelpers.createCloseButton(
     "closeButton",
     "closeButtonPlacementBig",
     "",
-    helpers.getCloseFunction(),
+    onboardingHelpers.getCloseFunction(),
     "dashboardInfoCard"
   );
 
@@ -40,7 +41,7 @@ export function createDashboardInfoCard(count: number) {
 
   const dashboard = global.componentGraph.dashboard;
   const title = setDashboardTitle(traversal, dashboard, count);
-  helpers.createCardContent(title, "", "dashboardInfoCard");
+  onboardingHelpers.createCardContent(title, "", "dashboardInfoCard");
   setDashboardInfos(traversal, count);
   createInfoCardButtons(traversal, "dashboard", [], count);
 }
