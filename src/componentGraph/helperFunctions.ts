@@ -5,17 +5,14 @@ import * as global from "../onboarding/ts/globalVariables";
 import Filter from "./Filter";
 import { getFilterDescription } from "../onboarding/ts/filterInfoCards";
 import BasicTextFormat from "../onboarding/ts/Content/Format/basicTextFormat";
-import {
-  getCardInfo,
-  getSlicerInfo,
-} from "../onboarding/ts/basicVisualContent";
-import { getLineClusteredColumnComboChartInfo } from "../onboarding/ts/complexVisualContent";
+import Card from "../onboarding/ts/Content/cardVisualContent";
+import Slicer from "../onboarding/ts/Content/slicerVisualContent";
 import LineChart from "../onboarding/ts/Content/lineChartVisualContent";
 import BarChart from "../onboarding/ts/Content/barChartVisualContent";
 import ColumnChart from "../onboarding/ts/Content/columnChartVisualContent";
+import ComboChart from "../onboarding/ts/Content/comboChartVisualContent";
 import { TraversalElement, isGroup } from "../onboarding/ts/traversal";
 import Data from "./Data";
-
 /*
 Get encoding of the visualization
 @param visual (VisualDescriptor) (https://learn.microsoft.com/ru-ru/javascript/api/powerbi/powerbi-client/visualdescriptor.visualdescriptor)
@@ -227,7 +224,10 @@ export async function getSpecificDataInfo(
   return dataMap.get(dataName) ?? [];
 }
 
-export async function getData(visual: VisualDescriptor, categories: string[]): Promise<Data> {
+export async function getData(
+  visual: VisualDescriptor,
+  categories: string[]
+): Promise<Data> {
   const attributes = await getVisualDataFields(visual);
   const exportedData = await exportData(visual);
   if (!exportedData) {
@@ -276,7 +276,9 @@ export async function getData(visual: VisualDescriptor, categories: string[]): P
   return { attributes, data };
 }
 
-async function getVisualDataFields(visual: VisualDescriptor): Promise<Array<string>> {
+async function getVisualDataFields(
+  visual: VisualDescriptor
+): Promise<Array<string>> {
   const DataFields: Array<string> = [];
 
   if (visual.getCapabilities) {
@@ -368,10 +370,12 @@ export async function getVisualInfos(
     switch (type) {
       case "card":
       case "multiRowCard":
-        visualInfos = await getCardInfo(visual);
+        const card = new Card();
+        visualInfos = await card.getCardInfo(visual);
         break;
       case "lineClusteredColumnComboChart":
-        visualInfos = await getLineClusteredColumnComboChartInfo(visual);
+        const combo = new ComboChart();
+        visualInfos = await combo.getLineClusteredColumnComboChartInfo(visual);
         break;
       case "lineChart":
         const lineChart = new LineChart();
@@ -386,7 +390,8 @@ export async function getVisualInfos(
         visualInfos = await columnChart.getClusteredColumnChartInfo(visual);
         break;
       case "slicer":
-        visualInfos = await getSlicerInfo(visual);
+        const slicer = new Slicer();
+        visualInfos = await slicer.getSlicerInfo(visual);
         break;
       default:
         break;

@@ -2,57 +2,6 @@ import * as helper from "./../../componentGraph/helperFunctions";
 import * as global from "./globalVariables";
 import { VisualDescriptor } from "powerbi-client";
 
-export async function getCardInfo(visual: VisualDescriptor) {
-  const CGVisual = global.componentGraph.dashboard.visualizations.find(
-    (vis) => vis.id === visual.name
-  );
-  const dataNames = CGVisual?.encoding.values!;
-
-  const generalImages = [];
-  const generalInfos = [];
-  const interactionImages: any[] = [];
-  const interactionInfos: string[] = [];
-  const insightImages: any[] = [];
-  const insightInfos: string[] = [];
-
-  generalImages.push("infoImg");
-  generalInfos.push(CGVisual?.description!);
-
-  let dataText = "";
-  for (const dataName of dataNames) {
-    const dataValue = await helper.getSpecificDataInfo(
-      visual,
-      dataName.attribute
-    );
-    dataText +=
-      " It shows the current value of " +
-      dataName.attribute +
-      ", which is " +
-      dataValue[0] +
-      ".";
-  }
-
-  generalImages.push("dataImg");
-  generalInfos.push(
-    "The purpose of this chart is to " + CGVisual?.task + "." + dataText
-  );
-
-  const filterText = helper.getLocalFilterText(CGVisual);
-  if (filterText !== "") {
-    generalImages.push("filterImg");
-    generalInfos.push("This chart has the following filters:<br>" + filterText);
-  }
-
-  return {
-    generalImages,
-    generalInfos,
-    interactionImages,
-    interactionInfos,
-    insightImages,
-    insightInfos,
-  };
-}
-
 export async function getCardChanges(visual: VisualDescriptor) {
   const CGVisual = global.componentGraph.dashboard.visualizations.find(
     (vis) => vis.id === visual.name
@@ -74,69 +23,6 @@ export async function getCardChanges(visual: VisualDescriptor) {
   }
 
   return visualInteractionInfo;
-}
-
-export function getSlicerInfo(visual: VisualDescriptor) {
-  const generalImages = [];
-  const generalInfos = [];
-  const interactionImages = [];
-  const interactionInfos = [];
-  const insightImages: any[] = [];
-  const insightInfos: string[] = [];
-
-  try {
-    const CGVisual = global.componentGraph.dashboard.visualizations.find(
-      (vis) => vis.id === visual.name
-    );
-    const filterName = CGVisual?.encoding.values[0];
-
-    generalImages.push("infoImg");
-    generalInfos.push(CGVisual?.description!);
-
-    if (filterName) {
-      generalImages.push("dataImg");
-      generalInfos.push(
-        "With this one you can filter by " +
-          filterName.attribute +
-          ". The purpose of this chart is to " +
-          CGVisual?.task +
-          "."
-      );
-    }
-
-    const filterText = helper.getLocalFilterText(CGVisual);
-    if (filterText !== "") {
-      generalImages.push("filterImg");
-      generalInfos.push(
-        "This chart has the following filters:<br>" + filterText
-      );
-    }
-
-    interactionImages.push("interactImg");
-    interactionInfos.push(CGVisual?.interactions.description!);
-
-    if (filterName) {
-      interactionImages.push("elemClickImg");
-      interactionInfos.push(
-        "With clicking on a " +
-          CGVisual?.mark +
-          " you can filter the report by " +
-          filterName.attribute +
-          "."
-      );
-    }
-  } catch (error) {
-    console.log("Error in getSlicerInfo", error);
-  }
-
-  return {
-    generalImages,
-    generalInfos,
-    interactionImages,
-    interactionInfos,
-    insightImages,
-    insightInfos,
-  };
 }
 
 export async function getChartChanges(visual: any, isVertical: boolean) {
@@ -173,23 +59,23 @@ export async function getChartChanges(visual: any, isVertical: boolean) {
     );
   });
 
-  let visualInteractionInfo = helpers.getGeneralInteractionInfo(
-    additionalFilters,
-    dataName
-  );
+  // let visualInteractionInfo = helpers.getGeneralInteractionInfo(
+  //   additionalFilters,
+  //   dataName
+  // );
 
-  if (axisValues && legendValues) {
-    visualInteractionInfo += helpers.getTargetInteractionFilter(axis);
-    visualInteractionInfo += " and ";
-    visualInteractionInfo +=
-      helpers.getTargetInteractionFilter(legendAttribute);
-  } else if (axisValues) {
-    visualInteractionInfo += helpers.getTargetInteractionFilter(axis);
-  } else if (legendValues) {
-    visualInteractionInfo +=
-      helpers.getTargetInteractionFilter(legendAttribute);
-  }
-  visualInteractionInfo += ".";
+  // if (axisValues && legendValues) {
+  //   visualInteractionInfo += helpers.getTargetInteractionFilter(axis);
+  //   visualInteractionInfo += " and ";
+  //   visualInteractionInfo +=
+  //     helpers.getTargetInteractionFilter(legendAttribute);
+  // } else if (axisValues) {
+  //   visualInteractionInfo += helpers.getTargetInteractionFilter(axis);
+  // } else if (legendValues) {
+  //   visualInteractionInfo +=
+  //     helpers.getTargetInteractionFilter(legendAttribute);
+  // }
+  // visualInteractionInfo += ".";
 
-  return visualInteractionInfo;
+  return "visualInteractionInfo";
 }

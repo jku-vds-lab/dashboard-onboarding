@@ -3,9 +3,9 @@ import GeneralDescription from "./generalDescription";
 import BasicTextFormat, { UserLevel } from "./Format/basicTextFormat";
 import Visualization from "../../../componentGraph/Visualization";
 import { VisualDescriptor } from "powerbi-client";
-import XAxis from "../../../componentGraph/xAxis";
-import Legend from "../../../componentGraph/legend";
-import YAxis from "../../../componentGraph/yAxis";
+import XAxis from "../../../componentGraph/XAxis";
+import Legend from "../../../componentGraph/Legend";
+import YAxis from "../../../componentGraph/YAxis";
 
 export default class LineChart extends Visualization {
   chart: Visualization;
@@ -64,8 +64,8 @@ export default class LineChart extends Visualization {
     this.dataName = (this.dataValue && this.dataValue.attribute) || "";
 
     this.text = this.textDescription.getBeginnerVisDesc("line", this);
-    this.text = this.textDescription.getIntermediateVisDesc("line", this);
-    this.text = this.textDescription.getAdvancedVisDesc("line", this);
+    // this.text = this.textDescription.getIntermediateVisDesc("line", this);
+    // this.text = this.textDescription.getAdvancedVisDesc("line", this);
     return this.text;
   }
 

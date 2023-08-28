@@ -1,7 +1,7 @@
-import Legend from "./legend";
-import Value from "./value";
-import XAxis from "./xAxis";
-import YAxis from "./yAxis";
+import Legend from "./Legend";
+import Value from "./Value";
+import XAxis from "./XAxis";
+import YAxis from "./YAxis";
 
 export default class Encoding {
   xAxes: XAxis[];

@@ -2,16 +2,16 @@ import Data from "./Data";
 import Insight from "./Insight";
 import Title from "./Title";
 import VisualChannel from "./VisualChannel";
-import Interactions from "./interactions";
+import Interactions from "./Interactions";
 import Encoding from "./encoding";
 import * as helper from "./helperFunctions";
 import LocalFilter from "./LocalFilter";
 import { VisualDescriptor } from "powerbi-client";
-import { page, visuals } from "./ComponentGraph";;
-import XAxis from "./xAxis";
-import YAxis from "./yAxis";
-import Legend from "./legend";
-import Value from "./value";
+import { page, visuals } from "./ComponentGraph";
+import XAxis from "./XAxis";
+import YAxis from "./YAxis";
+import Legend from "./Legend";
+import Value from "./Value";
 import Filter from "./Filter";
 
 export default class Visualization {

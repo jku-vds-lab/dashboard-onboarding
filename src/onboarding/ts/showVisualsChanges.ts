@@ -9,84 +9,149 @@ import { dataToString, getData } from "../../componentGraph/helperFunctions";
 import { getStandartCategories } from "./traversal";
 
 export async function showVisualChanges(selectedVisual: VisualDescriptor) {
-  const visualData = getData(selectedVisual, getStandartCategories(selectedVisual.type));
+  const visualData = getData(
+    selectedVisual,
+    getStandartCategories(selectedVisual.type)
+  );
 
-  if (
-    visualData &&
-    visualData.interactionChangedInfosStatus != global.infoStatus.deleted
-  ) {
-    disable.disableFrame();
-    disable.createDisabledArea(selectedVisual);
+  disable.disableFrame();
+  disable.createDisabledArea(selectedVisual);
 
-    const position = helpers.getVisualCardPos(
-      selectedVisual,
-      global.infoCardWidth,
-      global.infoCardMargin
-    );
+  const position = helpers.getVisualCardPos(
+    selectedVisual,
+    global.infoCardWidth,
+    global.infoCardMargin
+  );
 
-    const style = helpers.getCardStyle(
-      position.y,
-      position.x,
-      global.infoCardWidth,
-      ""
-    );
-    if (position.pos === "left") {
-      helpers.createCard("showVisualChangesCard", style, "rectLeftBig");
-      helpers.createCloseButton(
-        "closeButton",
-        "closeButtonPlacementBig",
-        "",
-        helpers.removeOnboarding,
-        "showVisualChangesCard"
-      );
-    } else {
-      helpers.createCard("showVisualChangesCard", style, "rectRightBig");
-      helpers.createCloseButton(
-        "closeButton",
-        "closeButtonPlacementBig",
-        "",
-        helpers.removeOnboarding,
-        "showVisualChangesCard"
-      );
-    }
-
-    helpers.createCardContent(
-      global.settings.interactionExample.title,
+  const style = helpers.getCardStyle(
+    position.y,
+    position.x,
+    global.infoCardWidth,
+    ""
+  );
+  if (position.pos === "left") {
+    helpers.createCard("showVisualChangesCard", style, "rectLeftBig");
+    helpers.createCloseButton(
+      "closeButton",
+      "closeButtonPlacementBig",
       "",
+      helpers.removeOnboarding,
       "showVisualChangesCard"
     );
-    helpers.createCardButtons(
-      "cardButtons",
-      "back to visual",
-      "",
-      "back to overview"
-    );
-
-    await createShowVisualChangesInfo(selectedVisual);
   } else {
-    showReportChanges();
+    helpers.createCard("showVisualChangesCard", style, "rectRightBig");
+    helpers.createCloseButton(
+      "closeButton",
+      "closeButtonPlacementBig",
+      "",
+      helpers.removeOnboarding,
+      "showVisualChangesCard"
+    );
   }
+
+  helpers.createCardContent(
+    global.settings.interactionExample.title,
+    "",
+    "showVisualChangesCard"
+  );
+  helpers.createCardButtons(
+    "cardButtons",
+    "back to visual",
+    "",
+    "back to overview"
+  );
+
+  await createShowVisualChangesInfo(selectedVisual);
 }
 
 async function createShowVisualChangesInfo(visual: VisualDescriptor) {
   const visualData = getData(visual, getStandartCategories(visual.type));
-  let visualChangeInfo;
 
-  switch (visualData?.interactionChangedInfosStatus) {
-    case global.infoStatus.original:
-      visualChangeInfo = await getShowVisualChangesText(visual);
-      break;
-    case global.infoStatus.changed:
-    case global.infoStatus.added:
-      visualChangeInfo = visualData.changedInteractionChangedInfo;
-      break;
-    default:
-      break;
-  }
+  const visualChangeInfo = await getShowVisualChangesText(visual);
 
   document.getElementById("contentText")!.innerHTML = "";
   document.getElementById("contentText")!.innerHTML += visualChangeInfo;
 }
+
+// export async function showVisualChanges(selectedVisual: VisualDescriptor) {
+//   const visualData = getData(selectedVisual, getStandartCategories(selectedVisual.type));
+
+//   if (
+//     visualData &&
+//     visualData.interactionChangedInfosStatus != global.infoStatus.deleted
+//   ) {
+//     disable.disableFrame();
+//     disable.createDisabledArea(selectedVisual);
+
+//     const position = helpers.getVisualCardPos(
+//       selectedVisual,
+//       global.infoCardWidth,
+//       global.infoCardMargin
+//     );
+
+//     const style = helpers.getCardStyle(
+//       position.y,
+//       position.x,
+//       global.infoCardWidth,
+//       ""
+//     );
+//     if (position.pos === "left") {
+//       helpers.createCard("showVisualChangesCard", style, "rectLeftBig");
+//       helpers.createCloseButton(
+//         "closeButton",
+//         "closeButtonPlacementBig",
+//         "",
+//         helpers.removeOnboarding,
+//         "showVisualChangesCard"
+//       );
+//     } else {
+//       helpers.createCard("showVisualChangesCard", style, "rectRightBig");
+//       helpers.createCloseButton(
+//         "closeButton",
+//         "closeButtonPlacementBig",
+//         "",
+//         helpers.removeOnboarding,
+//         "showVisualChangesCard"
+//       );
+//     }
+
+//     helpers.createCardContent(
+//       global.settings.interactionExample.title,
+//       "",
+//       "showVisualChangesCard"
+//     );
+//     helpers.createCardButtons(
+//       "cardButtons",
+//       "back to visual",
+//       "",
+//       "back to overview"
+//     );
+
+//     await createShowVisualChangesInfo(selectedVisual);
+//   } else {
+//     showReportChanges();
+//   }
+// }
+
+// async function createShowVisualChangesInfo(visual: VisualDescriptor) {
+//   const visualData = getData(visual, getStandartCategories(visual.type));
+//   let visualChangeInfo;
+
+//   switch (visualData?.interactionChangedInfosStatus) {
+//     case global.infoStatus.original:
+//       visualChangeInfo = await getShowVisualChangesText(visual);
+//       break;
+//     case global.infoStatus.changed:
+//     case global.infoStatus.added:
+//       visualChangeInfo = visualData.changedInteractionChangedInfo;
+//       break;
+//     default:
+//       break;
+//   }
+
+//   document.getElementById("contentText")!.innerHTML = "";
+//   document.getElementById("contentText")!.innerHTML += visualChangeInfo;
+// }
 
 export async function getShowVisualChangesText(visual: VisualDescriptor) {
   const allTargets = global.selectedTargets.map(({ equals }) => equals);

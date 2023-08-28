@@ -2,13 +2,16 @@ import NoviceText from "./generalDescription";
 import BasicTextFormat from "./Format/basicTextFormat";
 import Visualization from "../../../componentGraph/Visualization";
 import { VisualDescriptor } from "powerbi-client";
-import Legend from "../../../componentGraph/legend";
-import YAxis from "../../../componentGraph/yAxis";
+import Legend from "../../../componentGraph/Legend";
+import YAxis from "../../../componentGraph/YAxis";
 import { getSpecificDataInfo } from "../../../componentGraph/helperFunctions";
+import GeneralDescription from "./generalDescription";
 
 export default class ColumnChart extends Visualization {
   chart: Visualization;
   text: BasicTextFormat;
+  textDescription: GeneralDescription;
+
   noviceText: NoviceText;
   axisValue: YAxis;
   axis: string;
@@ -31,6 +34,7 @@ export default class ColumnChart extends Visualization {
       interactionInfos: [],
     };
     this.chart = new Visualization();
+    this.textDescription = new GeneralDescription();
     this.noviceText = new NoviceText();
     this.axisValue = new YAxis();
     this.axis = "";
@@ -63,6 +67,8 @@ export default class ColumnChart extends Visualization {
     this.dataName = this.chart.encoding.yAxes[0]
       ? this.chart.encoding.yAxes[0].attribute!
       : "";
+
+    this.text = this.textDescription.getBeginnerVisDesc("column", this);
 
     return this.text;
   }

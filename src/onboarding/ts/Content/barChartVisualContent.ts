@@ -2,9 +2,9 @@ import GeneralDescription from "./generalDescription";
 import BasicTextFormat from "./Format/basicTextFormat";
 import Visualization from "../../../componentGraph/Visualization";
 import { VisualDescriptor } from "powerbi-client";
-import XAxis from "../../../componentGraph/xAxis";
-import Legend from "../../../componentGraph/legend";
-import YAxis from "../../../componentGraph/yAxis";
+import XAxis from "../../../componentGraph/XAxis";
+import Legend from "../../../componentGraph/Legend";
+import YAxis from "../../../componentGraph/YAxis";
 import { getSpecificDataInfo } from "../../../componentGraph/helperFunctions";
 
 export default class BarChart extends Visualization {
@@ -53,7 +53,7 @@ export default class BarChart extends Visualization {
     this.axisValues = this.chart.encoding.yAxes[0]
       ? await getSpecificDataInfo(visual, this.axis)
       : [];
-    
+
     this.legendValue = this.chart?.encoding.legends[0];
     this.legend = this.chart.encoding.legends[0]
       ? this.chart.encoding.legends[0].attribute

@@ -2,7 +2,7 @@ import GeneralDescription from "./generalDescription";
 import BasicTextFormat from "./Format/basicTextFormat";
 import Visualization from "../../../componentGraph/Visualization";
 import { VisualDescriptor } from "powerbi-client";
-import Value from "../../../componentGraph/value";
+import Value from "../../../componentGraph/Value";
 
 export default class Card extends Visualization {
   chart: Visualization;

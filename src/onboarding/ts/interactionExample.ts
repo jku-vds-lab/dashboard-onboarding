@@ -59,7 +59,7 @@ export async function createInteractionCard(visual: VisualDescriptor) {
   );
   helpers.createCardButtons("cardButtons", "", "", "back to visual");
 
-  await interactionDesc.getInteractionInfo(visual);
+  // await interactionDesc.getInteractionInfo(visual.type, visual);
 }
 
 export function removeInteractionCard() {

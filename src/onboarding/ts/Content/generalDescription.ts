@@ -27,7 +27,7 @@ export default class GeneralDescription {
     of: " of ",
     and: " and ",
     over: " over ",
-    to: "to"
+    to: "to",
   };
   private actions = {
     displays: " displays ",
@@ -47,21 +47,21 @@ export default class GeneralDescription {
   private punctuations = {
     comma: ", ",
     dot: ".",
-    colon: ": "
+    colon: ": ",
   };
 
   private lineBreak = "<br>";
 
   private generalInfo = {
     values: " the values of the ",
-    chart: " this chart "
-  }
+    chart: " this chart ",
+  };
 
-  private components ={
+  private components = {
     xAxis: "X-axis",
     yAxis: "Y-axis",
-    legend: "legend"
-  }
+    legend: "legend",
+  };
 
   private axisInfo = {
     line: " shows the trend of ",
@@ -71,15 +71,15 @@ export default class GeneralDescription {
   private legendInfo = {
     mark: " represent a different ",
     legend: " distinguished by color",
-    color: " and its corresponding color."
+    color: " and its corresponding color.",
   };
 
   private filterInfo = {
     value: " Its current value is ",
     operation: "The operation ",
     executed: " is executed for ",
-    general: "This chart has the following filters:<br>"
-  }
+    general: "This chart has the following filters:<br>",
+  };
 
   async sendRequestToGPT(prompt: string) {
     const formBody: FormBody = { prompt: prompt, tokens: 20 };
@@ -101,11 +101,12 @@ export default class GeneralDescription {
     text =
       this.pronouns.it +
       this.actions.displays +
-      data + 
+      data +
       this.actions.encoded +
       this.prepositions.by +
       channel +
-      this.punctuations.dot + this.lineBreak;
+      this.punctuations.dot +
+      this.lineBreak;
 
     return text;
   }
@@ -113,9 +114,12 @@ export default class GeneralDescription {
   purposeText(task: string) {
     let text = "";
     text =
-      this.articles.the + this.actions.purpose +
-      this.prepositions.of + this.generalInfo.chart +
-      this.verbs.is + this.prepositions.to +
+      this.articles.the +
+      this.actions.purpose +
+      this.prepositions.of +
+      this.generalInfo.chart +
+      this.verbs.is +
+      this.prepositions.to +
       task +
       this.punctuations.dot +
       this.lineBreak;
@@ -156,7 +160,7 @@ export default class GeneralDescription {
     text =
       this.articles.the +
       axisType +
-      this.generalInfo.values+
+      this.generalInfo.values +
       axis +
       this.punctuations.dot +
       this.lineBreak;
@@ -180,25 +184,34 @@ export default class GeneralDescription {
   filterText(filters: Filter[]) {
     let text = "";
 
-      for (const filter of filters) {
-        if (filter.operation !== "All") {
-          text += this.filterInfo.operation + filter.operation +
-            this.filterInfo.executed + filter.attribute +
-            this.punctuations.dot;
+    for (const filter of filters) {
+      if (filter.operation !== "All") {
+        text +=
+          this.filterInfo.operation +
+          filter.operation +
+          this.filterInfo.executed +
+          filter.attribute +
+          this.punctuations.dot;
 
-          let valueText = helper.dataToString(filter.values);
-          if (valueText !== "") {
-            text += this.filterInfo.value + valueText +
-            this.punctuations.dot + this.lineBreak;
-          }
+        const valueText = helper.dataToString(filter.values);
+        if (valueText !== "") {
+          text +=
+            this.filterInfo.value +
+            valueText +
+            this.punctuations.dot +
+            this.lineBreak;
         }
       }
-  
+    }
+
     return text;
   }
 
-  getBeginnerVisDesc(visualType: string, visual: LineChart | BarChart | ColumnChart | ComboChart | Card | Slicer) {
-    switch(visualType){
+  getBeginnerVisDesc(
+    visualType: string,
+    visual: LineChart | BarChart | ColumnChart | ComboChart | Card | Slicer
+  ) {
+    switch (visualType) {
       case "card":
         break;
       case "slicer":
@@ -206,53 +219,64 @@ export default class GeneralDescription {
       case "combo":
         break;
       default:
+        visual = visual as LineChart | BarChart | ColumnChart;
         this.text.generalImages.push("infoImg");
         this.text.generalInfos.push(visual.description);
-    
+
         const dataString = helper.dataToString(visual.chart.data.attributes!);
-        const channelString = helper.dataToString(visual.chart.channel.channel!);
-    
+        const channelString = helper.dataToString(
+          visual.chart.channel.channel!
+        );
+
         const generalText = this.generalText(channelString, dataString);
         const purposeText = this.purposeText(visual?.task);
-    
+
         this.text.generalImages.push("dataImg");
         this.text.generalInfos.push(generalText + purposeText);
-    
+
         let markText = "";
         if (visual.axis) {
-          markText += this.markAxisText(visual.chart?.mark, visual.dataName, visual.axis);
+          markText += this.markAxisText(
+            visual.chart?.mark,
+            visual.dataName,
+            visual.axis
+          );
           this.text.generalImages.push("xAxisImg");
-          this.text.generalInfos.push(this.axisText(this.components.xAxis, visual.axis));
+          this.text.generalInfos.push(
+            this.axisText(this.components.xAxis, visual.axis)
+          );
         }
-    
-        if(visual.dataName){
+
+        if (visual.dataName) {
           this.text.generalImages.push("yAxisImg");
-          this.text.generalInfos.push(this.axisText(this.components.yAxis, visual.dataName));
+          this.text.generalInfos.push(
+            this.axisText(this.components.yAxis, visual.dataName)
+          );
         }
-    
+
         if (visual.legend) {
           markText += this.markLegendText(visual.chart.mark, visual.legend);
           this.text.generalImages.push("legendImg");
           this.text.generalInfos.push(this.legendText(visual.legend));
         }
-    
+
         this.text.generalImages.push(visualType + "GraphImg");
         this.text.generalInfos.push(markText);
-    
-    
+
         const filterText = this.filterText(visual.localFilters.localFilters);
         if (filterText !== "") {
           this.text.generalImages.push("filterImg");
-          this.text.generalInfos.push(
-            this.filterInfo.general + filterText
-          );
+          this.text.generalInfos.push(this.filterInfo.general + filterText);
         }
     }
     return this.text;
   }
 
-  getIntermediateVisDesc(visualType: string, visual: LineChart | BarChart | ColumnChart | ComboChart | Card | Slicer) {
-    switch(visualType){
+  getIntermediateVisDesc(
+    visualType: string,
+    visual: LineChart | BarChart | ColumnChart | ComboChart | Card | Slicer
+  ) {
+    switch (visualType) {
       case "card":
         break;
       case "slicer":
@@ -260,43 +284,60 @@ export default class GeneralDescription {
       case "combo":
         break;
       default:
+        visual = visual as LineChart | BarChart | ColumnChart;
         let markText = "";
-      if (visual.axis) {
-        markText += this.markAxisText(
-          visual.chart?.mark,
-          visual.dataName,
-          visual.axis
-        );
-        this.text.generalImages.push("xAxisImg");
-        this.text.generalInfos.push(this.components.xAxis + this.punctuations.colon + visual.axis + this.punctuations.dot);
-      }
-      if(visual.dataName){
-        this.text.generalImages.push("yAxisImg");
-        this.text.generalInfos.push(this.components.yAxis + this.punctuations.colon + visual.dataName + this.punctuations.dot);
-      }
+        if (visual.axis) {
+          markText += this.markAxisText(
+            visual.chart?.mark,
+            visual.dataName,
+            visual.axis
+          );
+          this.text.generalImages.push("xAxisImg");
+          this.text.generalInfos.push(
+            this.components.xAxis +
+              this.punctuations.colon +
+              visual.axis +
+              this.punctuations.dot
+          );
+        }
+        if (visual.dataName) {
+          this.text.generalImages.push("yAxisImg");
+          this.text.generalInfos.push(
+            this.components.yAxis +
+              this.punctuations.colon +
+              visual.dataName +
+              this.punctuations.dot
+          );
+        }
 
-      if (visual.legend) {
-        markText += this.markLegendText(visual.chart.mark, visual.legend);
-        this.text.generalImages.push("legendImg");
-        this.text.generalInfos.push(helper.firstLetterToUpperCase(this.components.legend) + this.punctuations.colon + visual.legend + this.punctuations.dot);
-      }
+        if (visual.legend) {
+          markText += this.markLegendText(visual.chart.mark, visual.legend);
+          this.text.generalImages.push("legendImg");
+          this.text.generalInfos.push(
+            helper.firstLetterToUpperCase(this.components.legend) +
+              this.punctuations.colon +
+              visual.legend +
+              this.punctuations.dot
+          );
+        }
 
-      this.text.generalImages.push(visualType + "GraphImg");
-      this.text.generalInfos.push(markText);
+        this.text.generalImages.push(visualType + "GraphImg");
+        this.text.generalInfos.push(markText);
 
-      const filterText = this.filterText(visual.localFilters.localFilters);
-      if (filterText !== "") {
-        this.text.generalImages.push("filterImg");
-        this.text.generalInfos.push(
-          this.filterInfo.general + filterText
-        );
-      }
+        const filterText = this.filterText(visual.localFilters.localFilters);
+        if (filterText !== "") {
+          this.text.generalImages.push("filterImg");
+          this.text.generalInfos.push(this.filterInfo.general + filterText);
+        }
     }
     return this.text;
   }
 
-  getAdvancedVisDesc(visualType: string, visual: LineChart | BarChart | ColumnChart | ComboChart | Card | Slicer) {
-    switch(visualType){
+  getAdvancedVisDesc(
+    visualType: string,
+    visual: LineChart | BarChart | ColumnChart | ComboChart | Card | Slicer
+  ) {
+    switch (visualType) {
       case "card":
         break;
       case "slicer":
@@ -304,6 +345,7 @@ export default class GeneralDescription {
       case "combo":
         break;
       default:
+        visual = visual as LineChart | BarChart | ColumnChart;
         let markText = "";
         if (visual.axis) {
           markText += this.markAxisText(
@@ -312,7 +354,7 @@ export default class GeneralDescription {
             visual.axis
           );
         }
-        if(visual.legend){
+        if (visual.legend) {
           markText += this.markLegendText(visual.chart.mark, visual.legend);
         }
 

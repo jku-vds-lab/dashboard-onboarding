@@ -2,7 +2,7 @@ import GeneralDescription from "./generalDescription";
 import BasicTextFormat from "./Format/basicTextFormat";
 import Visualization from "../../../componentGraph/Visualization";
 import { VisualDescriptor } from "powerbi-client";
-import Value from "../../../componentGraph/value";
+import Value from "../../../componentGraph/Value";
 
 export default class Slicer extends Visualization {
   chart: Visualization;
@@ -26,7 +26,7 @@ export default class Slicer extends Visualization {
     this.dataValue = new Value();
   }
 
-  async getCardInfo(visual: VisualDescriptor) {
+  async getSlicerInfo(visual: VisualDescriptor) {
     this.chart = await this.getVisualization(visual);
 
     //this.text = this.textDescription.getBeginnerText("slicer", this);
