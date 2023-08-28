@@ -1,7 +1,12 @@
 import React, { useState } from "react";
 import "./../onboarding/css/userLevel.css";
 import { Link } from "react-router-dom";
-
+import { useDispatch } from "react-redux";
+import {
+  increment,
+  ExpertiseLevel,
+  Level,
+} from "../onboarding/ts/Content/redux/expertise";
 interface CellProps {
   isSelected: boolean;
   onClick: () => void;
@@ -16,13 +21,42 @@ const Cell: React.FC<CellProps> = ({ isSelected, onClick }) => {
 };
 
 function UserLevel() {
+  // redux starts
+  const dispatch = useDispatch();
+  // redux  ends
   const [selectedX, setSelectedX] = useState<number | null>(null);
   const [selectedY, setSelectedY] = useState<number | null>(null);
 
   const handleCellClick = (xIndex: number, yIndex: number) => {
     setSelectedX(xIndex);
     setSelectedY(yIndex);
-    console.log("x: ", xIndex, "y: ", yIndex);
+
+    const expertise: ExpertiseLevel = {
+      Domain: Level.Medium,
+      Vis: Level.Medium,
+    };
+
+    if (xIndex == 0) {
+      expertise.Domain = Level.Low;
+    }
+    if (xIndex == 1) {
+      expertise.Domain = Level.Medium;
+    }
+    if (xIndex == 0) {
+      expertise.Domain = Level.High;
+    }
+
+    if (yIndex == 0) {
+      expertise.Vis = Level.Low;
+    }
+    if (yIndex == 1) {
+      expertise.Vis = Level.Medium;
+    }
+    if (yIndex == 0) {
+      expertise.Vis = Level.High;
+    }
+
+    dispatch(increment(expertise));
   };
 
   const xAxisLabels = ["Domain Expertise: Low", "Medium", "High"];

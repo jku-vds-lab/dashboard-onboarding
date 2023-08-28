@@ -6,9 +6,3 @@ export default interface BasicTextFormat {
   interactionImages: Array<string>;
   interactionInfos: Array<string>;
 }
-
-export enum UserLevel {
-  Beginner = 1,
-  Intermediate = 2,
-  Advanced = 3,
-}

@@ -1,6 +1,6 @@
 import * as helpers from "./../../../componentGraph/helperFunctions";
 import GeneralDescription from "./generalDescription";
-import BasicTextFormat, { UserLevel } from "./Format/basicTextFormat";
+import BasicTextFormat from "./Format/basicTextFormat";
 import Visualization from "../../../componentGraph/Visualization";
 import { VisualDescriptor } from "powerbi-client";
 import XAxis from "../../../componentGraph/XAxis";
@@ -19,9 +19,8 @@ export default class LineChart extends Visualization {
   legendValues: string[];
   dataValue: YAxis;
   dataName: string;
-  userLevel: UserLevel;
 
-  constructor(userLevel?: UserLevel) {
+  constructor() {
     super();
 
     this.text = {
@@ -42,7 +41,6 @@ export default class LineChart extends Visualization {
     this.legendValues = [];
     this.dataValue = new YAxis();
     this.dataName = "";
-    this.userLevel = userLevel ?? UserLevel.Beginner;
   }
 
   async getLineChartInfo(visual: VisualDescriptor) {
