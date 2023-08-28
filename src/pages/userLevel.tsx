@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import "./../onboarding/css/userLevel.css";
 import { Link } from "react-router-dom";
-import { useDrag, useDrop, DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
 
 interface CellProps {
   isSelected: boolean;
@@ -24,33 +22,40 @@ function UserLevel() {
   const handleCellClick = (xIndex: number, yIndex: number) => {
     setSelectedX(xIndex);
     setSelectedY(yIndex);
+    console.log("x: ", xIndex, "y: ", yIndex);
   };
 
+  const xAxisLabels = ["Domain Expertise: Low", "Medium", "High"];
+  const yAxisLabels = ["Vis Expertise: Low", "Medium", "High"];
+
   return (
-    <div className="matrix">
-      {Array.from({ length: 3 }, (_, yIndex) => (
-        <div className="row" key={yIndex}>
-          {Array.from({ length: 3 }, (_, xIndex) => (
-            <Cell
-              key={`${xIndex}-${yIndex}`}
-              isSelected={xIndex === selectedX && yIndex === selectedY}
-              onClick={() => handleCellClick(xIndex, yIndex)}
-            />
+    <div className="userLevel">
+      <Link to="/">
+        <div className="btn btn-secondary btn-dark ms-2">Launch Onboarding</div>
+      </Link>
+      <div className="matrix">
+        <div className="labels-row">
+          <div className="empty-label"></div>
+          {xAxisLabels.map((label, index) => (
+            <div className="axis-label" key={index}>
+              {label}
+            </div>
           ))}
         </div>
-      ))}
+        {Array.from({ length: 3 }, (_, yIndex) => (
+          <div className="row" key={yIndex}>
+            <div className="axis-label">{yAxisLabels[yIndex]}</div>
+            {Array.from({ length: 3 }, (_, xIndex) => (
+              <Cell
+                key={`${xIndex}-${yIndex}`}
+                isSelected={xIndex === selectedX && yIndex === selectedY}
+                onClick={() => handleCellClick(xIndex, yIndex)}
+              />
+            ))}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
 export default UserLevel;
-
-// <div className="userLevel">
-// <Link to="/">
-//   <div className="btn btn-secondary btn-dark ms-2">Launch Onboarding</div>
-// </Link>
-// <div className="matrix">
-//   {matrixData.map((expertise, index) => (
-//     <Cell key={index} expertise={expertise} onDrop={handleCellDrop} />
-//   ))}
-// </div>
-// </div>
