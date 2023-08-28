@@ -1,65 +1,47 @@
 import React, { useState } from "react";
 import "./../onboarding/css/userLevel.css";
-import Draggable from "react-draggable";
 import { Link } from "react-router-dom";
+import { useDrag, useDrop, DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 
 interface CellProps {
-  expertise: string;
-  onDrop: (expertise: string) => void;
+  isSelected: boolean;
+  onClick: () => void;
 }
-
-const Cell: React.FC<CellProps> = ({ expertise, onDrop }) => {
-  const handleDrop = (droppedExpertise: string) => {
-    onDrop(droppedExpertise);
-  };
-
+const Cell: React.FC<CellProps> = ({ isSelected, onClick }) => {
   return (
-    <div className={`cell ${expertise}`}>
-      <Draggable onStop={() => handleDrop(expertise)}>
-        <button className={`draggable-button`}>{expertise}</button>
-      </Draggable>
-    </div>
+    <div
+      className={`cell ${isSelected ? "selected" : ""}`}
+      onClick={onClick}
+    ></div>
   );
 };
 
 function UserLevel() {
-  const [matrixData, setMatrixData] = useState<string[]>([
-    "low low",
-    "low medium",
-    "low high",
-    "medium low",
-    "medium medium",
-    "medium high",
-    "high low",
-    "high medium",
-    "high high",
-  ]);
+  const [selectedX, setSelectedX] = useState<number | null>(null);
+  const [selectedY, setSelectedY] = useState<number | null>(null);
 
-  const handleCellDrop = (droppedExpertise: string) => {
-    const newData = matrixData.slice();
-    // const draggedIndex = newData.indexOf(draggedExpertise);
-    const dropIndex = newData.indexOf(droppedExpertise);
-
-    // newData[draggedIndex] = droppedExpertise;
-    newData[dropIndex] = droppedExpertise;
-
-    setMatrixData(newData);
+  const handleCellClick = (xIndex: number, yIndex: number) => {
+    setSelectedX(xIndex);
+    setSelectedY(yIndex);
   };
 
   return (
-    <div className="userLevel">
-      <Link to="/">
-        <div className="btn btn-secondary btn-dark ms-2">Launch Onboarding</div>
-      </Link>
-      <div className="matrix">
-        {matrixData.map((expertise, index) => (
-          <Cell key={index} expertise={expertise} onDrop={handleCellDrop} />
-        ))}
-      </div>
+    <div className="matrix">
+      {Array.from({ length: 3 }, (_, yIndex) => (
+        <div className="row" key={yIndex}>
+          {Array.from({ length: 3 }, (_, xIndex) => (
+            <Cell
+              key={`${xIndex}-${yIndex}`}
+              isSelected={xIndex === selectedX && yIndex === selectedY}
+              onClick={() => handleCellClick(xIndex, yIndex)}
+            />
+          ))}
+        </div>
+      ))}
     </div>
   );
 }
-
 export default UserLevel;
 
 // <div className="userLevel">
