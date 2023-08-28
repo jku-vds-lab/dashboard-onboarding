@@ -75,7 +75,7 @@ export default function StoryPane(props: Props) {
     }
 
     fillTextBox().catch(console.error);
-  }, [nodeBasicName, nodeFullName]);
+  }, [expertiseLevel, nodeBasicName, nodeFullName, visInfo]);
 
   const saveAnnotationChanges = async () => {
     try {
