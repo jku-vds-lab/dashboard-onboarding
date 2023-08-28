@@ -1,12 +1,25 @@
 import React from "react";
 import { useReactMediaRecorder } from "react-media-recorder";
-import { saveInfoVideo } from "../../onboarding/ts/helperFunctions";
+import { saveInfoVideo } from "../../componentGraph/helperFunctions";
+// redux starts
+import type { RootState } from "../redux/store";
+import { useSelector } from "react-redux";
+// redux ends
 
-interface Props{
-  setShowMediaOptions: any
+interface Props {
+  setShowMediaOptions: any;
 }
 
-export default function RecordView(props:Props) {
+export default function RecordView(props: Props) {
+  // redux starts
+  const nodeFullName = useSelector(
+    (state: RootState) => state.nodeModal.fullName
+  );
+  const nodeBasicName = useSelector(
+    (state: RootState) => state.nodeModal.basicName
+  );
+  // redux  ends
+
   const { status, startRecording, stopRecording, mediaBlobUrl, error } =
     useReactMediaRecorder({
       video: true,
@@ -41,18 +54,13 @@ export default function RecordView(props:Props) {
 
   const assignVideoToNode = () => {
     try {
-      const nodeId = document
-        ?.getElementById("saveRecording")
-        ?.getAttribute("nodeId");
-      const currentIdParts = nodeId?.split(" ");
       let category = "general";
-      if (currentIdParts!.length > 2) {
-        category = currentIdParts![1];
+      if (nodeFullName.length > 1) {
+        category = nodeFullName[1];
       }
-
       saveInfoVideo(
         " http://127.0.0.1:8000/upload-video/video.mp4",
-        currentIdParts![0],
+        nodeBasicName,
         [category],
         1
       );
