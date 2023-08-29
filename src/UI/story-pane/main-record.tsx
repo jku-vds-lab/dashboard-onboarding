@@ -33,7 +33,7 @@ export default function RecordView(props: Props) {
       if (mediaBlobUrl) {
         const blobResponse = await fetch(mediaBlobUrl);
         const blob = await blobResponse.blob();
-        const file = new File([blob], "video.mp4", { type: blob.type });
+        const file = new File([blob], "video.mp4", { type: blob.type }); // change to basic name from video.mp4
         const formData = new FormData();
         formData.append("video", file);
 
@@ -44,26 +44,27 @@ export default function RecordView(props: Props) {
 
         const data = await response.json();
         console.log("Video uploaded successfully!", data);
-
-        assignVideoToNode();
+        await assignVideoToNode();
       }
     } catch (error) {
       console.error("Error uploading video:", error);
     }
   };
 
-  const assignVideoToNode = () => {
+  const assignVideoToNode = async () => {
     try {
       let category = "general";
       if (nodeFullName.length > 1) {
         category = nodeFullName[1];
       }
-      saveInfoVideo(
-        " http://127.0.0.1:8000/upload-video/video.mp4",
-        nodeBasicName,
-        [category],
-        1
-      );
+
+      const videoURL = "http://127.0.0.1:8000/get-video";
+
+      saveInfoVideo(videoURL, nodeBasicName, [category], 1);
+
+      localStorage.setItem(nodeBasicName + "video", videoURL);
+
+      //
     } catch (error) {
       console.log("Error in assigning video to node", error);
     }
