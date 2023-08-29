@@ -24,18 +24,22 @@ export default function OutputPane() {
         <div className="col-resize" />
       </ResizeHandleLeft>
       <ResizeContent>
-        <Tabs defaultActiveKey="output" id="" justify>
-          <Tab eventKey="output" title="Output view">
-            <div
-              id="outputView"
-              style={{ color: "black", backgroundColor: "white" }}
-            >
-              <OutputView />
-            </div>
-          </Tab>
-        </Tabs>
+        <div id="outputView">
+          <div className="label">Output View</div>
+          <div
+            id="outputView"
+            style={{ color: "black", backgroundColor: "white" }}
+          >
+            <OutputView />
+          </div>
+        </div>
+        <div id="userLevel">
+          <div className="label">User Level</div>
+          <div id="userMatrix">
+            <UserLevel />
+          </div>
+        </div>
       </ResizeContent>
-      <UserLevel />
     </ResizePanel>
   );
 }
