@@ -50,9 +50,9 @@ async def upload_video(video: UploadFile = File(...)):
 
 
 @app.get("/get-video")
-async def get_video():
+async def get_videon(name):
     # Save the video file locally
-    file_path = f"uploads/video.mp4"
+    file_path = f"uploads/" + name + ".mp4"
     return FileResponse(file_path, media_type="video/mp4")
 
 

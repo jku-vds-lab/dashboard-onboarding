@@ -1,6 +1,7 @@
 import React from "react";
 import { useReactMediaRecorder } from "react-media-recorder";
 import { saveInfoVideo } from "../../componentGraph/helperFunctions";
+import "./../assets/css/video.css";
 // redux starts
 import type { RootState } from "../redux/store";
 import { useSelector } from "react-redux";
@@ -33,7 +34,9 @@ export default function RecordView(props: Props) {
       if (mediaBlobUrl) {
         const blobResponse = await fetch(mediaBlobUrl);
         const blob = await blobResponse.blob();
-        const file = new File([blob], "video.mp4", { type: blob.type }); // change to basic name from video.mp4
+        const file = new File([blob], nodeBasicName + ".mp4", {
+          type: blob.type,
+        }); // change to basic name from video.mp4
         const formData = new FormData();
         formData.append("video", file);
 
@@ -57,14 +60,9 @@ export default function RecordView(props: Props) {
       if (nodeFullName.length > 1) {
         category = nodeFullName[1];
       }
-
-      const videoURL = "http://127.0.0.1:8000/get-video";
-
+      const videoURL = "http://127.0.0.1:8000/get-video/?name=" + nodeBasicName;
       saveInfoVideo(videoURL, nodeBasicName, [category], 1);
-
       localStorage.setItem(nodeBasicName + "video", videoURL);
-
-      //
     } catch (error) {
       console.log("Error in assigning video to node", error);
     }
@@ -80,13 +78,6 @@ export default function RecordView(props: Props) {
         >
           Start Recording
         </button>
-        <button
-          id="stopRecording"
-          className="btn btn-secondary btn-xs justify-content-center align-items-center"
-          onClick={stopRecording}
-        >
-          Stop Recording
-        </button>
       </div>
       {mediaBlobUrl && (
         <button
@@ -97,7 +88,14 @@ export default function RecordView(props: Props) {
           Save
         </button>
       )}
-      {/* <video src={mediaBlobUrl} controls autoPlay loop /> */}
+      <div className="thumbnail-video-container">
+        {mediaBlobUrl && (
+          <video className="thumbnail-video" muted loop autoPlay>
+            <source src={mediaBlobUrl} type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        )}
+      </div>
     </div>
   );
 }
