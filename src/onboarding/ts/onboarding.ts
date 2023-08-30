@@ -131,8 +131,6 @@ export async function startOnboardingAt(
   // helpers.reloadOnboarding(); // Reload: Why is this needed?
   infoCard.removeInfoCard();
   introCard.removeIntroCard();
-  debugger;
-  console.log("Calling start onnboarding");
 
   switch (type) {
     case "intro":

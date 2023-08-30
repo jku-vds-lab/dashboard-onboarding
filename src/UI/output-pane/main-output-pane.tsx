@@ -26,10 +26,11 @@ export default function OutputPane() {
   const nodeBasicName = useSelector(
     (state: RootState) => state.nodeModal.basicName
   );
+  const expertiseLevel = useSelector((state: RootState) => state.expertise);
   // redux  ends
 
   useEffect(() => {
-    if (nodeBasicName) {
+    if (nodeBasicName && expertiseLevel) {
       const visual = global.allVisuals.find((visual) => {
         return visual.name == nodeBasicName;
       });
@@ -38,10 +39,16 @@ export default function OutputPane() {
 
       if (visual) {
         console.log("Visual found", visual);
-        startOnboardingAt("visual", visual, 1);
+        if (visual.name == "dashboard") {
+          startOnboardingAt("dashboard", visual, 1);
+        } else if (visual.name == "globalFilter") {
+          startOnboardingAt("globalFilter", visual, 1);
+        } else {
+          startOnboardingAt("visual", visual, 1);
+        }
       }
     }
-  }, [nodeBasicName]);
+  }, [nodeBasicName, expertiseLevel]);
 
   return (
     <ResizePanel initialWidth={600} maxWidth={800} minWidth={400}>
