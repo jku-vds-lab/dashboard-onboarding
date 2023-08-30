@@ -1,26 +1,52 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
 import Onboarding from "../../pages/onboarding";
 import "../assets/css/dashboard.scss";
+import * as global from "../../onboarding/ts/globalVariables";
 import {
   ResizeContent,
   ResizeHandleLeft,
   ResizePanel,
 } from "react-hook-resize-panel";
 import OutputView from "../../pages/outputView";
-import { reloadOnboarding } from "../../onboarding/ts/onboarding";
+import {
+  reloadOnboarding,
+  startOnboardingAt,
+} from "../../onboarding/ts/onboarding";
 import UserLevel from "./userLevel";
 
+// redux starts
+import type { RootState } from "../redux/store";
+import { useSelector } from "react-redux";
+// redux ends
+
 export default function OutputPane() {
+  // redux starts
+  const nodeBasicName = useSelector(
+    (state: RootState) => state.nodeModal.basicName
+  );
+  // redux  ends
+
+  useEffect(() => {
+    if (nodeBasicName) {
+      const visual = global.allVisuals.find((visual) => {
+        return visual.name == nodeBasicName;
+      });
+
+      if (visual) {
+        console.log("Visual found", visual);
+        startOnboardingAt("visual", visual, 1);
+      }
+    }
+  }, [nodeBasicName]);
+
   return (
-    <ResizePanel
-      className="output-menu"
-      initialWidth={400}
-      maxWidth={800}
-      minWidth={400}
-    >
-      <ResizeHandleLeft className="resize" onClick={reloadOnboarding}>
+    <ResizePanel initialWidth={600} maxWidth={800} minWidth={400}>
+      <ResizeHandleLeft
+        className="resize"
+        onClick={() => reloadOnboarding(false)}
+      >
         <div className="col-resize" />
       </ResizeHandleLeft>
       <ResizeContent>

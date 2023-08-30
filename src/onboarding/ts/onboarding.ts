@@ -31,7 +31,9 @@ import {
 } from "./traversal";
 import { basicTraversalStrategy } from "./traversalStrategies";
 import { VisualDescriptor } from "powerbi-client";
-
+import * as disable from "./disableArea";
+import * as infoCard from "./infoCards";
+import * as introCard from "./introCards";
 export async function onLoadReport(isMainPage: boolean) {
   console.log("Report is loading");
   try {
@@ -126,7 +128,11 @@ export async function startOnboardingAt(
   visual?: any,
   count?: number
 ) {
-  helpers.reloadOnboarding(); // Reload: Why is this needed?
+  // helpers.reloadOnboarding(); // Reload: Why is this needed?
+  infoCard.removeInfoCard();
+  introCard.removeIntroCard();
+  debugger;
+  console.log("Calling start onnboarding");
 
   switch (type) {
     case "intro":

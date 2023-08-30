@@ -46,7 +46,6 @@ export default function StoryPane(props: Props) {
 
   // redux starts for expertise level
   const expertiseLevel = useSelector((state: RootState) => state.expertise);
-  console.log("Expertise level", expertiseLevel);
   // redux ends for expertise level
 
   const visInfo = new SaveAndFetchContent("line", nodeFullName);

@@ -54,7 +54,6 @@ function UserLevel() {
       expertise.Vis = Level.High;
     }
 
-    console.log("Dispatch expertise", expertise);
     dispatch(decrement(expertise));
   };
 

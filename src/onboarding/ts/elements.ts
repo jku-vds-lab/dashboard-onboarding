@@ -303,8 +303,6 @@ export function createSource(attributes: {
   source.id = attributes.id;
   source.setAttribute("src", attributes.src);
   source.setAttribute("type", attributes.type);
-  debugger;
-
   document.getElementById(attributes.parentId)?.appendChild(source);
 }
 

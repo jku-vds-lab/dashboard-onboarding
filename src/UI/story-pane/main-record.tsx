@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useReactMediaRecorder } from "react-media-recorder";
 import { saveInfoVideo } from "../../componentGraph/helperFunctions";
 import "./../assets/css/video.css";
+import * as global from "../../onboarding/ts/globalVariables";
+import { startOnboardingAt } from "../../onboarding/ts/onboarding";
 // redux starts
 import type { RootState } from "../redux/store";
 import { useSelector } from "react-redux";
@@ -27,6 +29,13 @@ export default function RecordView(props: Props) {
       audio: true,
       screen: true,
     });
+
+  // useEffect(() => {
+  //   if (mediaBlobUrl) {
+  //     console.log("Call Save here");
+  //     handleSave();
+  //   }
+  // }, [mediaBlobUrl]);
 
   const handleSave = async () => {
     props.setShowMediaOptions(false);
@@ -63,6 +72,17 @@ export default function RecordView(props: Props) {
       const videoURL = "http://127.0.0.1:8000/get-video/?name=" + nodeBasicName;
       saveInfoVideo(videoURL, nodeBasicName, [category], 1);
       localStorage.setItem(nodeBasicName + "video", videoURL);
+
+      if (nodeBasicName) {
+        const visual = global.allVisuals.find((visual) => {
+          return visual.name == nodeBasicName;
+        });
+
+        if (visual) {
+          console.log("Visual found", visual);
+          startOnboardingAt("visual", visual, 1);
+        }
+      }
     } catch (error) {
       console.log("Error in assigning video to node", error);
     }
