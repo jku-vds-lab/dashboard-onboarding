@@ -166,14 +166,7 @@ export default function StoryPane(props: Props) {
       <div id="annotation-box" className="accordion node-desc">
         <div className="accordion-item">
           <h2 className="accordion-header">
-            <button
-              className="accordion-button collapsed"
-              type="button"
-              data-bs-toggle="collapse"
-              data-bs-target="#collapseDesc"
-              aria-expanded="true"
-              aria-controls="collapseDesc"
-            >
+            <div className="accordion-button">
               Component description
               {showMediaOptions ? (
                 <div>
@@ -194,7 +187,7 @@ export default function StoryPane(props: Props) {
                   Add media
                 </div>
               )}
-            </button>
+            </div>
           </h2>
           <div
             id="collapseDesc"
