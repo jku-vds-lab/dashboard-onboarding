@@ -34,6 +34,8 @@ export default function OutputPane() {
         return visual.name == nodeBasicName;
       });
 
+      // how to detect global filter and dashboard
+
       if (visual) {
         console.log("Visual found", visual);
         startOnboardingAt("visual", visual, 1);
