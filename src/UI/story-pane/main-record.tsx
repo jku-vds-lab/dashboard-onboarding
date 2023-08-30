@@ -88,14 +88,15 @@ export default function RecordView(props: Props) {
           Save
         </button>
       )}
-      <div className="thumbnail-video-container">
-        {mediaBlobUrl && (
+
+      {mediaBlobUrl && (
+        <div className="thumbnail-video-container">
           <video className="thumbnail-video" muted loop autoPlay>
             <source src={mediaBlobUrl} type="video/mp4" />
             Your browser does not support the video tag.
           </video>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }
