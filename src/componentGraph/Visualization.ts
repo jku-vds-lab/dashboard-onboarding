@@ -43,37 +43,10 @@ export default class Visualization {
     this.localFilters = new LocalFilter();
   }
 
-  async getVisualization(visual: VisualDescriptor) {
-    let visualization = new Visualization();
-    try {
-      visualization = await this.setVisualization(visual);
-    } catch (error) {
-      console.log("Error in getting Visuals Data", error);
-    }
-    return visualization;
-  }
-
-  async getVisualizations() {
-    const visualizations = new Array<Visualization>();
-    try {
-      const promises: Promise<any>[] = [];
-
-      for (const visual of visuals) {
-        promises.push(this.getVisualization(visual));
-      }
-      const results = await Promise.all(promises);
-      for (const result of results) {
-        visualizations.push(result);
-      }
-    } catch (error) {
-      console.log("Error in getting Visuals Data", error);
-    }
-    return visualizations;
-  }
-
   // change from VisualDescriptor to Visualization
-  async setVisualization(visual: VisualDescriptor) {
+  async getVisualization(visual: VisualDescriptor) {
     const visualization = new Visualization();
+
     try {
       visualization.id = visual.name;
       visualization.type = this.toCamelCaseString(visual.type);
@@ -98,7 +71,48 @@ export default class Visualization {
     } catch (error) {
       console.log("Error in setting visual data", error);
     }
+
     return visualization;
+  }
+
+  async getVisualizations() {
+    const visualizations = new Array<Visualization>();
+    try {
+      for (const visual of visuals) {
+        visualizations.push(await this.getVisualization(visual));
+      }
+    } catch (error) {
+      console.log("Error in getting Visuals Data", error);
+    }
+    return visualizations;
+  }
+
+  // change from VisualDescriptor to Visualization
+  async setVisualization(visual: VisualDescriptor) {
+    try {
+      this.id = visual.name;
+      this.type = this.toCamelCaseString(visual.type);
+      this.mark = this.getVisualMark(visual);
+      this.title = this.getVisualTitle(visual);
+      this.task = this.getVisualTask(visual);
+      this.description = this.getVisualDescription(visual);
+
+      const results = await Promise.all([
+        helper.getData(visual, []),
+        this.getVisualChannel(visual),
+        this.getVisualEncoding(visual),
+        this.getLocalFilter(visual),
+      ]);
+
+      if (results.length == 4) {
+        this.data = results[0];
+        this.channel = results[1];
+        this.encoding = results[2];
+        this.localFilters = results[3];
+      }
+    } catch (error) {
+      console.log("Error in setting visual data", error);
+    }
   }
 
   async getVisualEncoding(visual: VisualDescriptor): Promise<Encoding> {

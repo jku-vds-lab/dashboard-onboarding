@@ -1,7 +1,7 @@
 import * as helpers from "./../../../componentGraph/helperFunctions";
 import * as global from "./../globalVariables";
 import { createInfoList } from "./../visualInfo";
-import BasicTextFormat from "./Format/basicTextFormat";
+import { BasicTextFormat } from "./Format/basicTextFormat";
 import { ExpertiseLevel } from "../../../UI/redux/expertise";
 
 export default class SaveAndFetchContent {
@@ -52,10 +52,10 @@ export default class SaveAndFetchContent {
       let visualInfos: BasicTextFormat = {
         generalImages: [],
         generalInfos: [],
-        interactionImages: [],
-        interactionInfos: [],
         insightImages: [],
         insightInfos: [],
+        interactionImages: [],
+        interactionInfos: [],
       };
 
       const textBox = document.getElementById(

@@ -1,19 +1,15 @@
-import BasicTextFormat from "./Format/basicTextFormat";
+import { InsightTextFormat } from "./Format/basicTextFormat";
 import LineChart from "./lineChartVisualContent";
 import BarChart from "./barChartVisualContent";
 import ColumnChart from "./columnChartVisualContent";
 import ComboChart from "./comboChartVisualContent";
-import Card from "./cardVisualContent";
 import * as helper from "../../../componentGraph/helperFunctions";
+import { Level } from "../../../UI/redux/expertise";
 
 export default class InsightDescription {
-  text: BasicTextFormat = {
-    generalImages: [],
-    generalInfos: [],
+  insightText: InsightTextFormat = {
     insightImages: [],
     insightInfos: [],
-    interactionImages: [],
-    interactionInfos: [],
   };
 
   private insightInfo = {
@@ -21,7 +17,7 @@ export default class InsightDescription {
     measured: " was measured for ",
     highest: "The highest value of ",
     average: "On average ",
-    highestCategory: " has higher values than any other category.",
+    highestCategory: " has higher values than any other category",
   };
 
   private prepositions = {
@@ -51,7 +47,7 @@ export default class InsightDescription {
       this.insightInfo.measured +
       axisValues[Math.floor(axisValues.length / 2)];
 
-    if (legendValues) {
+    if (legendValues && legendValues?.length !== 0) {
       text +=
         this.prepositions.and +
         legendValues[Math.floor(legendValues.length / 2)];
@@ -63,23 +59,19 @@ export default class InsightDescription {
   }
 
   insightHighestValueText(
-    highestValue: string | number,
-    dataName: string,
-    dataCategory: (string | number)[],
+    highestValues: (string | number)[],
     legend?: string
   ) {
     let text = "";
 
     text =
       this.insightInfo.highest +
-      highestValue +
-      this.prepositions.space +
-      dataName +
+      highestValues[0] +
       this.insightInfo.measured +
-      dataCategory[0];
+      highestValues[1];
 
     if (legend) {
-      text += this.prepositions.and + dataCategory[1];
+      text += this.prepositions.and + highestValues[2];
     }
 
     text += this.punctuations.dot + this.lineBreak;
@@ -102,78 +94,97 @@ export default class InsightDescription {
 
   getInsightInfo(
     visualType: string,
-    visual: LineChart | BarChart | ColumnChart | ComboChart | Card
+    visual: LineChart | BarChart | ColumnChart | ComboChart,
+    expertiseLevel: Level
   ) {
     let value;
+    let highestCategory;
+    let highestValues;
+    let dataName;
     switch (visualType) {
-      case "card":
-        visual = visual as Card;
-        value = helper.getSpecificDataPoint(
-          visual.data.data,
-          "",
-          "",
-          visual.dataValue.attribute,
-          "",
-          ""
-        );
-        this.text.insightImages.push("lightbulbImg");
-        this.text.insightInfos.push(
-          this.insightExampleText(value!, "", [], [])
-        );
-        break;
       case "combo":
+        visual = visual as ComboChart
+        const allAxes = visual.columnAxes.concat(visual.lineAxes);
+        const allValues = visual.columnValues.concat(visual.lineValues);
+        dataName = allAxes[Math.floor(allAxes.length / 2)];
+
+        if(expertiseLevel === Level.Low){
+          value = helper.getSpecificDataPoint(visual.data.data, "", "",
+          allAxes[Math.floor(allAxes.length / 2)], visual.axis, visual.axisValues[Math.floor(visual.axisValues.length / 2)]);
+        }
+
+        // if(expertiseLevel !== Level.High) {
+        //   highestValues = helper.getHighestValue(visual.data.data, "Value", allAxes, "", visual.axis, visual.axisValues);
+        // }
+
+        // if (visual.legend) {
+        //   highestCategory = helper.getHighestCategory(visual.data.data, "Value", allValues, "Category");
+        // }
         break;
       default:
         visual = visual as LineChart | BarChart | ColumnChart;
-        value = helper.getSpecificDataPoint(
-          visual.data.data,
-          visual.legend,
-          visual.legendValues[Math.floor(visual.legendValues.length / 2)],
-          visual.dataName,
-          visual.axis,
-          visual.axisValues[Math.floor(visual.axisValues.length / 2)]
-        );
-        this.text.insightImages.push("lightbulbImg");
-        this.text.insightInfos.push(
-          this.insightExampleText(
-            value!,
-            visual.dataName,
-            visual.axisValues,
-            visual.legendValues
-          )
-        );
+        dataName = visual.dataName;
 
-        const highestValueArray = helper.getHighestValue(
-          visual.data.data,
-          visual.dataName,
-          visual.legendValues,
-          visual.legend,
-          visual.axis,
-          visual.axisValues
-        );
-        const highestValue = highestValueArray[0];
-        this.text.insightImages.push("lightbulbImg");
-        this.text.insightInfos.push(
-          this.insightHighestValueText(
-            highestValue,
+        if(expertiseLevel === Level.Low){
+          value = helper.getSpecificDataPoint(
+            visual.data.data,
+            visual.legend,
+            visual.legendValues[Math.floor(visual.legendValues.length / 2)],
             visual.dataName,
-            highestValueArray,
-            visual.legend
-          )
-        );
+            visual.axis,
+            visual.axisValues[Math.floor(visual.axisValues.length / 2)]
+          );
+        }
+
+        if(expertiseLevel !== Level.High) {
+          highestValues = helper.getHighestValue(
+            visual.data.data,
+            visual.dataName,
+            visual.legendValues,
+            visual.legend,
+            visual.axis,
+            visual.axisValues
+          );
+        }
 
         if (visual.legend) {
-          const highestCategory = helper.getHighestCategory(
+          highestCategory = helper.getHighestCategory(
             visual.data.data,
             visual.dataName,
             visual.legendValues,
             visual.legend
           );
-          this.text.insightImages.push("lightbulbImg");
-          this.text.insightInfos.push(
-            this.insightHighestCategoryText(highestCategory)
-          );
         }
     }
+
+    if(value){
+      this.insightText.insightImages.push("lightbulbImg");
+      this.insightText.insightInfos.push(
+        this.insightExampleText(
+          value,
+          dataName,
+          visual.axisValues,
+          visual.legendValues
+        )
+      );
+    }
+
+    if(highestValues) {
+      this.insightText.insightImages.push("lightbulbImg");
+      this.insightText.insightInfos.push(
+        this.insightHighestValueText(
+          highestValues,
+          visual.legend
+        )
+      );
+    }
+
+    if(highestCategory) {
+      this.insightText.insightImages.push("lightbulbImg");
+      this.insightText.insightInfos.push(
+        this.insightHighestCategoryText(highestCategory)
+      );
+    }
+    return this.insightText;
   }
 }

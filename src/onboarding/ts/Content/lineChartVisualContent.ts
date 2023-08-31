@@ -1,17 +1,16 @@
 import * as helpers from "./../../../componentGraph/helperFunctions";
-import GeneralDescription from "./generalDescription";
-import BasicTextFormat from "./Format/basicTextFormat";
+import { BasicTextFormat } from "./Format/basicTextFormat";
 import Visualization from "../../../componentGraph/Visualization";
 import { VisualDescriptor } from "powerbi-client";
 import XAxis from "../../../componentGraph/XAxis";
 import Legend from "../../../componentGraph/Legend";
 import YAxis from "../../../componentGraph/YAxis";
-import { ExpertiseLevel, Level } from "../../../UI/redux/expertise";
+import { ExpertiseLevel } from "../../../UI/redux/expertise";
+import ExpertiseText from "./userLevel";
 
 export default class LineChart extends Visualization {
-  chart: Visualization;
   text: BasicTextFormat;
-  textDescription: GeneralDescription;
+  textDescription: ExpertiseText;
   axisValue: XAxis;
   axis: string;
   axisValues: string[];
@@ -32,8 +31,7 @@ export default class LineChart extends Visualization {
       interactionImages: [],
       interactionInfos: [],
     };
-    this.chart = new Visualization();
-    this.textDescription = new GeneralDescription();
+    this.textDescription = new ExpertiseText();
     this.axisValue = new XAxis();
     this.axis = "";
     this.axisValues = [];
@@ -48,30 +46,24 @@ export default class LineChart extends Visualization {
     visual: VisualDescriptor,
     expertiseLevel: ExpertiseLevel
   ) {
-    this.chart = await this.getVisualization(visual);
+    await this.setVisualization(visual);
 
-    this.axisValue = this.chart.encoding.xAxes[0];
+    this.axisValue = this.encoding.xAxes[0];
     this.axis = this.axisValue && this.axisValue.attribute;
-    this.axisValues = this.chart.encoding.yAxes[0]
+    this.axisValues = this.encoding.yAxes[0]
       ? await helpers.getSpecificDataInfo(visual, this.axis)
       : [];
 
-    this.legendValue = this.chart?.encoding.legends[0];
+    this.legendValue = this.encoding.legends[0];
     this.legend = this.legendValue && this.legendValue.attribute;
-    this.legendValues = this.chart.encoding.legends[0]
+    this.legendValues = this.encoding.legends[0]
       ? await helpers.getSpecificDataInfo(visual, this.legend)
       : [];
 
-    this.dataValue = this.chart?.encoding.yAxes[0];
+    this.dataValue = this.encoding.yAxes[0];
     this.dataName = (this.dataValue && this.dataValue.attribute) || "";
 
-    if (expertiseLevel.Vis == Level.Low) {
-      this.text = this.textDescription.getBeginnerVisDesc("line", this);
-    } else if (expertiseLevel.Vis == Level.Medium) {
-      this.text = this.textDescription.getIntermediateVisDesc("line", this);
-    } else {
-      this.text = this.textDescription.getAdvancedVisDesc("line", this);
-    }
+    this.text = this.textDescription.getTextWithUserLevel(expertiseLevel, "line", this);
     return this.text;
   }
 

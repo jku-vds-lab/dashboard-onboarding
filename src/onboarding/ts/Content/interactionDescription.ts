@@ -1,16 +1,12 @@
-import BasicTextFormat from "./Format/basicTextFormat";
 import LineChart from "./lineChartVisualContent";
 import BarChart from "./barChartVisualContent";
 import ColumnChart from "./columnChartVisualContent";
 import ComboChart from "./comboChartVisualContent";
 import Slicer from "./slicerVisualContent";
+import { InteractionTextFormat } from "./Format/basicTextFormat";
 
 export default class InteractionDescription {
-  text: BasicTextFormat = {
-    generalImages: [],
-    generalInfos: [],
-    insightImages: [],
-    insightInfos: [],
+  interactionText: InteractionTextFormat = {
     interactionImages: [],
     interactionInfos: [],
   };
@@ -20,7 +16,7 @@ export default class InteractionDescription {
     clickAction: " you can filter the report",
     hover: "You can hover over ",
     hoverAction: " for detailed information",
-    label: "label of the",
+    label: "label of the ",
   };
 
   private prepositions = {
@@ -40,17 +36,21 @@ export default class InteractionDescription {
 
   private lineBreak = "<br>";
 
-  interactionClickText(mark: string, axis?: string, legend?: string) {
+  interactionClickText(mark: string, dataName?: string, axis?: string, legend?: string) {
     let text = "";
 
-    text = this.interactionInfo.click + mark + this.interactionInfo.clickAction;
+    text = this.interactionInfo.click + mark +
+    this.interactionInfo.clickAction +
+    this.prepositions.by;
 
-    if (axis && legend) {
-      text += this.prepositions.by + axis + this.punctuations.comma + legend;
+    if(dataName){
+      text += dataName;
+    } else if (axis && legend) {
+      text += axis + this.punctuations.comma + legend;
     } else if (axis) {
-      text += this.prepositions.by + axis;
+      text += axis;
     } else if (legend) {
-      text += this.prepositions.by + legend;
+      text += legend;
     }
 
     text += this.punctuations.dot + this.lineBreak;
@@ -105,45 +105,48 @@ export default class InteractionDescription {
   getInteractionInfo(
     visualType: string,
     visual: LineChart | BarChart | ColumnChart | ComboChart | Slicer,
-    isHorizontal: boolean
   ) {
-    //TODO add slicer and only display click information for slicer
     switch (visualType) {
       case "slicer":
-        break;
-      case "combo":
+        visual = visual as Slicer;
+        this.interactionText.interactionImages.push("elemClickImg");
+        this.interactionText.interactionInfos.push(this.interactionClickText(
+          visual.mark,
+          visual.data.attributes[0]
+        ));
         break;
       default:
         visual = visual as LineChart | BarChart | ColumnChart;
         let interactionInfo = this.interactionClickText(
-          visual.chart?.mark,
+          visual.mark,
           visual.axis,
           visual.legend
         );
 
-        if (visual.chart?.encoding.hasTooltip) {
-          interactionInfo += this.interactionHoverText(visual.chart?.mark);
+        if (visual.encoding.hasTooltip) {
+          interactionInfo += this.interactionHoverText(visual.mark);
         }
 
-        this.text.interactionImages.push("elemClickImg");
-        this.text.interactionInfos.push(interactionInfo);
+        this.interactionText.interactionImages.push("elemClickImg");
+        this.interactionText.interactionInfos.push(interactionInfo);
 
         if (visual.axisValue && visual.axisValue.isVisible) {
-          const axis = isHorizontal
+          const axis = (visualType === "line" || visualType === "column" || visualType === "combo")
             ? this.components.xAxis
             : this.components.yAxis;
-          this.text.interactionImages.push("axisClickImg");
-          this.text.interactionInfos.push(
+          this.interactionText.interactionImages.push("axisClickImg");
+          this.interactionText.interactionInfos.push(
             this.interactionClickAxisText(axis, visual.axis)
           );
         }
 
         if (visual.legendValue && visual.legendValue.isVisible) {
-          this.text.interactionImages.push("legendClickImg");
-          this.text.interactionInfos.push(
+          this.interactionText.interactionImages.push("legendClickImg");
+          this.interactionText.interactionInfos.push(
             this.interactionClickLegendText(visual.legend)
           );
         }
     }
+    return this.interactionText;
   }
 }

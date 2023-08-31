@@ -1,18 +1,17 @@
-import GeneralDescription from "./generalDescription";
-import BasicTextFormat from "./Format/basicTextFormat";
+import { BasicTextFormat } from "./Format/basicTextFormat";
 import Visualization from "../../../componentGraph/Visualization";
 import { VisualDescriptor } from "powerbi-client";
 import XAxis from "../../../componentGraph/XAxis";
 import Legend from "../../../componentGraph/Legend";
 import YAxis from "../../../componentGraph/YAxis";
 import { getSpecificDataInfo } from "../../../componentGraph/helperFunctions";
-import { ExpertiseLevel, Level } from "../../../UI/redux/expertise";
+import { ExpertiseLevel } from "../../../UI/redux/expertise";
+import ExpertiseText from "./userLevel";
 
 export default class BarChart extends Visualization {
-  chart: Visualization;
   text: BasicTextFormat;
-  textDescription: GeneralDescription;
-  axisValue: XAxis;
+  textDescription: ExpertiseText;
+  axisValue: YAxis;
   axis: string;
   axisValues: string[];
   legendValue: Legend;
@@ -32,9 +31,8 @@ export default class BarChart extends Visualization {
       interactionImages: [],
       interactionInfos: [],
     };
-    this.chart = new Visualization();
-    this.textDescription = new GeneralDescription();
-    this.axisValue = new XAxis();
+    this.textDescription = new ExpertiseText();
+    this.axisValue = new YAxis();
     this.axis = "";
     this.axisValues = [];
     this.legendValue = new Legend();
@@ -48,36 +46,29 @@ export default class BarChart extends Visualization {
     visual: VisualDescriptor,
     expertiseLevel: ExpertiseLevel
   ) {
-    this.chart = await this.getVisualization(visual);
+    await this.setVisualization(visual);
 
-    this.axisValue = this.chart.encoding.xAxes[0];
-    this.axis = this.chart.encoding.yAxes[0]
-      ? this.chart.encoding.yAxes[0].attribute!
+    this.axisValue = this.encoding.yAxes[0];
+    this.axis = this.encoding.yAxes[0]
+      ? this.encoding.yAxes[0].attribute!
       : "";
-    this.axisValues = this.chart.encoding.yAxes[0]
+    this.axisValues = this.encoding.yAxes[0]
       ? await getSpecificDataInfo(visual, this.axis)
       : [];
 
-    this.legendValue = this.chart?.encoding.legends[0];
-    this.legend = this.chart.encoding.legends[0]
-      ? this.chart.encoding.legends[0].attribute
+    this.legendValue = this.encoding.legends[0];
+    this.legend = this.encoding.legends[0]
+      ? this.encoding.legends[0].attribute
       : "";
-    this.legendValues = this.chart.encoding.legends[0]
+    this.legendValues = this.encoding.legends[0]
       ? await getSpecificDataInfo(visual, this.legend)
       : [];
 
-    this.dataName = this.chart.encoding.xAxes[0]
-      ? this.chart.encoding.xAxes[0].attribute!
+    this.dataName = this.encoding.xAxes[0]
+      ? this.encoding.xAxes[0].attribute!
       : "";
 
-    if (expertiseLevel.Vis == Level.Low) {
-      this.text = this.textDescription.getBeginnerVisDesc("bar", this);
-    } else if (expertiseLevel.Vis == Level.Medium) {
-      this.text = this.textDescription.getIntermediateVisDesc("bar", this);
-    } else {
-      this.text = this.textDescription.getAdvancedVisDesc("bar", this);
-    }
+    this.text = this.textDescription.getTextWithUserLevel(expertiseLevel, "bar", this);
     return this.text;
   }
-  getInsightInfo() {}
 }

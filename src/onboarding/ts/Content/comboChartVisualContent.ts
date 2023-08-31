@@ -1,16 +1,16 @@
-import GeneralDescription from "./generalDescription";
-import BasicTextFormat from "./Format/basicTextFormat";
+import { BasicTextFormat } from "./Format/basicTextFormat";
 import Visualization from "../../../componentGraph/Visualization";
 import { VisualDescriptor } from "powerbi-client";
 import XAxis from "../../../componentGraph/XAxis";
 import Legend from "../../../componentGraph/Legend";
 import YAxis from "../../../componentGraph/YAxis";
 import { getSpecificDataInfo } from "../../../componentGraph/helperFunctions";
+import { ExpertiseLevel } from "../../../UI/redux/expertise";
+import ExpertiseText from "./userLevel";
 
 export default class ComboChart extends Visualization {
-  chart: Visualization;
   text: BasicTextFormat;
-  textDescription: GeneralDescription;
+  textDescription: ExpertiseText;
   axisValue: XAxis;
   axis: string;
   axisValues: string[];
@@ -19,10 +19,10 @@ export default class ComboChart extends Visualization {
   legendValues: string[];
   dataNames: YAxis[];
   columnName: YAxis[];
-  columnAxis: string;
+  columnAxes: string[];
   columnValues: string[];
   lineName: YAxis[];
-  lineAxis: string;
+  lineAxes: string[];
   lineValues: string[];
 
   constructor() {
@@ -36,8 +36,7 @@ export default class ComboChart extends Visualization {
       interactionImages: [],
       interactionInfos: [],
     };
-    this.chart = new Visualization();
-    this.textDescription = new GeneralDescription();
+    this.textDescription = new ExpertiseText();
     this.axisValue = new XAxis();
     this.axis = "";
     this.axisValues = [];
@@ -46,51 +45,55 @@ export default class ComboChart extends Visualization {
     this.legendValues = [];
     this.dataNames = [];
     this.columnName = [];
-    this.columnAxis = "";
+    this.columnAxes = [];
     this.columnValues = [];
     this.lineName = [];
-    this.lineAxis = "";
+    this.lineAxes = [];
     this.lineValues = [];
   }
 
-  async getLineClusteredColumnComboChartInfo(visual: VisualDescriptor) {
-    this.chart = await this.getVisualization(visual);
+  async getLineClusteredColumnComboChartInfo(visual: VisualDescriptor, expertiseLevel: ExpertiseLevel) {
+    await this.setVisualization(visual);
 
-    this.axisValue = this.chart.encoding.xAxes[0];
-    this.axis = this.chart.encoding.xAxes[0]
-      ? this.chart.encoding.xAxes[0].attribute!
+    this.axisValue = this.encoding.xAxes[0];
+    this.axis = this.encoding.xAxes[0]
+      ? this.encoding.xAxes[0].attribute!
       : "";
-    this.axisValues = this.chart.encoding.xAxes[0]
+    this.axisValues = this.encoding.xAxes[0]
       ? await getSpecificDataInfo(visual, this.axis)
       : [];
 
-    this.legendValue = this.chart?.encoding.legends[0];
-    this.legend = this.chart.encoding.legends[0]
-      ? this.chart.encoding.legends[0].attribute
+    this.legendValue = this.encoding.legends[0];
+    this.legend = this.encoding.legends[0]
+      ? this.encoding.legends[0].attribute
       : "";
-    this.legendValues = this.chart.encoding.legends[0]
+    this.legendValues = this.encoding.legends[0]
       ? await getSpecificDataInfo(visual, this.legend)
       : [];
 
-    this.dataNames = this.chart.encoding.yAxes;
+    this.dataNames = this.encoding.yAxes;
     this.columnName = this.dataNames?.filter(
       (yAxis) => yAxis.type === "Column y-axis"
     )!;
     this.lineName = this.dataNames?.filter(
       (yAxis) => yAxis.type === "Line y-axis"
     )!;
-    this.columnAxis = this.columnName[0] ? this.columnName[0].attribute! : "";
-    this.columnValues = this.columnName[0]
-      ? await getSpecificDataInfo(visual, this.columnAxis)
-      : [];
-    this.lineAxis = this.lineName[0] ? this.lineName[0].attribute! : "";
-    this.lineValues = this.lineName[0]
-      ? await getSpecificDataInfo(visual, this.lineAxis)
-      : [];
 
-    //this.text = this.textDescription.getBeginnerText("combo", this);
-    // this.text = this.textDescription.getIntermediateText("combo", this);
-    this.text = this.textDescription.getAdvancedVisDesc("combo", this);
+    this.columnAxes = this.columnName.map((axis) => axis.attribute);
+    for(const axis of this.columnAxes){
+      for (const map of this.data.data) {
+        this.columnValues.push(map.get(axis));
+      }
+    }
+
+    this.lineAxes = this.lineName.map((axis) => axis.attribute);
+    for(const axis of this.lineAxes){
+      for (const map of this.data.data) {
+        this.lineValues.push(map.get(axis));
+      }
+    }
+
+    this.text = this.textDescription.getTextWithUserLevel(expertiseLevel, "combo", this);
     return this.text;
   }
 }

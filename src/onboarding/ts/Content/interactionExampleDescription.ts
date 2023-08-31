@@ -80,7 +80,7 @@ export default class InteractionExampleDescription {
       default:
         visual = visual as LineChart | BarChart | ColumnChart;
         return this.interactionText(
-          visual.chart.mark,
+          visual.mark,
           visual.dataName,
           visual.axisValues,
           visual.legendValues

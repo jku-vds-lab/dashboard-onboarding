@@ -1,14 +1,13 @@
-import GeneralDescription from "./generalDescription";
-import BasicTextFormat from "./Format/basicTextFormat";
+import { BasicTextFormat } from "./Format/basicTextFormat";
 import Visualization from "../../../componentGraph/Visualization";
 import { VisualDescriptor } from "powerbi-client";
-import Value from "../../../componentGraph/Value";
+import { ExpertiseLevel } from "../../../UI/redux/expertise";
+import ExpertiseText from "./userLevel";
 
 export default class Card extends Visualization {
-  chart: Visualization;
   text: BasicTextFormat;
-  textDescription: GeneralDescription;
-  dataValue: Value;
+  textDescription: ExpertiseText;
+  dataValue: string;
 
   constructor() {
     super();
@@ -21,17 +20,16 @@ export default class Card extends Visualization {
       interactionImages: [],
       interactionInfos: [],
     };
-    this.chart = new Visualization();
-    this.textDescription = new GeneralDescription();
-    this.dataValue = new Value();
+    this.textDescription = new ExpertiseText();
+    this.dataValue = "";
   }
 
-  async getCardInfo(visual: VisualDescriptor) {
-    this.chart = await this.getVisualization(visual);
+  async getCardInfo(visual: VisualDescriptor, expertiseLevel: ExpertiseLevel) {
+    await this.setVisualization(visual);
 
-    //this.text = this.textDescription.getBeginnerText("card", this);
-    // this.text = this.textDescription.getIntermediateText("card", this);
-    this.text = this.textDescription.getAdvancedVisDesc("card", this);
+    this.dataValue = this.data.data[0].get(this.data.attributes[0]);
+
+    this.text = this.textDescription.getTextWithUserLevel(expertiseLevel, "card", this);
     return this.text;
   }
 }

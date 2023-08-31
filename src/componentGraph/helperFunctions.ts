@@ -4,7 +4,7 @@ import { exportData } from "../Provenance/utils";
 import * as global from "../onboarding/ts/globalVariables";
 import Filter from "./Filter";
 import { getFilterDescription } from "../onboarding/ts/filterInfoCards";
-import BasicTextFormat from "../onboarding/ts/Content/Format/basicTextFormat";
+import { BasicTextFormat } from "../onboarding/ts/Content/Format/basicTextFormat";
 import Card from "../onboarding/ts/Content/cardVisualContent";
 import Slicer from "../onboarding/ts/Content/slicerVisualContent";
 import LineChart from "../onboarding/ts/Content/lineChartVisualContent";
@@ -363,21 +363,21 @@ export async function getVisualInfos(
   let visualInfos: BasicTextFormat = {
     generalImages: [],
     generalInfos: [],
+    insightImages: [],
+      insightInfos: [],
     interactionImages: [],
     interactionInfos: [],
-    insightImages: [],
-    insightInfos: [],
   };
   try {
     switch (type) {
       case "card":
       case "multiRowCard":
         const card = new Card();
-        visualInfos = await card.getCardInfo(visual);
+        visualInfos = await card.getCardInfo(visual, expertiseLevel);
         break;
       case "lineClusteredColumnComboChart":
         const combo = new ComboChart();
-        visualInfos = await combo.getLineClusteredColumnComboChartInfo(visual);
+        visualInfos = await combo.getLineClusteredColumnComboChartInfo(visual, expertiseLevel);
         break;
       case "lineChart":
         const lineChart = new LineChart();
@@ -392,11 +392,11 @@ export async function getVisualInfos(
         break;
       case "clusteredColumnChart":
         const columnChart = new ColumnChart();
-        visualInfos = await columnChart.getClusteredColumnChartInfo(visual);
+        visualInfos = await columnChart.getClusteredColumnChartInfo(visual, expertiseLevel);
         break;
       case "slicer":
         const slicer = new Slicer();
-        visualInfos = await slicer.getSlicerInfo(visual);
+        visualInfos = await slicer.getSlicerInfo(visual, expertiseLevel);
         break;
       default:
         break;
