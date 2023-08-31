@@ -48,12 +48,11 @@ export default function StoryPane(props: Props) {
   const expertiseLevel = useSelector((state: RootState) => state.expertise);
   // redux ends for expertise level
 
-  const visInfo = new SaveAndFetchContent("line", nodeFullName);
-
   useEffect(() => {
     async function fillTextBox() {
       // console.log("Trying to fill the box", nodeBasicName);
       if (nodeFullName?.length > 0) {
+        const visInfo = new SaveAndFetchContent(nodeFullName);
         switch (nodeBasicName) {
           case "dashboard":
             await getDashboardInfoInEditor(1);
@@ -74,7 +73,7 @@ export default function StoryPane(props: Props) {
     }
 
     fillTextBox().catch(console.error);
-  }, [expertiseLevel, nodeBasicName, nodeFullName, visInfo]);
+  }, [expertiseLevel, nodeBasicName, nodeFullName]);
 
   const saveAnnotationChanges = async () => {
     try {
@@ -91,8 +90,7 @@ export default function StoryPane(props: Props) {
       }
 
       const currentIdParts = nodeFullName;
-
-      //TODO update visuals with videos, saveInfoVideo(), when editor side is ready and we know when and with what to update
+      const visInfo = new SaveAndFetchContent(nodeFullName);
 
       switch (currentIdParts[0]) {
         case "dashboard":
