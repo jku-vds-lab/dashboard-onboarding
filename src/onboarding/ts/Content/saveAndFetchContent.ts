@@ -5,7 +5,6 @@ import { BasicTextFormat } from "./Format/basicTextFormat";
 import { ExpertiseLevel } from "../../../UI/redux/expertise";
 
 export default class SaveAndFetchContent {
-  private type: string;
   private visualData: global.SettingsVisual;
   private infos: Array<string>;
   private images: Array<string>;
@@ -13,8 +12,7 @@ export default class SaveAndFetchContent {
   private visFullName: string[];
   private categories: string[];
 
-  constructor(type: string, visFullName: string[]) {
-    this.type = type;
+  constructor(visFullName: string[]) {
     this.visFullName = visFullName;
     this.visualData = {
       id: "",

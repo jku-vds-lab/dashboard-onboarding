@@ -1,6 +1,7 @@
 import Dropdown from "react-bootstrap/Dropdown";
-import icon from "../icon-1.svg";
-import icon1 from "./../../assets/img/arrow-down.png";
+// import icon from "../icon-1.svg";
+// import icon1 from "./../../assets/img/arrow-down.png";
+import icon from "../../assets/img/icon-12.svg";
 export default function GroupNodeType(nodeData: any) {
   function updateLabel(event: any) {
     const label = event.target.innerText;
@@ -13,11 +14,12 @@ export default function GroupNodeType(nodeData: any) {
   return (
     <div className={`node node-group`} onClick={updateGroup}>
       <div className={`header`}>
+        <div className="header-label">Traversal: {nodeData.data.traverse}</div>
         <Dropdown>
           <Dropdown.Toggle variant="" className="n-button options">
             <img
               className="icon options"
-              src={icon1}
+              src={icon}
               alt="connect icon"
               width="10px"
               height="10px"
@@ -36,7 +38,7 @@ export default function GroupNodeType(nodeData: any) {
             </Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
-        <div className="label">{nodeData.data.traverse}</div>
+        {/* <div className="label">{nodeData.data.traverse}</div> */}
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
 $bg-dark: rgb(32,32,32);
-$bg-dark-1: rgb(83,83,83);
+$bg-dark-1: #2B2D30;
 $bg-dark-2: rgb(83,83,83);
 $default-handle-color: rgb(158, 159, 160);
 $default-node-color: #545454;
@@ -121,29 +121,41 @@ div[data-id*="GlobalFilter"] {
 
 .node-group{
   height:100%;
-  padding:10px;
+  padding:4px;
   .header{
     display: flex;
     align-content: start;
 
+    .header-label{
+      font-size: 7px;
+      padding: 5px;
+    }
+
+  .dropdown{
+    position: absolute;
+    right: 0;
+    top: 0;
+    padding: 0;
+    cursor: pointer;
 
     .n-button{
-      // background-color: #{$bg-dark-1};
-      width:30px;
-      height:30px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      border-radius: 2px;
-      margin-right: auto;
-
+      padding:0 5px;
+      border: none !important;
+      cursor: pointer;
       .icon{
         width:10px;
         height:10px;
         opacity: 0.8;
+        cursor: pointer;
+      }
+    &.show{
+      .icon{
+        opacity: 0.4;
       }
     }
+    }
 
+  }
     .dropdown-menu{
       z-index: 9999;
       background-color: #{$bg-dark-1};
@@ -151,8 +163,8 @@ div[data-id*="GlobalFilter"] {
 
       .dropdown-item{
         color: #{$color-white};
-        font-size: 10px;
-        padding: 0.2rem 1rem;
+        font-size: 7px;
+        padding: 0.1rem 0.5rem;
         &:hover{
           background-color: rgba(255,255,255,0.2);
         }
@@ -185,19 +197,20 @@ div[data-id*="GlobalFilter"] {
   margin-bottom: 10px;
 }
 
-.dndnode {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: grab;
-  background-color: #{$bg-dark-2};;
-  color: #{$color-white};
-  width: 130px;
-  height: 30px;
-  border-radius: 4px;
-  font-size: small;
+.dndnode{
+  position: relative;
+  &:before {
+    content: '';
+    position: absolute;
+    top:7px;
+    left:11px;
+    width: 15px;
+    height: 15px;
+    background-size: contain;
+    opacity: 0.7;
+    // background-image: url(../img/icon-11.png);
+  }
 }
-
 
 .reactflow-wrapper {
   flex-grow: 1;
@@ -257,11 +270,12 @@ div[data-id*="GlobalFilter"] {
   background-color: rgba(83,83,83,0.2);
   border: 1px solid rgb(83,83,83) !important;
   color: rgba(255,255,255,0.7);
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
   height: 200px;
   width: 280px;
 }
 .react-flow__node-group{
-
+  background-color: rgba(83,83,83,0.2) !important;
 }
 
 .context-menu{
