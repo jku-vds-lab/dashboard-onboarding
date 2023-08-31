@@ -7,6 +7,7 @@ import { removeFrame } from "./disableArea";
 import {
   removeInteractionCard,
   startInteractionExample,
+  createInteractionCardForOutputPane,
 } from "./interactionExample";
 import { createSettings } from "./createSettings";
 import { showReportChanges } from "./showReportChanges";
@@ -126,7 +127,8 @@ export async function reloadOnboardingAt() {
 export async function startOnboardingAt(
   type: string,
   visual?: any,
-  count?: number
+  count?: number,
+  outputPane?: boolean
 ) {
   // helpers.reloadOnboarding(); // Reload: Why is this needed?
   infoCard.removeInfoCard();
@@ -143,7 +145,11 @@ export async function startOnboardingAt(
       await createFilterInfoCard(count!);
       break;
     case "interaction":
-      await startInteractionExample();
+      if (outputPane) {
+        await createInteractionCardForOutputPane(visual);
+      } else {
+        await startInteractionExample();
+      }
       break;
     case "reportChanged":
       helpers.removeContainerOffset();

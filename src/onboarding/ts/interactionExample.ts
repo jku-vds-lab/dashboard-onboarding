@@ -6,8 +6,14 @@ import * as elements from "./elements";
 import { findCurrentTraversalVisual } from "./traversal";
 import { VisualDescriptor } from "powerbi-client";
 import InteractionExampleDescription from "./Content/interactionExampleDescription";
+import LineChart from "./Content/lineChartVisualContent";
+import BarChart from "./Content/barChartVisualContent";
+import ColumnChart from "./Content/columnChartVisualContent";
+import ComboChart from "./Content/comboChartVisualContent";
+import Slicer from "./Content/slicerVisualContent";
 
 export function startInteractionExample() {
+  debugger;
   global.setInteractionMode(true);
   infoCard.removeInfoCard();
   const traversalElem = findCurrentTraversalVisual();
@@ -62,6 +68,58 @@ export async function createInteractionCard(visual: VisualDescriptor) {
   // await interactionDesc.getInteractionInfo(visual.type, visual);
 }
 
+export async function createInteractionCardForOutputPane(
+  visual: VisualDescriptor
+) {
+  global.setInteractionMode(true);
+  infoCard.removeInfoCard();
+  const interactionDesc = new InteractionExampleDescription();
+  disable.disableFrame();
+  disable.createDisabledArea(visual);
+
+  const position = helpers.getVisualCardPos(
+    visual,
+    global.infoCardWidth,
+    global.infoCardMargin
+  );
+
+  const style = helpers.getCardStyle(
+    position.y,
+    position.x,
+    global.infoCardWidth,
+    ""
+  );
+  if (position.pos === "left") {
+    helpers.createCard("interactionCard", style, "rectLeftBig");
+    helpers.createCloseButton(
+      "closeButton",
+      "closeButtonPlacementBig",
+      "",
+      helpers.getCloseFunction(),
+      "interactionCard"
+    );
+  } else {
+    helpers.createCard("interactionCard", style, "rectRightBig");
+    helpers.createCloseButton(
+      "closeButton",
+      "closeButtonPlacementBig",
+      "",
+      helpers.getCloseFunction(),
+      "interactionCard"
+    );
+  }
+  helpers.createCardContent(
+    global.settings.interactionExample.title,
+    "",
+    "interactionCard"
+  );
+
+  helpers.createInteractionExampleButton("visualInfo", visual);
+
+  // helpers.createCardButtons("cardButtons", "", "", "back to visual");
+  // visual = visual as LineChart | BarChart | ColumnChart | ComboChart | Slicer;
+  // await interactionDesc.getInteractionInfo(visual.type, visual);
+}
 export function removeInteractionCard() {
   elements.removeElement("interactionCard");
   elements.removeElement("disabledUpper");

@@ -26,28 +26,36 @@ export default function OutputPane() {
   const nodeBasicName = useSelector(
     (state: RootState) => state.nodeModal.basicName
   );
+  const nodeFullName = useSelector(
+    (state: RootState) => state.nodeModal.fullName
+  );
   const expertiseLevel = useSelector((state: RootState) => state.expertise);
   // redux  ends
 
   useEffect(() => {
     if (nodeBasicName && expertiseLevel) {
+      let visualName = "";
       const visual = global.allVisuals.find((visual) => {
         return visual.name == nodeBasicName;
       });
 
-      // how to detect global filter and dashboard
+      if (!visual) {
+        return;
+      }
 
-      if (visual) {
-        if (visual.name == "dashboard") {
-          startOnboardingAt("dashboard", visual, 1);
-        } else if (visual.name == "globalFilter") {
-          startOnboardingAt("globalFilter", visual, 1);
-        } else {
-          startOnboardingAt("visual", visual, 1);
+      visualName = visual.name;
+      if (visualName != "dashboard") {
+        if (visualName != "globalFilter") {
+          visualName = "visual";
         }
       }
+
+      if (nodeFullName.includes("Interaction")) {
+        visualName = "interaction";
+      }
+      startOnboardingAt(visualName, visual, 1, true);
     }
-  }, [nodeBasicName, expertiseLevel]);
+  }, [nodeBasicName, nodeFullName, expertiseLevel]);
 
   return (
     <ResizePanel initialWidth={600} maxWidth={800} minWidth={400}>
