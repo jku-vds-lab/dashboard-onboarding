@@ -280,17 +280,20 @@ export default function NodesCanvas(props: Props) {
   const onSelectionContextMenu = useCallback(
     (event, sNodes: Node[]) => {
       event.preventDefault();
-
-      const position = getPosition(event);
+      const { clientX, clientY } = event;
+      const reactFlowBounds =
+        reactFlowWrapper?.current?.getBoundingClientRect();
+      const left = reactFlowBounds ? reactFlowBounds.left : 0;
+      const top = reactFlowBounds ? reactFlowBounds.top : 0;
       setPosition({
-        x: position.x,
-        y: position.y,
+        x: event.clientX - left,
+        y: event.clientY - top,
       });
 
       setSelectedNodes(sNodes);
       setIsOpen(true);
     },
-    [getPosition, setSelectedNodes]
+    [setSelectedNodes]
   );
 
   const onNodeContextMenu = useCallback(

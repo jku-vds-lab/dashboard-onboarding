@@ -78,7 +78,6 @@ export default function ComponentPane() {
   };
 
   function getTabsDataOfVisuals() {
-    console.log("All visuals", allVisuals);
     for (let i = 0; i < allVisuals.length; i++) {
       let visData = getVisData(allVisuals[i]);
       const existingTab = tabsData.find((tab) => tab.eventKey === visData[1]);
@@ -221,7 +220,7 @@ export default function ComponentPane() {
       <Nav.Item>
         <Nav.Link eventKey={eventKey} onClick={handleClick}>
           <OverlayTrigger
-            trigger={["hover", "hover"]}
+            trigger={["hover", "focus"]}
             placement="right"
             overlay={<Tooltip>{tooltip}</Tooltip>}
           >
@@ -239,7 +238,6 @@ export default function ComponentPane() {
   }
 
   function TabPaneItem({ eventKey, headerText, colorValue, components }) {
-    console.log("components", components);
     return (
       <Tab.Pane eventKey={eventKey}>
         <div className="tab-body-header">
