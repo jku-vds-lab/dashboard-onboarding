@@ -70,7 +70,7 @@ export default function ComponentPane() {
       (tab) => tab.eventKey === selectedTab
     ).colorVariable;
     root.style.setProperty(selectedColorVariable, componentColor);
-  }, [selectedTab, componentColor]);
+  }, [selectedTab, componentColor, tabsData]);
 
   const showPicker = () => {
     // Perform necessary actions on cancel
@@ -78,9 +78,11 @@ export default function ComponentPane() {
   };
 
   function getTabsDataOfVisuals() {
+    console.log("All visuals", allVisuals);
     for (let i = 0; i < allVisuals.length; i++) {
       let visData = getVisData(allVisuals[i]);
       const existingTab = tabsData.find((tab) => tab.eventKey === visData[1]);
+      console.log("Visdata", visData);
 
       if (existingTab) {
         const newVis = {
@@ -237,6 +239,7 @@ export default function ComponentPane() {
   }
 
   function TabPaneItem({ eventKey, headerText, colorValue, components }) {
+    console.log("components", components);
     return (
       <Tab.Pane eventKey={eventKey}>
         <div className="tab-body-header">

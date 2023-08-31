@@ -334,14 +334,19 @@ export function getDataWithId(
           }
         }
       }
+      // } else {
+      //   if (
+      //     elem.element.id === ID &&
+      //     elem.categories.every((category: string) =>
+      //       categories.includes(category)
+      //     ) &&
+      //     elem.count == count
+      //   ) {
+      //     foundVisual = elem;
+      //   }
+      // }
     } else {
-      if (
-        elem.element.id === ID &&
-        elem.categories.every((category: string) =>
-          categories.includes(category)
-        ) &&
-        elem.count == count
-      ) {
+      if (elem.element.id === ID) {
         foundVisual = elem;
       }
     }

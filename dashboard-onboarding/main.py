@@ -6,7 +6,11 @@ import os
 import openai
 from pydantic import BaseModel
 from typing import Annotated
+from fastapi.responses import FileResponse
+from pathlib import Path
+
 app = FastAPI()
+
 
 class ModelValues(BaseModel):
     prompt: str
@@ -16,7 +20,7 @@ class ModelValues(BaseModel):
 origins = [
     "http://localhost",
     "http://localhost:3000/dashboard-onboarding",
-    "http://localhost:3000" # React dev
+    "http://localhost:3000",  # React dev
 ]
 
 app.add_middleware(
@@ -25,14 +29,16 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
-    expose_headers=["X-Custom-Header"]
+    expose_headers=["X-Custom-Header"],
 )
+
 
 @app.get("/")
 def read_root():
     response = requests.get("http://localhost:3000/dashboard-onboarding")
 
     return response.text
+
 
 @app.post("/upload-video")
 async def upload_video(video: UploadFile = File(...)):
@@ -42,19 +48,26 @@ async def upload_video(video: UploadFile = File(...)):
         f.write(await video.read())
     return {"file_path": file_path}
 
+
+@app.get("/get-video")
+async def get_videon(name):
+    # Save the video file locally
+    file_path = f"uploads/" + name + ".mp4"
+    return FileResponse(file_path, media_type="video/mp4")
+
+
 @app.post("/chat-completion")
 async def chat_completion(model_values: ModelValues = Body(...)):
-    os.environ['OPENAI_API_KEY'] = '' #key goes here
-    openai.api_key = os.environ.get('OPENAI_API_KEY')
+    os.environ["OPENAI_API_KEY"] = ""  # key goes here
+    openai.api_key = os.environ.get("OPENAI_API_KEY")
     openai.Model.list()
     response = openai.ChatCompletion.create(
-                model="gpt-3.5-turbo",
-                messages=[{"role": "system", "content": model_values.prompt}
-                ],
-                temperature = 0.7,
-                max_tokens = model_values.tokens,
-                top_p = 1,
-                frequency_penalty = 0,
-                presence_penalty = 0,
-                )
+        model="gpt-3.5-turbo",
+        messages=[{"role": "system", "content": model_values.prompt}],
+        temperature=0.7,
+        max_tokens=model_values.tokens,
+        top_p=1,
+        frequency_penalty=0,
+        presence_penalty=0,
+    )
     return response

@@ -1,6 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useReactMediaRecorder } from "react-media-recorder";
 import { saveInfoVideo } from "../../componentGraph/helperFunctions";
+import "./../assets/css/video.css";
+import * as global from "../../onboarding/ts/globalVariables";
+import { startOnboardingAt } from "../../onboarding/ts/onboarding";
 // redux starts
 import type { RootState } from "../redux/store";
 import { useSelector } from "react-redux";
@@ -27,13 +30,22 @@ export default function RecordView(props: Props) {
       screen: true,
     });
 
+  // useEffect(() => {
+  //   if (mediaBlobUrl) {
+  //     console.log("Call Save here");
+  //     handleSave();
+  //   }
+  // }, [mediaBlobUrl]);
+
   const handleSave = async () => {
     props.setShowMediaOptions(false);
     try {
       if (mediaBlobUrl) {
         const blobResponse = await fetch(mediaBlobUrl);
         const blob = await blobResponse.blob();
-        const file = new File([blob], "video.mp4", { type: blob.type });
+        const file = new File([blob], nodeBasicName + ".mp4", {
+          type: blob.type,
+        }); // change to basic name from video.mp4
         const formData = new FormData();
         formData.append("video", file);
 
@@ -44,26 +56,33 @@ export default function RecordView(props: Props) {
 
         const data = await response.json();
         console.log("Video uploaded successfully!", data);
-
-        assignVideoToNode();
+        await assignVideoToNode();
       }
     } catch (error) {
       console.error("Error uploading video:", error);
     }
   };
 
-  const assignVideoToNode = () => {
+  const assignVideoToNode = async () => {
     try {
       let category = "general";
       if (nodeFullName.length > 1) {
         category = nodeFullName[1];
       }
-      saveInfoVideo(
-        " http://127.0.0.1:8000/upload-video/video.mp4",
-        nodeBasicName,
-        [category],
-        1
-      );
+      const videoURL = "http://127.0.0.1:8000/get-video/?name=" + nodeBasicName;
+      saveInfoVideo(videoURL, nodeBasicName, [category], 1);
+      localStorage.setItem(nodeBasicName + "video", videoURL);
+
+      if (nodeBasicName) {
+        const visual = global.allVisuals.find((visual) => {
+          return visual.name == nodeBasicName;
+        });
+
+        if (visual) {
+          console.log("Visual found", visual);
+          startOnboardingAt("visual", visual, 1);
+        }
+      }
     } catch (error) {
       console.log("Error in assigning video to node", error);
     }
@@ -79,13 +98,6 @@ export default function RecordView(props: Props) {
         >
           Start Recording
         </button>
-        <button
-          id="stopRecording"
-          className="btn btn-secondary btn-xs justify-content-center align-items-center"
-          onClick={stopRecording}
-        >
-          Stop Recording
-        </button>
       </div>
       {mediaBlobUrl && (
         <button
@@ -96,7 +108,15 @@ export default function RecordView(props: Props) {
           Save
         </button>
       )}
-      {/* <video src={mediaBlobUrl} controls autoPlay loop /> */}
+
+      {mediaBlobUrl && (
+        <div className="thumbnail-video-container">
+          <video className="thumbnail-video" muted loop autoPlay>
+            <source src={mediaBlobUrl} type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        </div>
+      )}
     </div>
   );
 }

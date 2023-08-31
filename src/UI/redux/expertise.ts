@@ -24,7 +24,6 @@ export const Expertise = createSlice({
     decrement: (state, action: PayloadAction<ExpertiseLevel>) => {
       state.Domain = action.payload.Domain;
       state.Vis = action.payload.Vis;
-      console.log("decrement state expertise", state, "action", action);
     },
   },
 });

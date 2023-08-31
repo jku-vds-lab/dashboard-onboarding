@@ -1,6 +1,6 @@
 import Dropdown from "react-bootstrap/Dropdown";
 import icon from "../icon-1.svg";
-
+import icon1 from "./../../assets/img/arrow-down.png";
 export default function GroupNodeType(nodeData: any) {
   function updateLabel(event: any) {
     const label = event.target.innerText;
@@ -17,7 +17,7 @@ export default function GroupNodeType(nodeData: any) {
           <Dropdown.Toggle variant="" className="n-button options">
             <img
               className="icon options"
-              src={icon}
+              src={icon1}
               alt="connect icon"
               width="10px"
               height="10px"
