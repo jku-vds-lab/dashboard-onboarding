@@ -63,6 +63,9 @@ export async function createInfoCard(
     );
   }
 
+  elements.createSlider({id: "level", min: "1", max: "3", parentId: "infoCard"}, setExpertiseLevel);
+  elements.createSliderLabels(["Low", "Medium", "High"], "infoCard");
+
   let traversal: TraversalElement[];
   if (global.explorationMode) {
     traversal = global.basicTraversal;
@@ -80,6 +83,12 @@ export async function createInfoCard(
 
   createInfoCardButtons(traversal, visual.name, categories, count);
   await createVisualInfo(traversal, visual, count, categories);
+}
+
+//ToDo update expirancelavel when slider value changes
+function setExpertiseLevel(){
+  // document.getElementById("level")?.value;
+
 }
 
 export function createInfoCardButtons(

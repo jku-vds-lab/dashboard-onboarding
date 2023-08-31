@@ -124,9 +124,10 @@ export function createSpan(attributes: {
   hidden: any;
   style: any;
   parentId: any;
-}) {
+}, classes?: string) {
   const span = document.createElement("span");
   span.id = attributes.id;
+  span.className = classes? classes: "";
   span.innerHTML = attributes.content;
   span.style.cssText = attributes.style;
   span.setAttribute("aria-hidden", attributes.hidden);
@@ -317,6 +318,28 @@ export function createYoutubeVideo(attributes: {
   video.style.cssText = attributes.style;
   video.setAttribute("src", attributes.src);
   document.getElementById(attributes.parentId)?.appendChild(video);
+}
+
+export function createSlider(attributes: {id: string; min: string; max:string; parentId:string}, onChange: any){
+  const slider = document.createElement("input");
+  slider.id = attributes.id;
+  slider.type = "range";
+  slider.min = attributes.min;
+  slider.max = attributes.max;
+  slider.onchange = onChange();
+  document.getElementById(attributes.parentId)?.appendChild(slider);
+}
+
+export function createSliderLabels(content:string[], parentId:string){
+  const div = document.createElement("div");
+  div.className = "ticks";
+  document.getElementById(parentId)?.appendChild(div);
+  for(const text of content){
+    const span = document.createElement("span");
+    span.className = "tick";
+    span.innerHTML = text;
+    document.getElementsByClassName("ticks")[0].appendChild(span);
+  }
 }
 
 export function removeElement(id: string) {
