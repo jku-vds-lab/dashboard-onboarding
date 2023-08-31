@@ -79,7 +79,6 @@ export default function RecordView(props: Props) {
         });
 
         if (visual) {
-          console.log("Visual found", visual);
           startOnboardingAt("visual", visual, 1);
         }
       }

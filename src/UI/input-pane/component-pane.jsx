@@ -219,19 +219,19 @@ export default function ComponentPane() {
     return (
       <Nav.Item>
         <Nav.Link eventKey={eventKey} onClick={handleClick}>
-          <OverlayTrigger
+          {/* <OverlayTrigger
             trigger={["hover", "focus"]}
-            placement="right"
+            placement="left"
             overlay={<Tooltip>{tooltip}</Tooltip>}
-          >
-            <img
-              className="icon options"
-              src={iconSrc}
-              width="18px"
-              height="18px"
-              alt="Component icon"
-            />
-          </OverlayTrigger>
+          > */}
+          <img
+            className="icon options"
+            src={iconSrc}
+            width="18px"
+            height="18px"
+            alt="Component icon"
+          />
+          {/* </OverlayTrigger> */}
         </Nav.Link>
       </Nav.Item>
     );

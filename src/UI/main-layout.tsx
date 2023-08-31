@@ -3,12 +3,7 @@ import InputPane from "./input-pane/main-input-pane";
 import StoryPane from "./story-pane/main-story-pane";
 import OutputPane from "./output-pane/main-output-pane";
 import { useState } from "react";
-import Dropdown from "react-bootstrap/Dropdown";
 import TraversalPane from "./input-pane/traversal-pane";
-import Tooltip from "react-bootstrap/Tooltip";
-import OverlayTrigger from "react-bootstrap/OverlayTrigger";
-
-import icon_1 from "./assets/img/icon-8.png";
 import { Link } from "react-router-dom";
 import Traversal from "./nodes-canvas/traversal";
 

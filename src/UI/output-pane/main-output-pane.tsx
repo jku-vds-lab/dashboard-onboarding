@@ -38,7 +38,6 @@ export default function OutputPane() {
       // how to detect global filter and dashboard
 
       if (visual) {
-        console.log("Visual found", visual);
         if (visual.name == "dashboard") {
           startOnboardingAt("dashboard", visual, 1);
         } else if (visual.name == "globalFilter") {
