@@ -1,17 +1,18 @@
-import { BasicTextFormat } from "./Format/basicTextFormat";
-import Visualization from "../../../componentGraph/Visualization";
+import { BasicTextFormat } from "./../Format/basicTextFormat";
+import Visualization from "../../../../componentGraph/Visualization";
 import { VisualDescriptor } from "powerbi-client";
-import XAxis from "../../../componentGraph/XAxis";
-import Legend from "../../../componentGraph/Legend";
-import YAxis from "../../../componentGraph/YAxis";
-import { getSpecificDataInfo } from "../../../componentGraph/helperFunctions";
-import { ExpertiseLevel } from "../../../UI/redux/expertise";
-import ExpertiseText from "./userLevel";
+import Legend from "../../../../componentGraph/Legend";
+import YAxis from "../../../../componentGraph/YAxis";
+import { getSpecificDataInfo } from "../../../../componentGraph/helperFunctions";
+import { ExpertiseLevel } from "../../../../UI/redux/expertise";
+import ExpertiseText from "./../userLevel";
+import XAxis from "../../../../componentGraph/XAxis";
 
-export default class BarChart extends Visualization {
+export default class ColumnChart extends Visualization {
   text: BasicTextFormat;
   textDescription: ExpertiseText;
-  axisValue: YAxis;
+
+  axisValue: XAxis;
   axis: string;
   axisValues: string[];
   legendValue: Legend;
@@ -32,7 +33,7 @@ export default class BarChart extends Visualization {
       interactionInfos: [],
     };
     this.textDescription = new ExpertiseText();
-    this.axisValue = new YAxis();
+    this.axisValue = new XAxis();
     this.axis = "";
     this.axisValues = [];
     this.legendValue = new Legend();
@@ -42,16 +43,13 @@ export default class BarChart extends Visualization {
     this.dataName = "";
   }
 
-  async getClusteredBarChartInfo(
+  async getClusteredColumnChartInfo(
     visual: VisualDescriptor,
     expertiseLevel: ExpertiseLevel
   ) {
     await this.setVisualization(visual);
-
-    this.axisValue = this.encoding.yAxes[0];
-    this.axis = this.encoding.yAxes[0]
-      ? this.encoding.yAxes[0].attribute!
-      : "";
+    this.axisValue = this.encoding.xAxes[0];
+    this.axis = this.encoding.xAxes[0] ? this.encoding.xAxes[0].attribute! : "";
     this.axisValues = this.encoding.yAxes[0]
       ? await getSpecificDataInfo(visual, this.axis)
       : [];
@@ -64,11 +62,16 @@ export default class BarChart extends Visualization {
       ? await getSpecificDataInfo(visual, this.legend)
       : [];
 
-    this.dataName = this.encoding.xAxes[0]
-      ? this.encoding.xAxes[0].attribute!
+    this.dataName = this.encoding.yAxes[0]
+      ? this.encoding.yAxes[0].attribute!
       : "";
 
-    this.text = this.textDescription.getTextWithUserLevel(expertiseLevel, "bar", this);
+    this.text = this.textDescription.getTextWithUserLevel(
+      expertiseLevel,
+      "column",
+      this
+    );
+
     return this.text;
   }
 }

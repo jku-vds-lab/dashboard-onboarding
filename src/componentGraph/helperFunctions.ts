@@ -5,12 +5,12 @@ import * as global from "../onboarding/ts/globalVariables";
 import Filter from "./Filter";
 import { getFilterDescription } from "../onboarding/ts/filterInfoCards";
 import { BasicTextFormat } from "../onboarding/ts/Content/Format/basicTextFormat";
-import Card from "../onboarding/ts/Content/cardVisualContent";
-import Slicer from "../onboarding/ts/Content/slicerVisualContent";
-import LineChart from "../onboarding/ts/Content/lineChartVisualContent";
-import BarChart from "../onboarding/ts/Content/barChartVisualContent";
-import ColumnChart from "../onboarding/ts/Content/columnChartVisualContent";
-import ComboChart from "../onboarding/ts/Content/comboChartVisualContent";
+import Card from "../onboarding/ts/Content/Visualizations/cardVisualContent";
+import Slicer from "../onboarding/ts/Content/Visualizations/slicerVisualContent";
+import LineChart from "../onboarding/ts/Content/Visualizations/lineChartVisualContent";
+import BarChart from "../onboarding/ts/Content/Visualizations/barChartVisualContent";
+import ColumnChart from "../onboarding/ts/Content/Visualizations/columnChartVisualContent";
+import ComboChart from "../onboarding/ts/Content/Visualizations/comboChartVisualContent";
 import { TraversalElement, isGroup } from "../onboarding/ts/traversal";
 import Data from "./Data";
 import { ExpertiseLevel, Level } from "../UI/redux/expertise";
@@ -369,7 +369,7 @@ export async function getVisualInfos(
     generalImages: [],
     generalInfos: [],
     insightImages: [],
-      insightInfos: [],
+    insightInfos: [],
     interactionImages: [],
     interactionInfos: [],
   };
@@ -382,7 +382,10 @@ export async function getVisualInfos(
         break;
       case "lineClusteredColumnComboChart":
         const combo = new ComboChart();
-        visualInfos = await combo.getLineClusteredColumnComboChartInfo(visual, expertiseLevel);
+        visualInfos = await combo.getLineClusteredColumnComboChartInfo(
+          visual,
+          expertiseLevel
+        );
         break;
       case "lineChart":
         const lineChart = new LineChart();
@@ -397,7 +400,10 @@ export async function getVisualInfos(
         break;
       case "clusteredColumnChart":
         const columnChart = new ColumnChart();
-        visualInfos = await columnChart.getClusteredColumnChartInfo(visual, expertiseLevel);
+        visualInfos = await columnChart.getClusteredColumnChartInfo(
+          visual,
+          expertiseLevel
+        );
         break;
       case "slicer":
         const slicer = new Slicer();

@@ -1,8 +1,8 @@
-import { BasicTextFormat } from "./Format/basicTextFormat";
-import Visualization from "../../../componentGraph/Visualization";
+import { BasicTextFormat } from "./../Format/basicTextFormat";
+import Visualization from "../../../../componentGraph/Visualization";
 import { VisualDescriptor } from "powerbi-client";
-import { ExpertiseLevel } from "../../../UI/redux/expertise";
-import ExpertiseText from "./userLevel";
+import { ExpertiseLevel } from "../../../../UI/redux/expertise";
+import ExpertiseText from "./../userLevel";
 
 export default class Card extends Visualization {
   text: BasicTextFormat;
@@ -29,7 +29,11 @@ export default class Card extends Visualization {
 
     this.dataValue = this.data.data[0].get(this.data.attributes[0]);
 
-    this.text = this.textDescription.getTextWithUserLevel(expertiseLevel, "card", this);
+    this.text = this.textDescription.getTextWithUserLevel(
+      expertiseLevel,
+      "card",
+      this
+    );
     return this.text;
   }
 }

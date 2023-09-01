@@ -1,8 +1,8 @@
-import BarChart from "./barChartVisualContent";
-import ColumnChart from "./columnChartVisualContent";
-import ComboChart from "./comboChartVisualContent";
-import LineChart from "./lineChartVisualContent";
-import Slicer from "./slicerVisualContent";
+import BarChart from "./../Visualizations/barChartVisualContent";
+import ColumnChart from "./../Visualizations/columnChartVisualContent";
+import ComboChart from "./../Visualizations/comboChartVisualContent";
+import LineChart from "./../Visualizations/lineChartVisualContent";
+import Slicer from "./../Visualizations/slicerVisualContent";
 
 export default class InteractionExampleDescription {
   private interactionInfo = {

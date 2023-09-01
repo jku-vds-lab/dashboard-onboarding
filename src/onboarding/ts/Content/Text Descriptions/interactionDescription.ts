@@ -1,9 +1,10 @@
-import LineChart from "./lineChartVisualContent";
-import BarChart from "./barChartVisualContent";
-import ColumnChart from "./columnChartVisualContent";
-import ComboChart from "./comboChartVisualContent";
-import Slicer from "./slicerVisualContent";
-import { InteractionTextFormat } from "./Format/basicTextFormat";
+import BarChart from "./../Visualizations/barChartVisualContent";
+import ColumnChart from "./../Visualizations/columnChartVisualContent";
+import ComboChart from "./../Visualizations/comboChartVisualContent";
+import LineChart from "./../Visualizations/lineChartVisualContent";
+import Slicer from "./../Visualizations/slicerVisualContent";
+
+import { InteractionTextFormat } from "./../Format/basicTextFormat";
 
 export default class InteractionDescription {
   interactionText: InteractionTextFormat = {
@@ -36,14 +37,21 @@ export default class InteractionDescription {
 
   private lineBreak = "<br>";
 
-  interactionClickText(mark: string, dataName?: string, axis?: string, legend?: string) {
+  interactionClickText(
+    mark: string,
+    dataName?: string,
+    axis?: string,
+    legend?: string
+  ) {
     let text = "";
 
-    text = this.interactionInfo.click + mark +
-    this.interactionInfo.clickAction +
-    this.prepositions.by;
+    text =
+      this.interactionInfo.click +
+      mark +
+      this.interactionInfo.clickAction +
+      this.prepositions.by;
 
-    if(dataName){
+    if (dataName) {
       text += dataName;
     } else if (axis && legend) {
       text += axis + this.punctuations.comma + legend;
@@ -104,16 +112,15 @@ export default class InteractionDescription {
 
   getInteractionInfo(
     visualType: string,
-    visual: LineChart | BarChart | ColumnChart | ComboChart | Slicer,
+    visual: LineChart | BarChart | ColumnChart | ComboChart | Slicer
   ) {
     switch (visualType) {
       case "slicer":
         visual = visual as Slicer;
         this.interactionText.interactionImages.push("elemClickImg");
-        this.interactionText.interactionInfos.push(this.interactionClickText(
-          visual.mark,
-          visual.data.attributes[0]
-        ));
+        this.interactionText.interactionInfos.push(
+          this.interactionClickText(visual.mark, visual.data.attributes[0])
+        );
         break;
       default:
         visual = visual as LineChart | BarChart | ColumnChart;
@@ -131,9 +138,12 @@ export default class InteractionDescription {
         this.interactionText.interactionInfos.push(interactionInfo);
 
         if (visual.axisValue && visual.axisValue.isVisible) {
-          const axis = (visualType === "line" || visualType === "column" || visualType === "combo")
-            ? this.components.xAxis
-            : this.components.yAxis;
+          const axis =
+            visualType === "line" ||
+            visualType === "column" ||
+            visualType === "combo"
+              ? this.components.xAxis
+              : this.components.yAxis;
           this.interactionText.interactionImages.push("axisClickImg");
           this.interactionText.interactionInfos.push(
             this.interactionClickAxisText(axis, visual.axis)

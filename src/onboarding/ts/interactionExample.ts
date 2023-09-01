@@ -5,12 +5,7 @@ import * as disable from "./disableArea";
 import * as elements from "./elements";
 import { findCurrentTraversalVisual } from "./traversal";
 import { VisualDescriptor } from "powerbi-client";
-import InteractionExampleDescription from "./Content/interactionExampleDescription";
-import LineChart from "./Content/lineChartVisualContent";
-import BarChart from "./Content/barChartVisualContent";
-import ColumnChart from "./Content/columnChartVisualContent";
-import ComboChart from "./Content/comboChartVisualContent";
-import Slicer from "./Content/slicerVisualContent";
+import InteractionExampleDescription from "./Content/Text Descriptions/interactionExampleDescription";
 
 export function startInteractionExample() {
   debugger;
