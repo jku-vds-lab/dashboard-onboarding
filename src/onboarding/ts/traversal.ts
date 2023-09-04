@@ -578,7 +578,7 @@ export function getStandartCategories(type: string) {
   switch (type) {
     case "card":
     case "multiRowCard":
-      categories = ["general", "insight"];
+      categories = ["general"];
       break;
     case "slicer":
       categories = ["general", "interaction"];
