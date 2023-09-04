@@ -7,10 +7,12 @@ import YAxis from "../../../../componentGraph/YAxis";
 import { getSpecificDataInfo } from "../../../../componentGraph/helperFunctions";
 import { ExpertiseLevel } from "../../../../UI/redux/expertise";
 import ExpertiseText from "../userLevel";
+import InteractionExampleDescription from "../Text Descriptions/interactionExampleDescription";
 
 export default class BarChart extends Visualization {
   text: BasicTextFormat;
   textDescription: ExpertiseText;
+  interactionExample: InteractionExampleDescription;
   axisValue: YAxis;
   axis: string;
   axisValues: string[];
@@ -32,6 +34,7 @@ export default class BarChart extends Visualization {
       interactionInfos: [],
     };
     this.textDescription = new ExpertiseText();
+    this.interactionExample = new InteractionExampleDescription();
     this.axisValue = new YAxis();
     this.axis = "";
     this.axisValues = [];
@@ -42,10 +45,7 @@ export default class BarChart extends Visualization {
     this.dataName = "";
   }
 
-  async getClusteredBarChartInfo(
-    visual: VisualDescriptor,
-    expertiseLevel: ExpertiseLevel
-  ) {
+  async setVisualInformation(visual:VisualDescriptor){    
     await this.setVisualization(visual);
 
     this.axisValue = this.encoding.yAxes[0];
@@ -65,12 +65,21 @@ export default class BarChart extends Visualization {
     this.dataName = this.encoding.xAxes[0]
       ? this.encoding.xAxes[0].attribute!
       : "";
+  }
 
+  getClusteredBarChartInfo(
+    expertiseLevel: ExpertiseLevel
+  ) {
     this.text = this.textDescription.getTextWithUserLevel(
       expertiseLevel,
       "bar",
       this
     );
     return this.text;
+  }
+
+  getBarChartInteractionExample(){
+    const exampleText = this.interactionExample.getInteractionInfo("bar", this);
+    return exampleText?exampleText:"";
   }
 }

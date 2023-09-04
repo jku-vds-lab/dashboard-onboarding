@@ -378,36 +378,39 @@ export async function getVisualInfos(
       case "card":
       case "multiRowCard":
         const card = new Card();
-        visualInfos = await card.getCardInfo(visual, expertiseLevel);
+        await card.setVisualInformation(visual);
+        visualInfos = await card.getCardInfo(expertiseLevel);
         break;
       case "lineClusteredColumnComboChart":
         const combo = new ComboChart();
+        await combo.setVisualInformation(visual);
         visualInfos = await combo.getLineClusteredColumnComboChartInfo(
-          visual,
           expertiseLevel
         );
         break;
       case "lineChart":
         const lineChart = new LineChart();
-        visualInfos = await lineChart.getLineChartInfo(visual, expertiseLevel);
+        await lineChart.setVisualInformation(visual);
+        visualInfos = await lineChart.getLineChartInfo(expertiseLevel);
         break;
       case "clusteredBarChart":
         const barChart = new BarChart();
+        await barChart.setVisualInformation(visual);
         visualInfos = await barChart.getClusteredBarChartInfo(
-          visual,
           expertiseLevel
         );
         break;
       case "clusteredColumnChart":
         const columnChart = new ColumnChart();
+        await columnChart.setVisualInformation(visual);
         visualInfos = await columnChart.getClusteredColumnChartInfo(
-          visual,
           expertiseLevel
         );
         break;
       case "slicer":
         const slicer = new Slicer();
-        visualInfos = await slicer.getSlicerInfo(visual, expertiseLevel);
+        await slicer.setVisualInformation(visual);
+        visualInfos = await slicer.getSlicerInfo(expertiseLevel);
         break;
       default:
         break;

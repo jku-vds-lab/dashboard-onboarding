@@ -24,11 +24,13 @@ export default class Card extends Visualization {
     this.dataValue = "";
   }
 
-  async getCardInfo(visual: VisualDescriptor, expertiseLevel: ExpertiseLevel) {
+  async setVisualInformation(visual: VisualDescriptor){
     await this.setVisualization(visual);
 
     this.dataValue = this.data.data[0].get(this.data.attributes[0]);
+  }
 
+  getCardInfo(expertiseLevel: ExpertiseLevel) {
     this.text = this.textDescription.getTextWithUserLevel(
       expertiseLevel,
       "card",

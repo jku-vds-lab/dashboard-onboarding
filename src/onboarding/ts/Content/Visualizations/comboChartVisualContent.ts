@@ -7,10 +7,12 @@ import YAxis from "../../../../componentGraph/YAxis";
 import { getSpecificDataInfo } from "../../../../componentGraph/helperFunctions";
 import { ExpertiseLevel } from "../../../../UI/redux/expertise";
 import ExpertiseText from "./../userLevel";
+import InteractionExampleDescription from "../Text Descriptions/interactionExampleDescription";
 
 export default class ComboChart extends Visualization {
   text: BasicTextFormat;
   textDescription: ExpertiseText;
+  interactionExample: InteractionExampleDescription;
   axisValue: XAxis;
   axis: string;
   axisValues: string[];
@@ -37,6 +39,7 @@ export default class ComboChart extends Visualization {
       interactionInfos: [],
     };
     this.textDescription = new ExpertiseText();
+    this.interactionExample = new InteractionExampleDescription();
     this.axisValue = new XAxis();
     this.axis = "";
     this.axisValues = [];
@@ -52,10 +55,7 @@ export default class ComboChart extends Visualization {
     this.lineValues = [];
   }
 
-  async getLineClusteredColumnComboChartInfo(
-    visual: VisualDescriptor,
-    expertiseLevel: ExpertiseLevel
-  ) {
+  async setVisualInformation(visual: VisualDescriptor){
     await this.setVisualization(visual);
 
     this.axisValue = this.encoding.xAxes[0];
@@ -94,11 +94,21 @@ export default class ComboChart extends Visualization {
       }
     }
 
+  }
+
+  getLineClusteredColumnComboChartInfo(
+    expertiseLevel: ExpertiseLevel
+  ) {
     this.text = this.textDescription.getTextWithUserLevel(
       expertiseLevel,
       "combo",
       this
     );
     return this.text;
+  }
+
+  getComboChartInteractionExample(){
+    const exampleText = this.interactionExample.getInteractionInfo("combo", this);
+    return exampleText?exampleText:"";
   }
 }

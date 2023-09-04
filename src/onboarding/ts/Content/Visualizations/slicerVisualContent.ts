@@ -4,10 +4,12 @@ import { VisualDescriptor } from "powerbi-client";
 import Value from "../../../../componentGraph/Value";
 import { ExpertiseLevel } from "../../../../UI/redux/expertise";
 import ExpertiseText from "../userLevel";
+import InteractionExampleDescription from "../Text Descriptions/interactionExampleDescription";
 
 export default class Slicer extends Visualization {
   text: BasicTextFormat;
   textDescription: ExpertiseText;
+  interactionExample: InteractionExampleDescription;
   dataValue: Value;
 
   constructor() {
@@ -22,20 +24,27 @@ export default class Slicer extends Visualization {
       interactionInfos: [],
     };
     this.textDescription = new ExpertiseText();
+    this.interactionExample = new InteractionExampleDescription();
     this.dataValue = new Value();
   }
 
-  async getSlicerInfo(
-    visual: VisualDescriptor,
+  async setVisualInformation(visual: VisualDescriptor){
+    await this.setVisualization(visual);
+  }
+
+  getSlicerInfo(
     expertiseLevel: ExpertiseLevel
   ) {
-    await this.setVisualization(visual);
-
     this.text = this.textDescription.getTextWithUserLevel(
       expertiseLevel,
       "slicer",
       this
     );
     return this.text;
+  }
+
+  getSlicerChartInteractionExample(){
+    const exampleText = this.interactionExample.getInteractionInfo("slicer", this);
+    return exampleText?exampleText:"";
   }
 }

@@ -7,11 +7,12 @@ import { getSpecificDataInfo } from "../../../../componentGraph/helperFunctions"
 import { ExpertiseLevel } from "../../../../UI/redux/expertise";
 import ExpertiseText from "./../userLevel";
 import XAxis from "../../../../componentGraph/XAxis";
+import InteractionExampleDescription from "../Text Descriptions/interactionExampleDescription";
 
 export default class ColumnChart extends Visualization {
   text: BasicTextFormat;
   textDescription: ExpertiseText;
-
+  interactionExample: InteractionExampleDescription;
   axisValue: XAxis;
   axis: string;
   axisValues: string[];
@@ -33,6 +34,7 @@ export default class ColumnChart extends Visualization {
       interactionInfos: [],
     };
     this.textDescription = new ExpertiseText();
+    this.interactionExample = new InteractionExampleDescription();
     this.axisValue = new XAxis();
     this.axis = "";
     this.axisValues = [];
@@ -43,10 +45,7 @@ export default class ColumnChart extends Visualization {
     this.dataName = "";
   }
 
-  async getClusteredColumnChartInfo(
-    visual: VisualDescriptor,
-    expertiseLevel: ExpertiseLevel
-  ) {
+  async setVisualInformation(visual: VisualDescriptor){
     await this.setVisualization(visual);
     this.axisValue = this.encoding.xAxes[0];
     this.axis = this.encoding.xAxes[0] ? this.encoding.xAxes[0].attribute! : "";
@@ -66,6 +65,11 @@ export default class ColumnChart extends Visualization {
       ? this.encoding.yAxes[0].attribute!
       : "";
 
+  }
+
+  getClusteredColumnChartInfo(
+    expertiseLevel: ExpertiseLevel
+  ) {
     this.text = this.textDescription.getTextWithUserLevel(
       expertiseLevel,
       "column",
@@ -73,5 +77,10 @@ export default class ColumnChart extends Visualization {
     );
 
     return this.text;
+  }
+
+  getColumnChartInteractionExample(){
+    const exampleText = this.interactionExample.getInteractionInfo("column", this);
+    return exampleText?exampleText:"";
   }
 }

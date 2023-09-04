@@ -6,9 +6,14 @@ import * as elements from "./elements";
 import { findCurrentTraversalVisual } from "./traversal";
 import { VisualDescriptor } from "powerbi-client";
 import InteractionExampleDescription from "./Content/Text Descriptions/interactionExampleDescription";
+import Card from "./Content/Visualizations/cardVisualContent";
+import BarChart from "./Content/Visualizations/barChartVisualContent";
+import ColumnChart from "./Content/Visualizations/columnChartVisualContent";
+import ComboChart from "./Content/Visualizations/comboChartVisualContent";
+import LineChart from "./Content/Visualizations/lineChartVisualContent";
+import Slicer from "./Content/Visualizations/slicerVisualContent";
 
 export function startInteractionExample() {
-  debugger;
   global.setInteractionMode(true);
   infoCard.removeInfoCard();
   const traversalElem = findCurrentTraversalVisual();
@@ -60,7 +65,41 @@ export async function createInteractionCard(visual: VisualDescriptor) {
   );
   helpers.createCardButtons("cardButtons", "", "", "back to visual");
 
-  // await interactionDesc.getInteractionInfo(visual.type, visual);
+  await getInteractionExampleText(visual);
+}
+
+ async function getInteractionExampleText(visual: VisualDescriptor){
+  let exampleText = "";
+  switch (visual.type) {
+    case "lineClusteredColumnComboChart":
+      const combo = new ComboChart();
+      await combo.setVisualInformation(visual);
+      exampleText = await combo.getComboChartInteractionExample();
+      break;
+    case "lineChart":
+      const lineChart = new LineChart();
+      await lineChart.setVisualInformation(visual);
+      exampleText = await lineChart.getLineChartInteractionExample();
+      break;
+    case "clusteredBarChart":
+      const barChart = new BarChart();
+      await barChart.setVisualInformation(visual);
+      exampleText = await barChart.getBarChartInteractionExample();
+      break;
+    case "clusteredColumnChart":
+      const columnChart = new ColumnChart();
+      await columnChart.setVisualInformation(visual);
+      exampleText = await columnChart.getColumnChartInteractionExample();
+      break;
+    case "slicer":
+      const slicer = new Slicer();
+      await slicer.setVisualInformation(visual);
+      exampleText = await slicer.getSlicerChartInteractionExample();
+      break;
+    default:
+      break;
+  }
+  document.getElementById("contentText")!.innerHTML = exampleText;
 }
 
 export async function createInteractionCardForOutputPane(

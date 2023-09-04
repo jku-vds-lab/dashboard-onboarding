@@ -57,6 +57,20 @@ export default class InteractionExampleDescription {
     return text;
   }
 
+  interactionSlicerText(
+    mark: string,
+    dataPoint: string
+  ) {
+    let text = "";
+
+    text =
+      this.interactionInfo.click +
+      mark + dataPoint +
+      this.punctuations.dot + this.lineBreak;
+
+    return text;
+  }
+
   interactionElementText(dataValue: string) {
     let text = "";
 
@@ -70,13 +84,16 @@ export default class InteractionExampleDescription {
     return text;
   }
 
-  async getInteractionInfo(
+  getInteractionInfo(
     visualType: string,
     visual: LineChart | BarChart | ColumnChart | ComboChart | Slicer
   ) {
     switch (visualType) {
       case "slicer":
-        break;
+        return this.interactionText(
+          visual.mark,
+          visual.data.data[Math.floor(visual.data.data.length / 2)].get(visual.data.attributes[0]),
+        );
       default:
         visual = visual as LineChart | BarChart | ColumnChart;
         return this.interactionText(
