@@ -1,21 +1,39 @@
 [
     {
-    "type": "Card",
-    "task": "summarize",
-    "description": "The card shows the number of new hires",
-    "title": {
-        "text": "New Hires"
-    },
-    "data": {"attribute": "New Hires", "type": "quantitative"},
-    "global_filter": {"and":
-                      [{"attribute": "Year", "equal": 2014},
-                       {"not": {"attribute": "Month", "equal": "Dec"}}
-                       ]},
-    "encoding": {
-        "value": {"aggregate": "sum", "attribute": "New Hires", "type": "quantitative", "title": "New Hires"}
-    },
-    "mark": "card",
-    "insight": ""
+        "type": "Card",
+        "task": "summarize",
+        "description": "The card shows the number of new hires",
+        "title": {
+            "text": "New Hires"
+        },
+        "data": {
+            "attribute": "New Hires",
+            "type": "quantitative"
+        },
+        "global_filter": {
+            "and": [
+                {
+                    "attribute": "Year",
+                    "equal": 2014
+                },
+                {
+                    "not": {
+                        "attribute": "Month",
+                        "equal": "Dec"
+                    }
+                }
+            ]
+        },
+        "encoding": {
+            "value": {
+                "aggregate": "sum",
+                "attribute": "New Hires",
+                "type": "quantitative",
+                "title": "New Hires"
+            }
+        },
+        "mark": "card",
+        "insight": ""
     },
     {
         "type": "Card",
@@ -24,13 +42,31 @@
         "title": {
             "text": "New Hires SPLY"
         },
-        "data": {"attribute": "New Hires SPLY", "type": "quantitative"},
-        "global_filter": {"and":
-                        [{"attribute": "Year", "equal": 2014},
-                        {"not": {"attribute": "Month", "equal": "Dec"}}
-                        ]},
+        "data": {
+            "attribute": "New Hires SPLY",
+            "type": "quantitative"
+        },
+        "global_filter": {
+            "and": [
+                {
+                    "attribute": "Year",
+                    "equal": 2014
+                },
+                {
+                    "not": {
+                        "attribute": "Month",
+                        "equal": "Dec"
+                    }
+                }
+            ]
+        },
         "encoding": {
-            "value": {"aggregate": "sum", "attribute": "New Hires SPLY", "type": "quantitative", "title": "New Hires SPLY"}
+            "value": {
+                "aggregate": "sum",
+                "attribute": "New Hires SPLY",
+                "type": "quantitative",
+                "title": "New Hires SPLY"
+            }
         },
         "mark": "card",
         "insight": ""
@@ -42,17 +78,38 @@
         "title": {
             "text": "Region"
         },
-        "data": {"attribute": "Region", "type": "categorical"},
-        "global_filter": {"and":
-                        [{"attribute": "Year", "equal": 2014},
-                        {"not": {"attribute": "Month", "equal": "Dec"}}
-                        ]},
+        "data": {
+            "attribute": "Region",
+            "type": "categorical"
+        },
+        "global_filter": {
+            "and": [
+                {
+                    "attribute": "Year",
+                    "equal": 2014
+                },
+                {
+                    "not": {
+                        "attribute": "Month",
+                        "equal": "Dec"
+                    }
+                }
+            ]
+        },
         "interactions": [
-            {"description": "",
-            "filtering": {"interaction_attribute": "Region",
-                        "interaction_chart": ["New Hires", "New Hires SPLY",
-                                                "New Hires and Hew Hires Same Period Last Year", "New Hires by Month and FPDesc",
-                                                "New Hires by Region and Ethnicity"]}}
+            {
+                "description": "",
+                "filtering": {
+                    "interaction_attribute": "Region",
+                    "interaction_chart": [
+                        "New Hires",
+                        "New Hires SPLY",
+                        "New Hires and Hew Hires Same Period Last Year",
+                        "New Hires by Month and FPDesc",
+                        "New Hires by Region and Ethnicity"
+                    ]
+                }
+            }
         ],
         "mark": "filter",
         "insight": ""
@@ -64,17 +121,38 @@
         "title": {
             "text": "Ethnicity"
         },
-        "data": {"attribute": "Ethnicity", "type": "categorical"},
-        "global_filter": {"and":
-                        [{"attribute": "Year", "equal": 2014},
-                        {"not": {"attribute": "Month", "equal": "Dec"}}
-                        ]},
+        "data": {
+            "attribute": "Ethnicity",
+            "type": "categorical"
+        },
+        "global_filter": {
+            "and": [
+                {
+                    "attribute": "Year",
+                    "equal": 2014
+                },
+                {
+                    "not": {
+                        "attribute": "Month",
+                        "equal": "Dec"
+                    }
+                }
+            ]
+        },
         "interactions": [
-            {"description": "",
-            "filtering": {"interaction_attribute": "Ethnicity",
-                        "interaction_chart": ["New Hires", "New Hires SPLY",
-                                                "New Hires and Hew Hires Same Period Last Year", "New Hires by Month and FPDesc",
-                                                "New Hires by Region and Ethnicity"]}}
+            {
+                "description": "",
+                "filtering": {
+                    "interaction_attribute": "Ethnicity",
+                    "interaction_chart": [
+                        "New Hires",
+                        "New Hires SPLY",
+                        "New Hires and Hew Hires Same Period Last Year",
+                        "New Hires by Month and FPDesc",
+                        "New Hires by Region and Ethnicity"
+                    ]
+                }
+            }
         ],
         "mark": "filter",
         "insight": ""
@@ -86,67 +164,191 @@
         "title": {
             "text": "New Hires by Month and FPDesc"
         },
-        "data": [{"attribute": "New Hires", "type": "quantitative"},
-                {"attribute": "Month", "type": "temporal"}],
-        "global_filter": {"and":
-                        [{"attribute": "Year", "equal": 2014},
-                        {"not": {"attribute": "Month", "equal": "Dec"}}
-                        ]},
+        "data": [
+            {
+                "attribute": "New Hires",
+                "type": "quantitative"
+            },
+            {
+                "attribute": "Month",
+                "type": "temporal"
+            }
+        ],
+        "global_filter": {
+            "and": [
+                {
+                    "attribute": "Year",
+                    "equal": 2014
+                },
+                {
+                    "not": {
+                        "attribute": "Month",
+                        "equal": "Dec"
+                    }
+                }
+            ]
+        },
         "interactions": [
-            {"description": "",
-            "highlighting": {"interaction_attribute": "Month",
-                        "interaction_chart": ["New Hires and Hew Hires Same Period Last Year", "New Hires by Month and FPDesc", "New Hires by Region and Ethnicity"]},
-            "filtering": {"interaction_attribute": "Month",
-                        "interaction_chart": ["New Hires", "New Hires SPLY"]}},
-            {"description": "",
-            "highlighting": {"interaction_attribute": "Month, FPDesc",
-                        "interaction_chart": ["New Hires and Hew Hires Same Period Last Year", "New Hires by Month and FPDesc", "New Hires by Region and Ethnicity"]},
-            "filtering": {"interaction_attribute": "Month, FPDesc",
-                        "interaction_chart": ["New Hires", "New Hires SPLY"]}}
+            {
+                "description": "",
+                "highlighting": {
+                    "interaction_attribute": "Month",
+                    "interaction_chart": [
+                        "New Hires and Hew Hires Same Period Last Year",
+                        "New Hires by Month and FPDesc",
+                        "New Hires by Region and Ethnicity"
+                    ]
+                },
+                "filtering": {
+                    "interaction_attribute": "Month",
+                    "interaction_chart": [
+                        "New Hires",
+                        "New Hires SPLY"
+                    ]
+                }
+            },
+            {
+                "description": "",
+                "highlighting": {
+                    "interaction_attribute": "Month, FPDesc",
+                    "interaction_chart": [
+                        "New Hires and Hew Hires Same Period Last Year",
+                        "New Hires by Month and FPDesc",
+                        "New Hires by Region and Ethnicity"
+                    ]
+                },
+                "filtering": {
+                    "interaction_attribute": "Month, FPDesc",
+                    "interaction_chart": [
+                        "New Hires",
+                        "New Hires SPLY"
+                    ]
+                }
+            }
         ],
         "mark": "line",
         "visual_channel": "position, color",
         "encoding": {
-            "x_axis": {"attribute": "Month", "type": "temporal", "title": ""},
-            "y_axis": {"aggregate": "sum", "attribute": "New Hires", "type": "quantitative", "title": ""},
-            "legend": {"attribute": "FPDesc", "type": "categorical"}
+            "x_axis": {
+                "attribute": "Month",
+                "type": "temporal",
+                "title": ""
+            },
+            "y_axis": {
+                "aggregate": "sum",
+                "attribute": "New Hires",
+                "type": "quantitative",
+                "title": ""
+            },
+            "legend": {
+                "attribute": "FPDesc",
+                "type": "categorical"
+            }
         },
         "insight": ""
     },
     {
         "type": "Clustered bar chart",
         "task": "part-to-whole relationship, lookup values, find trends",
-        "description": "The clustered bar chart displayes the New Hires.",
+        "description": "The clustered bar chart displays the New Hires.",
         "title": {
             "text": "New Hires by Region and Ethnicity"
         },
-        "data": [{"attribute": "New Hires", "type": "quantitative"},
-                {"attribute": "Region", "type": "categorical"},
-                {"attribute": "VP", "type": "categorical"},
-                {"attribute": "Ethnicity", "type": "categorical"}],
-        "global_filter": {"and":
-                        [{"attribute": "Year", "equal": 2014},
-                        {"not": {"attribute": "Month", "equal": "Dec"}}
-                        ]},
+        "data": [
+            {
+                "attribute": "New Hires",
+                "type": "quantitative"
+            },
+            {
+                "attribute": "Region",
+                "type": "categorical"
+            },
+            {
+                "attribute": "VP",
+                "type": "categorical"
+            },
+            {
+                "attribute": "Ethnicity",
+                "type": "categorical"
+            }
+        ],
+        "global_filter": {
+            "and": [
+                {
+                    "attribute": "Year",
+                    "equal": 2014
+                },
+                {
+                    "not": {
+                        "attribute": "Month",
+                        "equal": "Dec"
+                    }
+                }
+            ]
+        },
         "interactions": [
-            {"description": "",
-            "highlighting": {"interaction_attribute": "Region",
-                        "interaction_chart": ["New Hires and Hew Hires Same Period Last Year", "New Hires by Region and Ethnicity"]},
-            "filtering": {"interaction_attribute": "Region",
-                        "interaction_chart": ["New Hires", "New Hires SPLY", "New Hires by Month and FPDesc"]}},
-            {"description": "",
-            "highlighting": {"interaction_attribute": "Ethnicity",
-                        "interaction_chart": ["New Hires and Hew Hires Same Period Last Year", "New Hires by Region and Ethnicity"]},
-            "filtering": {"interaction_attribute": "Ethnicity",
-                        "interaction_chart": ["New Hires", "New Hires SPLY", "New Hires by Month and FPDesc"]}}
+            {
+                "description": "",
+                "highlighting": {
+                    "interaction_attribute": "Region",
+                    "interaction_chart": [
+                        "New Hires and Hew Hires Same Period Last Year",
+                        "New Hires by Region and Ethnicity"
+                    ]
+                },
+                "filtering": {
+                    "interaction_attribute": "Region",
+                    "interaction_chart": [
+                        "New Hires",
+                        "New Hires SPLY",
+                        "New Hires by Month and FPDesc"
+                    ]
+                }
+            },
+            {
+                "description": "",
+                "highlighting": {
+                    "interaction_attribute": "Ethnicity",
+                    "interaction_chart": [
+                        "New Hires and Hew Hires Same Period Last Year",
+                        "New Hires by Region and Ethnicity"
+                    ]
+                },
+                "filtering": {
+                    "interaction_attribute": "Ethnicity",
+                    "interaction_chart": [
+                        "New Hires",
+                        "New Hires SPLY",
+                        "New Hires by Month and FPDesc"
+                    ]
+                }
+            }
         ],
         "mark": "line",
         "visual_channel": "position, color",
         "encoding": {
-            "x_axis": {"aggregate": "sum", "attribute": "New Hires", "type": "quantitative", "title": ""},
-            "y_axis": [{"attribute": "Region", "type": "categorical", "title": ""},
-                    {"attribute": "VP", "type": "categorical", "title": ""}],
-            "legend": {"attribute": "Ethnicity", "type": "categorical"}
+            "x_axis": {
+                "aggregate": "sum",
+                "attribute": "New Hires",
+                "type": "quantitative",
+                "title": ""
+            },
+            "y_axis": [
+                {
+                    "attribute": "Region",
+                    "type": "categorical",
+                    "title": ""
+                },
+                {
+                    "attribute": "VP",
+                    "type": "categorical",
+                    "title": ""
+                }
+            ],
+            "legend": {
+                "attribute": "Ethnicity",
+                "type": "categorical"
+            }
         },
         "insight": ""
     },
@@ -157,30 +359,89 @@
         "title": {
             "text": "New Hires and New Hires Same Period Last Year"
         },
-        "data": [{"attribute": "New Hires", "type": "quantitative"},
-                {"attribute": "New Hires SPLY", "type": "quantitative"},
-                {"attribute": "Month", "type": "temporal"}],
-        "global_filter": {"and":
-                        [{"attribute": "Year", "equal": 2014},
-                        {"not": {"attribute": "Month", "equal": "Dec"}}
-                        ]},
+        "data": [
+            {
+                "attribute": "New Hires",
+                "type": "quantitative"
+            },
+            {
+                "attribute": "New Hires SPLY",
+                "type": "quantitative"
+            },
+            {
+                "attribute": "Month",
+                "type": "temporal"
+            }
+        ],
+        "global_filter": {
+            "and": [
+                {
+                    "attribute": "Year",
+                    "equal": 2014
+                },
+                {
+                    "not": {
+                        "attribute": "Month",
+                        "equal": "Dec"
+                    }
+                }
+            ]
+        },
         "interactions": [
-            {"description": "",
-            "highlighting": {"interaction_attribute": "Month",
-                        "interaction_chart": ["New Hires and Hew Hires Same Period Last Year", "New Hires by Region and Ethnicity"]},
-            "filtering": {"interaction_attribute": "Month",
-                        "interaction_chart": ["New Hires", "New Hires SPLY", "New Hires by Month and FPDesc"]}},
-            {"description": "",
-            "highlighting": {"interaction_attribute": ["New Hires", "New Hires SPLY"],
-                        "interaction_chart": ["New Hires and Hew Hires Same Period Last Year"]}}
+            {
+                "description": "",
+                "highlighting": {
+                    "interaction_attribute": "Month",
+                    "interaction_chart": [
+                        "New Hires and Hew Hires Same Period Last Year",
+                        "New Hires by Region and Ethnicity"
+                    ]
+                },
+                "filtering": {
+                    "interaction_attribute": "Month",
+                    "interaction_chart": [
+                        "New Hires",
+                        "New Hires SPLY",
+                        "New Hires by Month and FPDesc"
+                    ]
+                }
+            },
+            {
+                "description": "",
+                "highlighting": {
+                    "interaction_attribute": [
+                        "New Hires",
+                        "New Hires SPLY"
+                    ],
+                    "interaction_chart": [
+                        "New Hires and Hew Hires Same Period Last Year"
+                    ]
+                }
+            }
         ],
         "layer": [
             {
                 "mark": "line",
                 "encoding": {
-                    "x_axis": {"attribute": "Month", "type": "temporal", "title": ""},
-                    "y_axis": [{"aggregate": "sum", "attribute": "New Hires", "type": "quantitative", "title": ""},
-                            {"aggregate": "sum", "attribute": "New Hires SPLY", "type": "quantitative", "title": ""}]
+                    "x_axis": {
+                        "attribute": "Month",
+                        "type": "temporal",
+                        "title": ""
+                    },
+                    "y_axis": [
+                        {
+                            "aggregate": "sum",
+                            "attribute": "New Hires",
+                            "type": "quantitative",
+                            "title": ""
+                        },
+                        {
+                            "aggregate": "sum",
+                            "attribute": "New Hires SPLY",
+                            "type": "quantitative",
+                            "title": ""
+                        }
+                    ]
                 }
             },
             {

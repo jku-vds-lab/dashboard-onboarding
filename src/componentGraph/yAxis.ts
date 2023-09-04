@@ -1,18 +1,13 @@
-import Component from "./component";
+import CommonProp from "./CommonProp";
 
-class YAxis extends Component{
-  
-    constructor() {
-        super();
-    }
-
-    setYAxisData(value: string, isVisible: boolean){
-        super.setComponentData(value, isVisible);
-    }
-
-    getComponentDescriptionData(): string {
-        return "This Y-axis displays the values of " + this.attribute + ".";
-    }
+class YAxis extends CommonProp {
+  constructor() {
+    super();
   }
-  
-  export default YAxis;
+
+  setYAxisData(value: string, isVisible: boolean) {
+    super.setComponentData(value, isVisible);
+  }
+}
+
+export default YAxis;

@@ -1,4 +1,4 @@
-import * as helpers from "./helperFunctions";
+import * as helpers from "./../../componentGraph/helperFunctions";
 import * as global from "./globalVariables";
 import { getNewDashboardInfo } from "./dashboardInfoCard";
 import { replacer } from "../../componentGraph/ComponentGraph";
@@ -13,7 +13,7 @@ import {
 import { VisualDescriptor } from "powerbi-client";
 import { reportId } from "../../Config";
 
-let visualIndex:number;
+let visualIndex: number;
 
 export async function createSettings() {
   const settings = global.createSettingsObject();
@@ -69,10 +69,10 @@ async function setGroup(elem: Group) {
   for (const trav of elem.visuals) {
     const visuals: TraversalElement[] = [];
     for (const vis of trav) {
-      const i = traversal.findIndex(trav => getIndex(trav, vis)>-1);
+      const i = traversal.findIndex((trav) => getIndex(trav, vis) > -1);
 
-      if(i>-1 && visualIndex>-1){
-          traversal[i][visualIndex].categories.push(vis.categories[0]);
+      if (i > -1 && visualIndex > -1) {
+        traversal[i][visualIndex].categories.push(vis.categories[0]);
       } else {
         if (vis.element.id === "dashboard") {
           const traversalElem = createTraversalElement("dashboard");
@@ -95,15 +95,18 @@ async function setGroup(elem: Group) {
         }
       }
     }
-    if(visuals.length>0){
+    if (visuals.length > 0) {
       traversal.push(visuals);
     }
   }
   return traversal;
 }
 
-function getIndex(trav: TraversalElement[], vis: TraversalElement){
-  visualIndex = trav.findIndex(visual => visual.count === vis.count && visual.element.id === vis.element.id)
+function getIndex(trav: TraversalElement[], vis: TraversalElement) {
+  visualIndex = trav.findIndex(
+    (visual) =>
+      visual.count === vis.count && visual.element.id === vis.element.id
+  );
   return visualIndex;
 }
 
@@ -125,12 +128,17 @@ function setDashboardInfo() {
 async function setVisualsInfo(id: string) {
   try {
     const visual = findTraversalVisual(id);
+    if (!visual) {
+      return;
+    }
     const settingsVisual = global.createVisual();
+
     settingsVisual.id = visual.name;
+
     const CGVisual = global.componentGraph.dashboard.visualizations.find(
       (vis) => vis.id === visual.name
     )!;
-    settingsVisual.title = CGVisual.title.text;
+    settingsVisual.title = CGVisual.title.title;
 
     const visualInfos = await helpers.getVisualInfos(visual);
 
@@ -149,7 +157,7 @@ async function setVisualsInfo(id: string) {
 
     return settingsVisual;
   } catch (error) {
-    console.error(error);
+    console.error("Error in setVisualsInfo", error);
   }
 }
 
@@ -177,17 +185,16 @@ function setInteractionExampleInfo() {
     "Can you see how this visual changed?";
 
   for (const visual of global.currentVisuals) {
-    const type = helpers.getTypeName(visual);
     const CGVisual = global.componentGraph.dashboard.visualizations.find(
       (vis) => vis.id === visual.name
     )!;
-    switch (type) {
-      case "Card":
-      case "Multi Row Card":
+    switch (visual.type) {
+      case "card":
+      case "multiRowCard":
         const settingsInteractableVisualCard =
           global.createInteractableVisualCard();
         settingsInteractableVisualCard.id = visual.name;
-        settingsInteractableVisualCard.title = CGVisual.title.text;
+        settingsInteractableVisualCard.title = CGVisual.title.title;
 
         settingsInteractableVisualCard.clickInfosStatus = null;
         settingsInteractableVisualCard.changedClickInfo = null;
@@ -197,11 +204,11 @@ function setInteractionExampleInfo() {
 
         settingsInteractionExample.visuals.push(settingsInteractableVisualCard);
         break;
-      case "Slicer":
+      case "slicer":
         const settingsInteractableVisualSlicer =
           global.createInteractableVisualSlicer();
         settingsInteractableVisualSlicer.id = visual.name;
-        settingsInteractableVisualSlicer.title = CGVisual.title.text;
+        settingsInteractableVisualSlicer.title = CGVisual.title.title;
 
         settingsInteractableVisualSlicer.clickInfosStatus = "origninal";
         settingsInteractableVisualSlicer.changedClickInfo = "";
@@ -215,7 +222,7 @@ function setInteractionExampleInfo() {
       default:
         const settingsInteractableVisual = global.createInteractableVisual();
         settingsInteractableVisual.id = visual.name;
-        settingsInteractableVisual.title = CGVisual.title.text;
+        settingsInteractableVisual.title = CGVisual.title.title;
 
         settingsInteractableVisual.clickInfosStatus = "original";
         settingsInteractableVisual.changedClickInfo = "";

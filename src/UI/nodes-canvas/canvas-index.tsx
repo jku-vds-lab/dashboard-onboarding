@@ -9,21 +9,23 @@ import { Node } from "reactflow";
 import "reactflow/dist/style.css";
 import "../assets/css/flow.scss";
 import * as global from "../../onboarding/ts/globalVariables";
-import { TraversalElement, findTraversalVisual, groupType } from "../../onboarding/ts/traversal";
+import {
+  TraversalElement,
+  findTraversalVisual,
+  groupType,
+} from "../../onboarding/ts/traversal";
 
-// import ICustomNode from "./nodeTypes/ICustomNode";
 import { ContextMenu } from "./context-menu";
-
-import Traversal from "./traversal";
-
-import { getVisualInfoInEditor } from "../../onboarding/ts/infoCards";
-import { getDashboardInfoInEditor } from "../../onboarding/ts/dashboardInfoCard";
-import { getFilterInfoInEditor } from "../../onboarding/ts/filterInfoCards";
 
 import GroupNode from "./nodes/groupNode";
 import GroupNodeType from "./nodes/groupNodeType";
 import DefaultNode from "./nodes/defaultNode";
 import React from "react";
+
+// redux starts
+import { useDispatch } from "react-redux";
+import { increment } from "../redux/nodeModalities";
+// redux ends
 
 const nodeTypes = { group: GroupNodeType };
 
@@ -37,12 +39,17 @@ interface MousePosition {
   y: number;
 }
 export default function NodesCanvas(props: Props) {
+  // redux starts
+  const dispatch = useDispatch();
+  // redux  ends
+
   const defaultNode = useCallback(() => {
     return new DefaultNode();
   }, []);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const initialNodes: Node[] = createIntitialNodes();
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+
   const [setReactFlowInstance] = useState<ReactFlowInstance>();
   const reactFlowInstance = useReactFlow();
   const { getIntersectingNodes } = useReactFlow();
@@ -56,7 +63,7 @@ export default function NodesCanvas(props: Props) {
   });
 
   const handleMouseClick = (event: React.MouseEvent<HTMLDivElement>) => {
-    console.log("Mouse click is called");
+    // console.log("Mouse click is called");
     const { clientX, clientY } = event;
 
     setMousePosition({ x: clientX, y: clientY });
@@ -65,24 +72,29 @@ export default function NodesCanvas(props: Props) {
   function createIntitialNodes() {
     const initialNodes: Node[] = [];
     const createdNodes = createNodes(global.settings.traversalStrategy);
-    for(const node of createdNodes){
-      initialNodes.push(node)
+    if (createdNodes) {
+      for (const node of createdNodes) {
+        initialNodes.push(node);
+      }
     }
     return initialNodes;
   }
 
-  function createNodes(traversal: TraversalElement[]){
+  function createNodes(traversal: TraversalElement[]) {
     const createdNodes: Node[] = [];
     let prevNode;
 
-    for(const elem of traversal){
+    for (const elem of traversal) {
       if (elem.element.id === "group") {
         const nodesWithinGroup: Node[] = [];
         const visuals = elem.element.visuals;
 
-        for(let i=0; i<visuals.length; i++){
-          for(let j=0; j<visuals[i].length; j++){
+        for (let i = 0; i < visuals.length; i++) {
+          for (let j = 0; j < visuals[i].length; j++) {
             const visTitle = getTitle(visuals[i][j]);
+            if (!visTitle) {
+              return;
+            }
             const visType = getType(visTitle);
             const newNode = defaultNode().getNode(
               event,
@@ -101,11 +113,15 @@ export default function NodesCanvas(props: Props) {
         const groupNodeObj = new GroupNode({
           nodes: nodesWithinGroup,
           id: "group " + elem.count,
-          position: {x:0,y:0},
+          position: { x: 0, y: 0 },
           data: null,
         });
 
-        const groupNode = groupNodeObj.getGroupNode(false, getPositionForWholeTrav(prevNode), elem.element.type);
+        const groupNode = groupNodeObj.getGroupNode(
+          false,
+          getPositionForWholeTrav(prevNode),
+          elem.element.type
+        );
         createdNodes.push(groupNode);
         prevNode = groupNode;
 
@@ -116,6 +132,9 @@ export default function NodesCanvas(props: Props) {
         });
       } else {
         const visTitle = getTitle(elem);
+        if (!visTitle) {
+          return;
+        }
         const visType = getType(visTitle);
         const newNode = defaultNode().getNode(
           event,
@@ -147,37 +166,6 @@ export default function NodesCanvas(props: Props) {
       return position;
     },
     [reactFlowInstance]
-  );
-
-  const onClick = useCallback(
-    async (event) => {
-      // here we need to update the reactFlowWrapper and Instance
-
-      const container = document.getElementById("canvas-container");
-      event.target.classList.contains("react-flow__pane")
-        ? container?.classList.remove("show")
-        : container?.classList.add("show");
-
-      const fullNameArray = defaultNode().getFullNodeNameArray(event);
-      const basicName = defaultNode().getBasicName(event);
-
-      switch (basicName) {
-        case "dashboard":
-          getDashboardInfoInEditor(1);
-          break;
-        case "globalFilter":
-          await getFilterInfoInEditor(1);
-          break;
-        case "group":
-          break;
-        default:
-          if (fullNameArray) {
-            await getVisualInfoInEditor(fullNameArray, 1);
-          }
-          break;
-      }
-    },
-    [defaultNode]
   );
 
   const onDragOver = useCallback((event) => {
@@ -217,26 +205,43 @@ export default function NodesCanvas(props: Props) {
     [nodes, getPosition, defaultNode, setNodes]
   );
 
-  function getCount(id: string){
+  function getCount(id: string) {
     let count = 1;
     let sameNodes;
     let index = 1;
 
-    if(id.split(" ").length > 1){
-      sameNodes = nodes.filter(node => node.id.split(" ")[0] + " " + node.id.split(" ")[1] === id);
+    if (id.split(" ").length > 1) {
+      sameNodes = nodes.filter(
+        (node) => node.id.split(" ")[0] + " " + node.id.split(" ")[1] === id
+      );
       index = 2;
     } else {
-      sameNodes = nodes.filter(node => node.id.split(" ").length <4 && node.id.split(" ")[0] === id);
-      
+      sameNodes = nodes.filter(
+        (node) => node.id.split(" ").length < 4 && node.id.split(" ")[0] === id
+      );
     }
 
-    if(sameNodes.length > 0){
-      const max = Math.max(...sameNodes.map(node => parseInt(node.id.split(" ")[index])));
+    if (sameNodes.length > 0) {
+      const max = Math.max(
+        ...sameNodes.map((node) => parseInt(node.id.split(" ")[index]))
+      );
       count += max;
     }
 
     return count;
   }
+
+  const onClick = (event: any) => {
+    const container = document.getElementById("canvas-container");
+    event.target.classList.contains("react-flow__pane")
+      ? container?.classList.remove("show")
+      : container?.classList.add("show");
+
+    const fullNameArray = defaultNode().getFullNodeNameArray(event);
+    const basicName = defaultNode().getBasicName(event);
+
+    dispatch(increment([basicName, fullNameArray]));
+  };
 
   const onNodeDragStart = useCallback(
     (event, node) => {
@@ -255,12 +260,12 @@ export default function NodesCanvas(props: Props) {
   );
 
   const onNodeDragStop = (event: any, node: Node) => {
-    console.log("Node pos", node.position);
+    // console.log("Node pos", node.position);
 
     if (node.type == "group") {
       nodes.forEach((sNode) => {
         if (sNode.parentNode == node.id) {
-          console.log(sNode.positionAbsolute); // --> this is not getting updated
+          // console.log(sNode.positionAbsolute); // --> this is not getting updated
         }
       });
     }
@@ -275,17 +280,20 @@ export default function NodesCanvas(props: Props) {
   const onSelectionContextMenu = useCallback(
     (event, sNodes: Node[]) => {
       event.preventDefault();
-
-      const position = getPosition(event);
+      const { clientX, clientY } = event;
+      const reactFlowBounds =
+        reactFlowWrapper?.current?.getBoundingClientRect();
+      const left = reactFlowBounds ? reactFlowBounds.left : 0;
+      const top = reactFlowBounds ? reactFlowBounds.top : 0;
       setPosition({
-        x: position.x,
-        y: position.y,
+        x: event.clientX - left,
+        y: event.clientY - top,
       });
 
       setSelectedNodes(sNodes);
       setIsOpen(true);
     },
-    [getPosition, setSelectedNodes]
+    [setSelectedNodes]
   );
 
   const onNodeContextMenu = useCallback(
@@ -309,8 +317,7 @@ export default function NodesCanvas(props: Props) {
       setNodes((nodes) => nodes.filter((n) => n.id !== nodeData.id));
     }
     setIsOpen(false);
-  },
-  [nodes]);
+  }, [nodes]);
 
   const addGroup = useCallback(() => {
     try {
@@ -334,7 +341,11 @@ export default function NodesCanvas(props: Props) {
         position: { x: 0, y: 0 },
         data: null,
       });
-      const groupNode = groupNodeObj.getGroupNode(true, {x:0,y:0}, groupType.all);
+      const groupNode = groupNodeObj.getGroupNode(
+        true,
+        { x: 0, y: 0 },
+        groupType.all
+      );
       setNodes((nds) => nds.concat(groupNode));
 
       if (!groupNode) {
@@ -361,41 +372,42 @@ export default function NodesCanvas(props: Props) {
         });
       });
 
-      console.log("Nodes", nodes);
-      console.log("Selected Nodes", selectedNodes);
+      // console.log("Nodes", nodes);
+      // console.log("Selected Nodes", selectedNodes);
     } catch (error) {
       console.log("Error", error);
     }
   }, [nodes, selectedNodes, setNodes]);
 
   useEffect(() => {
-   if (props.trigger) {
-      console.log("q", props.traversal);
+    if (props.trigger) {
+      // console.log("q", props.traversal);
       buildTraversal(props.traversal);
     }
   }, [props.trigger]);
 
   useEffect(() => {
     props.setNodesForSave(nodes);
-  }, [ nodes]);
+  }, [nodes]);
 
   function buildTraversal(traversal: any) {
     setNodes([]);
-    
-    const createdNodes = createNodes(traversal);
 
-    for(const node of createdNodes){
-      setNodes((nds) => nds.concat(node));
+    const createdNodes = createNodes(traversal);
+    if (createdNodes) {
+      for (const node of createdNodes) {
+        setNodes((nds) => nds.concat(node));
+      }
     }
   }
 
   function getPositionForWholeTrav(prevNode: any) {
     let pos = {
       x: 0,
-      y: 0
-    }
-  
-    if(prevNode){
+      y: 0,
+    };
+
+    if (prevNode) {
       const offset = 5;
       const prevNodeHeight = parseInt(String(prevNode.style?.height!), 10);
       pos = {
@@ -409,8 +421,8 @@ export default function NodesCanvas(props: Props) {
   function getPositionWithinGroup(xIndex: number, yIndex: number) {
     let xOffset = 10;
     let yOffset = 40;
-    xOffset = xOffset + (xIndex * 110);
-    yOffset = yOffset + (yIndex * 35);
+    xOffset = xOffset + xIndex * 110;
+    yOffset = yOffset + yIndex * 35;
     const pos = {
       x: xOffset,
       y: yOffset,
@@ -455,6 +467,9 @@ export default function NodesCanvas(props: Props) {
 
       default:
         const vis = findTraversalVisual(elem.element.id);
+        if (!vis) {
+          return;
+        }
         visTitle = createNodeTitle(vis?.type);
         const itemLength = checkDuplicateComponents(vis?.type);
         if (itemLength > 1) {

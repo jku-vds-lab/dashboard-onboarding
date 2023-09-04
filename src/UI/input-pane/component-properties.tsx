@@ -8,17 +8,17 @@ export interface InputNode {
   key: string;
 }
 
-interface Props{
+interface Props {
   visual: string;
 }
 
-export default function Components(props:Props) {
+export default function Components(props: Props) {
   const inputNodes: InputNode[] = [];
   const className = "dndnode";
   const visParentId = "componentNodes";
   let inputNode: InputNode;
-  
-  switch(props.visual){
+
+  switch (props.visual) {
     case "dashboard":
       inputNode = {
         mainComponent: createNode(
@@ -48,7 +48,11 @@ export default function Components(props:Props) {
       inputNodes.push(inputNode);
       break;
     default:
-      const vis = allVisuals.find(vis => vis.name === props.visual);
+      const vis = allVisuals.find((vis) => vis.name === props.visual);
+
+      if (!vis) {
+        return;
+      }
 
       let visTitle = createNodeTitle(vis.type);
       const visClassName = className + " " + visTitle;
@@ -58,7 +62,7 @@ export default function Components(props:Props) {
       if (itemLength > 1) {
         visTitle = visTitle + " (" + vis.title + ")";
       }
-  
+
       inputNode = {
         mainComponent: createNode(
           mainId,
@@ -71,7 +75,7 @@ export default function Components(props:Props) {
         key: mainId,
       };
       inputNodes.push(inputNode);
-  
+
       const result = getSubComponents(mainId, visTitle, vis.type);
       const subIds = result?.ids;
       const subtitles = result?.contents;
@@ -193,13 +197,11 @@ export default function Components(props:Props) {
     return myDiv;
   }
 
-  return(
-      <div>
-        {inputNodes.map(node =>
-          <div  key={node.mainComponent.id}>
-            {node.mainComponent}
-          </div>
-        )}
-      </div>
-    );
+  return (
+    <div>
+      {inputNodes.map((node) => (
+        <div key={node.mainComponent.id}>{node.mainComponent}</div>
+      ))}
+    </div>
+  );
 }

@@ -1,31 +1,28 @@
 import React from "react";
-import {
-  FaArrowAltCircleUp,
-  FaCheck,
-  FaPencilAlt,
-  FaPeopleArrows,
-  FaPlus,
-  FaUndo,
-} from "react-icons/fa";
+import { FaCheck, FaUndo } from "react-icons/fa";
 import { ReactFlowProvider } from "reactflow";
 import NodesCanvas from "../nodes-canvas/canvas-index";
 import "../assets/css/dashboard.scss";
+import SaveAndFetchContent from "./../../onboarding/ts/Content/saveAndFetchContent"; // should be moved close to story pane
 import {
-  resetVisualChanges,
-  saveVisualChanges,
-} from "../../onboarding/ts/infoCards";
-import {
+  getDashboardInfoInEditor,
   resetDashboardChanges,
   saveDashboardChanges,
 } from "../../onboarding/ts/dashboardInfoCard";
 import {
+  getFilterInfoInEditor,
   resetFilterChanges,
   saveFilterChanges,
 } from "../../onboarding/ts/filterInfoCards";
 import mediaIcon from "../assets/img/icon-7.png";
-import OpenAI from "./main-open-ai";
 import { useEffect, useState } from "react";
 import RecordView from "./main-record";
+import * as global from "../../onboarding/ts/globalVariables";
+
+// redux starts
+import type { RootState } from "../redux/store";
+import { useSelector } from "react-redux";
+// redux ends
 
 interface Props {
   mainTrigger: number;
@@ -38,39 +35,81 @@ export default function StoryPane(props: Props) {
   const [showMediaOptions, setShowMediaOptions] = useState(false);
   const [nodes, setNodes] = useState([]);
 
-  const saveAnnotationChanges = async (e: any) => {
-    const infos = [];
+  // redux starts
+  const nodeFullName = useSelector(
+    (state: RootState) => state.nodeModal.fullName
+  );
+  const nodeBasicName = useSelector(
+    (state: RootState) => state.nodeModal.basicName
+  );
+  // redux  ends
 
-    const list = (document.getElementById("textBox")! as HTMLTextAreaElement)
-      .children[0];
-    const listElems = list.children;
+  // redux starts for expertise level
+  const expertiseLevel = useSelector((state: RootState) => state.expertise);
+  // redux ends for expertise level
 
-    for (let i = 0; i < listElems.length; i++) {
-      infos.push(listElems[i].innerHTML);
+  useEffect(() => {
+    async function fillTextBox() {
+      // console.log("Trying to fill the box", nodeBasicName);
+      if (nodeFullName?.length > 0) {
+        const visInfo = new SaveAndFetchContent(nodeFullName);
+        switch (nodeBasicName) {
+          case "dashboard":
+            await getDashboardInfoInEditor(1);
+            break;
+          case "globalFilter":
+            getFilterInfoInEditor(1);
+            break;
+          case "group":
+            break;
+          default:
+            if (nodeFullName) {
+              await visInfo.getVisualDescInEditor(expertiseLevel);
+              // await getVisualDescInEditor(nodeFullName);
+            }
+            break;
+        }
+      }
     }
 
-    const nodeId = e.target.getAttribute("nodeId");
-    const currentIdParts = nodeId?.split(" ");
+    fillTextBox().catch(console.error);
+  }, [expertiseLevel, nodeBasicName, nodeFullName]);
 
-    //TODO update visuals with videos, saveInfoVideo(), when editor side is ready and we know when and with what to update
+  const saveAnnotationChanges = async () => {
+    try {
+      const infos = [];
+      const textBox = document.getElementById(
+        "textBox"
+      )! as HTMLTextAreaElement;
+      const globalText = textBox.innerHTML;
+      const child = textBox.children[0];
+      const listElems = child.children;
 
-    switch (currentIdParts[0]) {
-      case "dashboard":
-        await saveDashboardChanges(infos, 1);
-        break;
-      case "globalFilter":
-        await saveFilterChanges(infos, 1);
-        break;
-      default:
-        await saveVisualChanges(infos, currentIdParts, 1);
-        break;
+      for (let i = 0; i < listElems.length; i++) {
+        infos.push(listElems[i].innerHTML);
+      }
+
+      const currentIdParts = nodeFullName;
+      const visInfo = new SaveAndFetchContent(nodeFullName);
+
+      switch (currentIdParts[0]) {
+        case "dashboard":
+          await saveDashboardChanges(infos, 1);
+          break;
+        case "globalFilter":
+          await saveFilterChanges(infos, 1);
+          break;
+        default:
+          await visInfo.saveVisualInfo(infos, globalText, currentIdParts, 1);
+          break;
+      }
+    } catch (error) {
+      console.log("Error in saveAnnotatiionChanges", error);
     }
   };
 
   const resetAnnotationChanges = async () => {
-    const nodeId = document?.getElementById("saveText")?.getAttribute("nodeId");
-
-    const currentIdParts = nodeId?.split(" ");
+    const currentIdParts = nodeFullName;
     if (!currentIdParts) {
       return;
     }
@@ -82,7 +121,7 @@ export default function StoryPane(props: Props) {
         await resetFilterChanges(1);
         break;
       default:
-        await resetVisualChanges(currentIdParts, 1);
+        // await resetVisualChanges(currentIdParts, 1);
         break;
     }
   };
@@ -100,34 +139,35 @@ export default function StoryPane(props: Props) {
 
   useEffect(() => {
     props.setNodes(nodes);
-  }, [ nodes]);
+  }, [nodes, props]);
 
   const buildTraversal = () => {
     setTrigger((trigger) => trigger + 1);
   };
 
   return (
-    <div id="canvas-container" className="canvas-cont" style={{ flexGrow: 1, position: "relative" }}>
+    <div
+      id="canvas-container"
+      className="canvas-cont"
+      style={{ flexGrow: 1, position: "relative" }}
+    >
       <div className="flow">
         <ReactFlowProvider>
-          <NodesCanvas trigger={trigger} traversal={props.traversal} setNodesForSave={setNodes}/>
+          <NodesCanvas
+            trigger={trigger}
+            traversal={props.traversal}
+            setNodesForSave={setNodes}
+          />
         </ReactFlowProvider>
       </div>
       <div id="annotation-box" className="accordion node-desc">
         <div className="accordion-item">
           <h2 className="accordion-header">
-            <button
-              className="accordion-button collapsed"
-              type="button"
-              data-bs-toggle="collapse"
-              data-bs-target="#collapseDesc"
-              aria-expanded="true"
-              aria-controls="collapseDesc"
-            >
+            <div className="accordion-button">
               Component description
               {showMediaOptions ? (
                 <div>
-                  <RecordView setShowMediaOptions={setShowMediaOptions}/>
+                  <RecordView setShowMediaOptions={setShowMediaOptions} />
                 </div>
               ) : (
                 <div
@@ -144,7 +184,7 @@ export default function StoryPane(props: Props) {
                   Add media
                 </div>
               )}
-            </button>
+            </div>
           </h2>
           <div
             id="collapseDesc"
@@ -157,7 +197,9 @@ export default function StoryPane(props: Props) {
                 id="textBox"
                 className="editable form-control"
                 contentEditable="true"
-              ></div>
+              >
+                {/* This is where the text should go */}
+              </div>
               <div className="controls">
                 <div
                   className="btn btn-secondary btn-sm me-auto"

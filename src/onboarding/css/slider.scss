@@ -1,0 +1,75 @@
+$unit: 5px;
+
+* {box-sizing: border-box;}
+
+@mixin range-track {
+  -webkit-appearance: none;
+  width: 100%;
+  height: $unit * 4;
+  color: transparent;
+  background:rgb(218, 226, 238);
+  border-radius: 999px;
+  border: 1px solid black;
+}
+@mixin range-thumb {
+  -webkit-appearance: none;
+  height: $unit * 4;
+  width: $unit * 4;
+  border-radius: 30px;
+  background: black;
+  box-shadow: 0px 2px 10px -2px black(1);
+}
+input[type=range] {
+  -webkit-appearance: none;
+  display: block;
+  margin: 0;
+  width: 100%;
+  padding-left: 25%;
+  padding-right: 25%;
+  background: transparent;
+}
+input[type=range]::-webkit-slider-runnable-track {
+  @include range-track();
+}
+input[type=range]::-moz-range-track {
+  @include range-track();
+}
+input[type=range]::-ms-track {
+  @include range-track();
+}
+input[type=range]::-ms-fill-lower {
+  display: none;
+}
+input[type=range]::-ms-fill-upper {
+  display: none;
+}
+input[type=range]::-webkit-slider-thumb {
+  @include range-thumb();
+}
+input[type=range]::-moz-range-thumb {
+  @include range-thumb();
+}
+input[type=range]::-ms-thumb {
+  @include range-thumb();
+}
+
+
+
+
+//And now the ticks
+.ticks {
+  display: flex;
+  justify-content: space-between;
+  padding: $unit;
+  padding-left: 26%;
+  padding-right: 26%;
+}
+.tick {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  width: 1px;
+  height: $unit;
+  line-height: $unit * 5;
+  margin-bottom: $unit*2;
+}

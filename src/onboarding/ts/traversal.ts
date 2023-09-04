@@ -15,7 +15,8 @@ import * as global from "./globalVariables";
 import { replacer } from "../../componentGraph/ComponentGraph";
 import { getTraversalElement } from "./createSettings";
 import { IDefaultNode } from "../../UI/nodes-canvas/nodes/defaultNode";
-import GroupNode, { IGroupNode } from "../../UI/nodes-canvas/nodes/groupNode";
+import { IGroupNode } from "../../UI/nodes-canvas/nodes/groupNode";
+import { VisualDescriptor } from "powerbi-client";
 
 export let traversalStrategy: TraversalElement[] = [];
 export const lookedAtInGroup = createLookedAtInGroup();
@@ -24,7 +25,7 @@ export let traversalInGroupIndex = 0;
 export let visualInGroupIndex = 0;
 
 export interface TraversalElement {
-  element: any;
+  element: any; // TO BE FIXED
   categories: string[];
   count: number;
 }
@@ -32,7 +33,7 @@ export interface TraversalElement {
 export interface Group {
   id: string;
   type: groupType;
-  visuals: any[];
+  visuals: any[]; // TO BE FIXED
 }
 
 export interface LookedAtInGroup {
@@ -135,7 +136,9 @@ export function createInformationCard(
       break;
     case "visual":
       createInfoCard(
-        global.allVisuals.find((vis) => vis.name === visualId),
+        <VisualDescriptor>(
+          global.allVisuals.find((vis) => vis.name === visualId)
+        ),
         count,
         categories!
       );
@@ -354,14 +357,24 @@ export function createExplainGroupCard() {
     `px;height:` +
     global.explainGroupCardHeight +
     `px;pointer-events:auto;border-radius:10px;background-color:lightsteelblue;z-index: 99 !important;`;
-  if(global.isEditor){
-    const flex = document.getElementById("flexContainer")!.getBoundingClientRect();
-    const onboarding = document.getElementById("onboarding")!.getBoundingClientRect();
-    style += `position:relative;top:` + -(onboarding.top - flex.top - global.globalCardTop) + `px;margin: 0 auto;`;
-  }else{
-    style += `position:fixed;top:` + global.globalCardTop + `px;left:50%;margin-left:` +
-    -(global.explainGroupCardWidth / 2) +
-    `px;`;
+  if (global.isEditor) {
+    const flex = document
+      .getElementById("flexContainer")!
+      .getBoundingClientRect();
+    const onboarding = document
+      .getElementById("onboarding")!
+      .getBoundingClientRect();
+    style +=
+      `position:relative;top:` +
+      -(onboarding.top - flex.top - global.globalCardTop) +
+      `px;margin: 0 auto;`;
+  } else {
+    style +=
+      `position:fixed;top:` +
+      global.globalCardTop +
+      `px;left:50%;margin-left:` +
+      -(global.explainGroupCardWidth / 2) +
+      `px;`;
   }
   helpers.createCard("explainGroupCard", style, "");
   helpers.createCloseButton(
@@ -455,7 +468,7 @@ export async function createTraversalOfNodes(
         trav.push(travElem);
       }
     }
-    console.log("Trav", trav);
+    // console.log("Trav", trav);
     await updateTraversal(trav);
   } catch (error) {
     console.log("Error", error);
@@ -565,7 +578,7 @@ export function getStandartCategories(type: string) {
   switch (type) {
     case "card":
     case "multiRowCard":
-      categories = ["general", "insight"];
+      categories = ["general"];
       break;
     case "slicer":
       categories = ["general", "interaction"];

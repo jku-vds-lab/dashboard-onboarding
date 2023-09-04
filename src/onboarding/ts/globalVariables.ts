@@ -1,4 +1,4 @@
-import { Report, Page } from "powerbi-client";
+import { Report, Page, VisualDescriptor } from "powerbi-client";
 import ComponentGraph from "../../componentGraph/ComponentGraph";
 import { TraversalElement } from "./traversal";
 
@@ -28,11 +28,11 @@ export let reportHeight: number;
 export let settings: Settings;
 export let componentGraph: ComponentGraph;
 export let report: Report;
-export let currentVisuals: any[];
-export let allVisuals: any[];
+export let currentVisuals: VisualDescriptor[];
+export let allVisuals: VisualDescriptor[];
 export let page: Page;
 export let selectedTargets: Target[];
-export let interactionSelectedVisual: any;
+export let interactionSelectedVisual: VisualDescriptor;
 
 export let explorationMode = false;
 export let isGuidedTour = false;
@@ -59,6 +59,8 @@ export let basicTraversal: TraversalElement[] = [];
 
 export let isEditor: boolean = false;
 
+export let isFirstTimeLoading: boolean = true;
+
 export enum infoStatus {
   original = "original",
   changed = "changed",
@@ -68,8 +70,8 @@ export enum infoStatus {
 
 export enum mediaType {
   video = "Video",
-  text = "Text"
-} 
+  text = "Text",
+}
 
 export interface ReportOffset {
   top: number;
@@ -150,8 +152,8 @@ export function createSettingsObject() {
     reportOffset: createReportOffset(),
     traversalStrategy: [] as TraversalElement[],
     interactionExample: createInteractionExample(),
-    allVisuals: [] as string [],
-    reportId: ""
+    allVisuals: [] as string[],
+    reportId: "",
   };
   return settings;
 }
@@ -308,10 +310,10 @@ export function setComponentGraph(newComponentGraph: ComponentGraph) {
 export function setReport(newReport: Report) {
   report = newReport;
 }
-export function setVisuals(newCurrentVisuals: any[]) {
+export function setVisuals(newCurrentVisuals: VisualDescriptor[]) {
   currentVisuals = newCurrentVisuals;
 }
-export function setAllVisuals(newAllVisuals: any[]) {
+export function setAllVisuals(newAllVisuals: VisualDescriptor[]) {
   allVisuals = newAllVisuals;
 }
 export function setPage(newPage: Page) {
@@ -388,6 +390,9 @@ export function setIsEditor(newIsEditor: boolean) {
   isEditor = newIsEditor;
 }
 
+export function setIsFirstTimeLoading(status: boolean) {
+  isFirstTimeLoading = status;
+}
 export function createDivAttributes() {
   return {
     id: "",
@@ -530,7 +535,7 @@ export function createVideoAttributes() {
     id: "",
     width: "",
     controls: "true",
-    parentId: ""
+    parentId: "",
   };
 }
 
@@ -539,7 +544,7 @@ export function createSourceAttributes() {
     id: "",
     src: "",
     type: "",
-    parentId: ""
+    parentId: "",
   };
 }
 
@@ -548,6 +553,6 @@ export function createYoutubeVideoAttributes() {
     id: "",
     style: "",
     src: "",
-    parentId: ""
+    parentId: "",
   };
 }

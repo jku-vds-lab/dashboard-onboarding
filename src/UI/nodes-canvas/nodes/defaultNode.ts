@@ -40,38 +40,6 @@ export default class DefaultNode {
     return newNode;
   }
 
-  /*getNodeBgColor(type: string) {
-    let color = "";
-    switch (type) {
-      case "Dashboard":
-        color = "#4e91e9";
-        break;
-      case "Line":
-        color = "#d95f02";
-        break;
-      case "Bar":
-        color = "#1b9e77";
-        break;
-      case "Filter":
-        color = "#e7298a";
-        break;
-      case "KPI":
-        color = "#7570b3";
-        break;
-      case "GlobalFilter":
-        color = "#e25757";
-        break;
-      case "Column":
-        color = "#66a61e";
-        break;
-      default:
-        color = "#595959";
-        break;
-    }
-
-    return color;
-  }*/
-
   style() {
     const nodeStyle: CSSProperties = {
       display: "flex",

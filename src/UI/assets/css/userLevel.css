@@ -1,0 +1,38 @@
+.matrix {
+  display: flex;
+  flex-direction: column;
+  width: 550px;
+  margin: 20px auto;
+}
+
+.labels-row {
+  display: flex;
+  margin-bottom: 5px;
+  padding-left: 60px;
+}
+
+.axis-label {
+  flex: 1;
+  margin: auto;
+  text-align: center;
+  text-decoration-color: antiquewhite;
+  font-size: small;
+}
+
+.row {
+  display: flex;
+}
+
+.cell {
+  flex: 1;
+  border: 1px solid #0000005b;
+  height: 50px;
+  width: 50px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  background-color: rgb(83,83,83);
+}
+
+.selected {
+  background-color: #929fd8;
+}

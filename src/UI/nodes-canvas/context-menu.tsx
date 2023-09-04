@@ -1,4 +1,3 @@
-import { AnyKindOfDictionary } from "lodash";
 import React, { useState, useEffect, memo } from "react";
 
 interface ContextProps {
@@ -11,7 +10,7 @@ interface ContextProps {
 
 export const ContextMenu = memo((props: ContextProps) => {
   const handleClick = () => {
-    console.log("Div clicked!");
+    // console.log("Div clicked!");
     // Perform any desired actions on mouse click
   };
   return props.isOpen ? (

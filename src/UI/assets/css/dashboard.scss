@@ -110,6 +110,7 @@ $color-white: #f1f1f1;
 
       .accordion-button.basic{
         color:  #{$color-white};
+        font-size:14px;
 
         &:after{
           background-image: url("../img/arrow-down.png");
@@ -495,4 +496,9 @@ $color-white: #f1f1f1;
     border: none !important;
     background: rgba(255,255,255,0.8);
   }
+}
+
+#userLevel{
+  position: fixed;
+  bottom: 0px;
 }

@@ -7,6 +7,7 @@ import { removeFrame } from "./disableArea";
 import {
   removeInteractionCard,
   startInteractionExample,
+  createInteractionCardForOutputPane,
 } from "./interactionExample";
 import { createSettings } from "./createSettings";
 import { showReportChanges } from "./showReportChanges";
@@ -18,68 +19,64 @@ import { reportDivisor, resize, textSize } from "./sizes";
 import { createFilterInfoCard, removeFilterInfoCard } from "./filterInfoCards";
 import { showVisualChanges } from "./showVisualsChanges";
 import {
-  createExplainGroupCard,
   createLookedAtIds,
-  currentId,
   findCurrentTraversalCount,
   findCurrentTraversalVisual,
-  findTraversalVisual,
   findVisualIndexInTraversal,
   getCurrentTraversalElementType,
   getStandartCategories,
-  isGroup,
-  lookedAtInGroup,
   removeExplainGroupCard,
   setCurrentId,
   TraversalElement,
-  traversalStrategy,
   updateLookedAt,
-  updateTraversal,
 } from "./traversal";
-import { replacer } from "../../componentGraph/ComponentGraph";
 import { basicTraversalStrategy } from "./traversalStrategies";
-
-export async function onLoadReport() {
-  await helpers.getActivePage();
-  await helpers.getVisuals();
-  for (const vis of global.allVisuals) {
-    const caps = await vis.getCapabilities();
-    console.log(vis.type, caps);
-    for (const cap of caps.dataRoles) {
-      console.log(cap.name, await vis.getDataFields(cap.name));
+import { VisualDescriptor } from "powerbi-client";
+import * as disable from "./disableArea";
+import * as infoCard from "./infoCards";
+import * as introCard from "./introCards";
+export async function onLoadReport(isMainPage: boolean) {
+  console.log("Report is loading");
+  try {
+    if (global.isFirstTimeLoading) {
+      console.log("Local Storage Cleared!");
+      localStorage.clear();
+      global.setIsFirstTimeLoading(false);
     }
+    await helpers.getActivePage();
+    await helpers.getVisualsfromPowerBI();
+    await helpers.createComponentGraph();
+    await helpers.getSettings();
+
+    if (isMainPage) {
+      const trav = await basicTraversalStrategy();
+      global.setBasicTraversal(trav);
+
+      helpers.createEditOnboardingButtons();
+      helpers.createOnboardingButtons();
+    }
+
+    resize(isMainPage);
+    elements.addStylesheet("/onboarding/css/onboarding.css");
+
+    createGuidedTour();
+  } catch (error) {
+    console.log("Error on loading the report", error);
   }
-  await helpers.createComponentGraph();
-  console.log(global.componentGraph);
-  await helpers.getSettings();
-
-  await helpers.handelNewReport();
-
-  const trav = await basicTraversalStrategy();
-  global.setBasicTraversal(trav);
-
-  // const trav = await setTestAllGroupsTraversalStrategy();
-  // console.log(trav);
-  // await updateTraversal(trav);
-
-  helpers.createEditOnboardingButtons();
-  helpers.createOnboardingButtons();
-
-  resize();
-
-  elements.addStylesheet("/onboarding/css/onboarding.css");
-
-  createGuidedTour();
 }
 
 export async function onReloadReport() {
-  const oldPage = global.page.name;
-  await helpers.getActivePage();
+  try {
+    const oldPage = global.page.name;
+    await helpers.getActivePage();
 
-  if (global.page.name !== oldPage && global.page.displayName !== "Info") {
-    await helpers.getVisuals();
-    await createSettings();
-    helpers.resizeEmbed(global.filterOpenedWidth);
+    if (global.page.name !== oldPage && global.page.displayName !== "Info") {
+      await helpers.getVisualsfromPowerBI();
+      await createSettings();
+      helpers.resizeEmbed(global.filterOpenedWidth);
+    }
+  } catch (error) {
+    console.log("Erron reloading the report", error);
   }
 }
 
@@ -95,8 +92,8 @@ export async function onDataSelected(event: { detail: { dataPoints: any[] } }) {
   }
 }
 
-export async function reloadOnboarding() {
-  await resize();
+export async function reloadOnboarding(isMainPage: boolean) {
+  await resize(isMainPage);
   await reloadOnboardingAt();
 }
 
@@ -130,9 +127,12 @@ export async function reloadOnboardingAt() {
 export async function startOnboardingAt(
   type: string,
   visual?: any,
-  count?: number
+  count?: number,
+  outputPane?: boolean
 ) {
-  helpers.reloadOnboarding();
+  // helpers.reloadOnboarding(); // Reload: Why is this needed?
+  infoCard.removeInfoCard();
+  introCard.removeIntroCard();
 
   switch (type) {
     case "intro":
@@ -145,7 +145,11 @@ export async function startOnboardingAt(
       await createFilterInfoCard(count!);
       break;
     case "interaction":
-      await startInteractionExample();
+      if (outputPane) {
+        await createInteractionCardForOutputPane(visual);
+      } else {
+        await startInteractionExample();
+      }
       break;
     case "reportChanged":
       helpers.removeContainerOffset();
@@ -218,15 +222,20 @@ export function createOnboardingOverlay() {
     elements.createButton(attributes);
   }
 
-  global.currentVisuals.forEach(function (visual: any) {
+  global.currentVisuals.forEach(function (visual: VisualDescriptor) {
     if (
       findVisualIndexInTraversal(global.basicTraversal, visual.name, 1) !== -1
     ) {
+      const visualLayoutX = visual.layout.x ?? 0;
+      const visualLayoutY = visual.layout.y ?? 0;
+      const visualLayoutWidth = visual.layout.width ?? 0;
+      const visualLayoutHeight = visual.layout.height ?? 0;
+
       const style = helpers.getClickableStyle(
-        visual.layout.y / reportDivisor,
-        visual.layout.x / reportDivisor,
-        visual.layout.width / reportDivisor,
-        visual.layout.height / reportDivisor
+        visualLayoutY / reportDivisor,
+        visualLayoutX / reportDivisor,
+        visualLayoutWidth / reportDivisor,
+        visualLayoutHeight / reportDivisor
       );
       createOverlay(visual.name, style, 1, getStandartCategories(visual.type));
     }
@@ -285,13 +294,21 @@ export function createOverlayForVisuals(visuals: TraversalElement[]) {
         break;
       default:
         const visual = global.currentVisuals.find(
-          (vis: any) => vis.name === visualInfo.element.id
+          (vis: VisualDescriptor) => vis.name === visualInfo.element.id
         );
+        if (!visual) {
+          return;
+        }
+
+        const visualLayoutX = visual.layout.x ?? 0;
+        const visualLayoutY = visual.layout.y ?? 0;
+        const visualLayoutWidth = visual.layout.width ?? 0;
+        const visualLayoutHeight = visual.layout.height ?? 0;
         style = helpers.getClickableStyle(
-          visual.layout.y / reportDivisor,
-          visual.layout.x / reportDivisor,
-          visual.layout.width / reportDivisor,
-          visual.layout.height / reportDivisor
+          visualLayoutY / reportDivisor,
+          visualLayoutX / reportDivisor,
+          visualLayoutWidth / reportDivisor,
+          visualLayoutHeight / reportDivisor
         );
         style += "border: 5px solid lightgreen;";
         createOverlay(
