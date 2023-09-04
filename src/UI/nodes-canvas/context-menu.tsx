@@ -1,4 +1,3 @@
-import { AnyKindOfDictionary } from "lodash";
 import React, { useState, useEffect, memo } from "react";
 
 interface ContextProps {

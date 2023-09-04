@@ -1,6 +1,6 @@
-import { VisualDescriptor, Page } from "powerbi-client";
+import { VisualDescriptor, Page, models } from "powerbi-client";
 import "powerbi-report-authoring";
-import { exportData } from "../Provenance/utils";
+// import { exportData } from "../Provenance/utils";
 import * as global from "../onboarding/ts/globalVariables";
 import Filter from "./Filter";
 import { getFilterDescription } from "../onboarding/ts/filterInfoCards";
@@ -14,10 +14,34 @@ import ComboChart from "../onboarding/ts/Content/Visualizations/comboChartVisual
 import { TraversalElement, isGroup } from "../onboarding/ts/traversal";
 import Data from "./Data";
 import { ExpertiseLevel, Level } from "../UI/redux/expertise";
+import { IExportDataResult } from "powerbi-models";
 /*
 Get encoding of the visualization
 @param visual (VisualDescriptor) (https://learn.microsoft.com/ru-ru/javascript/api/powerbi/powerbi-client/visualdescriptor.visualdescriptor)
 */
+
+export async function exportData(
+  visual: VisualDescriptor
+): Promise<IExportDataResult | null> {
+  // starting on 12/16/2021, exportData throws error.
+  // If call exportData repeatedly a few times then it starts to work.
+  // Implement pattern to try 4 times before throwing an error
+
+  let tries = 0;
+  let result: models.IExportDataResult | null = null;
+  while (tries < 4) {
+    try {
+      result = await visual.exportData(models.ExportDataType.Summarized);
+      break;
+    } catch (err) {
+      tries++;
+      if (tries === 4) {
+        console.error("exportData - " + visual.title, err);
+      }
+    }
+  }
+  return result;
+}
 
 export async function getPageFilters(
   page: Page
@@ -396,9 +420,7 @@ export async function getVisualInfos(
       case "clusteredBarChart":
         const barChart = new BarChart();
         await barChart.setVisualInformation(visual);
-        visualInfos = await barChart.getClusteredBarChartInfo(
-          expertiseLevel
-        );
+        visualInfos = await barChart.getClusteredBarChartInfo(expertiseLevel);
         break;
       case "clusteredColumnChart":
         const columnChart = new ColumnChart();

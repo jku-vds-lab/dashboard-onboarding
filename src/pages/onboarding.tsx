@@ -4,6 +4,7 @@ import MyReport from "./report";
 
 export default function Onboarding() {
   return (
+    // <MyReport isMainPage={true} />
     <div className="container-fluid" id="flexContainer">
       <div className="row" id="onboarding-header">
         <Link

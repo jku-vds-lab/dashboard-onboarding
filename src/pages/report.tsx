@@ -16,6 +16,7 @@ import * as config from "../Config";
 import * as onboarding from "../onboarding/ts/onboarding";
 import * as global from "../onboarding/ts/globalVariables";
 import { Link } from "react-router-dom";
+import ParentComponent from "../onboarding/ts/Content/Onboarding Elements/parentComponent";
 const powerbi = new service.Service(
   factories.hpmFactory,
   factories.wpmpFactory,
@@ -160,6 +161,7 @@ export default class MyReport extends React.Component<AppProps, AppState> {
     window.addEventListener("resize", () =>
       onboarding.reloadOnboarding(isMainPage)
     );
+    console.log("Reset called");
     powerbi.reset(reportContainer);
   }
 
@@ -278,10 +280,17 @@ export default class MyReport extends React.Component<AppProps, AppState> {
   render(): JSX.Element {
     this.myReport = this.renderMyReport();
     return (
-      <div id="embed-container" ref={this.state.reportRef}>
-        {" "}
-        Loading the report...
-      </div>
+      <>
+        <div id="embed-container" ref={this.state.reportRef}>
+          {" "}
+          Loading the report...
+        </div>
+        <div>
+          {/* {this.myReport && (
+            <ParentComponent report={this.myReport}></ParentComponent>
+          )} */}
+        </div>
+      </>
     );
   }
 }
