@@ -22,6 +22,7 @@ import {
 
 import { VisualDescriptor } from "powerbi-client";
 import { getDataWithId } from "../../componentGraph/helperFunctions";
+import { textSize } from "./sizes";
 
 export async function createInfoCard(
   visual: VisualDescriptor,
@@ -63,6 +64,13 @@ export async function createInfoCard(
     );
   }
 
+  const labelAttributes = global.createLabelAttributes();
+  labelAttributes.id = "sliderLabel";
+  labelAttributes.for = "level";
+  labelAttributes.parentId = "infoCard";
+  labelAttributes.style = `font-size: ${textSize}rem; text-align: center; width: 100%; font-weight: 500;`
+  labelAttributes.content = "Level of Detail:";
+  elements.createLabel(labelAttributes);
   elements.createSlider({id: "level", min: "1", max: "3", parentId: "infoCard"}, setExpertiseLevel);
   elements.createSliderLabels(["Low", "Medium", "High"], "infoCard");
 

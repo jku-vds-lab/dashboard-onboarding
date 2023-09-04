@@ -323,6 +323,7 @@ export function createYoutubeVideo(attributes: {
 export function createSlider(attributes: {id: string; min: string; max:string; parentId:string}, onChange: any){
   const slider = document.createElement("input");
   slider.id = attributes.id;
+  slider.name = attributes.id;
   slider.type = "range";
   slider.min = attributes.min;
   slider.max = attributes.max;
