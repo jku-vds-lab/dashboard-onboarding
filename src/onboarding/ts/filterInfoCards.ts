@@ -75,35 +75,34 @@ export function createFilterList(
   if (!visualData) {
     return;
   }
-  switch (visualData.mediaType) {
-    case "Video":
-      const attributes = global.createDivAttributes();
-      attributes.id = "videoContainer";
-      attributes.style = "position: relative;padding-bottom: 56.25%;height: 0;";
-      attributes.parentId = "contentText";
-      elements.createDiv(attributes);
-      const videoAttributes = global.createVideoAttributes();
-      videoAttributes.id = "video";
-      videoAttributes.width = "100%";
-      videoAttributes.parentId = "videoContainer";
-      elements.createVideo(videoAttributes);
+  const videoURL = localStorage.getItem("globalFiltervideo");
+  if (videoURL) {
+    const attributes = global.createDivAttributes();
+    attributes.id = "videoContainer";
+    attributes.style = "position: relative;padding-bottom: 56.25%;height: 0;";
+    attributes.parentId = "contentText";
+    elements.createDiv(attributes);
+    const videoAttributes = global.createVideoAttributes();
+    videoAttributes.id = "video";
+    videoAttributes.width = "100%";
+    videoAttributes.parentId = "videoContainer";
+    elements.createVideo(videoAttributes);
 
-      const sourceAttributes = global.createSourceAttributes();
-      sourceAttributes.id = "source";
-      sourceAttributes.src = visualData.videoURL;
-      sourceAttributes.type = "video/mp4";
-      sourceAttributes.parentId = "video";
-      elements.createSource(sourceAttributes);
-      break;
-    default:
-      const ul = document.createElement("ul");
-      document.getElementById(parentId)?.appendChild(ul);
+    const sourceAttributes = global.createSourceAttributes();
+    sourceAttributes.id = "source";
+    sourceAttributes.src = visualData.videoURL;
+    sourceAttributes.type = "video/mp4";
+    sourceAttributes.parentId = "video";
+    elements.createSource(sourceAttributes);
+  }
 
-      for (let i = 0; i < list.length; ++i) {
-        const li = document.createElement("li");
-        li.innerHTML = list[i];
-        ul.appendChild(li);
-      }
+  const ul = document.createElement("ul");
+  document.getElementById(parentId)?.appendChild(ul);
+
+  for (let i = 0; i < list.length; ++i) {
+    const li = document.createElement("li");
+    li.innerHTML = list[i];
+    ul.appendChild(li);
   }
 }
 

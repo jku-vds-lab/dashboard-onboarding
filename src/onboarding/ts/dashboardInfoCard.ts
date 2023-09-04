@@ -91,37 +91,35 @@ function setDashboardInfos(traversal: TraversalElement[], count: number) {
     return;
   }
 
-  switch (visualData.mediaType) {
-    case "Video":
-      const attributes = global.createDivAttributes();
-      attributes.id = "videoContainer";
-      attributes.style = "position: relative;padding-bottom: 56.25%;height: 0;";
-      attributes.parentId = "contentText";
-      elements.createDiv(attributes);
-      const videoAttributes = global.createVideoAttributes();
-      videoAttributes.id = "video";
-      videoAttributes.width = "100%";
-      videoAttributes.parentId = "videoContainer";
-      elements.createVideo(videoAttributes);
+  const videoURL = localStorage.getItem("dashboardvideo");
+  if (videoURL) {
+    const attributes = global.createDivAttributes();
+    attributes.id = "videoContainer";
+    attributes.style = "position: relative;padding-bottom: 56.25%;height: 0;";
+    attributes.parentId = "contentText";
+    elements.createDiv(attributes);
+    const videoAttributes = global.createVideoAttributes();
+    videoAttributes.id = "video";
+    videoAttributes.width = "100%";
+    videoAttributes.parentId = "videoContainer";
+    elements.createVideo(videoAttributes);
 
-      const sourceAttributes = global.createSourceAttributes();
-      sourceAttributes.id = "source";
-      sourceAttributes.src = visualData.videoURL;
-      sourceAttributes.type = "video/mp4";
-      sourceAttributes.parentId = "video";
-      elements.createSource(sourceAttributes);
-      break;
-    default:
-      const dashboardInfos = getDashboardInfos(traversal, count);
+    const sourceAttributes = global.createSourceAttributes();
+    sourceAttributes.id = "source";
+    sourceAttributes.src = visualData.videoURL;
+    sourceAttributes.type = "video/mp4";
+    sourceAttributes.parentId = "video";
+    elements.createSource(sourceAttributes);
+  }
 
-      if (dashboardInfos) {
-        createInfoList(
-          dashboardInfos[0],
-          dashboardInfos[1],
-          "contentText",
-          false
-        );
-      }
+  const dashboardInfos = getDashboardInfos(traversal, count);
+  if (dashboardInfos) {
+    createInfoList(
+      dashboardInfos[0],
+      dashboardInfos[1],
+      "contentText",
+      false
+    );
   }
 }
 
