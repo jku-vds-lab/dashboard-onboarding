@@ -1,8 +1,8 @@
-import BarChart from "./../Visualizations/barChartVisualContent";
-import ColumnChart from "./../Visualizations/columnChartVisualContent";
-import ComboChart from "./../Visualizations/comboChartVisualContent";
-import LineChart from "./../Visualizations/lineChartVisualContent";
-import Slicer from "./../Visualizations/slicerVisualContent";
+import BarChart from "../Visualizations/BarChartVisualContent";
+import ColumnChart from "../Visualizations/ColumnChartVisualContent";
+import ComboChart from "../Visualizations/ComboChartVisualContent";
+import LineChart from "../Visualizations/LineChartVisualContent";
+import Slicer from "../Visualizations/SlicerVisualContent";
 
 import { InteractionTextFormat } from "./../Format/basicTextFormat";
 

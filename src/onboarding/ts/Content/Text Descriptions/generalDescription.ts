@@ -1,12 +1,12 @@
 import { GeneralTextFormat } from "../Format/basicTextFormat";
-import LineChart from "../Visualizations/lineChartVisualContent";
-import BarChart from "../Visualizations/barChartVisualContent";
+import LineChart from "../Visualizations/LineChartVisualContent";
+import BarChart from "../Visualizations/BarChartVisualContent";
 import * as helper from "../../../../componentGraph/helperFunctions";
 import Filter from "../../../../componentGraph/Filter";
-import ColumnChart from "./../Visualizations/columnChartVisualContent";
-import ComboChart from "./../Visualizations/comboChartVisualContent";
-import Card from "./../Visualizations/cardVisualContent";
-import Slicer from "../Visualizations/slicerVisualContent";
+import ColumnChart from "../Visualizations/ColumnChartVisualContent";
+import ComboChart from "../Visualizations/ComboChartVisualContent";
+import Card from "../Visualizations/CardVisualContent";
+import Slicer from "../Visualizations/SlicerVisualContent";
 
 interface FormBody {
   prompt: string;

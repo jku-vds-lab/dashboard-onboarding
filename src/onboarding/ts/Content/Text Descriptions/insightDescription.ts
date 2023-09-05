@@ -1,8 +1,8 @@
 import { InsightTextFormat } from "./../Format/basicTextFormat";
-import LineChart from "./../Visualizations/lineChartVisualContent";
-import BarChart from "./../Visualizations/barChartVisualContent";
-import ColumnChart from "./../Visualizations/columnChartVisualContent";
-import ComboChart from "./../Visualizations/comboChartVisualContent";
+import LineChart from "../Visualizations/LineChartVisualContent";
+import BarChart from "../Visualizations/BarChartVisualContent";
+import ColumnChart from "../Visualizations/ColumnChartVisualContent";
+import ComboChart from "../Visualizations/ComboChartVisualContent";
 import * as helper from "../../../../componentGraph/helperFunctions";
 import { Level } from "../../../../UI/redux/expertise";
 

@@ -1,8 +1,8 @@
-import { BasicTextFormat } from "./../Format/basicTextFormat";
+import { BasicTextFormat } from "../Format/basicTextFormat";
 import Visualization from "../../../../componentGraph/Visualization";
 import { VisualDescriptor } from "powerbi-client";
 import { ExpertiseLevel } from "../../../../UI/redux/expertise";
-import ExpertiseText from "./../userLevel";
+import ExpertiseText from "../userLevel";
 
 export default class Card extends Visualization {
   text: BasicTextFormat;
@@ -24,7 +24,7 @@ export default class Card extends Visualization {
     this.dataValue = "";
   }
 
-  async setVisualInformation(visual: VisualDescriptor){
+  async setVisualInformation(visual: VisualDescriptor) {
     await this.setVisualization(visual);
 
     this.dataValue = this.data.data[0].get(this.data.attributes[0]);

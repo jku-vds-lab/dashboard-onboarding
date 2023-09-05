@@ -1,14 +1,14 @@
 import { ExpertiseLevel, Level } from "../../../UI/redux/expertise";
 import { BasicTextFormat } from "./Format/basicTextFormat";
-import BarChart from "./Visualizations/barChartVisualContent";
-import Card from "./Visualizations/cardVisualContent";
-import ColumnChart from "./Visualizations/columnChartVisualContent";
-import ComboChart from "./Visualizations/comboChartVisualContent";
+import BarChart from "./Visualizations/BarChartVisualContent";
+import Card from "./Visualizations/CardVisualContent";
+import ColumnChart from "./Visualizations/ColumnChartVisualContent";
+import ComboChart from "./Visualizations/ComboChartVisualContent";
 import GeneralDescription from "./Text Descriptions/generalDescription";
 import InsightDescription from "./Text Descriptions/insightDescription";
 import InteractionDescription from "./Text Descriptions/interactionDescription";
-import LineChart from "./Visualizations/lineChartVisualContent";
-import Slicer from "./Visualizations/slicerVisualContent";
+import LineChart from "./Visualizations/LineChartVisualContent";
+import Slicer from "./Visualizations/SlicerVisualContent";
 
 export default class ExpertiseText {
   text: BasicTextFormat;

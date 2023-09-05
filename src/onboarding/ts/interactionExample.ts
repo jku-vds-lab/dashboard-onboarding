@@ -6,12 +6,12 @@ import * as elements from "./elements";
 import { findCurrentTraversalVisual } from "./traversal";
 import { VisualDescriptor } from "powerbi-client";
 import InteractionExampleDescription from "./Content/Text Descriptions/interactionExampleDescription";
-import Card from "./Content/Visualizations/cardVisualContent";
-import BarChart from "./Content/Visualizations/barChartVisualContent";
-import ColumnChart from "./Content/Visualizations/columnChartVisualContent";
-import ComboChart from "./Content/Visualizations/comboChartVisualContent";
-import LineChart from "./Content/Visualizations/lineChartVisualContent";
-import Slicer from "./Content/Visualizations/slicerVisualContent";
+import Card from "./Content/Visualizations/CardVisualContent";
+import BarChart from "./Content/Visualizations/BarChartVisualContent";
+import ColumnChart from "./Content/Visualizations/ColumnChartVisualContent";
+import ComboChart from "./Content/Visualizations/ComboChartVisualContent";
+import LineChart from "./Content/Visualizations/LineChartVisualContent";
+import Slicer from "./Content/Visualizations/SlicerVisualContent";
 
 export function startInteractionExample() {
   global.setInteractionMode(true);
@@ -68,7 +68,7 @@ export async function createInteractionCard(visual: VisualDescriptor) {
   await getInteractionExampleText(visual);
 }
 
- async function getInteractionExampleText(visual: VisualDescriptor){
+async function getInteractionExampleText(visual: VisualDescriptor) {
   let exampleText = "";
   switch (visual.type) {
     case "lineClusteredColumnComboChart":

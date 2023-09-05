@@ -1,4 +1,4 @@
-import { BasicTextFormat } from "./../Format/basicTextFormat";
+import { BasicTextFormat } from "../Format/basicTextFormat";
 import Visualization from "../../../../componentGraph/Visualization";
 import { VisualDescriptor } from "powerbi-client";
 import XAxis from "../../../../componentGraph/XAxis";
@@ -6,7 +6,7 @@ import Legend from "../../../../componentGraph/Legend";
 import YAxis from "../../../../componentGraph/YAxis";
 import { getSpecificDataInfo } from "../../../../componentGraph/helperFunctions";
 import { ExpertiseLevel } from "../../../../UI/redux/expertise";
-import ExpertiseText from "./../userLevel";
+import ExpertiseText from "../userLevel";
 import InteractionExampleDescription from "../Text Descriptions/interactionExampleDescription";
 
 export default class ComboChart extends Visualization {
@@ -55,7 +55,7 @@ export default class ComboChart extends Visualization {
     this.lineValues = [];
   }
 
-  async setVisualInformation(visual: VisualDescriptor){
+  async setVisualInformation(visual: VisualDescriptor) {
     await this.setVisualization(visual);
 
     this.axisValue = this.encoding.xAxes[0];
@@ -93,12 +93,9 @@ export default class ComboChart extends Visualization {
         this.lineValues.push(map.get(axis));
       }
     }
-
   }
 
-  getLineClusteredColumnComboChartInfo(
-    expertiseLevel: ExpertiseLevel
-  ) {
+  getLineClusteredColumnComboChartInfo(expertiseLevel: ExpertiseLevel) {
     this.text = this.textDescription.getTextWithUserLevel(
       expertiseLevel,
       "combo",
@@ -107,8 +104,11 @@ export default class ComboChart extends Visualization {
     return this.text;
   }
 
-  getComboChartInteractionExample(){
-    const exampleText = this.interactionExample.getInteractionInfo("combo", this);
-    return exampleText?exampleText:"";
+  getComboChartInteractionExample() {
+    const exampleText = this.interactionExample.getInteractionInfo(
+      "combo",
+      this
+    );
+    return exampleText ? exampleText : "";
   }
 }
