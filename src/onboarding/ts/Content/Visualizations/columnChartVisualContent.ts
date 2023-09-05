@@ -1,11 +1,11 @@
-import { BasicTextFormat } from "./../Format/basicTextFormat";
+import { BasicTextFormat } from "../Format/basicTextFormat";
 import Visualization from "../../../../componentGraph/Visualization";
 import { VisualDescriptor } from "powerbi-client";
 import Legend from "../../../../componentGraph/Legend";
 import YAxis from "../../../../componentGraph/YAxis";
 import { getSpecificDataInfo } from "../../../../componentGraph/helperFunctions";
 import { ExpertiseLevel } from "../../../../UI/redux/expertise";
-import ExpertiseText from "./../userLevel";
+import ExpertiseText from "../userLevel";
 import XAxis from "../../../../componentGraph/XAxis";
 import InteractionExampleDescription from "../Text Descriptions/interactionExampleDescription";
 
@@ -45,7 +45,7 @@ export default class ColumnChart extends Visualization {
     this.dataName = "";
   }
 
-  async setVisualInformation(visual: VisualDescriptor){
+  async setVisualInformation(visual: VisualDescriptor) {
     await this.setVisualization(visual);
     this.axisValue = this.encoding.xAxes[0];
     this.axis = this.encoding.xAxes[0] ? this.encoding.xAxes[0].attribute! : "";
@@ -64,12 +64,9 @@ export default class ColumnChart extends Visualization {
     this.dataName = this.encoding.yAxes[0]
       ? this.encoding.yAxes[0].attribute!
       : "";
-
   }
 
-  getClusteredColumnChartInfo(
-    expertiseLevel: ExpertiseLevel
-  ) {
+  getClusteredColumnChartInfo(expertiseLevel: ExpertiseLevel) {
     this.text = this.textDescription.getTextWithUserLevel(
       expertiseLevel,
       "column",
@@ -79,8 +76,11 @@ export default class ColumnChart extends Visualization {
     return this.text;
   }
 
-  getColumnChartInteractionExample(){
-    const exampleText = this.interactionExample.getInteractionInfo("column", this);
-    return exampleText?exampleText:"";
+  getColumnChartInteractionExample() {
+    const exampleText = this.interactionExample.getInteractionInfo(
+      "column",
+      this
+    );
+    return exampleText ? exampleText : "";
   }
 }

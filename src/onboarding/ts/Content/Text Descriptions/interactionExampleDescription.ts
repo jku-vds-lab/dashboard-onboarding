@@ -1,8 +1,8 @@
-import BarChart from "./../Visualizations/barChartVisualContent";
-import ColumnChart from "./../Visualizations/columnChartVisualContent";
-import ComboChart from "./../Visualizations/comboChartVisualContent";
-import LineChart from "./../Visualizations/lineChartVisualContent";
-import Slicer from "./../Visualizations/slicerVisualContent";
+import BarChart from "../Visualizations/BarChartVisualContent";
+import ColumnChart from "../Visualizations/ColumnChartVisualContent";
+import ComboChart from "../Visualizations/ComboChartVisualContent";
+import LineChart from "../Visualizations/LineChartVisualContent";
+import Slicer from "../Visualizations/SlicerVisualContent";
 
 export default class InteractionExampleDescription {
   private interactionInfo = {
@@ -57,16 +57,15 @@ export default class InteractionExampleDescription {
     return text;
   }
 
-  interactionSlicerText(
-    mark: string,
-    dataPoint: string
-  ) {
+  interactionSlicerText(mark: string, dataPoint: string) {
     let text = "";
 
     text =
       this.interactionInfo.click +
-      mark + dataPoint +
-      this.punctuations.dot + this.lineBreak;
+      mark +
+      dataPoint +
+      this.punctuations.dot +
+      this.lineBreak;
 
     return text;
   }
@@ -92,7 +91,9 @@ export default class InteractionExampleDescription {
       case "slicer":
         return this.interactionText(
           visual.mark,
-          visual.data.data[Math.floor(visual.data.data.length / 2)].get(visual.data.attributes[0]),
+          visual.data.data[Math.floor(visual.data.data.length / 2)].get(
+            visual.data.attributes[0]
+          )
         );
       default:
         visual = visual as LineChart | BarChart | ColumnChart;
