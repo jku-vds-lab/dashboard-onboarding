@@ -151,20 +151,10 @@ export async function similarVisTraversalStrategy() {
   const trav = [];
   // "current visuals", currentVisuals);
   try {
-    const traversalElem1 = createTraversalElement("dashboard");
-    traversalElem1.element = await getTraversalElement("dashboard");
-    traversalElem1.count = 1;
-    trav.push(traversalElem1);
-
-    const traversalElem2 = createTraversalElement("globalFilter");
-    traversalElem2.element = await getTraversalElement("globalFilter");
-    traversalElem2.count = 1;
-    trav.push(traversalElem2);
-
     const groupFilters = createGroup();
-    groupFilters.type = groupType.atLeastOne;
+    groupFilters.type = groupType.onlyOne;
     const groupGeneralVis = createGroup();
-    groupGeneralVis.type = groupType.atLeastOne;
+    groupGeneralVis.type = groupType.onlyOne;
     const groupOtherVis = createGroup();
     groupOtherVis.type = groupType.all;
 
