@@ -128,6 +128,7 @@ export async function reloadOnboardingAt() {
 export async function startOnboardingAt(
   type: string,
   visual?: any,
+  categories?: string[],
   count?: number,
   outputPane?: boolean,
   expertiseLevel?: ExpertiseLevel
@@ -146,7 +147,7 @@ export async function startOnboardingAt(
       createDashboardInfoCard(count!);
       break;
     case "globalFilter":
-      await createFilterInfoCard(getStandartCategories(type), count!, expertiseLevel);
+      await createFilterInfoCard(categories!, count!, expertiseLevel);
       break;
     case "interaction":
       if (outputPane) {
@@ -163,7 +164,7 @@ export async function startOnboardingAt(
       await showVisualChanges(visual);
       break;
     case "visual":
-      await createInfoCard(visual, count!, getStandartCategories(type), expertiseLevel);
+      await createInfoCard(visual, count!, categories!, expertiseLevel);
       break;
     case "explorationOverlay":
       createOnboardingOverlay();

@@ -34,26 +34,37 @@ export default function OutputPane() {
 
   useEffect(() => {
     if (nodeBasicName && expertiseLevel) {
+      let visual = undefined;
       let visualName = "";
-      const visual = global.allVisuals.find((visual) => {
-        return visual.name == nodeBasicName;
-      });
-
-      if (!visual) {
-        return;
-      }
-
-      visualName = visual.name;
-      if (visualName != "dashboard") {
-        if (visualName != "globalFilter") {
+      let category: string[];
+      let count: number;
+      nodeFullName
+      switch(nodeBasicName){
+        case "dashboard":
+        case "globalFilter":
+          visualName = nodeBasicName;
+          break;
+        default:
+          visual = global.allVisuals.find((visual) => {
+            return visual.name == nodeBasicName;
+          });
+    
+          if (!visual) {
+            return;
+          }
+    
           visualName = "visual";
-        }
       }
 
-      if (nodeFullName.includes("Interaction")) {
-        visualName = "interaction";
+      if(nodeFullName.length > 3){
+        category = [nodeFullName[1]];
+        count = parseInt(nodeFullName[2]);
+      }else{
+        category = ["general"]
+        count = parseInt(nodeFullName[1]);
       }
-      startOnboardingAt(visualName, visual, 1, true);
+
+      startOnboardingAt(visualName, visual, category, count, true, expertiseLevel);
     }
   }, [nodeBasicName, nodeFullName, expertiseLevel]);
 
