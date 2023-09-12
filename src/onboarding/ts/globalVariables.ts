@@ -125,9 +125,10 @@ export interface FilterVisual {
   mediaType: mediaType;
   videoURL: string;
   title: string | undefined;
-  generalInformation: string | undefined;
-  filterInfosStatus: string[];
-  changedFilterInfos: string[];
+  generalInfosStatus: string[];
+  interactionInfosStatus: string[];
+  changedGeneralInfos: string[];
+  changedInteractionInfos: string[];
 }
 
 export interface InteractionExample {
@@ -203,8 +204,10 @@ export function createFilterVisual() {
     mediaType: mediaType.text,
     videoURL: "",
     title: "",
-    filterInfosStatus: [] as string[],
-    changedFilterInfos: [] as string[],
+    generalInfosStatus: [] as string[],
+    interactionInfosStatus: [] as string[],
+    changedGeneralInfos: [] as string[],
+    changedInteractionInfos: [] as string[],
   };
 }
 

@@ -12,10 +12,12 @@ import ComboChart from "./Content/Visualizations/ComboChartVisualContent";
 import LineChart from "./Content/Visualizations/LineChartVisualContent";
 import Slicer from "./Content/Visualizations/SlicerVisualContent";
 import GlobalFilters from "./Content/Visualizations/GlobalFiltersVisualContent";
+import { removeFilterInfoCard } from "./filterInfoCards";
 
 export function startInteractionExample() {
   global.setInteractionMode(true);
   infoCard.removeInfoCard();
+  removeFilterInfoCard();
 
   let traversal: TraversalElement[];
   if (global.explorationMode) {

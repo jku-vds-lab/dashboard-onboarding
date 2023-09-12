@@ -167,10 +167,15 @@ async function setFilterInfo() {
   settingsFilterVisual.id = "globalFilter";
   settingsFilterVisual.title = "Filters";
 
-  const filters = await global.page.getFilters();
-  for (let i = 0; i < filters.length; ++i) {
-    settingsFilterVisual.filterInfosStatus.push("original");
-    settingsFilterVisual.changedFilterInfos.push("");
+  const visualInfos = await helpers.getVisualInfos("globalFilter", { Domain: Level.Medium, Vis: Level.Medium });
+
+  for (let i = 0; i < visualInfos.generalInfos.length; ++i) {
+    settingsFilterVisual.generalInfosStatus.push("original");
+    settingsFilterVisual.changedGeneralInfos.push("");
+  }
+  for (let i = 0; i < visualInfos.interactionInfos.length; ++i) {
+    settingsFilterVisual.interactionInfosStatus.push("original");
+    settingsFilterVisual.changedInteractionInfos.push("");
   }
 
   return settingsFilterVisual;

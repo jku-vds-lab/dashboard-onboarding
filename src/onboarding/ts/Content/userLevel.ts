@@ -56,7 +56,7 @@ export default class ExpertiseText {
     this.text.generalImages = generalInfo.generalImages;
     this.text.generalInfos = generalInfo.generalInfos;
 
-    if (visualType !== "card" && visualType !== "slicer") {
+    if (visualType !== "card" && visualType !== "slicer" && visualType !== "globalFilter") {
       visual = visual as LineChart | BarChart | ColumnChart | ComboChart;
       const insightInfo = this.insightDescription.getInsightInfo(
         visualType,
