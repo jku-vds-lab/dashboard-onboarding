@@ -134,6 +134,8 @@ export async function startOnboardingAt(
 ) {
   // helpers.reloadOnboarding(); // Reload: Why is this needed?
   infoCard.removeInfoCard();
+  removeFilterInfoCard();
+  removeDashboardInfoCard();
   introCard.removeIntroCard();
 
   switch (type) {
