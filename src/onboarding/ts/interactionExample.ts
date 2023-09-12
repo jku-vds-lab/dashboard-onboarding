@@ -32,14 +32,15 @@ export function startInteractionExample() {
   } else{
     const visual = findCurrentTraversalVisual();
     if(visual){
-      createInteractionCard(traversalElemId, visual[0]);
+      createInteractionCard(visual[0], visual[1]);
     }
   }
 }
 
-export async function createInteractionCard(visualType: string, visual?: VisualDescriptor) {
+export async function createInteractionCard(visualId: string, visual?: VisualDescriptor) {
   let position;
-  if(visualType === "globalFilter"){
+  let visualType;
+  if(visualId === "globalFilter"){
     disable.createFilterDisabledArea();
 
     position = {
@@ -48,6 +49,7 @@ export async function createInteractionCard(visualType: string, visual?: VisualD
       pos: "left"
     }
 
+    visualType = visualId;
   } else {
     disable.disableFrame();
     disable.createDisabledArea(visual);
@@ -57,6 +59,8 @@ export async function createInteractionCard(visualType: string, visual?: VisualD
       global.infoCardWidth,
       global.infoCardMargin
     );
+
+    visualType = visual!.type;
   }
 
   const style = helpers.getCardStyle(

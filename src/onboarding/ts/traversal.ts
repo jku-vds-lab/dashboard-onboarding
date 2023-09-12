@@ -296,6 +296,7 @@ export function findCurrentTraversalVisual() {
       traversalElem.id !== "globalFilter"
     ) {
       return [
+        traversalElem.id,
         currentVisuals.find((vis: any) => vis.name === visInGroup.element.id),
         visInGroup.categories,
         visInGroup.count,
@@ -304,10 +305,19 @@ export function findCurrentTraversalVisual() {
   }
 
   if (
-    traversalElem.element.id !== "dashboard" &&
-    traversalElem.element.id !== "globalFilter"
+    traversalElem.element.id === "globalFilter"
   ) {
     return [
+      traversalElem.element.id,
+      null,
+      traversalElem.categories,
+      traversalElem.count,
+    ];
+  } else if (
+    traversalElem.element.id !== "dashboard"
+  ) {
+    return [
+      traversalElem.element.id,
       currentVisuals.find((vis: any) => vis.name === traversalElem.element.id),
       traversalElem.categories,
       traversalElem.count,

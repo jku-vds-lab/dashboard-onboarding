@@ -114,7 +114,7 @@ export async function createTabsWithContent(
     }
 
     createInfoList(interactionImages, interactionInfos, "interactionTab", false);
-    onboardingHelpers.createInteractionExampleButton("interactionTab");
+    // onboardingHelpers.createInteractionExampleButton("interactionTab");
   }
 }
 

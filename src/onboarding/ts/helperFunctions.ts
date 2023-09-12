@@ -38,6 +38,7 @@ import {
   findCurrentTraversalVisualIndex,
 } from "./traversal";
 import * as helper from "../../componentGraph/helperFunctions";
+import { createFilterInfoCard } from "./filterInfoCards";
 
 export function addContainerOffset(cardHeight: number) {
   const rect = document
@@ -89,11 +90,15 @@ function backToVisual() {
   removeHintCard();
   const traversalElement = findCurrentTraversalVisual();
   if (traversalElement) {
-    createInfoCard(
-      traversalElement[0],
-      traversalElement[2],
-      traversalElement[1]
-    );
+    if(traversalElement[0] === "globalFilter"){
+      createFilterInfoCard(traversalElement[2], traversalElement[3]);
+    } else {
+      createInfoCard(
+        traversalElement[1],
+        traversalElement[3],
+        traversalElement[2]
+      );
+    }
   }
 }
 

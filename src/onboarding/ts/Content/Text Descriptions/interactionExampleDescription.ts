@@ -11,6 +11,8 @@ export default class InteractionExampleDescription {
     representing: " representing ",
     data: " data ",
     element: "element ",
+    filter: " filter ",
+    select: " select one of its "
   };
 
   private prepositions = {
@@ -58,6 +60,20 @@ export default class InteractionExampleDescription {
     return text;
   }
 
+  interactionGlobalFilterText(
+    mark: string,
+    dataName: string,
+  ) {
+    const text =
+      this.interactionInfo.click + this.interactionInfo.filter +
+      dataName +
+      this.prepositions.and + this.interactionInfo.select +
+      mark +
+      this.punctuations.dot + this.lineBreak;
+
+    return text;
+  }
+
   getInteractionInfo(
     visualType: string,
     visual: LineChart | BarChart | ColumnChart | ComboChart | Slicer | GlobalFilters
@@ -74,10 +90,9 @@ export default class InteractionExampleDescription {
       case "globalFilter":
         visual = visual as GlobalFilters;
         const exampleFilter = visual.filters[Math.floor(visual.filters.length / 2)];
-        return this.interactionText(
+        return this.interactionGlobalFilterText(
           visual.mark,
-          exampleFilter.attribute,
-          exampleFilter.values
+          exampleFilter.attribute
         );
       default:
         visual = visual as LineChart | BarChart | ColumnChart;
