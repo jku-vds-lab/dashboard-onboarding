@@ -12,7 +12,7 @@ import {
 } from "./traversal";
 import { VisualDescriptor } from "powerbi-client";
 import { reportId } from "../../Config";
-import { Level } from "../../UI/redux/expertise";
+import { store } from "../../UI/redux/store";
 
 let visualIndex: number;
 
@@ -141,7 +141,9 @@ async function setVisualsInfo(id: string) {
     )!;
     settingsVisual.title = CGVisual.title.title;
 
-    const visualInfos = await helpers.getVisualInfos(visual.type, { Domain: Level.Medium, Vis: Level.Medium }, visual);
+    const state = store.getState();
+
+    const visualInfos = await helpers.getVisualInfos(visual.type, state.expertise, visual);
 
     for (let i = 0; i < visualInfos.generalInfos.length; ++i) {
       settingsVisual.generalInfosStatus.push("original");
@@ -167,7 +169,9 @@ async function setFilterInfo() {
   settingsFilterVisual.id = "globalFilter";
   settingsFilterVisual.title = "Filters";
 
-  const visualInfos = await helpers.getVisualInfos("globalFilter", { Domain: Level.Medium, Vis: Level.Medium });
+  const state = store.getState();
+
+  const visualInfos = await helpers.getVisualInfos("globalFilter", state.expertise);
 
   for (let i = 0; i < visualInfos.generalInfos.length; ++i) {
     settingsFilterVisual.generalInfosStatus.push("original");

@@ -17,6 +17,7 @@ import { getTraversalElement } from "./createSettings";
 import { IDefaultNode } from "../../UI/nodes-canvas/nodes/defaultNode";
 import { IGroupNode } from "../../UI/nodes-canvas/nodes/groupNode";
 import { VisualDescriptor } from "powerbi-client";
+import { store } from "../../UI/redux/store";
 
 export let traversalStrategy: TraversalElement[] = [];
 export const lookedAtInGroup = createLookedAtInGroup();
@@ -123,12 +124,14 @@ export function createInformationCard(
   removeDashboardInfoCard();
   removeFilterInfoCard();
   removeOnboardingOverlay();
+
+  const state = store.getState();
   switch (type) {
     case "dashboard":
       createDashboardInfoCard(count);
       break;
     case "globalFilter":
-      createFilterInfoCard(getStandartCategories("globalFilter"), count);
+      createFilterInfoCard(getStandartCategories("globalFilter"), count, state.expertise);
       break;
     case "group":
       createExplainGroupCard();
@@ -140,7 +143,8 @@ export function createInformationCard(
           global.allVisuals.find((vis) => vis.name === visualId)
         ),
         count,
-        categories!
+        categories!,
+        state.expertise
       );
       break;
   }

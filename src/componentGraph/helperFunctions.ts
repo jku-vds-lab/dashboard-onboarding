@@ -387,7 +387,7 @@ export function firstLetterToUpperCase(str: string) {
 
 export async function getVisualInfos(
   visualType: string,
-  expertiseLevel: ExpertiseLevel = { Domain: Level.Medium, Vis: Level.Medium },
+  expertiseLevel?: ExpertiseLevel,
   visual?: VisualDescriptor
 ): Promise<BasicTextFormat> {
   let visualInfos: BasicTextFormat = {
@@ -399,6 +399,9 @@ export async function getVisualInfos(
     interactionInfos: [],
   };
   try {
+    if(!expertiseLevel){
+      expertiseLevel = { Domain: Level.Medium, Vis: Level.Medium };
+    }
     switch (visualType) {
       case "card":
       case "multiRowCard":

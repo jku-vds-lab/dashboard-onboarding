@@ -39,6 +39,7 @@ import {
 } from "./traversal";
 import * as helper from "../../componentGraph/helperFunctions";
 import { createFilterInfoCard } from "./filterInfoCards";
+import { store } from "../../UI/redux/store";
 
 export function addContainerOffset(cardHeight: number) {
   const rect = document
@@ -88,15 +89,19 @@ function backToVisual() {
   removeInteractionCard();
   removeShowChangesCard();
   removeHintCard();
+
+  const state = store.getState();
+
   const traversalElement = findCurrentTraversalVisual();
   if (traversalElement) {
     if(traversalElement[0] === "globalFilter"){
-      createFilterInfoCard(traversalElement[2], traversalElement[3]);
+      createFilterInfoCard(traversalElement[2], traversalElement[3], state.expertise);
     } else {
       createInfoCard(
         traversalElement[1],
         traversalElement[3],
-        traversalElement[2]
+        traversalElement[2],
+        state.expertise
       );
     }
   }
