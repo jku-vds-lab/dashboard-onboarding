@@ -9,8 +9,12 @@ import { createInfoCardButtons } from "./infoCards";
 import { replacer } from "../../componentGraph/ComponentGraph";
 import { TraversalElement, createTraversalElement } from "./traversal";
 import { getTraversalElement } from "./createSettings";
+import { VisualDescriptor } from "powerbi-client";
+import GlobalFilters from "./Content/Visualizations/GlobalFiltersVisualContent";
+import { createInfoList, createTabs } from "./visualInfo";
+import { ExpertiseLevel } from "../../UI/redux/expertise";
 
-export async function createFilterInfoCard(count: number) {
+export async function createFilterInfoCard(categories: string[], count: number, expertiseLevel?: ExpertiseLevel) {
   createFilterDisabledArea();
 
   const style = onboardingHelpers.getCardStyle(
@@ -39,7 +43,7 @@ export async function createFilterInfoCard(count: number) {
   const filterData = helpers.getDataWithId(
     traversal,
     "globalFilter",
-    ["general"],
+    categories,
     count
   );
   if (!filterData) {
@@ -48,14 +52,69 @@ export async function createFilterInfoCard(count: number) {
 
   onboardingHelpers.createCardContent(
     filterData.title,
-    filterData.generalInformation,
+   "",
     "filterInfoCard"
   );
   createInfoCardButtons(traversal, "globalFilter", [], count);
 
-  const filters = await getFilterInfos(traversal, count);
-  if (filters) {
-    createFilterList(traversal, filters, "contentText", count);
+  createTabsWithContent(filterData, categories, expertiseLevel);
+  onboardingHelpers.createInteractionExampleButton("interactionTab");
+}
+
+export async function createTabsWithContent(
+  visualData: any,
+  categories: string[],
+  expertiseLevel?: ExpertiseLevel
+) {
+  const visualInfos = await helpers.getVisualInfos("globalFilter", expertiseLevel);
+
+  createTabs(categories);
+
+  if (categories.includes("general")) {
+    const generalImages = [];
+    const generalInfos = [];
+
+    for (let i = 0; i < visualData.generalInfosStatus.length; ++i) {
+      switch (visualData.generalInfosStatus[i]) {
+        case global.infoStatus.original:
+          generalImages.push(visualInfos.generalImages[i]);
+          generalInfos.push(visualInfos.generalInfos[i]);
+          break;
+        case global.infoStatus.changed:
+        case global.infoStatus.added:
+          generalImages.push("dotImg");
+          generalInfos.push(visualData.changedGeneralInfos[i]);
+          break;
+        default:
+          break;
+      }
+    }
+
+    createInfoList(generalImages, generalInfos, "generalTab", false);
+  }
+
+  if (categories.includes("interaction")) {
+    const interactionImages = [];
+    const interactionInfos = [];
+
+    for (let i = 0; i < visualData.interactionInfosStatus.length; ++i) {
+      switch (visualData.interactionInfosStatus[i]) {
+        case global.infoStatus.original:
+          interactionImages.push(visualInfos.interactionImages[i]);
+          interactionInfos.push(visualInfos.interactionInfos[i]);
+          break;
+        case global.infoStatus.changed:
+        case global.infoStatus.added:
+          interactionImages.push("dotImg");
+          interactionInfos.push(visualData.changedInteractionInfos[i]);
+          break;
+        default:
+          break;
+      }
+    }
+
+    createInfoList(interactionImages, interactionInfos, "interactionTab", false);
+    onboardingHelpers.createInteractionExampleButton("interactionTab");
   }
 }
 
@@ -112,7 +171,7 @@ export function getFilterDescription(filter: Filter) {
   if (filter.operation) {
     if (filter.values.length != 0) {
       valueText =
-        " Its current value is " + helpers.dataToString(filter.values) + ".";
+        " Its current value is " + helpers.dataToString(filter.values, "and") + ".";
     }
     filterText =
       "The operation " +

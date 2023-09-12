@@ -282,11 +282,7 @@ export function createEditOnboardingButtons() {
 
 export async function createInteractionExampleButton(
   parentId: string,
-  visual: VisualDescriptor
 ) {
-  if (!(await helper.getVisualData(visual))) {
-    return;
-  }
   elements.removeElement("interactionExample");
 
   const attributes = global.createButtonAttributes();
@@ -507,11 +503,11 @@ export function recreateInteractionExampleButton() {
     const visual = global.currentVisuals[global.currentVisualIndex];
     let parent = document.getElementById("visualInfoTabs");
     if (parent) {
-      createInteractionExampleButton("interactionTab", visual);
+      createInteractionExampleButton("interactionTab");
     }
     parent = document.getElementById("visualInfo");
     if (parent) {
-      createInteractionExampleButton("visualInfo", visual);
+      createInteractionExampleButton("visualInfo");
     }
   }
 }

@@ -203,7 +203,6 @@ export function createFilterVisual() {
     mediaType: mediaType.text,
     videoURL: "",
     title: "",
-    generalInformation: "",
     filterInfosStatus: [] as string[],
     changedFilterInfos: [] as string[],
   };

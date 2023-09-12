@@ -35,6 +35,7 @@ import { VisualDescriptor } from "powerbi-client";
 import * as disable from "./disableArea";
 import * as infoCard from "./infoCards";
 import * as introCard from "./introCards";
+import { ExpertiseLevel } from "../../UI/redux/expertise";
 export async function onLoadReport(isMainPage: boolean) {
   console.log("Report is loading");
   try {
@@ -128,7 +129,8 @@ export async function startOnboardingAt(
   type: string,
   visual?: any,
   count?: number,
-  outputPane?: boolean
+  outputPane?: boolean,
+  expertiseLevel?: ExpertiseLevel
 ) {
   // helpers.reloadOnboarding(); // Reload: Why is this needed?
   infoCard.removeInfoCard();
@@ -142,7 +144,7 @@ export async function startOnboardingAt(
       createDashboardInfoCard(count!);
       break;
     case "globalFilter":
-      await createFilterInfoCard(count!);
+      await createFilterInfoCard(getStandartCategories(type), count!, expertiseLevel);
       break;
     case "interaction":
       if (outputPane) {
@@ -159,7 +161,7 @@ export async function startOnboardingAt(
       await showVisualChanges(visual);
       break;
     case "visual":
-      await createInfoCard(visual, count!, getStandartCategories(visual.type));
+      await createInfoCard(visual, count!, getStandartCategories(type), expertiseLevel);
       break;
     case "explorationOverlay":
       createOnboardingOverlay();

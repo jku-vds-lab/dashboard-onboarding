@@ -46,6 +46,19 @@ export default function Components(props: Props) {
         key: "globalFilter",
       };
       inputNodes.push(inputNode);
+
+      inputNode = {
+        mainComponent: createNode(
+          "globalFilter",
+          className + " GlobalFilter",
+          "GlobalFilters",
+          "Interaction",
+          visParentId,
+          "GlobalFilter"
+        ),
+        key: "globalFilter",
+      };
+      inputNodes.push(inputNode);
       break;
     default:
       const vis = allVisuals.find((vis) => vis.name === props.visual);

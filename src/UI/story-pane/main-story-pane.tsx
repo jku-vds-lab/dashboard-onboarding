@@ -57,15 +57,9 @@ export default function StoryPane(props: Props) {
           case "dashboard":
             await getDashboardInfoInEditor(1);
             break;
-          case "globalFilter":
-            getFilterInfoInEditor(1);
-            break;
-          case "group":
-            break;
           default:
             if (nodeFullName) {
               await visInfo.getVisualDescInEditor(expertiseLevel);
-              // await getVisualDescInEditor(nodeFullName);
             }
             break;
         }

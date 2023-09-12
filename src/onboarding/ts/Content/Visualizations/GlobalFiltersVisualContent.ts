@@ -5,16 +5,16 @@ import Value from "../../../../componentGraph/Value";
 import { ExpertiseLevel } from "../../../../UI/redux/expertise";
 import ExpertiseText from "../userLevel";
 import InteractionExampleDescription from "../Text Descriptions/interactionExampleDescription";
+import GlobalFilter from "../../../../componentGraph/GlobalFilter";
 
-export default class Slicer extends Visualization {
+export default class GlobalFilters extends GlobalFilter{
   text: BasicTextFormat;
   textDescription: ExpertiseText;
   interactionExample: InteractionExampleDescription;
-  dataValue: Value;
+  filterNames: string[];
 
   constructor() {
     super();
-
     this.text = {
       generalImages: [],
       generalInfos: [],
@@ -25,26 +25,26 @@ export default class Slicer extends Visualization {
     };
     this.textDescription = new ExpertiseText();
     this.interactionExample = new InteractionExampleDescription();
-    this.dataValue = new Value();
+    this.filterNames = [];
   }
 
-  async setVisualInformation(visual: VisualDescriptor){
-    await this.setVisualization(visual);
-  }
+    async setGlobalFilterInformation(){
+        await this.getGlobalFilter();
+        
+        this.filterNames = this.filters.map((filter) => filter.attribute);
+    }
 
-  getSlicerInfo(
-    expertiseLevel: ExpertiseLevel
-  ) {
+  getGlobalFilterInfo(expertiseLevel: ExpertiseLevel) {
     this.text = this.textDescription.getTextWithUserLevel(
       expertiseLevel,
-      "slicer",
+      "globalFilter",
       this
     );
     return this.text;
   }
 
-  getSlicerInteractionExample(){
-    const exampleText = this.interactionExample.getInteractionInfo("slicer", this);
+  getGlobalFilterInteractionExample(){
+    const exampleText = this.interactionExample.getInteractionInfo("globalFilter", this);
     return exampleText?exampleText:"";
   }
 }

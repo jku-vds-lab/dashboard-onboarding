@@ -23,11 +23,13 @@ import {
 import { VisualDescriptor } from "powerbi-client";
 import { getDataWithId } from "../../componentGraph/helperFunctions";
 import { textSize } from "./sizes";
+import { ExpertiseLevel } from "../../UI/redux/expertise";
 
 export async function createInfoCard(
   visual: VisualDescriptor,
   count: number,
-  categories: string[]
+  categories: string[],
+  expertiseLevel?: ExpertiseLevel
 ) {
   disable.disableFrame();
   disable.createDisabledArea(visual);
@@ -90,7 +92,7 @@ export async function createInfoCard(
   helpers.createCardContent(visualData?.title, "", "infoCard");
 
   createInfoCardButtons(traversal, visual.name, categories, count);
-  await createVisualInfo(traversal, visual, count, categories);
+  await createVisualInfo(traversal, visual, count, categories, expertiseLevel);
 }
 
 //ToDo update expirancelavel when slider value changes

@@ -9,6 +9,7 @@ import InsightDescription from "./Text Descriptions/insightDescription";
 import InteractionDescription from "./Text Descriptions/interactionDescription";
 import LineChart from "./Visualizations/LineChartVisualContent";
 import Slicer from "./Visualizations/SlicerVisualContent";
+import GlobalFilters from "./Visualizations/GlobalFiltersVisualContent";
 
 export default class ExpertiseText {
   text: BasicTextFormat;
@@ -33,7 +34,7 @@ export default class ExpertiseText {
   getTextWithUserLevel(
     expertiseLevel: ExpertiseLevel,
     visualType: string,
-    visual: LineChart | BarChart | ColumnChart | ComboChart | Card | Slicer
+    visual: LineChart | BarChart | ColumnChart | ComboChart | Card | Slicer | GlobalFilters
   ) {
     let generalInfo;
     if (expertiseLevel.Vis == Level.Low) {
@@ -72,7 +73,8 @@ export default class ExpertiseText {
         | BarChart
         | ColumnChart
         | ComboChart
-        | Slicer;
+        | Slicer
+        | GlobalFilters;
       const interactionInfo = this.interactionDescription.getInteractionInfo(
         visualType,
         visual

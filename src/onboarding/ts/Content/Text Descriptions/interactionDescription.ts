@@ -1,6 +1,8 @@
+import { dataToString } from "../../../../componentGraph/helperFunctions";
 import BarChart from "../Visualizations/BarChartVisualContent";
 import ColumnChart from "../Visualizations/ColumnChartVisualContent";
 import ComboChart from "../Visualizations/ComboChartVisualContent";
+import GlobalFilters from "../Visualizations/GlobalFiltersVisualContent";
 import LineChart from "../Visualizations/LineChartVisualContent";
 import Slicer from "../Visualizations/SlicerVisualContent";
 
@@ -112,7 +114,7 @@ export default class InteractionDescription {
 
   getInteractionInfo(
     visualType: string,
-    visual: LineChart | BarChart | ColumnChart | ComboChart | Slicer
+    visual: LineChart | BarChart | ColumnChart | ComboChart | Slicer | GlobalFilters
   ) {
     switch (visualType) {
       case "slicer":
@@ -120,6 +122,13 @@ export default class InteractionDescription {
         this.interactionText.interactionImages.push("elemClickImg");
         this.interactionText.interactionInfos.push(
           this.interactionClickText(visual.mark, visual.data.attributes[0])
+        );
+        break;
+      case "globalFilter":
+        visual = visual as GlobalFilters;
+        this.interactionText.interactionImages.push("elemClickImg");
+        this.interactionText.interactionInfos.push(
+          this.interactionClickText(visual.mark, dataToString(visual.filterNames, "or"))
         );
         break;
       default:

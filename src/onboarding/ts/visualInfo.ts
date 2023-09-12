@@ -7,12 +7,14 @@ import { divisor } from "./sizes";
 import { TraversalElement } from "./traversal";
 import { icons } from "./textIcons";
 import { VisualDescriptor } from "powerbi-client";
+import { ExpertiseLevel } from "../../UI/redux/expertise";
 
 export async function createVisualInfo(
   traversal: TraversalElement[],
   visual: VisualDescriptor,
   count: number,
-  categories: string[]
+  categories: string[], 
+  expertiseLevel?: ExpertiseLevel
 ) {
   document.getElementById("contentText")!.innerHTML = "";
   const visualData = helpers.getDataWithId(
@@ -47,16 +49,16 @@ export async function createVisualInfo(
     elements.createSource(sourceAttributes);
   }
 
-  await info.createTabsWithContent(visual, visualData, count, categories);
+  await info.createTabsWithContent(visual, visualData, categories, expertiseLevel);
 }
 
 export async function createTabsWithContent(
   visual: VisualDescriptor,
   visualData: any,
-  count: number,
-  categories: string[]
+  categories: string[], 
+  expertiseLevel?: ExpertiseLevel
 ) {
-  const visualInfos = await helpers.getVisualInfos(visual);
+  const visualInfos = await helpers.getVisualInfos(visual.type, expertiseLevel, visual);
 
   createTabs(categories);
 
@@ -109,7 +111,7 @@ export async function createTabsWithContent(
       "interactionTab",
       false
     );
-    helper.createInteractionExampleButton("interactionTab", visual);
+    helper.createInteractionExampleButton("interactionTab");
   }
 
   if (categories.includes("insight")) {
@@ -165,7 +167,7 @@ export async function createTabsWithContent(
   }
 }
 
-function createTabs(categories: string[]) {
+export function createTabs(categories: string[]) {
   let divAttributes = global.createDivAttributes();
   divAttributes.id = "visualInfoTabs";
   divAttributes.parentId = "contentText";

@@ -128,7 +128,7 @@ export function createInformationCard(
       createDashboardInfoCard(count);
       break;
     case "globalFilter":
-      createFilterInfoCard(count);
+      createFilterInfoCard(getStandartCategories("globalFilter"), count);
       break;
     case "group":
       createExplainGroupCard();
@@ -580,11 +580,11 @@ export function getStandartCategories(type: string) {
     case "multiRowCard":
       categories = ["general"];
       break;
+    case "globalFilter":
     case "slicer":
       categories = ["general", "interaction"];
       break;
     case "dashboard":
-    case "globalFilter":
       categories = ["general"];
       break;
     default:

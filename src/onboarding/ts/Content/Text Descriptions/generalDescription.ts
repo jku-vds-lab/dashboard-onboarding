@@ -7,6 +7,7 @@ import ColumnChart from "../Visualizations/ColumnChartVisualContent";
 import ComboChart from "../Visualizations/ComboChartVisualContent";
 import Card from "../Visualizations/CardVisualContent";
 import Slicer from "../Visualizations/SlicerVisualContent";
+import GlobalFilters from "../Visualizations/GlobalFiltersVisualContent";
 
 interface FormBody {
   prompt: string;
@@ -54,7 +55,8 @@ export default class GeneralDescription {
     chart: " this chart ",
     currentValue: "This visual shows the current value of ",
     which: "which is ",
-    with: "With this one ",
+    with: "With this Visual ",
+    globalFilter: "Here you can filter the report by ",
     filter: "you can filter by ",
   };
 
@@ -131,6 +133,17 @@ export default class GeneralDescription {
     text =
       this.generalInfo.with +
       this.generalInfo.filter +
+      dataName +
+      this.punctuations.dot +
+      this.lineBreak;
+
+    return text;
+  }
+
+  globalFilterText(dataName: string) {
+    let text = "";
+    text =
+      this.generalInfo.globalFilter +
       dataName +
       this.punctuations.dot +
       this.lineBreak;
@@ -228,7 +241,7 @@ export default class GeneralDescription {
           this.punctuations.dot +
           this.lineBreak;
 
-        const valueText = helper.dataToString(filter.values);
+        const valueText = helper.dataToString(filter.values, "and");
         if (valueText !== "") {
           text +=
             this.filterInfo.value +
@@ -244,8 +257,9 @@ export default class GeneralDescription {
 
   getBeginnerVisDesc(
     visualType: string,
-    visual: LineChart | BarChart | ColumnChart | ComboChart | Card | Slicer
+    visual: LineChart | BarChart | ColumnChart | ComboChart | Card | Slicer | GlobalFilters
   ) {
+    let filters;
     this.text.generalImages.push("infoImg");
     this.text.generalInfos.push(visual.description);
     const purposeText = this.purposeText(visual?.task);
@@ -260,6 +274,8 @@ export default class GeneralDescription {
 
         this.text.generalImages.push("dataImg");
         this.text.generalInfos.push(generalTextCard + purposeText);
+
+        filters = visual.localFilters.localFilters;
         break;
       case "slicer":
         visual = visual as Slicer;
@@ -267,13 +283,24 @@ export default class GeneralDescription {
 
         this.text.generalImages.push("dataImg");
         this.text.generalInfos.push(generalTextSlicer + purposeText);
+
+        filters = visual.localFilters.localFilters;
+        break;
+      case "globalFilter":
+        visual = visual as GlobalFilters;
+        const generalTextFilter = this.globalFilterText(helper.dataToString(visual.filterNames, "or"));
+
+        this.text.generalImages.push("dataImg");
+        this.text.generalInfos.push(generalTextFilter + purposeText);
+
+        filters = visual.filters;
         break;
       default:
         let dataName;
         let marks = [];
         if (visualType === "combo") {
           visual = visual as ComboChart;
-          dataName = helper.dataToString(visual.data.attributes);
+          dataName = helper.dataToString(visual.data.attributes, "and");
           marks = ["Line", "Bar"];
         } else {
           visual = visual as LineChart | BarChart | ColumnChart;
@@ -281,8 +308,8 @@ export default class GeneralDescription {
           marks = [visual.mark];
         }
 
-        const dataString = helper.dataToString(visual.data.attributes!);
-        const channelString = helper.dataToString(visual.channel.channel!);
+        const dataString = helper.dataToString(visual.data.attributes!, "and");
+        const channelString = helper.dataToString(visual.channel.channel!, "and");
 
         const generalText = this.generalText(channelString, dataString);
 
@@ -340,9 +367,11 @@ export default class GeneralDescription {
           this.text.generalImages.push("barChartImg");
         }
         this.text.generalInfos.push(markText);
+
+        filters = visual.localFilters.localFilters;
     }
 
-    const filterText = this.filterText(visual.localFilters.localFilters);
+    const filterText = this.filterText(filters);
     if (filterText !== "") {
       this.text.generalImages.push("filterImg");
       this.text.generalInfos.push(this.filterInfo.general + filterText);
@@ -352,8 +381,9 @@ export default class GeneralDescription {
 
   getIntermediateVisDesc(
     visualType: string,
-    visual: LineChart | BarChart | ColumnChart | ComboChart | Card | Slicer
+    visual: LineChart | BarChart | ColumnChart | ComboChart | Card | Slicer | GlobalFilters
   ) {
+    let filters;
     switch (visualType) {
       case "card":
         visual = visual as Card;
@@ -364,6 +394,8 @@ export default class GeneralDescription {
 
         this.text.generalImages.push("dataImg");
         this.text.generalInfos.push(generalTextCard);
+
+        filters = visual.localFilters.localFilters;
         break;
       case "slicer":
         visual = visual as Slicer;
@@ -371,6 +403,17 @@ export default class GeneralDescription {
 
         this.text.generalImages.push("dataImg");
         this.text.generalInfos.push(generalTextSlicer);
+
+        filters = visual.localFilters.localFilters;
+        break;
+      case "globalFilter":
+        visual = visual as GlobalFilters;
+        const generalTextFilter = this.globalFilterText(helper.dataToString(visual.filterNames, "or"));
+
+        this.text.generalImages.push("dataImg");
+        this.text.generalInfos.push(generalTextFilter);
+
+        filters = visual.filters;
         break;
       default:
         visual = visual as LineChart | BarChart | ColumnChart | ComboChart;
@@ -379,7 +422,7 @@ export default class GeneralDescription {
         let marks = [];
         if (visualType === "combo") {
           visual = visual as ComboChart;
-          dataName = helper.dataToString(visual.data.attributes);
+          dataName = helper.dataToString(visual.data.attributes, "and");
           marks = ["line", "bar"];
         } else {
           visual = visual as LineChart | BarChart | ColumnChart;
@@ -454,9 +497,11 @@ export default class GeneralDescription {
           this.text.generalImages.push("barChartImg");
         }
         this.text.generalInfos.push(markText);
+
+        filters = visual.localFilters.localFilters;
     }
 
-    const filterText = this.filterText(visual.localFilters.localFilters);
+    const filterText = this.filterText(filters);
     if (filterText !== "") {
       this.text.generalImages.push("filterImg");
       this.text.generalInfos.push(this.filterInfo.general + filterText);
@@ -466,7 +511,7 @@ export default class GeneralDescription {
 
   getAdvancedVisDesc(
     visualType: string,
-    visual: LineChart | BarChart | ColumnChart | ComboChart | Card | Slicer
+    visual: LineChart | BarChart | ColumnChart | ComboChart | Card | Slicer | GlobalFilters
   ) {
     switch (visualType) {
       case "card":
@@ -486,13 +531,20 @@ export default class GeneralDescription {
         this.text.generalImages.push("dataImg");
         this.text.generalInfos.push(generalTextSlicer);
         break;
+      case "globalFilter":
+        visual = visual as GlobalFilters;
+        const generalTextFilter = this.globalFilterText(helper.dataToString(visual.filterNames, "or"));
+
+        this.text.generalImages.push("dataImg");
+        this.text.generalInfos.push(generalTextFilter);
+        break;
       default:
         visual = visual as LineChart | BarChart | ColumnChart | ComboChart;
         let dataName;
         let marks = [];
         if (visualType === "combo") {
           visual = visual as ComboChart;
-          dataName = helper.dataToString(visual.data.attributes);
+          dataName = helper.dataToString(visual.data.attributes, "and");
           marks = ["line", "bar"];
         } else {
           visual = visual as LineChart | BarChart | ColumnChart;
@@ -521,10 +573,4 @@ export default class GeneralDescription {
 
     return this.text;
   }
-
-  // get beginner, intermediate and advanced insight information
-
-  // interaction information always stays the same
-
-  // all text should be here and not in helper functions, not anywhere else. Max within the vis. But no where else.
 }

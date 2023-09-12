@@ -39,7 +39,7 @@ export default class SaveAndFetchContent {
     count: number
   ) {
     try {
-      localStorage.setItem(visFullName.toString(), JSON.stringify(test));
+      localStorage.setItem(visFullName[0], JSON.stringify(test));
     } catch (error) {
       console.log("Error in saveVisualInfo()", error);
     }
@@ -60,22 +60,26 @@ export default class SaveAndFetchContent {
         "textBox"
       )! as HTMLTextAreaElement;
       textBox.innerHTML = "";
-      const textInStorage = localStorage.getItem(this.visFullName.toString());
+      const textInStorage = localStorage.getItem(this.visFullName[0]);
       if (textInStorage) {
         const textBox = document.getElementById(
           "textBox"
         )! as HTMLTextAreaElement;
         textBox.innerHTML = textInStorage;
       } else {
-        const visual = global.allVisuals.find((visual) => {
-          return visual.name == this.visFullName[0];
-        });
-
-        if (!visual) {
-          return;
+        if(this.visFullName[0] === "globalFilter"){
+          visualInfos = await helpers.getVisualInfos(this.visFullName[0], expertiseLevel);
+        } else{
+          const visual = global.allVisuals.find((visual) => {
+            return visual.name == this.visFullName[0];
+          });
+  
+          if (!visual) {
+            return;
+          }
+  
+          visualInfos = await helpers.getVisualInfos(this.visFullName[0], expertiseLevel, visual);
         }
-
-        visualInfos = await helpers.getVisualInfos(visual, expertiseLevel);
         await createInfoList(
           visualInfos.generalImages,
           visualInfos.generalInfos,

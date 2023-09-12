@@ -1,6 +1,7 @@
 import BarChart from "../Visualizations/BarChartVisualContent";
 import ColumnChart from "../Visualizations/ColumnChartVisualContent";
 import ComboChart from "../Visualizations/ComboChartVisualContent";
+import GlobalFilters from "../Visualizations/GlobalFiltersVisualContent";
 import LineChart from "../Visualizations/LineChartVisualContent";
 import Slicer from "../Visualizations/SlicerVisualContent";
 
@@ -57,43 +58,26 @@ export default class InteractionExampleDescription {
     return text;
   }
 
-  interactionSlicerText(mark: string, dataPoint: string) {
-    let text = "";
-
-    text =
-      this.interactionInfo.click +
-      mark +
-      dataPoint +
-      this.punctuations.dot +
-      this.lineBreak;
-
-    return text;
-  }
-
-  interactionElementText(dataValue: string) {
-    let text = "";
-
-    text =
-      this.interactionInfo.click +
-      this.interactionInfo.element +
-      dataValue +
-      this.punctuations.dot +
-      this.lineBreak;
-
-    return text;
-  }
-
   getInteractionInfo(
     visualType: string,
-    visual: LineChart | BarChart | ColumnChart | ComboChart | Slicer
+    visual: LineChart | BarChart | ColumnChart | ComboChart | Slicer | GlobalFilters
   ) {
     switch (visualType) {
       case "slicer":
+        visual = visual as Slicer;
         return this.interactionText(
           visual.mark,
           visual.data.data[Math.floor(visual.data.data.length / 2)].get(
             visual.data.attributes[0]
           )
+        );
+      case "globalFilter":
+        visual = visual as GlobalFilters;
+        const exampleFilter = visual.filters[Math.floor(visual.filters.length / 2)];
+        return this.interactionText(
+          visual.mark,
+          exampleFilter.attribute,
+          exampleFilter.values
         );
       default:
         visual = visual as LineChart | BarChart | ColumnChart;
