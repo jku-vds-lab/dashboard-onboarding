@@ -424,13 +424,13 @@ function createExplainGroupText() {
   return explaination;
 }
 
-export async function createTraversalOfGroupNodes(groupNode: IGroupNode) {
+export function createTraversalOfGroupNodes(groupNode: IGroupNode) {
   const group = createGroup();
 
   try {
     group.type = groupNode.data.traverse;
     for (const sNode of groupNode.nodes) {
-      const traversalElem = await getTraversalElem(sNode);
+      const traversalElem = getTraversalElem(sNode);
       group.visuals.push([traversalElem]);
     }
   } catch (error) {}
@@ -438,7 +438,7 @@ export async function createTraversalOfGroupNodes(groupNode: IGroupNode) {
   return group;
 }
 
-export async function getTraversalElem(sNode: any) {
+export function getTraversalElem(sNode: any) {
   const traversalElem: TraversalElement = {
     element: "",
     categories: [],
@@ -456,7 +456,7 @@ export async function getTraversalElem(sNode: any) {
       count = parseInt(idParts[1]);
     }
 
-    traversalElem.element = await getTraversalElement(nodeId);
+    traversalElem.element = getTraversalElement(nodeId);
     traversalElem.count = count;
     traversalElem.categories = [nodeCat];
   } catch (error) {
@@ -466,7 +466,7 @@ export async function getTraversalElem(sNode: any) {
   return traversalElem;
 }
 
-export async function createTraversalOfNodes(
+export function createTraversalOfNodes(
   allNodes: (IDefaultNode | IGroupNode)[]
 ) {
   try {
@@ -474,22 +474,22 @@ export async function createTraversalOfNodes(
 
     for (const node of allNodes) {
       if (node.type == "default") {
-        trav.push(await getTraversalElem(node));
+        trav.push(getTraversalElem(node));
       } else {
         const travElem = createTraversalElement("group");
-        travElem.element = await createTraversalOfGroupNodes(<IGroupNode>node);
+        travElem.element = createTraversalOfGroupNodes(<IGroupNode>node);
         travElem.count = parseInt(node.id.split(" ")[1]);
         trav.push(travElem);
       }
     }
     // console.log("Trav", trav);
-    await updateTraversal(trav);
+    updateTraversal(trav);
   } catch (error) {
     console.log("Error", error);
   }
 }
 
-export async function updateTraversal(
+export function updateTraversal(
   newTraversalStrategy: TraversalElement[]
 ) {
   try {
@@ -524,7 +524,7 @@ export async function updateTraversal(
                 newVisuals.push(oldSetting);
               } else {
                 const traversalElem = createTraversalElement("");
-                traversalElem.element = await getTraversalElement(
+                traversalElem.element = getTraversalElement(
                   groupElem.element.id
                 );
                 traversalElem.count = groupElem.count;
@@ -538,7 +538,7 @@ export async function updateTraversal(
           traversal.push(elem);
         } else {
           const traversalElem = createTraversalElement("");
-          traversalElem.element = await getTraversalElement(elem.element);
+          traversalElem.element = getTraversalElement(elem.element);
           traversalElem.count = elem.count;
           traversalElem.categories = elem.categories;
           traversal.push(traversalElem);
@@ -556,7 +556,7 @@ export async function updateTraversal(
           traversal.push(oldSetting);
         } else {
           const traversalElem = createTraversalElement("");
-          traversalElem.element = await getTraversalElement(elem.element.id);
+          traversalElem.element = getTraversalElement(elem.element.id);
           traversalElem.count = elem.count;
           traversalElem.categories = elem.categories;
           traversal.push(traversalElem);

@@ -61,13 +61,6 @@ export let isEditor: boolean = false;
 
 export let isFirstTimeLoading: boolean = true;
 
-export enum infoStatus {
-  original = "original",
-  changed = "changed",
-  added = "added",
-  deleted = "deleted",
-}
-
 export enum mediaType {
   video = "Video",
   text = "Text",
@@ -84,10 +77,8 @@ export interface DashboardInfo {
   id: string;
   mediaType: mediaType;
   videoURL: string;
-  titleStatus: string;
-  changedTitle: string;
-  infoStatus: string[];
-  changedInfos: string[];
+  changedGeneralImages: string[];
+  changedGeneralInfos: string[];
 }
 
 export interface SettingsVisual {
@@ -96,11 +87,11 @@ export interface SettingsVisual {
   videoURL: string;
   title: string | undefined;
   disabled: boolean;
-  generalInfosStatus: string[];
-  interactionInfosStatus: string[];
-  insightInfosStatus: string[];
+  changedGeneralImages: string[];
   changedGeneralInfos: string[];
+  changedInteractionImages: string[];
   changedInteractionInfos: string[];
+  changedInsightImages: string[];
   changedInsightInfos: string[];
 }
 
@@ -125,9 +116,9 @@ export interface FilterVisual {
   mediaType: mediaType;
   videoURL: string;
   title: string | undefined;
-  generalInfosStatus: string[];
-  interactionInfosStatus: string[];
+  changedGeneralImages: string[];
   changedGeneralInfos: string[];
+  changedInteractionImages: string[];
   changedInteractionInfos: string[];
 }
 
@@ -171,13 +162,11 @@ export function createReportOffset() {
 
 export function createDashboardInfo() {
   const dashboardInfo: DashboardInfo = {
-    id: "",
+    id: "dashboard",
     mediaType: mediaType.text,
     videoURL: "",
-    titleStatus: "",
-    changedTitle: "",
-    infoStatus: [],
-    changedInfos: [],
+    changedGeneralImages: [],
+    changedGeneralInfos: [],
   };
   return dashboardInfo;
 }
@@ -189,25 +178,25 @@ export function createVisual() {
     videoURL: "",
     title: "",
     disabled: false,
-    generalInfosStatus: [] as string[],
-    interactionInfosStatus: [] as string[],
-    insightInfosStatus: [] as string[],
-    changedGeneralInfos: [] as string[],
-    changedInteractionInfos: [] as string[],
-    changedInsightInfos: [] as string[],
+    changedGeneralImages: [],
+    changedGeneralInfos: [],
+    changedInteractionImages: [],
+    changedInteractionInfos: [],
+    changedInsightImages: [],
+    changedInsightInfos: [],
   };
 }
 
 export function createFilterVisual() {
   return {
-    id: "",
+    id: "globalFilter",
     mediaType: mediaType.text,
     videoURL: "",
-    title: "",
-    generalInfosStatus: [] as string[],
-    interactionInfosStatus: [] as string[],
-    changedGeneralInfos: [] as string[],
-    changedInteractionInfos: [] as string[],
+    title: "Filters",
+    changedGeneralImages: [],
+    changedGeneralInfos: [],
+    changedInteractionImages: [],
+    changedInteractionInfos: []
   };
 }
 

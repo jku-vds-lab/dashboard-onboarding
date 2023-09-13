@@ -20,17 +20,17 @@ export default function TraversalPane(props) {
     props.buildTraversal();
   }
 
-  async function createMartiniGlassTrav(option) {
+  function createMartiniGlassTrav(option) {
     setSelectedOption(option);
-    const trav = await martiniGlassTraversalStrategy();
+    const trav = martiniGlassTraversalStrategy();
     props.setTrav(trav);
     props.buildTraversal();
   }
 
-  async function createDepthFirstTrav(option) {
+  function createDepthFirstTrav(option) {
     setSelectedOption(option);
 
-    const trav = await depthFirstTraversalStrategy();
+    const trav = depthFirstTraversalStrategy();
     props.setTrav(trav);
     props.buildTraversal();
   }

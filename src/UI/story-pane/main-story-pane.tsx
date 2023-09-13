@@ -4,16 +4,6 @@ import { ReactFlowProvider } from "reactflow";
 import NodesCanvas from "../nodes-canvas/canvas-index";
 import "../assets/css/dashboard.scss";
 import SaveAndFetchContent from "./../../onboarding/ts/Content/saveAndFetchContent"; // should be moved close to story pane
-import {
-  getDashboardInfoInEditor,
-  resetDashboardChanges,
-  saveDashboardChanges,
-} from "../../onboarding/ts/dashboardInfoCard";
-import {
-  getFilterInfoInEditor,
-  resetFilterChanges,
-  saveFilterChanges,
-} from "../../onboarding/ts/filterInfoCards";
 import mediaIcon from "../assets/img/icon-7.png";
 import { useEffect, useState } from "react";
 import RecordView from "./main-record";
@@ -30,7 +20,7 @@ interface Props {
   setNodes: any;
 }
 
-export default function StoryPane(props: Props) {
+ export default function StoryPane(props: Props) {
   const [trigger, setTrigger] = useState(0);
   const [showMediaOptions, setShowMediaOptions] = useState(false);
   const [nodes, setNodes] = useState([]);
@@ -53,29 +43,21 @@ export default function StoryPane(props: Props) {
       // console.log("Trying to fill the box", nodeBasicName);
       if (nodeFullName?.length > 0) {
         const visInfo = new SaveAndFetchContent(nodeFullName);
-        switch (nodeBasicName) {
-          case "dashboard":
-            await getDashboardInfoInEditor(1);
-            break;
-          default:
-            if (nodeFullName) {
-              await visInfo.getVisualDescInEditor(expertiseLevel);
-            }
-            break;
-        }
+        await visInfo.getVisualDescInEditor(expertiseLevel);
       }
     }
 
     fillTextBox().catch(console.error);
   }, [expertiseLevel, nodeBasicName, nodeFullName]);
 
-  const saveAnnotationChanges = async () => {
+  const saveAnnotationChanges = () => {
     try {
+      debugger
       const infos = [];
+      const images: string[] = [];
       const textBox = document.getElementById(
         "textBox"
       )! as HTMLTextAreaElement;
-      const globalText = textBox.innerHTML;
       const child = textBox.children[0];
       const listElems = child.children;
 
@@ -83,41 +65,16 @@ export default function StoryPane(props: Props) {
         infos.push(listElems[i].innerHTML);
       }
 
-      const currentIdParts = nodeFullName;
       const visInfo = new SaveAndFetchContent(nodeFullName);
-
-      switch (currentIdParts[0]) {
-        case "dashboard":
-          await saveDashboardChanges(infos, 1);
-          break;
-        case "globalFilter":
-          await saveFilterChanges(infos, 1);
-          break;
-        default:
-          await visInfo.saveVisualInfo(infos, globalText, currentIdParts, 1);
-          break;
-      }
+      visInfo.saveVisualInfo(images, infos);
     } catch (error) {
       console.log("Error in saveAnnotatiionChanges", error);
     }
   };
 
-  const resetAnnotationChanges = async () => {
-    const currentIdParts = nodeFullName;
-    if (!currentIdParts) {
-      return;
-    }
-    switch (currentIdParts[0]) {
-      case "dashboard":
-        await resetDashboardChanges(1);
-        break;
-      case "globalFilter":
-        await resetFilterChanges(1);
-        break;
-      default:
-        // await resetVisualChanges(currentIdParts, 1);
-        break;
-    }
+  const resetAnnotationChanges = () => {
+    const visInfo = new SaveAndFetchContent(nodeFullName);
+    visInfo.resetVisualInfo();
   };
 
   const addMediaOptions = () => {

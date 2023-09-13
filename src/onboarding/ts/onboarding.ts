@@ -47,10 +47,10 @@ export async function onLoadReport(isMainPage: boolean) {
     await helpers.getActivePage();
     await helpers.getVisualsfromPowerBI();
     await helpers.createComponentGraph();
-    await helpers.getSettings();
+    helpers.getSettings();
 
     if (isMainPage) {
-      const trav = await basicTraversalStrategy();
+      const trav = basicTraversalStrategy();
       global.setBasicTraversal(trav);
 
       helpers.createEditOnboardingButtons();
@@ -73,7 +73,7 @@ export async function onReloadReport() {
 
     if (global.page.name !== oldPage && global.page.displayName !== "Info") {
       await helpers.getVisualsfromPowerBI();
-      await createSettings();
+      createSettings();
       helpers.resizeEmbed(global.filterOpenedWidth);
     }
   } catch (error) {

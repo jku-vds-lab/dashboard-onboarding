@@ -55,32 +55,11 @@ export function showReportChanges() {
 
   helpers.createCardContent(
     global.settings.interactionExample.title,
-    createShowReportChangesInfo(),
+    getShowReportChangesText(),
     "showChangesCard"
   );
 
   helpers.createCardButtons("cardButtons", "", "", "back to visual");
-}
-
-function createShowReportChangesInfo() {
-  let reportChangesInfo;
-
-  switch (global.settings.interactionExample.generalInfoStatus) {
-    case global.infoStatus.original:
-      reportChangesInfo = getShowReportChangesText();
-      break;
-    case global.infoStatus.changed:
-    case global.infoStatus.added:
-      reportChangesInfo = global.settings.interactionExample.changedGeneralInfo;
-      break;
-    case global.infoStatus.deleted:
-      reportChangesInfo =
-        "You can now click on one of the cards or graphs to get detailed information about its changes.";
-      break;
-    default:
-      break;
-  }
-  return reportChangesInfo;
 }
 
 export function getShowReportChangesText() {

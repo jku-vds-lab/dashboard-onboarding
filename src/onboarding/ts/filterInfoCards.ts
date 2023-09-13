@@ -6,11 +6,7 @@ import { createFilterDisabledArea, removeFrame } from "./disableArea";
 import Filter from "../../componentGraph/Filter";
 import { removeElement } from "./elements";
 import { createExpertiseSlider, createInfoCardButtons } from "./infoCards";
-import { replacer } from "../../componentGraph/ComponentGraph";
-import { TraversalElement, createTraversalElement } from "./traversal";
-import { getTraversalElement } from "./createSettings";
-import { VisualDescriptor } from "powerbi-client";
-import GlobalFilters from "./Content/Visualizations/GlobalFiltersVisualContent";
+import { TraversalElement } from "./traversal";
 import { createInfoList, createTabs } from "./visualInfo";
 import { ExpertiseLevel } from "../../UI/redux/expertise";
 
@@ -59,6 +55,39 @@ export async function createFilterInfoCard(categories: string[], count: number, 
   );
   createInfoCardButtons(traversal, "globalFilter", [], count);
 
+  document.getElementById("contentText")!.innerHTML = "";
+  const visualData = helpers.getDataWithId(
+    traversal,
+    "globalFilter",
+    categories,
+    count
+  );
+  if (!visualData) {
+    return;
+  }
+
+  const videoURL = localStorage.getItem("globalFiltervideo");
+  if (videoURL) {
+    const attributes = global.createDivAttributes();
+    attributes.id = "videoContainer";
+    attributes.style = "position: relative;padding-bottom: 56.25%;height: 0;";
+    attributes.parentId = "contentText";
+    elements.createDiv(attributes);
+
+    const videoAttributes = global.createVideoAttributes();
+    videoAttributes.id = "video";
+    videoAttributes.width = "100%";
+    videoAttributes.parentId = "videoContainer";
+    elements.createVideo(videoAttributes);
+
+    const sourceAttributes = global.createSourceAttributes();
+    sourceAttributes.id = "source";
+    sourceAttributes.src = videoURL;
+    sourceAttributes.type = "video/mp4";
+    sourceAttributes.parentId = "video";
+    elements.createSource(sourceAttributes);
+  }
+
   createTabsWithContent(filterData, categories, expertiseLevel);
 }
 
@@ -72,97 +101,34 @@ export async function createTabsWithContent(
   createTabs(categories);
 
   if (categories.includes("general")) {
-    const generalImages = [];
-    const generalInfos = [];
+    let generalImages = [];
+    let generalInfos = [];
 
-    for (let i = 0; i < visualData.generalInfosStatus.length; ++i) {
-      switch (visualData.generalInfosStatus[i]) {
-        case global.infoStatus.original:
-          generalImages.push(visualInfos.generalImages[i]);
-          generalInfos.push(visualInfos.generalInfos[i]);
-          break;
-        case global.infoStatus.changed:
-        case global.infoStatus.added:
-          generalImages.push("dotImg");
-          generalInfos.push(visualData.changedGeneralInfos[i]);
-          break;
-        default:
-          break;
-      }
+    if(visualData.changedGeneralInfo.length === 0){
+      generalImages = visualInfos.generalImages;
+      generalInfos = visualInfos.generalInfos;
+    } else {
+      generalImages = visualData.changedGeneralImages;
+      generalInfos = visualData.changedGeneralInfos;
     }
 
     createInfoList(generalImages, generalInfos, "generalTab", false);
   }
 
   if (categories.includes("interaction")) {
-    const interactionImages = [];
-    const interactionInfos = [];
+    let interactionImages = [];
+    let interactionInfos = [];
 
-    for (let i = 0; i < visualData.interactionInfosStatus.length; ++i) {
-      switch (visualData.interactionInfosStatus[i]) {
-        case global.infoStatus.original:
-          interactionImages.push(visualInfos.interactionImages[i]);
-          interactionInfos.push(visualInfos.interactionInfos[i]);
-          break;
-        case global.infoStatus.changed:
-        case global.infoStatus.added:
-          interactionImages.push("dotImg");
-          interactionInfos.push(visualData.changedInteractionInfos[i]);
-          break;
-        default:
-          break;
-      }
+    if(visualData.changedInteractionInfo.length === 0){
+      interactionImages = visualInfos.interactionImages;
+      interactionInfos = visualInfos.interactionInfos;
+    } else {
+      interactionImages = visualData.changedInteractionImages;
+      interactionInfos = visualData.changedInteractionInfos;
     }
 
     createInfoList(interactionImages, interactionInfos, "interactionTab", false);
     // onboardingHelpers.createInteractionExampleButton("interactionTab");
-  }
-}
-
-export function createFilterList(
-  traversal: TraversalElement[],
-  list: string | any[],
-  parentId: string,
-  count: number
-) {
-  document.getElementById("contentText")!.innerHTML = "";
-  const visualData = helpers.getDataWithId(
-    traversal,
-    "globalFilter",
-    ["general"],
-    count
-  );
-  if (!visualData) {
-    return;
-  }
-  const videoURL = localStorage.getItem("globalFiltervideo");
-  if (videoURL) {
-    const attributes = global.createDivAttributes();
-    attributes.id = "videoContainer";
-    attributes.style = "position: relative;padding-bottom: 56.25%;height: 0;";
-    attributes.parentId = "contentText";
-    elements.createDiv(attributes);
-    const videoAttributes = global.createVideoAttributes();
-    videoAttributes.id = "video";
-    videoAttributes.width = "100%";
-    videoAttributes.parentId = "videoContainer";
-    elements.createVideo(videoAttributes);
-
-    const sourceAttributes = global.createSourceAttributes();
-    sourceAttributes.id = "source";
-    sourceAttributes.src = visualData.videoURL;
-    sourceAttributes.type = "video/mp4";
-    sourceAttributes.parentId = "video";
-    elements.createSource(sourceAttributes);
-  }
-
-  const ul = document.createElement("ul");
-  document.getElementById(parentId)?.appendChild(ul);
-
-  for (let i = 0; i < list.length; ++i) {
-    const li = document.createElement("li");
-    li.innerHTML = list[i];
-    ul.appendChild(li);
   }
 }
 
@@ -187,176 +153,8 @@ export function getFilterDescription(filter: Filter) {
   return filter.attribute + ": " + filterText;
 }
 
-export async function getFilterInfos(
-  traversal: TraversalElement[],
-  count: number
-) {
-  const filterInfos = await helpers.getFilterInfo();
-
-  const filterData = helpers.getDataWithId(
-    traversal,
-    "globalFilter",
-    ["general"],
-    count
-  );
-  if (!filterData) {
-    return;
-  }
-
-  const newFilters = [];
-  for (let i = 0; i < filterData.filterInfosStatus.length; ++i) {
-    switch (filterData.filterInfosStatus[i]) {
-      case global.infoStatus.original:
-        newFilters.push(filterInfos[i]);
-        break;
-      case global.infoStatus.changed:
-      case global.infoStatus.added:
-        newFilters.push(filterData.changedFilterInfos[i]);
-        break;
-      default:
-        break;
-    }
-  }
-  return newFilters;
-}
-
 export function removeFilterInfoCard() {
   removeElement("filterInfoCard");
   removeElement("disabledLeft");
   removeFrame();
-}
-
-export async function saveFilterChanges(newInfo: string[], count: number) {
-  const filterInfos = await helpers.getFilterInfo();
-
-  let filterData = helpers.getDataWithId(
-    global.settings.traversalStrategy,
-    "globalFilter",
-    ["general"],
-    count
-  );
-  if (!filterData) {
-    const traversalElem = createTraversalElement("");
-    traversalElem.element = await getTraversalElement("globalFilter");
-    traversalElem.count = count;
-    traversalElem.categories = ["general"];
-    global.settings.traversalStrategy.push(traversalElem);
-    filterData = helpers.getDataWithId(
-      global.settings.traversalStrategy,
-      "globalFilter",
-      ["general"],
-      count
-    );
-  }
-
-  for (let i = 0; i < newInfo.length; ++i) {
-    if (newInfo[i] == "" || newInfo[i] == null) {
-      filterData.filterInfosStatus[i] = "deleted";
-      filterData.changedFilterInfos[i] = "";
-    } else if (i >= filterData.filterInfosStatus.length) {
-      filterData.filterInfosStatus.push("added");
-      filterData.changedFilterInfos.push(newInfo[i]);
-    } else if (newInfo[i] == filterInfos[i]) {
-      filterData.filterInfosStatus[i] = "original";
-      filterData.changedFilterInfos[i] = "";
-    } else {
-      filterData.filterInfosStatus[i] = "changed";
-      filterData.changedFilterInfos[i] = newInfo[i];
-    }
-  }
-
-  if (newInfo.length < filterData.filterInfosStatus.length) {
-    for (let i = newInfo.length; i < filterData.filterInfosStatus.length; ++i) {
-      filterData.filterInfosStatus[i] = "deleted";
-      filterData.changedFilterInfos[i] = "";
-    }
-  }
-
-  localStorage.setItem("settings", JSON.stringify(global.settings, replacer));
-}
-
-export async function resetFilterChanges(count: number) {
-  const filterInfos = await helpers.getFilterInfo();
-
-  const textBox = document.getElementById("textBox")! as HTMLTextAreaElement;
-  textBox.innerHTML = "";
-
-  const ul = document.createElement("ul");
-  document.getElementById("textBox")?.appendChild(ul);
-
-  for (let i = 0; i < filterInfos.length; ++i) {
-    const li = document.createElement("li");
-    li.innerHTML = filterInfos[i];
-    ul.appendChild(li);
-  }
-
-  const filterData = helpers.getDataWithId(
-    global.settings.traversalStrategy,
-    "globalFilter",
-    ["general"],
-    count
-  );
-  if (!filterData) {
-    const traversalElem = createTraversalElement("");
-    traversalElem.element = await getTraversalElement("globalFilter");
-    traversalElem.count = count;
-    traversalElem.categories = ["general"];
-    global.settings.traversalStrategy.push(traversalElem);
-    return;
-  }
-
-  for (let i = 0; i < filterInfos.length; ++i) {
-    filterData.filterInfosStatus[i] = "original";
-    filterData.changedFilterInfos[i] = "";
-  }
-
-  if (filterInfos.length < filterData.filterInfosStatus.length) {
-    const elemCount = filterData.filterInfosStatus.length - filterInfos.length;
-    filterData.filterInfosStatus.splice(filterInfos.length, elemCount);
-    filterData.changedFilterInfos.splice(filterInfos.length, elemCount);
-  }
-
-  localStorage.setItem("settings", JSON.stringify(global.settings, replacer));
-}
-
-export function getFilterInfoInEditor(count: number) {
-  let infos = [];
-
-  const filterInfos = helpers.getFilterInfo();
-
-  const filterData = helpers.getDataWithId(
-    global.settings.traversalStrategy,
-    "globalFilter",
-    ["general"],
-    count
-  );
-  if (!filterData) {
-    infos = filterInfos;
-  } else {
-    for (let i = 0; i < filterData.filterInfosStatus.length; ++i) {
-      switch (filterData.filterInfosStatus[i]) {
-        case global.infoStatus.original:
-          infos.push(filterInfos[i]);
-          break;
-        case global.infoStatus.changed:
-        case global.infoStatus.added:
-          infos.push(filterData.changedFilterInfos[i]);
-          break;
-        default:
-          break;
-      }
-    }
-  }
-
-  const textBox = document.getElementById("textBox")! as HTMLTextAreaElement;
-  textBox.innerHTML = "";
-
-  const ul = document.createElement("ul");
-  document.getElementById("textBox")?.appendChild(ul);
-
-  for (let i = 0; i < infos.length; ++i) {
-    const li = document.createElement("li");
-    li.innerHTML = infos[i];
-    ul.appendChild(li);
-  }
 }

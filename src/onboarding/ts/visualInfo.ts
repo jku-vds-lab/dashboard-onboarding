@@ -63,46 +63,30 @@ export async function createTabsWithContent(
   createTabs(categories);
 
   if (categories.includes("general")) {
-    const generalImages = [];
-    const generalInfos = [];
+    let generalImages = [];
+    let generalInfos = [];
 
-    for (let i = 0; i < visualData.generalInfosStatus.length; ++i) {
-      switch (visualData.generalInfosStatus[i]) {
-        case global.infoStatus.original:
-          generalImages.push(visualInfos.generalImages[i]);
-          generalInfos.push(visualInfos.generalInfos[i]);
-          break;
-        case global.infoStatus.changed:
-        case global.infoStatus.added:
-          generalImages.push("dotImg");
-          generalInfos.push(visualData.changedGeneralInfos[i]);
-          break;
-        default:
-          break;
-      }
+    if(visualData.changedGeneralInfo.length === 0){
+      generalImages = visualInfos.generalImages;
+      generalInfos = visualInfos.generalInfos;
+    } else {
+      generalImages = visualData.changedGeneralImages;
+      generalInfos = visualData.changedGeneralInfos;
     }
 
     createInfoList(generalImages, generalInfos, "generalTab", false);
   }
 
   if (categories.includes("interaction")) {
-    const interactionImages = [];
-    const interactionInfos = [];
+    let interactionImages = [];
+    let interactionInfos = [];
 
-    for (let i = 0; i < visualData.interactionInfosStatus.length; ++i) {
-      switch (visualData.interactionInfosStatus[i]) {
-        case global.infoStatus.original:
-          interactionImages.push(visualInfos.interactionImages[i]);
-          interactionInfos.push(visualInfos.interactionInfos[i]);
-          break;
-        case global.infoStatus.changed:
-        case global.infoStatus.added:
-          interactionImages.push("dotImg");
-          interactionInfos.push(visualData.changedInteractionInfos[i]);
-          break;
-        default:
-          break;
-      }
+    if(visualData.changedInteractionInfo.length === 0){
+      interactionImages = visualInfos.interactionImages;
+      interactionInfos = visualInfos.interactionInfos;
+    } else {
+      interactionImages = visualData.changedInteractionImages;
+      interactionInfos = visualData.changedInteractionInfos;
     }
 
     createInfoList(
@@ -115,55 +99,18 @@ export async function createTabsWithContent(
   }
 
   if (categories.includes("insight")) {
-    const insightImages = [];
-    const insightInfos = [];
+    let insightImages = [];
+    let insightInfos = [];
 
-    for (let i = 0; i < visualData.insightInfosStatus.length; ++i) {
-      switch (visualData.insightInfosStatus[i]) {
-        case global.infoStatus.original:
-          insightImages.push(visualInfos.insightImages[i]);
-          insightInfos.push(visualInfos.insightInfos[i]);
-          break;
-        case global.infoStatus.changed:
-        case global.infoStatus.added:
-          insightImages.push("dotImg");
-          insightInfos.push(visualData.changedInsightInfos[i]);
-          break;
-        default:
-          break;
-      }
+    if(visualData.changedInsightInfo.length === 0){
+      insightImages = visualInfos.insightImages;
+      insightInfos = visualInfos.insightInfos;
+    } else {
+      insightImages = visualData.changedInsightImages;
+      insightInfos = visualData.changedInsightInfos;
     }
 
     createInfoList(insightImages, insightInfos, "insightTab", false);
-  }
-
-  const otherCategories = categories.filter(
-    (category) =>
-      category !== "general" &&
-      category !== "interaction" &&
-      category !== "insight"
-  );
-  for (const category of otherCategories) {
-    const images = [];
-    const infos = [];
-
-    for (let i = 0; i < visualData[category + "InfosStatus"].length; ++i) {
-      switch (visualData[category + "InfosStatus"][i]) {
-        case global.infoStatus.original:
-          images.push(visualInfos[category + "Images"][i]);
-          infos.push(visualInfos[category + "Infos"][i]);
-          break;
-        case global.infoStatus.changed:
-        case global.infoStatus.added:
-          images.push("dotImg");
-          infos.push(visualData["changed" + category + "Infos"][i]);
-          break;
-        default:
-          break;
-      }
-    }
-
-    createInfoList(images, infos, category + "Tab", false);
   }
 }
 

@@ -3,92 +3,178 @@ import * as global from "./../globalVariables";
 import { createInfoList } from "./../visualInfo";
 import { BasicTextFormat } from "./Format/basicTextFormat";
 import { ExpertiseLevel } from "../../../UI/redux/expertise";
+import { createTraversalElement, findTraversalVisual } from "../traversal";
+import { getTraversalElement } from "../createSettings";
+import { replacer } from "../../../componentGraph/ComponentGraph";
+import { getNewDashboardInfo } from "../dashboardInfoCard";
 
 export default class SaveAndFetchContent {
-  private visualData: global.SettingsVisual;
-  private infos: Array<string>;
-  private images: Array<string>;
-
   private visFullName: string[];
-  private categories: string[];
+  private generatedInfos: BasicTextFormat;
 
   constructor(visFullName: string[]) {
     this.visFullName = visFullName;
-    this.visualData = {
-      id: "",
-      mediaType: global.mediaType.text,
-      videoURL: "",
-      title: "",
-      disabled: false,
-      generalInfosStatus: [],
-      interactionInfosStatus: [],
-      insightInfosStatus: [],
-      changedGeneralInfos: [],
-      changedInteractionInfos: [],
-      changedInsightInfos: [],
+    this.generatedInfos = {
+      generalImages: [],
+      generalInfos: [],
+      insightImages: [],
+      insightInfos: [],
+      interactionImages: [],
+      interactionInfos: [],
     };
-    this.categories = [];
-    this.infos = [];
-    this.images = [];
   }
 
-  async saveVisualInfo(
+  saveVisualInfo(
+    newImages: string[],
     newInfo: string[],
-    test: any,
-    visFullName: string[],
-    count: number
   ) {
-    try {
-      localStorage.setItem(visFullName[0], JSON.stringify(test));
-    } catch (error) {
-      console.log("Error in saveVisualInfo()", error);
+    const visData = this.getVisData();
+    if(this.visFullName.length > 3){
+      if(this.visFullName[1] === "Interaction"){
+        visData.changedInteractionImages = newImages;
+        visData.changedInteractionInfos = newInfo;
+      } else if(this.visFullName[1] === "Insight"){
+        visData.changedInsightImages = newImages;
+        visData.changedInsightInfos = newInfo;
+      }
+    }else{
+      visData.changedGeneralImages = newImages;
+      visData.changedGeneralInfos = newInfo;
     }
+      
+    localStorage.setItem("settings", JSON.stringify(global.settings, replacer));
+  }
+
+  resetVisualInfo() {
+    const visData = this.getVisData();
+    if(this.visFullName.length > 3){
+      if(this.visFullName[1] === "Interaction"){
+        visData.changedInteractionImages = [];
+        visData.changedInteractionInfos = [];
+      } else if(this.visFullName[1] === "Insight"){
+        visData.changedInsightImages = [];
+        visData.changedInsightInfos = [];
+      }
+    }else{
+      visData.changedGeneralImages = [];
+      visData.changedGeneralInfos = [];
+    }
+      
+    localStorage.setItem("settings", JSON.stringify(global.settings, replacer));
   }
 
   async getVisualDescInEditor(expertiseLevel: ExpertiseLevel) {
     try {
-      let visualInfos: BasicTextFormat = {
-        generalImages: [],
-        generalInfos: [],
-        insightImages: [],
-        insightInfos: [],
-        interactionImages: [],
-        interactionInfos: [],
-      };
+      const visData = this.getVisData();
+
+      switch(this.visFullName[0]){
+        case "dashboard":
+          const dashboard = global.componentGraph.dashboard;
+          const dashboardInfo = getNewDashboardInfo(dashboard);
+          this.generatedInfos.generalImages = dashboardInfo[0];
+          this.generatedInfos.generalInfos = dashboardInfo[1];
+          break;
+        case "globalFilter":
+          this.generatedInfos = await helpers.getVisualInfos(this.visFullName[0], expertiseLevel);
+          break;
+        default:
+          const visual = findTraversalVisual(this.visFullName[0]);
+          if (!visual) {
+            return;
+          }
+          this.generatedInfos = await helpers.getVisualInfos(visual.type, expertiseLevel, visual);
+      }
 
       const textBox = document.getElementById(
         "textBox"
       )! as HTMLTextAreaElement;
       textBox.innerHTML = "";
-      const textInStorage = localStorage.getItem(this.visFullName[0]);
-      if (textInStorage) {
-        const textBox = document.getElementById(
-          "textBox"
-        )! as HTMLTextAreaElement;
-        textBox.innerHTML = textInStorage;
-      } else {
-        if(this.visFullName[0] === "globalFilter"){
-          visualInfos = await helpers.getVisualInfos(this.visFullName[0], expertiseLevel);
-        } else{
-          const visual = global.allVisuals.find((visual) => {
-            return visual.name == this.visFullName[0];
-          });
-  
-          if (!visual) {
-            return;
+
+      let images = [];
+      let infos = [];
+
+      if(this.visFullName.length > 3){
+        if(this.visFullName[1] === "Interaction"){
+          if(visData.changedInteractionInfos.length === 0){
+            images = this.generatedInfos.interactionImages;
+            infos = this.generatedInfos.interactionInfos;
+          } else {
+            images = visData.changedInteractionImages;
+            infos = visData.changedInteractionInfos;
           }
-  
-          visualInfos = await helpers.getVisualInfos(this.visFullName[0], expertiseLevel, visual);
+        } else if(this.visFullName[1] === "Insight"){
+          if(visData.changedInsigthInfos.length === 0){
+            images = this.generatedInfos.insightImages;
+            infos = this.generatedInfos.insightInfos;
+          } else {
+            images = visData.changedInsightImages;
+            infos = visData.changedInsightInfos;
+          }
         }
-        await createInfoList(
-          visualInfos.generalImages,
-          visualInfos.generalInfos,
-          "textBox",
-          true
-        );
+      }else{
+        if(visData.changedGeneralInfos.length === 0){
+          images = this.generatedInfos.generalImages;
+          infos = this.generatedInfos.generalInfos;
+        } else {
+          images = visData.changedGeneralImages;
+          infos = visData.changedGeneralInfos;
+        }
       }
+    
+      await createInfoList(
+        images,
+        infos,
+        "textBox",
+        true
+      );
     } catch (error) {
       console.log("Error in getting basic visual description in editor", error);
     }
+  }
+
+  getVisData(){
+    let visData;
+    if(this.visFullName.length > 3){
+      visData = helpers.getDataWithId(
+        global.settings.traversalStrategy,
+        this.visFullName[0],
+        [this.visFullName[1]],
+        parseInt(this.visFullName[2])
+      );
+      if (!visData) {
+        const traversalElem = createTraversalElement("");
+        traversalElem.element = getTraversalElement(this.visFullName[0]);
+        traversalElem.count = parseInt(this.visFullName[2]);
+        traversalElem.categories = [this.visFullName[1]];
+        global.settings.traversalStrategy.push(traversalElem);
+        visData = helpers.getDataWithId(
+          global.settings.traversalStrategy,
+          this.visFullName[0],
+          [this.visFullName[1]],
+          parseInt(this.visFullName[2])
+        );
+      }
+    }else{
+      visData = helpers.getDataWithId(
+        global.settings.traversalStrategy,
+        this.visFullName[0],
+        ["general"],
+        parseInt(this.visFullName[1])
+      );
+      if (!visData) {
+        const traversalElem = createTraversalElement("");
+        traversalElem.element = getTraversalElement(this.visFullName[0]);
+        traversalElem.count = parseInt(this.visFullName[2]);
+        traversalElem.categories = [this.visFullName[1]];
+        global.settings.traversalStrategy.push(traversalElem);
+        visData = helpers.getDataWithId(
+          global.settings.traversalStrategy,
+          this.visFullName[0],
+          ["general"],
+          parseInt(this.visFullName[1])
+        );
+      }
+    }
+    return visData;
   }
 }

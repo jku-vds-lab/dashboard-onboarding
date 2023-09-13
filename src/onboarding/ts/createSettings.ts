@@ -16,9 +16,9 @@ import { store } from "../../UI/redux/store";
 
 let visualIndex: number;
 
-export async function createSettings() {
+export function createSettings() {
   const settings = global.createSettingsObject();
-  settings.traversalStrategy = await setTraversalStrategy();
+  settings.traversalStrategy = setTraversalStrategy();
   settings.interactionExample = setInteractionExampleInfo();
   settings.allVisuals = global.allVisuals.map((visual: VisualDescriptor) => {
     return visual.name;
@@ -29,19 +29,19 @@ export async function createSettings() {
   localStorage.setItem("settings", JSON.stringify(global.settings, replacer));
 }
 
-export async function getTraversalElement(elem: any) {
+export function getTraversalElement(elem: any) {
   let traversalElement;
   try {
     if (isGroup(elem)) {
-      const traversalGroupVisuals = await setGroup(elem);
+      const traversalGroupVisuals = setGroup(elem);
       elem.visuals = traversalGroupVisuals;
       traversalElement = elem;
     } else if (elem === "dashboard") {
       traversalElement = setDashboardInfo();
     } else if (elem === "globalFilter") {
-      traversalElement = await setFilterInfo();
+      traversalElement = setFilterInfo();
     } else {
-      traversalElement = await setVisualsInfo(elem);
+      traversalElement = setVisualsInfo(elem);
     }
   } catch (error) {
     console.log("Error in getTraversalElement", error);
@@ -50,22 +50,22 @@ export async function getTraversalElement(elem: any) {
   return traversalElement;
 }
 
-async function setTraversalStrategy() {
+ function setTraversalStrategy() {
   const traversalElem1 = createTraversalElement("dashboard");
-  traversalElem1.element = await getTraversalElement("dashboard");
+  traversalElem1.element = getTraversalElement("dashboard");
   traversalStrategy.push(traversalElem1);
   for (const vis of global.currentVisuals) {
     const traversalElem = createTraversalElement(vis.type);
-    traversalElem.element = await getTraversalElement(vis.name);
+    traversalElem.element = getTraversalElement(vis.name);
     traversalStrategy.push(traversalElem);
   }
   const traversalElem2 = createTraversalElement("globalFilter");
-  traversalElem2.element = await getTraversalElement("globalFilter");
+  traversalElem2.element = getTraversalElement("globalFilter");
   traversalStrategy.push(traversalElem2);
   return traversalStrategy;
 }
 
-async function setGroup(elem: Group) {
+function setGroup(elem: Group) {
   const traversal: TraversalElement[][] = [];
   for (const trav of elem.visuals) {
     const visuals: TraversalElement[] = [];
@@ -85,13 +85,13 @@ async function setGroup(elem: Group) {
           const traversalElem = createTraversalElement("globalFilter");
           traversalElem.count = vis.count;
           traversalElem.categories = vis.categories;
-          traversalElem.element = await setFilterInfo();
+          traversalElem.element = setFilterInfo();
           visuals.push(traversalElem);
         } else {
           const traversalElem = createTraversalElement("");
           traversalElem.count = vis.count;
           traversalElem.categories = vis.categories;
-          traversalElem.element = await setVisualsInfo(vis.element.id);
+          traversalElem.element = setVisualsInfo(vis.element.id);
           visuals.push(traversalElem);
         }
       }
@@ -113,20 +113,11 @@ function getIndex(trav: TraversalElement[], vis: TraversalElement) {
 
 function setDashboardInfo() {
   const settingsDashboardInfo = global.createDashboardInfo();
-  settingsDashboardInfo.id = "dashboard";
-  settingsDashboardInfo.titleStatus = "original";
-  settingsDashboardInfo.changedTitle = "";
-
-  const dashboardInfo = getNewDashboardInfo(global.componentGraph.dashboard);
-  for (let i = 0; i < dashboardInfo[1].length; ++i) {
-    settingsDashboardInfo.infoStatus.push("original");
-    settingsDashboardInfo.changedInfos.push("");
-  }
 
   return settingsDashboardInfo;
 }
 
-async function setVisualsInfo(id: string) {
+function setVisualsInfo(id: string) {
   try {
     const visual = findTraversalVisual(id);
     if (!visual) {
@@ -141,47 +132,14 @@ async function setVisualsInfo(id: string) {
     )!;
     settingsVisual.title = CGVisual.title.title;
 
-    const state = store.getState();
-
-    const visualInfos = await helpers.getVisualInfos(visual.type, state.expertise, visual);
-
-    for (let i = 0; i < visualInfos.generalInfos.length; ++i) {
-      settingsVisual.generalInfosStatus.push("original");
-      settingsVisual.changedGeneralInfos.push("");
-    }
-    for (let i = 0; i < visualInfos.interactionInfos.length; ++i) {
-      settingsVisual.interactionInfosStatus.push("original");
-      settingsVisual.changedInteractionInfos.push("");
-    }
-    for (let i = 0; i < visualInfos.insightInfos.length; ++i) {
-      settingsVisual.insightInfosStatus.push("original");
-      settingsVisual.changedInsightInfos.push("");
-    }
-
     return settingsVisual;
   } catch (error) {
     console.error("Error in setVisualsInfo", error);
   }
 }
 
-async function setFilterInfo() {
+function setFilterInfo() {
   const settingsFilterVisual = global.createFilterVisual();
-  settingsFilterVisual.id = "globalFilter";
-  settingsFilterVisual.title = "Filters";
-
-  const state = store.getState();
-
-  const visualInfos = await helpers.getVisualInfos("globalFilter", state.expertise);
-
-  for (let i = 0; i < visualInfos.generalInfos.length; ++i) {
-    settingsFilterVisual.generalInfosStatus.push("original");
-    settingsFilterVisual.changedGeneralInfos.push("");
-  }
-  for (let i = 0; i < visualInfos.interactionInfos.length; ++i) {
-    settingsFilterVisual.interactionInfosStatus.push("original");
-    settingsFilterVisual.changedInteractionInfos.push("");
-  }
-
   return settingsFilterVisual;
 }
 

@@ -440,10 +440,10 @@ export async function createComponentGraph() {
   await graph.setComponentGraphData();
 }
 
-export async function getSettings() {
+export function getSettings() {
   try {
     if (localStorage.getItem("settings") == null) {
-      await createSettings();
+      createSettings();
     }
     global.setSettings(JSON.parse(localStorage.getItem("settings")!, reviver));
   } catch (error) {
