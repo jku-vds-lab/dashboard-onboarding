@@ -116,9 +116,7 @@ export default function Components(props: Props) {
     const displayTitles = [];
     switch (type) {
       case "card":
-        ids.push(oldId + " Insight");
-        titles.push(oldTitle + " Insight");
-        displayTitles.push("Insight");
+      case "multiRowCard":
         break;
       case "slicer":
         ids.push(oldId + " Interaction");
