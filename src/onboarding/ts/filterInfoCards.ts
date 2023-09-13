@@ -5,7 +5,7 @@ import * as elements from "./elements";
 import { createFilterDisabledArea, removeFrame } from "./disableArea";
 import Filter from "../../componentGraph/Filter";
 import { removeElement } from "./elements";
-import { createInfoCardButtons } from "./infoCards";
+import { createExpertiseSlider, createInfoCardButtons } from "./infoCards";
 import { replacer } from "../../componentGraph/ComponentGraph";
 import { TraversalElement, createTraversalElement } from "./traversal";
 import { getTraversalElement } from "./createSettings";
@@ -33,6 +33,8 @@ export async function createFilterInfoCard(categories: string[], count: number, 
     "filterInfoCard"
   );
 
+  createExpertiseSlider("globalFilter", categories, count, "filterInfoCard")
+
   let traversal: TraversalElement[];
   if (global.explorationMode) {
     traversal = global.basicTraversal;
@@ -58,7 +60,6 @@ export async function createFilterInfoCard(categories: string[], count: number, 
   createInfoCardButtons(traversal, "globalFilter", [], count);
 
   createTabsWithContent(filterData, categories, expertiseLevel);
-  onboardingHelpers.createInteractionExampleButton("interactionTab");
 }
 
 export async function createTabsWithContent(

@@ -64,7 +64,7 @@ export default function OutputPane() {
         count = parseInt(nodeFullName[1]);
       }
 
-      startOnboardingAt(visualName, visual, category, count, true, expertiseLevel);
+      startOnboardingAt(visualName, visual, category, count, expertiseLevel, true);
     }
   }, [nodeBasicName, nodeFullName, expertiseLevel]);
 

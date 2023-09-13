@@ -23,7 +23,9 @@ import {
 import { VisualDescriptor } from "powerbi-client";
 import { getDataWithId } from "../../componentGraph/helperFunctions";
 import { textSize } from "./sizes";
-import { ExpertiseLevel } from "../../UI/redux/expertise";
+import { decrement, ExpertiseLevel, Level } from "../../UI/redux/expertise";
+import { store } from "../../UI/redux/store";
+import { startOnboardingAt } from "./onboarding";
 
 export async function createInfoCard(
   visual: VisualDescriptor,
@@ -66,15 +68,7 @@ export async function createInfoCard(
     );
   }
 
-  const labelAttributes = global.createLabelAttributes();
-  labelAttributes.id = "sliderLabel";
-  labelAttributes.for = "level";
-  labelAttributes.parentId = "infoCard";
-  labelAttributes.style = `font-size: ${textSize}rem; text-align: center; width: 100%; font-weight: 500;`
-  labelAttributes.content = "Level of Detail:";
-  elements.createLabel(labelAttributes);
-  elements.createSlider({id: "level", min: "1", max: "3", parentId: "infoCard"}, setExpertiseLevel);
-  elements.createSliderLabels(["Low", "Medium", "High"], "infoCard");
+  createExpertiseSlider("visual", categories, count, "infoCard", visual);
 
   let traversal: TraversalElement[];
   if (global.explorationMode) {
@@ -95,10 +89,55 @@ export async function createInfoCard(
   await createVisualInfo(traversal, visual, count, categories, expertiseLevel);
 }
 
-//ToDo update expirancelavel when slider value changes
-function setExpertiseLevel(){
-  // document.getElementById("level")?.value;
+export function createExpertiseSlider(type: string, categories: string[], count: number, parentId: string, visual?: VisualDescriptor){
+  const labelAttributes = global.createLabelAttributes();
+  labelAttributes.id = "sliderLabel";
+  labelAttributes.for = "level";
+  labelAttributes.parentId = parentId;
+  labelAttributes.style = `font-size: ${textSize}rem; text-align: center; width: 100%; font-weight: 500;`
+  labelAttributes.content = "Level of Detail:";
+  const currentValue = currentSliderValue(categories).toString();
+  elements.createLabel(labelAttributes);
+  elements.createSlider({id: "level", min: "1", max: "3", value: currentValue, parentId: parentId},
+  { type: type, categories: categories, count: count, visual: visual }, setExpertiseLevel);
+  elements.createSliderLabels(["Low", "Medium", "High"], parentId);
+}
 
+function currentSliderValue(categories: string[]){
+  const state = store.getState();
+  const expertise = state.expertise;
+  if(categories.includes("general") && categories.includes("insight")){
+    if(expertise.Vis < expertise.Domain ){
+      return expertise.Vis;
+    } else {
+      return expertise.Domain;
+    }
+  } else if(categories.includes("general")){
+    return expertise.Vis;
+  } else if(categories.includes("insight")){
+    return expertise.Domain;
+  }
+  return "1";
+}
+
+function setExpertiseLevel(visualInfo: { type: string, categories: string[], count: number, visual?: VisualDescriptor }){
+  const slider = document.getElementById("level")! as HTMLInputElement;
+  const currentLevel = slider.value;
+  let newExpertise: ExpertiseLevel;
+
+  const state = store.getState();
+  const expertise = state.expertise;
+
+  if(visualInfo.categories.includes("general") && !visualInfo.categories.includes("insight")){
+    newExpertise = {Domain: expertise.Domain, Vis: parseInt(currentLevel)};
+  } else if(visualInfo.categories.includes("insight") && !visualInfo.categories.includes("general")){
+    newExpertise = {Domain: parseInt(currentLevel), Vis: expertise.Vis};
+  } else {
+    newExpertise = {Domain: parseInt(currentLevel), Vis: parseInt(currentLevel)};
+  }
+
+  store.dispatch(decrement(newExpertise));
+  startOnboardingAt(visualInfo.type, visualInfo.visual, visualInfo.categories, visualInfo.count, newExpertise);
 }
 
 export function createInfoCardButtons(

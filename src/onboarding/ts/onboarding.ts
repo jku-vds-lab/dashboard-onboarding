@@ -130,8 +130,8 @@ export async function startOnboardingAt(
   visual?: any,
   categories?: string[],
   count?: number,
-  outputPane?: boolean,
-  expertiseLevel?: ExpertiseLevel
+  expertiseLevel?: ExpertiseLevel,
+  outputPane?: boolean
 ) {
   // helpers.reloadOnboarding(); // Reload: Why is this needed?
   infoCard.removeInfoCard();
