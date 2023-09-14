@@ -12,6 +12,7 @@ import * as global from "../../onboarding/ts/globalVariables";
 // redux starts
 import type { RootState } from "../redux/store";
 import { useSelector } from "react-redux";
+import { startOnboardingAt } from "../../onboarding/ts/onboarding";
 // redux ends
 
 interface Props {
@@ -67,6 +68,7 @@ interface Props {
 
       const visInfo = new SaveAndFetchContent(nodeFullName);
       visInfo.saveVisualInfo(images, infos);
+      reloadOnboarding();
     } catch (error) {
       console.log("Error in saveAnnotatiionChanges", error);
     }
@@ -74,8 +76,44 @@ interface Props {
 
   const resetAnnotationChanges = () => {
     const visInfo = new SaveAndFetchContent(nodeFullName);
-    visInfo.resetVisualInfo();
+    visInfo.resetVisualInfo(expertiseLevel);
+    reloadOnboarding();
   };
+
+  const reloadOnboarding = () => {
+    if (nodeBasicName && expertiseLevel) {
+      let visual = undefined;
+      let visualName = "";
+      let category: string[];
+      let count: number;
+      nodeFullName
+      switch(nodeBasicName){
+        case "dashboard":
+        case "globalFilter":
+          visualName = nodeBasicName;
+          break;
+        default:
+          visual = global.allVisuals.find((visual) => {
+            return visual.name == nodeBasicName;
+          });
+    
+          if (!visual) {
+            return;
+          }
+    
+          visualName = "visual";
+      }
+
+      if(nodeFullName.length > 3){
+        category = [nodeFullName[1]];
+        count = parseInt(nodeFullName[2]);
+      }else{
+        category = ["general"]
+        count = parseInt(nodeFullName[1]);
+      }
+      startOnboardingAt(visualName, visual, category, count, expertiseLevel, true);
+    }
+  }
 
   const addMediaOptions = () => {
     setShowMediaOptions(true);
