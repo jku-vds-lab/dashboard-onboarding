@@ -251,6 +251,7 @@ export async function createInfoList(
   document.getElementById(parentId)?.appendChild(ul);
   for (let i = 0; i < infos.length; ++i) {
     const li = document.createElement("li");
+    li.className = images[i];
     if (editor) {
       li.style.listStyleImage = "url(" + icons["white-" + images[i]] + ")";
       li.style.paddingLeft = "10px";

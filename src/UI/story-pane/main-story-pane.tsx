@@ -62,6 +62,7 @@ interface Props {
       const listElems = child.children;
 
       for (let i = 0; i < listElems.length; i++) {
+        images.push(listElems[i].className);
         infos.push(listElems[i].innerHTML);
       }
 
