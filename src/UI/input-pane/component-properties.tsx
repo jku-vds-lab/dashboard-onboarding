@@ -46,6 +46,19 @@ export default function Components(props: Props) {
         key: "globalFilter",
       };
       inputNodes.push(inputNode);
+
+      inputNode = {
+        mainComponent: createNode(
+          "globalFilter",
+          className + " GlobalFilter",
+          "GlobalFilters",
+          "Interaction",
+          visParentId,
+          "GlobalFilter"
+        ),
+        key: "globalFilter",
+      };
+      inputNodes.push(inputNode);
       break;
     default:
       const vis = allVisuals.find((vis) => vis.name === props.visual);
@@ -103,9 +116,7 @@ export default function Components(props: Props) {
     const displayTitles = [];
     switch (type) {
       case "card":
-        ids.push(oldId + " Insight");
-        titles.push(oldTitle + " Insight");
-        displayTitles.push("Insight");
+      case "multiRowCard":
         break;
       case "slicer":
         ids.push(oldId + " Interaction");
@@ -144,10 +155,13 @@ export default function Components(props: Props) {
         newTitle = "Filter";
         break;
       case "lineClusteredColumnComboChart":
-        newTitle = "Column Chart";
+        newTitle = "Combo Chart";
         break;
       case "clusteredBarChart":
         newTitle = "Bar Chart";
+        break;
+      case "clusteredColumnChart":
+        newTitle = "Column Chart";
         break;
       case "lineChart":
         newTitle = "Line Chart";

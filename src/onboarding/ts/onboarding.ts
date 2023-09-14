@@ -35,6 +35,7 @@ import { VisualDescriptor } from "powerbi-client";
 import * as disable from "./disableArea";
 import * as infoCard from "./infoCards";
 import * as introCard from "./introCards";
+import { ExpertiseLevel } from "../../UI/redux/expertise";
 export async function onLoadReport(isMainPage: boolean) {
   console.log("Report is loading");
   try {
@@ -46,10 +47,10 @@ export async function onLoadReport(isMainPage: boolean) {
     await helpers.getActivePage();
     await helpers.getVisualsfromPowerBI();
     await helpers.createComponentGraph();
-    await helpers.getSettings();
+    helpers.getSettings();
 
     if (isMainPage) {
-      const trav = await basicTraversalStrategy();
+      const trav = basicTraversalStrategy();
       global.setBasicTraversal(trav);
 
       helpers.createEditOnboardingButtons();
@@ -72,7 +73,7 @@ export async function onReloadReport() {
 
     if (global.page.name !== oldPage && global.page.displayName !== "Info") {
       await helpers.getVisualsfromPowerBI();
-      await createSettings();
+      createSettings();
       helpers.resizeEmbed(global.filterOpenedWidth);
     }
   } catch (error) {
@@ -127,11 +128,15 @@ export async function reloadOnboardingAt() {
 export async function startOnboardingAt(
   type: string,
   visual?: any,
+  categories?: string[],
   count?: number,
+  expertiseLevel?: ExpertiseLevel,
   outputPane?: boolean
 ) {
   // helpers.reloadOnboarding(); // Reload: Why is this needed?
   infoCard.removeInfoCard();
+  removeFilterInfoCard();
+  removeDashboardInfoCard();
   introCard.removeIntroCard();
 
   switch (type) {
@@ -142,7 +147,7 @@ export async function startOnboardingAt(
       createDashboardInfoCard(count!);
       break;
     case "globalFilter":
-      await createFilterInfoCard(count!);
+      await createFilterInfoCard(categories!, count!, expertiseLevel);
       break;
     case "interaction":
       if (outputPane) {
@@ -159,7 +164,7 @@ export async function startOnboardingAt(
       await showVisualChanges(visual);
       break;
     case "visual":
-      await createInfoCard(visual, count!, getStandartCategories(visual.type));
+      await createInfoCard(visual, count!, categories!, expertiseLevel);
       break;
     case "explorationOverlay":
       createOnboardingOverlay();

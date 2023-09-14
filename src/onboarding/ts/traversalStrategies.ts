@@ -7,86 +7,86 @@ import {
 } from "./traversal";
 import * as global from "./globalVariables";
 
-export async function basicTraversalStrategy() {
+export function basicTraversalStrategy() {
   const trav = [];
   const traversalElem = createTraversalElement("dashboard");
-  traversalElem.element = await getTraversalElement("dashboard");
+  traversalElem.element = getTraversalElement("dashboard");
   trav.push(traversalElem);
   for (const vis of global.allVisuals) {
     const categories = getStandartCategories(vis.type);
     const traversalElem2 = createTraversalElement(vis.type);
-    traversalElem2.element = await getTraversalElement(vis.name);
+    traversalElem2.element = getTraversalElement(vis.name);
     traversalElem2.categories = categories;
     trav.push(traversalElem2);
   }
   const traversalElem1 = createTraversalElement("globalFilter");
-  traversalElem1.element = await getTraversalElement("globalFilter");
+  traversalElem1.element = getTraversalElement("globalFilter");
   trav.push(traversalElem1);
   return trav;
 }
 
-export async function depthFirstTraversalStrategyOriginal() {
+export function depthFirstTraversalStrategyOriginal() {
   const trav = [];
   const traversalElem = createTraversalElement("dashboard");
-  traversalElem.element = await getTraversalElement("dashboard");
+  traversalElem.element = getTraversalElement("dashboard");
   trav.push(traversalElem);
   for (const vis of global.currentVisuals) {
     const categories = getStandartCategories(vis.type);
     for (const category of categories) {
       const traversalElem2 = createTraversalElement(vis.type);
-      traversalElem2.element = await getTraversalElement(vis.name);
+      traversalElem2.element = getTraversalElement(vis.name);
       traversalElem2.categories = [category];
       trav.push(traversalElem2);
     }
   }
   const traversalElem1 = createTraversalElement("globalFilter");
-  traversalElem1.element = await getTraversalElement("globalFilter");
+  traversalElem1.element = getTraversalElement("globalFilter");
   trav.push(traversalElem1);
   return trav;
 }
 
-export async function martiniGlassTraversalStrategy() {
+export function martiniGlassTraversalStrategy() {
   const trav = [];
   const traversalElem = createTraversalElement("dashboard");
-  traversalElem.element = await getTraversalElement("dashboard");
+  traversalElem.element = getTraversalElement("dashboard");
   trav.push(traversalElem);
   for (const vis of global.currentVisuals) {
     const traversalElem2 = createTraversalElement(vis.type);
-    traversalElem2.element = await getTraversalElement(vis.name);
+    traversalElem2.element = getTraversalElement(vis.name);
     traversalElem2.categories = ["general"];
     trav.push(traversalElem2);
   }
   for (const vis of global.currentVisuals) {
     const traversalElem3 = createTraversalElement(vis.type);
-    traversalElem3.element = await getTraversalElement(vis.name);
+    traversalElem3.element = getTraversalElement(vis.name);
     traversalElem3.categories = ["insight"];
     trav.push(traversalElem3);
   }
 
   for (const vis of global.currentVisuals) {
     const traversalElem4 = createTraversalElement(vis.type);
-    traversalElem4.element = await getTraversalElement(vis.name);
+    traversalElem4.element = getTraversalElement(vis.name);
     traversalElem4.categories = ["interaction"];
     trav.push(traversalElem4);
   }
 
   const traversalElem1 = createTraversalElement("globalFilter");
-  traversalElem1.element = await getTraversalElement("globalFilter");
+  traversalElem1.element = getTraversalElement("globalFilter");
   trav.push(traversalElem1);
   return trav;
 }
 
-export async function depthFirstTraversalStrategy() {
+export function depthFirstTraversalStrategy() {
   const trav = [];
   // "current visuals", currentVisuals);
   try {
     const traversalElem1 = createTraversalElement("dashboard");
-    traversalElem1.element = await getTraversalElement("dashboard");
+    traversalElem1.element = getTraversalElement("dashboard");
     traversalElem1.count = 1;
     trav.push(traversalElem1);
 
     const traversalElem2 = createTraversalElement("globalFilter");
-    traversalElem2.element = await getTraversalElement("globalFilter");
+    traversalElem2.element = getTraversalElement("globalFilter");
     traversalElem2.count = 1;
     trav.push(traversalElem2);
 
@@ -103,7 +103,7 @@ export async function depthFirstTraversalStrategy() {
 
       for (const category of categories) {
         const traversalElem = createTraversalElement(vis.type);
-        traversalElem.element = await getTraversalElement(vis.name);
+        traversalElem.element = getTraversalElement(vis.name);
         traversalElem.count = 1;
         traversalElem.categories = [category];
         groupTrav.push(traversalElem);

@@ -20,7 +20,7 @@ export async function getLineClusteredColumnComboChartChanges(visual: any) {
   });
 
   const allAttributs = dataArray.map((yAxis) => yAxis.attribute);
-  const allDataString = helpers.dataToString(allAttributs);
+  const allDataString = helpers.dataToString(allAttributs, "and");
 
   let visualInteractionInfo = getGeneralInteractionInfo(
     additionalFilters,

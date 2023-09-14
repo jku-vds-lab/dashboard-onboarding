@@ -38,6 +38,8 @@ import {
   findCurrentTraversalVisualIndex,
 } from "./traversal";
 import * as helper from "../../componentGraph/helperFunctions";
+import { createFilterInfoCard } from "./filterInfoCards";
+import { store } from "../../UI/redux/store";
 
 export function addContainerOffset(cardHeight: number) {
   const rect = document
@@ -87,13 +89,21 @@ function backToVisual() {
   removeInteractionCard();
   removeShowChangesCard();
   removeHintCard();
+
+  const state = store.getState();
+
   const traversalElement = findCurrentTraversalVisual();
   if (traversalElement) {
-    createInfoCard(
-      traversalElement[0],
-      traversalElement[2],
-      traversalElement[1]
-    );
+    if(traversalElement[0] === "globalFilter"){
+      createFilterInfoCard(traversalElement[2], traversalElement[3], state.expertise);
+    } else {
+      createInfoCard(
+        traversalElement[1],
+        traversalElement[3],
+        traversalElement[2],
+        state.expertise
+      );
+    }
   }
 }
 
@@ -282,11 +292,7 @@ export function createEditOnboardingButtons() {
 
 export async function createInteractionExampleButton(
   parentId: string,
-  visual: VisualDescriptor
 ) {
-  if (!(await helper.getVisualData(visual))) {
-    return;
-  }
   elements.removeElement("interactionExample");
 
   const attributes = global.createButtonAttributes();
@@ -434,10 +440,10 @@ export async function createComponentGraph() {
   await graph.setComponentGraphData();
 }
 
-export async function getSettings() {
+export function getSettings() {
   try {
     if (localStorage.getItem("settings") == null) {
-      await createSettings();
+      createSettings();
     }
     global.setSettings(JSON.parse(localStorage.getItem("settings")!, reviver));
   } catch (error) {
@@ -507,11 +513,11 @@ export function recreateInteractionExampleButton() {
     const visual = global.currentVisuals[global.currentVisualIndex];
     let parent = document.getElementById("visualInfoTabs");
     if (parent) {
-      createInteractionExampleButton("interactionTab", visual);
+      createInteractionExampleButton("interactionTab");
     }
     parent = document.getElementById("visualInfo");
     if (parent) {
-      createInteractionExampleButton("visualInfo", visual);
+      createInteractionExampleButton("visualInfo");
     }
   }
 }

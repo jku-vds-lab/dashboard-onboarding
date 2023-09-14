@@ -17,6 +17,7 @@ import { getTraversalElement } from "./createSettings";
 import { IDefaultNode } from "../../UI/nodes-canvas/nodes/defaultNode";
 import { IGroupNode } from "../../UI/nodes-canvas/nodes/groupNode";
 import { VisualDescriptor } from "powerbi-client";
+import { store } from "../../UI/redux/store";
 
 export let traversalStrategy: TraversalElement[] = [];
 export const lookedAtInGroup = createLookedAtInGroup();
@@ -123,12 +124,14 @@ export function createInformationCard(
   removeDashboardInfoCard();
   removeFilterInfoCard();
   removeOnboardingOverlay();
+
+  const state = store.getState();
   switch (type) {
     case "dashboard":
       createDashboardInfoCard(count);
       break;
     case "globalFilter":
-      createFilterInfoCard(count);
+      createFilterInfoCard(getStandartCategories("globalFilter"), count, state.expertise);
       break;
     case "group":
       createExplainGroupCard();
@@ -140,7 +143,8 @@ export function createInformationCard(
           global.allVisuals.find((vis) => vis.name === visualId)
         ),
         count,
-        categories!
+        categories!,
+        state.expertise
       );
       break;
   }
@@ -296,6 +300,7 @@ export function findCurrentTraversalVisual() {
       traversalElem.id !== "globalFilter"
     ) {
       return [
+        traversalElem.id,
         currentVisuals.find((vis: any) => vis.name === visInGroup.element.id),
         visInGroup.categories,
         visInGroup.count,
@@ -304,10 +309,19 @@ export function findCurrentTraversalVisual() {
   }
 
   if (
-    traversalElem.element.id !== "dashboard" &&
-    traversalElem.element.id !== "globalFilter"
+    traversalElem.element.id === "globalFilter"
   ) {
     return [
+      traversalElem.element.id,
+      null,
+      traversalElem.categories,
+      traversalElem.count,
+    ];
+  } else if (
+    traversalElem.element.id !== "dashboard"
+  ) {
+    return [
+      traversalElem.element.id,
       currentVisuals.find((vis: any) => vis.name === traversalElem.element.id),
       traversalElem.categories,
       traversalElem.count,
@@ -410,13 +424,13 @@ function createExplainGroupText() {
   return explaination;
 }
 
-export async function createTraversalOfGroupNodes(groupNode: IGroupNode) {
+export function createTraversalOfGroupNodes(groupNode: IGroupNode) {
   const group = createGroup();
 
   try {
     group.type = groupNode.data.traverse;
     for (const sNode of groupNode.nodes) {
-      const traversalElem = await getTraversalElem(sNode);
+      const traversalElem = getTraversalElem(sNode);
       group.visuals.push([traversalElem]);
     }
   } catch (error) {}
@@ -424,7 +438,7 @@ export async function createTraversalOfGroupNodes(groupNode: IGroupNode) {
   return group;
 }
 
-export async function getTraversalElem(sNode: any) {
+export function getTraversalElem(sNode: any) {
   const traversalElem: TraversalElement = {
     element: "",
     categories: [],
@@ -442,7 +456,7 @@ export async function getTraversalElem(sNode: any) {
       count = parseInt(idParts[1]);
     }
 
-    traversalElem.element = await getTraversalElement(nodeId);
+    traversalElem.element = getTraversalElement(nodeId);
     traversalElem.count = count;
     traversalElem.categories = [nodeCat];
   } catch (error) {
@@ -452,7 +466,7 @@ export async function getTraversalElem(sNode: any) {
   return traversalElem;
 }
 
-export async function createTraversalOfNodes(
+export function createTraversalOfNodes(
   allNodes: (IDefaultNode | IGroupNode)[]
 ) {
   try {
@@ -460,22 +474,22 @@ export async function createTraversalOfNodes(
 
     for (const node of allNodes) {
       if (node.type == "default") {
-        trav.push(await getTraversalElem(node));
+        trav.push(getTraversalElem(node));
       } else {
         const travElem = createTraversalElement("group");
-        travElem.element = await createTraversalOfGroupNodes(<IGroupNode>node);
+        travElem.element = createTraversalOfGroupNodes(<IGroupNode>node);
         travElem.count = parseInt(node.id.split(" ")[1]);
         trav.push(travElem);
       }
     }
     // console.log("Trav", trav);
-    await updateTraversal(trav);
+    updateTraversal(trav);
   } catch (error) {
     console.log("Error", error);
   }
 }
 
-export async function updateTraversal(
+export function updateTraversal(
   newTraversalStrategy: TraversalElement[]
 ) {
   try {
@@ -510,7 +524,7 @@ export async function updateTraversal(
                 newVisuals.push(oldSetting);
               } else {
                 const traversalElem = createTraversalElement("");
-                traversalElem.element = await getTraversalElement(
+                traversalElem.element = getTraversalElement(
                   groupElem.element.id
                 );
                 traversalElem.count = groupElem.count;
@@ -524,7 +538,7 @@ export async function updateTraversal(
           traversal.push(elem);
         } else {
           const traversalElem = createTraversalElement("");
-          traversalElem.element = await getTraversalElement(elem.element);
+          traversalElem.element = getTraversalElement(elem.element);
           traversalElem.count = elem.count;
           traversalElem.categories = elem.categories;
           traversal.push(traversalElem);
@@ -542,7 +556,7 @@ export async function updateTraversal(
           traversal.push(oldSetting);
         } else {
           const traversalElem = createTraversalElement("");
-          traversalElem.element = await getTraversalElement(elem.element.id);
+          traversalElem.element = getTraversalElement(elem.element.id);
           traversalElem.count = elem.count;
           traversalElem.categories = elem.categories;
           traversal.push(traversalElem);
@@ -580,11 +594,11 @@ export function getStandartCategories(type: string) {
     case "multiRowCard":
       categories = ["general"];
       break;
+    case "globalFilter":
     case "slicer":
       categories = ["general", "interaction"];
       break;
     case "dashboard":
-    case "globalFilter":
       categories = ["general"];
       break;
     default:

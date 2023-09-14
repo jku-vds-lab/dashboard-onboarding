@@ -5,12 +5,12 @@ import * as elements from "./elements";
 import { createFilterDisabledArea, removeFrame } from "./disableArea";
 import Filter from "../../componentGraph/Filter";
 import { removeElement } from "./elements";
-import { createInfoCardButtons } from "./infoCards";
-import { replacer } from "../../componentGraph/ComponentGraph";
-import { TraversalElement, createTraversalElement } from "./traversal";
-import { getTraversalElement } from "./createSettings";
+import { createExpertiseSlider, createInfoCardButtons } from "./infoCards";
+import { TraversalElement } from "./traversal";
+import { createInfoList, createTabs } from "./visualInfo";
+import { ExpertiseLevel } from "../../UI/redux/expertise";
 
-export async function createFilterInfoCard(count: number) {
+export async function createFilterInfoCard(categories: string[], count: number, expertiseLevel?: ExpertiseLevel) {
   createFilterDisabledArea();
 
   const style = onboardingHelpers.getCardStyle(
@@ -29,6 +29,8 @@ export async function createFilterInfoCard(count: number) {
     "filterInfoCard"
   );
 
+  createExpertiseSlider("globalFilter", categories, count, "filterInfoCard")
+
   let traversal: TraversalElement[];
   if (global.explorationMode) {
     traversal = global.basicTraversal;
@@ -39,7 +41,7 @@ export async function createFilterInfoCard(count: number) {
   const filterData = helpers.getDataWithId(
     traversal,
     "globalFilter",
-    ["general"],
+    categories,
     count
   );
   if (!filterData) {
@@ -48,33 +50,22 @@ export async function createFilterInfoCard(count: number) {
 
   onboardingHelpers.createCardContent(
     filterData.title,
-    filterData.generalInformation,
+   "",
     "filterInfoCard"
   );
   createInfoCardButtons(traversal, "globalFilter", [], count);
 
-  const filters = await getFilterInfos(traversal, count);
-  if (filters) {
-    createFilterList(traversal, filters, "contentText", count);
-  }
-}
-
-export function createFilterList(
-  traversal: TraversalElement[],
-  list: string | any[],
-  parentId: string,
-  count: number
-) {
   document.getElementById("contentText")!.innerHTML = "";
   const visualData = helpers.getDataWithId(
     traversal,
     "globalFilter",
-    ["general"],
+    categories,
     count
   );
   if (!visualData) {
     return;
   }
+
   const videoURL = localStorage.getItem("globalFiltervideo");
   if (videoURL) {
     const attributes = global.createDivAttributes();
@@ -82,6 +73,7 @@ export function createFilterList(
     attributes.style = "position: relative;padding-bottom: 56.25%;height: 0;";
     attributes.parentId = "contentText";
     elements.createDiv(attributes);
+
     const videoAttributes = global.createVideoAttributes();
     videoAttributes.id = "video";
     videoAttributes.width = "100%";
@@ -90,19 +82,53 @@ export function createFilterList(
 
     const sourceAttributes = global.createSourceAttributes();
     sourceAttributes.id = "source";
-    sourceAttributes.src = visualData.videoURL;
+    sourceAttributes.src = videoURL;
     sourceAttributes.type = "video/mp4";
     sourceAttributes.parentId = "video";
     elements.createSource(sourceAttributes);
   }
 
-  const ul = document.createElement("ul");
-  document.getElementById(parentId)?.appendChild(ul);
+  createTabsWithContent(filterData, categories, expertiseLevel);
+}
 
-  for (let i = 0; i < list.length; ++i) {
-    const li = document.createElement("li");
-    li.innerHTML = list[i];
-    ul.appendChild(li);
+export async function createTabsWithContent(
+  visualData: any,
+  categories: string[],
+  expertiseLevel?: ExpertiseLevel
+) {
+  const visualInfos = await helpers.getVisualInfos("globalFilter", expertiseLevel);
+
+  createTabs(categories);
+
+  if (categories.includes("general")) {
+    let generalImages = [];
+    let generalInfos = [];
+
+    if(visualData.changedGeneralInfos.length === 0){
+      generalImages = visualInfos.generalImages;
+      generalInfos = visualInfos.generalInfos;
+    } else {
+      generalImages = visualData.changedGeneralImages;
+      generalInfos = visualData.changedGeneralInfos;
+    }
+
+    createInfoList(generalImages, generalInfos, "generalTab", false);
+  }
+
+  if (categories.includes("interaction")) {
+    let interactionImages = [];
+    let interactionInfos = [];
+
+    if(visualData.changedInteractionInfos.length === 0){
+      interactionImages = visualInfos.interactionImages;
+      interactionInfos = visualInfos.interactionInfos;
+    } else {
+      interactionImages = visualData.changedInteractionImages;
+      interactionInfos = visualData.changedInteractionInfos;
+    }
+
+    createInfoList(interactionImages, interactionInfos, "interactionTab", false);
+    // onboardingHelpers.createInteractionExampleButton("interactionTab");
   }
 }
 
@@ -112,7 +138,7 @@ export function getFilterDescription(filter: Filter) {
   if (filter.operation) {
     if (filter.values.length != 0) {
       valueText =
-        " Its current value is " + helpers.dataToString(filter.values) + ".";
+        " Its current value is " + helpers.dataToString(filter.values, "and") + ".";
     }
     filterText =
       "The operation " +
@@ -127,176 +153,8 @@ export function getFilterDescription(filter: Filter) {
   return filter.attribute + ": " + filterText;
 }
 
-export async function getFilterInfos(
-  traversal: TraversalElement[],
-  count: number
-) {
-  const filterInfos = await helpers.getFilterInfo();
-
-  const filterData = helpers.getDataWithId(
-    traversal,
-    "globalFilter",
-    ["general"],
-    count
-  );
-  if (!filterData) {
-    return;
-  }
-
-  const newFilters = [];
-  for (let i = 0; i < filterData.filterInfosStatus.length; ++i) {
-    switch (filterData.filterInfosStatus[i]) {
-      case global.infoStatus.original:
-        newFilters.push(filterInfos[i]);
-        break;
-      case global.infoStatus.changed:
-      case global.infoStatus.added:
-        newFilters.push(filterData.changedFilterInfos[i]);
-        break;
-      default:
-        break;
-    }
-  }
-  return newFilters;
-}
-
 export function removeFilterInfoCard() {
   removeElement("filterInfoCard");
   removeElement("disabledLeft");
   removeFrame();
-}
-
-export async function saveFilterChanges(newInfo: string[], count: number) {
-  const filterInfos = await helpers.getFilterInfo();
-
-  let filterData = helpers.getDataWithId(
-    global.settings.traversalStrategy,
-    "globalFilter",
-    ["general"],
-    count
-  );
-  if (!filterData) {
-    const traversalElem = createTraversalElement("");
-    traversalElem.element = await getTraversalElement("globalFilter");
-    traversalElem.count = count;
-    traversalElem.categories = ["general"];
-    global.settings.traversalStrategy.push(traversalElem);
-    filterData = helpers.getDataWithId(
-      global.settings.traversalStrategy,
-      "globalFilter",
-      ["general"],
-      count
-    );
-  }
-
-  for (let i = 0; i < newInfo.length; ++i) {
-    if (newInfo[i] == "" || newInfo[i] == null) {
-      filterData.filterInfosStatus[i] = "deleted";
-      filterData.changedFilterInfos[i] = "";
-    } else if (i >= filterData.filterInfosStatus.length) {
-      filterData.filterInfosStatus.push("added");
-      filterData.changedFilterInfos.push(newInfo[i]);
-    } else if (newInfo[i] == filterInfos[i]) {
-      filterData.filterInfosStatus[i] = "original";
-      filterData.changedFilterInfos[i] = "";
-    } else {
-      filterData.filterInfosStatus[i] = "changed";
-      filterData.changedFilterInfos[i] = newInfo[i];
-    }
-  }
-
-  if (newInfo.length < filterData.filterInfosStatus.length) {
-    for (let i = newInfo.length; i < filterData.filterInfosStatus.length; ++i) {
-      filterData.filterInfosStatus[i] = "deleted";
-      filterData.changedFilterInfos[i] = "";
-    }
-  }
-
-  localStorage.setItem("settings", JSON.stringify(global.settings, replacer));
-}
-
-export async function resetFilterChanges(count: number) {
-  const filterInfos = await helpers.getFilterInfo();
-
-  const textBox = document.getElementById("textBox")! as HTMLTextAreaElement;
-  textBox.innerHTML = "";
-
-  const ul = document.createElement("ul");
-  document.getElementById("textBox")?.appendChild(ul);
-
-  for (let i = 0; i < filterInfos.length; ++i) {
-    const li = document.createElement("li");
-    li.innerHTML = filterInfos[i];
-    ul.appendChild(li);
-  }
-
-  const filterData = helpers.getDataWithId(
-    global.settings.traversalStrategy,
-    "globalFilter",
-    ["general"],
-    count
-  );
-  if (!filterData) {
-    const traversalElem = createTraversalElement("");
-    traversalElem.element = await getTraversalElement("globalFilter");
-    traversalElem.count = count;
-    traversalElem.categories = ["general"];
-    global.settings.traversalStrategy.push(traversalElem);
-    return;
-  }
-
-  for (let i = 0; i < filterInfos.length; ++i) {
-    filterData.filterInfosStatus[i] = "original";
-    filterData.changedFilterInfos[i] = "";
-  }
-
-  if (filterInfos.length < filterData.filterInfosStatus.length) {
-    const elemCount = filterData.filterInfosStatus.length - filterInfos.length;
-    filterData.filterInfosStatus.splice(filterInfos.length, elemCount);
-    filterData.changedFilterInfos.splice(filterInfos.length, elemCount);
-  }
-
-  localStorage.setItem("settings", JSON.stringify(global.settings, replacer));
-}
-
-export function getFilterInfoInEditor(count: number) {
-  let infos = [];
-
-  const filterInfos = helpers.getFilterInfo();
-
-  const filterData = helpers.getDataWithId(
-    global.settings.traversalStrategy,
-    "globalFilter",
-    ["general"],
-    count
-  );
-  if (!filterData) {
-    infos = filterInfos;
-  } else {
-    for (let i = 0; i < filterData.filterInfosStatus.length; ++i) {
-      switch (filterData.filterInfosStatus[i]) {
-        case global.infoStatus.original:
-          infos.push(filterInfos[i]);
-          break;
-        case global.infoStatus.changed:
-        case global.infoStatus.added:
-          infos.push(filterData.changedFilterInfos[i]);
-          break;
-        default:
-          break;
-      }
-    }
-  }
-
-  const textBox = document.getElementById("textBox")! as HTMLTextAreaElement;
-  textBox.innerHTML = "";
-
-  const ul = document.createElement("ul");
-  document.getElementById("textBox")?.appendChild(ul);
-
-  for (let i = 0; i < infos.length; ++i) {
-    const li = document.createElement("li");
-    li.innerHTML = infos[i];
-    ul.appendChild(li);
-  }
 }

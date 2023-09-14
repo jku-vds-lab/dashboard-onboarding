@@ -155,7 +155,7 @@ async function createShowVisualChangesInfo(visual: VisualDescriptor) {
 
 export async function getShowVisualChangesText(visual: VisualDescriptor) {
   const allTargets = global.selectedTargets.map(({ equals }) => equals);
-  const allTargetsString = dataToString(allTargets);
+  const allTargetsString = dataToString(allTargets, "and");
   let visualChangeInfo =
     "You can see that this visual was filtered by " +
     allTargetsString +

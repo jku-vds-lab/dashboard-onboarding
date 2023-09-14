@@ -4,16 +4,6 @@ import { ReactFlowProvider } from "reactflow";
 import NodesCanvas from "../nodes-canvas/canvas-index";
 import "../assets/css/dashboard.scss";
 import SaveAndFetchContent from "./../../onboarding/ts/Content/saveAndFetchContent"; // should be moved close to story pane
-import {
-  getDashboardInfoInEditor,
-  resetDashboardChanges,
-  saveDashboardChanges,
-} from "../../onboarding/ts/dashboardInfoCard";
-import {
-  getFilterInfoInEditor,
-  resetFilterChanges,
-  saveFilterChanges,
-} from "../../onboarding/ts/filterInfoCards";
 import mediaIcon from "../assets/img/icon-7.png";
 import { useEffect, useState } from "react";
 import RecordView from "./main-record";
@@ -22,6 +12,7 @@ import * as global from "../../onboarding/ts/globalVariables";
 // redux starts
 import type { RootState } from "../redux/store";
 import { useSelector } from "react-redux";
+import { startOnboardingAt } from "../../onboarding/ts/onboarding";
 // redux ends
 
 interface Props {
@@ -30,7 +21,7 @@ interface Props {
   setNodes: any;
 }
 
-export default function StoryPane(props: Props) {
+ export default function StoryPane(props: Props) {
   const [trigger, setTrigger] = useState(0);
   const [showMediaOptions, setShowMediaOptions] = useState(false);
   const [nodes, setNodes] = useState([]);
@@ -53,78 +44,76 @@ export default function StoryPane(props: Props) {
       // console.log("Trying to fill the box", nodeBasicName);
       if (nodeFullName?.length > 0) {
         const visInfo = new SaveAndFetchContent(nodeFullName);
-        switch (nodeBasicName) {
-          case "dashboard":
-            await getDashboardInfoInEditor(1);
-            break;
-          case "globalFilter":
-            getFilterInfoInEditor(1);
-            break;
-          case "group":
-            break;
-          default:
-            if (nodeFullName) {
-              await visInfo.getVisualDescInEditor(expertiseLevel);
-              // await getVisualDescInEditor(nodeFullName);
-            }
-            break;
-        }
+        await visInfo.getVisualDescInEditor(expertiseLevel);
       }
     }
 
     fillTextBox().catch(console.error);
   }, [expertiseLevel, nodeBasicName, nodeFullName]);
 
-  const saveAnnotationChanges = async () => {
+  const saveAnnotationChanges = () => {
     try {
       const infos = [];
+      const images: string[] = [];
       const textBox = document.getElementById(
         "textBox"
       )! as HTMLTextAreaElement;
-      const globalText = textBox.innerHTML;
       const child = textBox.children[0];
       const listElems = child.children;
 
       for (let i = 0; i < listElems.length; i++) {
+        images.push(listElems[i].className);
         infos.push(listElems[i].innerHTML);
       }
 
-      const currentIdParts = nodeFullName;
       const visInfo = new SaveAndFetchContent(nodeFullName);
-
-      switch (currentIdParts[0]) {
-        case "dashboard":
-          await saveDashboardChanges(infos, 1);
-          break;
-        case "globalFilter":
-          await saveFilterChanges(infos, 1);
-          break;
-        default:
-          await visInfo.saveVisualInfo(infos, globalText, currentIdParts, 1);
-          break;
-      }
+      visInfo.saveVisualInfo(images, infos);
+      reloadOnboarding();
     } catch (error) {
       console.log("Error in saveAnnotatiionChanges", error);
     }
   };
 
-  const resetAnnotationChanges = async () => {
-    const currentIdParts = nodeFullName;
-    if (!currentIdParts) {
-      return;
-    }
-    switch (currentIdParts[0]) {
-      case "dashboard":
-        await resetDashboardChanges(1);
-        break;
-      case "globalFilter":
-        await resetFilterChanges(1);
-        break;
-      default:
-        // await resetVisualChanges(currentIdParts, 1);
-        break;
-    }
+  const resetAnnotationChanges = () => {
+    const visInfo = new SaveAndFetchContent(nodeFullName);
+    visInfo.resetVisualInfo(expertiseLevel);
+    reloadOnboarding();
   };
+
+  const reloadOnboarding = () => {
+    if (nodeBasicName && expertiseLevel) {
+      let visual = undefined;
+      let visualName = "";
+      let category: string[];
+      let count: number;
+      nodeFullName
+      switch(nodeBasicName){
+        case "dashboard":
+        case "globalFilter":
+          visualName = nodeBasicName;
+          break;
+        default:
+          visual = global.allVisuals.find((visual) => {
+            return visual.name == nodeBasicName;
+          });
+    
+          if (!visual) {
+            return;
+          }
+    
+          visualName = "visual";
+      }
+
+      if(nodeFullName.length > 3){
+        category = [nodeFullName[1]];
+        count = parseInt(nodeFullName[2]);
+      }else{
+        category = ["general"]
+        count = parseInt(nodeFullName[1]);
+      }
+      startOnboardingAt(visualName, visual, category, count, expertiseLevel, true);
+    }
+  }
 
   const addMediaOptions = () => {
     setShowMediaOptions(true);
