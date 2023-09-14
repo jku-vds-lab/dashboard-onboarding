@@ -128,7 +128,7 @@ export default class InteractionDescription {
         visual = visual as GlobalFilters;
         this.interactionText.interactionImages.push("elemClickImg");
         this.interactionText.interactionInfos.push(
-          this.interactionClickText(visual.mark, dataToString(visual.filterNames, "or"))
+          this.interactionClickText(visual.globalFilterInfos.mark, dataToString(visual.filterNames, "or"))
         );
         break;
       default:

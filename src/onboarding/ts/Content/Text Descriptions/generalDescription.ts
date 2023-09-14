@@ -260,40 +260,46 @@ export default class GeneralDescription {
     visual: LineChart | BarChart | ColumnChart | ComboChart | Card | Slicer | GlobalFilters
   ) {
     let filters;
-    this.text.generalImages.push("infoImg");
-    this.text.generalInfos.push(visual.description);
-    const purposeText = this.purposeText(visual?.task);
 
     switch (visualType) {
       case "card":
         visual = visual as Card;
+        this.text.generalImages.push("infoImg");
+        this.text.generalInfos.push(visual.description);
+        const purposeTextCard = this.purposeText(visual?.task);
         const generalTextCard = this.cardText(
           visual.data.attributes[0],
           visual.dataValue
         );
 
         this.text.generalImages.push("dataImg");
-        this.text.generalInfos.push(generalTextCard + purposeText);
+        this.text.generalInfos.push(generalTextCard + purposeTextCard);
 
         filters = visual.localFilters.localFilters;
         break;
       case "slicer":
         visual = visual as Slicer;
+        this.text.generalImages.push("infoImg");
+        this.text.generalInfos.push(visual.description);
+        const purposeTextSlicer = this.purposeText(visual?.task);
         const generalTextSlicer = this.slicerText(visual.data.attributes[0]);
 
         this.text.generalImages.push("dataImg");
-        this.text.generalInfos.push(generalTextSlicer + purposeText);
+        this.text.generalInfos.push(generalTextSlicer + purposeTextSlicer);
 
         filters = visual.localFilters.localFilters;
         break;
       case "globalFilter":
         visual = visual as GlobalFilters;
+        this.text.generalImages.push("infoImg");
+        this.text.generalInfos.push(visual.globalFilterInfos.description);
+        const purposeTextFilter = this.purposeText(visual?.globalFilterInfos.task);
         const generalTextFilter = this.globalFilterText(helper.dataToString(visual.filterNames, "or"));
 
         this.text.generalImages.push("dataImg");
-        this.text.generalInfos.push(generalTextFilter + purposeText);
+        this.text.generalInfos.push(generalTextFilter + purposeTextFilter);
 
-        filters = visual.filters;
+        filters = visual.globalFilterInfos.filters;
         break;
       default:
         let dataName;
@@ -308,13 +314,17 @@ export default class GeneralDescription {
           marks = [visual.mark];
         }
 
+        this.text.generalImages.push("infoImg");
+        this.text.generalInfos.push(visual.description);
+        const purposeTextVisual = this.purposeText(visual?.task);
+
         const dataString = helper.dataToString(visual.data.attributes!, "and");
         const channelString = helper.dataToString(visual.channel.channel!, "and");
 
         const generalText = this.generalText(channelString, dataString);
 
         this.text.generalImages.push("dataImg");
-        this.text.generalInfos.push(generalText + purposeText);
+        this.text.generalInfos.push(generalText + purposeTextVisual);
 
         const isHorizontal =
           visualType === "line" ||
@@ -413,7 +423,7 @@ export default class GeneralDescription {
         this.text.generalImages.push("dataImg");
         this.text.generalInfos.push(generalTextFilter);
 
-        filters = visual.filters;
+        filters = visual.globalFilterInfos.filters;
         break;
       default:
         visual = visual as LineChart | BarChart | ColumnChart | ComboChart;

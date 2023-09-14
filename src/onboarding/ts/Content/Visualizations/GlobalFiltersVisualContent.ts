@@ -7,14 +7,16 @@ import ExpertiseText from "../userLevel";
 import InteractionExampleDescription from "../Text Descriptions/interactionExampleDescription";
 import GlobalFilter from "../../../../componentGraph/GlobalFilter";
 
-export default class GlobalFilters extends GlobalFilter{
+export default class GlobalFilters {
   text: BasicTextFormat;
   textDescription: ExpertiseText;
   interactionExample: InteractionExampleDescription;
   filterNames: string[];
+  globalFilterInfos: GlobalFilter;
 
   constructor() {
-    super();
+    // exends GlobalFilter and super call throws called before initialization error workaraund with initializing it here as a variable, someone needs to look into that when there is more time
+    this.globalFilterInfos = new GlobalFilter();
     this.text = {
       generalImages: [],
       generalInfos: [],
@@ -29,9 +31,9 @@ export default class GlobalFilters extends GlobalFilter{
   }
 
     async setGlobalFilterInformation(){
-        await this.getGlobalFilter();
+        await this.globalFilterInfos.getGlobalFilter();
         
-        this.filterNames = this.filters.map((filter) => filter.attribute);
+        this.filterNames = []//this.filters.map((filter) => filter.attribute);
     }
 
   getGlobalFilterInfo(expertiseLevel: ExpertiseLevel) {

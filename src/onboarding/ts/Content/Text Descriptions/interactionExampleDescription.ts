@@ -89,9 +89,9 @@ export default class InteractionExampleDescription {
         );
       case "globalFilter":
         visual = visual as GlobalFilters;
-        const exampleFilter = visual.filters[Math.floor(visual.filters.length / 2)];
+        const exampleFilter = visual.globalFilterInfos.filters[Math.floor(visual.globalFilterInfos.filters.length / 2)];
         return this.interactionGlobalFilterText(
-          visual.mark,
+          visual.globalFilterInfos.mark,
           exampleFilter.attribute
         );
       default:
