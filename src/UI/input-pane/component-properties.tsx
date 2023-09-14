@@ -155,10 +155,13 @@ export default function Components(props: Props) {
         newTitle = "Filter";
         break;
       case "lineClusteredColumnComboChart":
-        newTitle = "Column Chart";
+        newTitle = "Combo Chart";
         break;
       case "clusteredBarChart":
         newTitle = "Bar Chart";
+        break;
+      case "clusteredColumnChart":
+        newTitle = "Column Chart";
         break;
       case "lineChart":
         newTitle = "Line Chart";
