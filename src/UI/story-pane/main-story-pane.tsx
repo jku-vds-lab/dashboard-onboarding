@@ -53,7 +53,6 @@ interface Props {
 
   const saveAnnotationChanges = () => {
     try {
-      debugger
       const infos = [];
       const images: string[] = [];
       const textBox = document.getElementById(
