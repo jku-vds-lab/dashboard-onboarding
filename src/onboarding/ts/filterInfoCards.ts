@@ -104,7 +104,7 @@ export async function createTabsWithContent(
     let generalImages = [];
     let generalInfos = [];
 
-    if(visualData.changedGeneralInfo.length === 0){
+    if(visualData.changedGeneralInfos.length === 0){
       generalImages = visualInfos.generalImages;
       generalInfos = visualInfos.generalInfos;
     } else {
@@ -119,7 +119,7 @@ export async function createTabsWithContent(
     let interactionImages = [];
     let interactionInfos = [];
 
-    if(visualData.changedInteractionInfo.length === 0){
+    if(visualData.changedInteractionInfos.length === 0){
       interactionImages = visualInfos.interactionImages;
       interactionInfos = visualInfos.interactionInfos;
     } else {

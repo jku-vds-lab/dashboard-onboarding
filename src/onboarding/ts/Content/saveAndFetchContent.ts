@@ -103,7 +103,7 @@ export default class SaveAndFetchContent {
             infos = visData.changedInteractionInfos;
           }
         } else if(this.visFullName[1] === "Insight"){
-          if(visData.changedInsigthInfos.length === 0){
+          if(visData.changedInsightInfos.length === 0){
             images = this.generatedInfos.insightImages;
             infos = this.generatedInfos.insightInfos;
           } else {

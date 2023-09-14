@@ -101,15 +101,15 @@ export function getDashboardInfos(
 
   let newImages: string[];
   let newInfos: string[];
-    if(dashboardData.changedInfos.length === 0){
+    if(dashboardData.changedGeneralInfos.length === 0){
       const dashboard = global.componentGraph.dashboard;
       const dashboardInfo = getNewDashboardInfo(dashboard);
 
       newImages = dashboardInfo[0];
       newInfos = dashboardInfo[1];
     } else {
-      newImages = dashboardData.changedImages;
-      newInfos = dashboardData.changedInfos;
+      newImages = dashboardData.changedGeneralImages;
+      newInfos = dashboardData.changedGeneralInfos;
     }
        
   return [newImages, newInfos];

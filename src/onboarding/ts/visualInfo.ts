@@ -62,11 +62,11 @@ export async function createTabsWithContent(
 
   createTabs(categories);
 
-  if (categories.includes("general")) {
+  if (categories.includes("general") || categories.includes("General")) {
     let generalImages = [];
     let generalInfos = [];
 
-    if(visualData.changedGeneralInfo.length === 0){
+    if(visualData.changedGeneralInfos.length === 0){
       generalImages = visualInfos.generalImages;
       generalInfos = visualInfos.generalInfos;
     } else {
@@ -77,11 +77,11 @@ export async function createTabsWithContent(
     createInfoList(generalImages, generalInfos, "generalTab", false);
   }
 
-  if (categories.includes("interaction")) {
+  if (categories.includes("interaction") || categories.includes("Interaction")) {
     let interactionImages = [];
     let interactionInfos = [];
 
-    if(visualData.changedInteractionInfo.length === 0){
+    if(visualData.changedInteractionInfos.length === 0){
       interactionImages = visualInfos.interactionImages;
       interactionInfos = visualInfos.interactionInfos;
     } else {
@@ -98,11 +98,11 @@ export async function createTabsWithContent(
     helper.createInteractionExampleButton("interactionTab");
   }
 
-  if (categories.includes("insight")) {
+  if (categories.includes("insight") || categories.includes("Insight")) {
     let insightImages = [];
     let insightInfos = [];
 
-    if(visualData.changedInsightInfo.length === 0){
+    if(visualData.changedInsightInfos.length === 0){
       insightImages = visualInfos.insightImages;
       insightInfos = visualInfos.insightInfos;
     } else {
@@ -131,10 +131,10 @@ export function createTabs(categories: string[]) {
   const attributes = [];
 
   for (const category of categories) {
-    ids.push(category + "Pill");
+    ids.push(category.toLowerCase() + "Pill");
   }
 
-  if (categories.includes("general")) {
+  if (categories.includes("general") || categories.includes("General")) {
     const aAttributes = global.createTabAnchorAttributes();
     aAttributes.id = "generalLink";
     if (divisor <= 2) {
@@ -148,7 +148,7 @@ export function createTabs(categories: string[]) {
     attributes.push(aAttributes);
   }
 
-  if (categories.includes("interaction")) {
+  if (categories.includes("interaction") || categories.includes("Interaction")) {
     const aAttributes = global.createTabAnchorAttributes();
     aAttributes.id = "interactionLink";
     if (divisor <= 2) {
@@ -162,7 +162,7 @@ export function createTabs(categories: string[]) {
     attributes.push(aAttributes);
   }
 
-  if (categories.includes("insight")) {
+  if (categories.includes("insight") || categories.includes("Insight")) {
     const aAttributes = global.createTabAnchorAttributes();
     aAttributes.id = "insightLink";
     if (divisor <= 2) {
@@ -173,21 +173,6 @@ export function createTabs(categories: string[]) {
     }
     aAttributes.href = "insightTab";
     aAttributes.parentId = "insightPill";
-    attributes.push(aAttributes);
-  }
-
-  const otherCategories = categories.filter(
-    (category) =>
-      category !== "general" &&
-      category !== "interaction" &&
-      category !== "insight"
-  );
-  for (const category of otherCategories) {
-    const aAttributes = global.createTabAnchorAttributes();
-    aAttributes.id = category + "Link";
-    aAttributes.content = helpers.firstLetterToUpperCase(category);
-    aAttributes.href = category + "Tab";
-    aAttributes.parentId = category + "Pill";
     attributes.push(aAttributes);
   }
 
@@ -203,8 +188,8 @@ export function createTabs(categories: string[]) {
   const tabPills = [];
 
   for (const category of categories) {
-    ids.push(category + "Tab");
-    tabPills.push(category + "Link");
+    ids.push(category.toLowerCase() + "Tab");
+    tabPills.push(category.toLowerCase() + "Link");
   }
 
   createTabContent(ids, tabPills);
