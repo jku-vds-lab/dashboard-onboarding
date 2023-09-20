@@ -14,6 +14,7 @@ import c_icon_3 from "../assets/img/icon-5.png";
 import c_icon_4 from "../assets/img/icon-3.png";
 import c_icon_5 from "../assets/img/icon-2.png";
 import c_icon_6 from "../assets/img/icon-4.png";
+import c_icon_table from "../assets/img/icon-table.svg";
 import { allVisuals } from "../../onboarding/ts/globalVariables";
 
 export default function ComponentPane() {
@@ -196,6 +197,20 @@ export default function ComponentPane() {
         type = "comboChart";
         icon = c_icon_4;
         variable = "--combo-chart-color";
+        color = "#EDB464";
+        break;
+      case "pivotTable":
+        name = "Matrix";
+        type = "matrix";
+        icon = c_icon_table;
+        variable = "--matrix-color";
+        color = "#EDB464";
+        break;
+      case "tableEx":
+        name = "Table";
+        type = "table";
+        icon = c_icon_table;
+        variable = "--table-color";
         color = "#EDB464";
         break;
       default:

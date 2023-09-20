@@ -12,6 +12,8 @@ $kpi-color: #7570b3;
 $filter-color: #e7298a;
 $globalFilter-color: #e25757;
 $column-color: #66a61e;
+$matrix-color: #ccca54;
+$table-color: #59aeb4;
 $color-white: #f1f1f1;
 
 .d-board {
@@ -417,6 +419,12 @@ $color-white: #f1f1f1;
 }
 .bar-chart .color-box{
   background-color: #{$bar-chart-color};
+}
+.matrix .color-box{
+  background-color: #{$matrix-color};
+}
+.table .color-box{
+  background-color: #{$table-color};
 }
 .toolbar{
   width: 100%;

@@ -501,6 +501,7 @@ export function getVisualIndex(name: string) {
 
 export async function getVisualsfromPowerBI() {
   const visuals = await global.page.getVisuals();
+  console.log(visuals);
   global.setVisuals(visuals);
   sortVisuals();
   removeDesignVisuals();
@@ -541,9 +542,10 @@ export function removeContainerOffset() {
 function removeDesignVisuals() {
   const visuals = global.currentVisuals.filter(function (visual) {
     return (
-      visual.type !== "shape" &&
+      visual.type !== "" &&
       visual.type !== "basicShape" &&
-      visual.type !== "textbox"
+      visual.type !== "textbox" &&
+      visual.type !== "actionButton"
     );
   });
   global.setVisuals(visuals);

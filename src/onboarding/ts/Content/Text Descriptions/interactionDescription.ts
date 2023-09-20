@@ -4,7 +4,9 @@ import ColumnChart from "../Visualizations/ColumnChartVisualContent";
 import ComboChart from "../Visualizations/ComboChartVisualContent";
 import GlobalFilters from "../Visualizations/GlobalFiltersVisualContent";
 import LineChart from "../Visualizations/LineChartVisualContent";
+import Matrix from "../Visualizations/MatrixVisualContent";
 import Slicer from "../Visualizations/SlicerVisualContent";
+import Table from "../Visualizations/TableVisualContent";
 
 import { InteractionTextFormat } from "./../Format/basicTextFormat";
 
@@ -68,11 +70,25 @@ export default class InteractionDescription {
     return text;
   }
 
+  
+  interactionTableText(mark: string) {
+    let text = "";
+
+    text =
+      this.interactionInfo.click +
+      mark +
+      this.interactionInfo.clickAction +
+      this.punctuations.dot +
+      this.lineBreak;
+
+    return text;
+  }
+
   interactionHoverText(mark: string) {
     let text = "";
 
     text =
-      this.interactionInfo.hover +
+      this.interactionInfo.click +
       mark +
       this.interactionInfo.hoverAction +
       this.punctuations.dot +
@@ -114,7 +130,7 @@ export default class InteractionDescription {
 
   getInteractionInfo(
     visualType: string,
-    visual: LineChart | BarChart | ColumnChart | ComboChart | Slicer | GlobalFilters
+    visual: LineChart | BarChart | ColumnChart | ComboChart | Slicer | GlobalFilters | Matrix | Table
   ) {
     switch (visualType) {
       case "slicer":
@@ -130,6 +146,16 @@ export default class InteractionDescription {
         this.interactionText.interactionInfos.push(
           this.interactionClickText(visual.globalFilterInfos.mark, dataToString(visual.filterNames, "or"))
         );
+        break;
+      case "matrix":
+      case "table":
+        visual = visual as Matrix | Table;
+        const interactionInfoTable = this.interactionTableText(
+          visual.mark,
+        );
+
+        this.interactionText.interactionImages.push("elemClickImg");
+        this.interactionText.interactionInfos.push(interactionInfoTable);
         break;
       default:
         visual = visual as LineChart | BarChart | ColumnChart;

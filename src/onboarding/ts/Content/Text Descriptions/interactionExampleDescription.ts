@@ -3,7 +3,9 @@ import ColumnChart from "../Visualizations/ColumnChartVisualContent";
 import ComboChart from "../Visualizations/ComboChartVisualContent";
 import GlobalFilters from "../Visualizations/GlobalFiltersVisualContent";
 import LineChart from "../Visualizations/LineChartVisualContent";
+import Matrix from "../Visualizations/MatrixVisualContent";
 import Slicer from "../Visualizations/SlicerVisualContent";
+import Table from "../Visualizations/TableVisualContent";
 
 export default class InteractionExampleDescription {
   private interactionInfo = {
@@ -76,7 +78,7 @@ export default class InteractionExampleDescription {
 
   getInteractionInfo(
     visualType: string,
-    visual: LineChart | BarChart | ColumnChart | ComboChart | Slicer | GlobalFilters
+    visual: LineChart | BarChart | ColumnChart | ComboChart | Slicer | GlobalFilters | Matrix | Table
   ) {
     switch (visualType) {
       case "slicer":
@@ -94,6 +96,19 @@ export default class InteractionExampleDescription {
           visual.globalFilterInfos.mark,
           exampleFilter.attribute
         );
+      case "matrix":
+      case "table":
+        visual = visual as Matrix | Table;
+        const cellNames = visual.encoding.values.map((values) => values.attribute);
+        const columnNames = visual.encoding.columns.map((columns) => columns.attribute);
+        const rowNames = visual.encoding.rows.map((rows) => rows.attribute);
+        return this.interactionText(
+          visual.mark,
+          cellNames[Math.floor(cellNames.length / 2)],
+          columnNames,
+          rowNames
+        );
+        break;
       default:
         visual = visual as LineChart | BarChart | ColumnChart;
         return this.interactionText(

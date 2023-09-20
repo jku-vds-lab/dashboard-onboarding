@@ -13,6 +13,8 @@ import YAxis from "./YAxis";
 import Legend from "./Legend";
 import Value from "./Value";
 import Filter from "./Filter";
+import Column from "./Column";
+import Row from "./Row";
 
 export default class Visualization {
   id: string;
@@ -134,7 +136,6 @@ export default class Visualization {
         visibility = results[1];
         encoding.hasTooltip = results[2];
       }
-
       for (const key in attributes) {
         const type = attributes[key];
         switch (type) {
@@ -158,9 +159,20 @@ export default class Visualization {
             break;
           case "Field":
           case "Fields":
+          case "Values":
             const value = new Value();
             value.setValueData(key, true);
             encoding.values.push(value);
+            break;
+          case "Columns":
+            const column = new Column();
+            column.setValueData(key, true);
+            encoding.columns.push(column);
+            break;
+          case "Rows":
+            const row = new Row();
+            row.setValueData(key, true);
+            encoding.rows.push(row);
             break;
           default:
             break;
@@ -211,10 +223,12 @@ export default class Visualization {
     switch (VisualType) {
       case "card":
       case "multiRowCard":
-        mark = "Value";
-        break;
       case "slicer":
         mark = "Value";
+        break;
+      case "tableEx":
+      case "pivotTable":
+        mark = "Value in a Cell";
         break;
       case "lineChart":
         mark = "Line";
@@ -270,6 +284,10 @@ export default class Visualization {
       case "lineClusteredColumnComboChart":
         task = "compare, lookup values and find trends";
         break;
+      case "pivotTable":
+      case "tableEx":
+        task = "lookup values and compare";
+        break;
       default:
         task = "This type of visual is not supported yet";
         break;
@@ -303,6 +321,14 @@ export default class Visualization {
         description =
           "This element is a line clustered column combo chart. It can combine lines and bars in one chart.";
         break;
+      case "pivotTable":
+      description =
+        "This element is a matrix.";
+      break;
+      case "tableEx":
+      description =
+        "This element is a table.";
+      break;
       default:
         description = "This type of visual is not supported yet";
         break;
@@ -327,6 +353,9 @@ export default class Visualization {
       ) {
         channel.push("color");
       }
+    }
+    if(VisualType === "pivotTable" || VisualType === "tableEx"){
+      channel.push("value");
     }
     return { channel };
   }

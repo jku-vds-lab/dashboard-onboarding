@@ -13,6 +13,9 @@ import lightbulbImg from "../assets/lightbulb.png";
 import lineGraphImg from "../assets/line-chart.png";
 import xAxisImg from "../assets/x-axis.png";
 import yAxisImg from "../assets/y-axis.png";
+import tableImg from "../assets/table.png";
+import columnImg from "../assets/columns.png";
+import rowImg from "../assets/rows.png";
 
 import whiteAxisClickImg from "../assets/axis-click-light.png";
 import whiteBarChartImg from "../assets/bar-chart-light.png";
@@ -29,6 +32,9 @@ import whiteLightbulbImg from "../assets/lightbulb-light.png";
 import whiteLineGraphImg from "../assets/line-chart-light.png";
 import whiteXAxisImg from "../assets/x-axis-light.png";
 import whiteYAxisImg from "../assets/y-axis-light.png";
+import whitetableImg from "../assets/table-light.png";
+import whitecolumnImg from "../assets/columns-light.png";
+import whiterowImg from "../assets/rows-light.png";
 
 
 export const icons : {[key:string] : any} = {
@@ -47,6 +53,9 @@ export const icons : {[key:string] : any} = {
     "lineGraphImg" : lineGraphImg,
     "xAxisImg" : xAxisImg,
     "yAxisImg" : yAxisImg,
+    "tableImg" : tableImg,
+    "columnImg" : columnImg,
+    "rowImg" : rowImg,
 
     "white-axisClickImg" : whiteAxisClickImg,
     "white-barChartImg" : whiteBarChartImg,
@@ -63,4 +72,7 @@ export const icons : {[key:string] : any} = {
     "white-lineGraphImg" : whiteLineGraphImg,
     "white-xAxisImg" : whiteXAxisImg,
     "white-yAxisImg" : whiteYAxisImg,
+    "white-tableImg" : whitetableImg,
+    "white-columnImg" : whitecolumnImg,
+    "white-rowImg" : whiterowImg
 }

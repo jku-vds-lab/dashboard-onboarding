@@ -10,6 +10,8 @@ $kpi-color: var(--kpi-color);
 $filter-color: var(--filter-color);
 $globalFilter-color: var(--filter-color);
 $column-color: var(--column-chart-color);
+$matrix-color: var(--matrix-color);
+$table-color: var(--table-color);
 $color-white: #f1f1f1;
 
 .empty{
@@ -86,6 +88,24 @@ div[data-id*="dashboard"] {
 div[data-id*="GlobalFilter"] {
   &:before{
     background-color: #{$globalFilter-color};
+  }
+}
+
+div[data-id*="Matrix"] {
+  &:before{
+    background-color: #{$matrix-color};
+  }
+  &:after{
+    background-image: url("../img/icon-table.svg");
+  }
+}
+
+div[data-id*="Table"] {
+  &:before{
+    background-color: #{$table-color};
+  }
+  &:after{
+    background-image: url("../img/icon-table.svg");
   }
 }
 

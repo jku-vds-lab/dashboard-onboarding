@@ -13,6 +13,8 @@ import LineChart from "./Content/Visualizations/LineChartVisualContent";
 import Slicer from "./Content/Visualizations/SlicerVisualContent";
 import GlobalFilters from "./Content/Visualizations/GlobalFiltersVisualContent";
 import { removeFilterInfoCard } from "./filterInfoCards";
+import Matrix from "./Content/Visualizations/MatrixVisualContent";
+import Table from "./Content/Visualizations/TableVisualContent";
 
 export function startInteractionExample() {
   global.setInteractionMode(true);
@@ -130,6 +132,16 @@ async function getInteractionExampleText(visualType: string, visual?: VisualDesc
       const slicer = new Slicer();
       await slicer.setVisualInformation(visual!);
       exampleText = await slicer.getSlicerInteractionExample();
+      break;
+    case "pivotTable":
+      const matrix = new Matrix();
+      await matrix.setVisualInformation(visual!);
+      exampleText = await matrix.getMatrixInteractionExample();
+      break;
+    case "tableEx":
+      const table = new Table();
+      await table.setVisualInformation(visual!);
+      exampleText = await table.getTableInteractionExample();
       break;
     default:
       break;

@@ -5,6 +5,8 @@ import ColumnChart from "../Visualizations/ColumnChartVisualContent";
 import ComboChart from "../Visualizations/ComboChartVisualContent";
 import * as helper from "../../../../componentGraph/helperFunctions";
 import { Level } from "../../../../UI/redux/expertise";
+import Matrix from "../Visualizations/MatrixVisualContent";
+import Table from "../Visualizations/TableVisualContent";
 
 export default class InsightDescription {
   insightText: InsightTextFormat = {
@@ -91,7 +93,7 @@ export default class InsightDescription {
 
   getInsightInfo(
     visualType: string,
-    visual: LineChart | BarChart | ColumnChart | ComboChart,
+    visual: LineChart | BarChart | ColumnChart | ComboChart | Matrix | Table,
     expertiseLevel: Level
   ) {
     let value;
@@ -123,6 +125,10 @@ export default class InsightDescription {
         // if (visual.legend) {
         //   highestCategory = helper.getHighestCategory(visual.data.data, "Value", allValues, "Category");
         // }
+        break;
+      case "matrix":
+        break;
+      case "table":
         break;
       default:
         visual = visual as LineChart | BarChart | ColumnChart;
@@ -160,31 +166,31 @@ export default class InsightDescription {
         }
     }
 
-    if (value) {
-      this.insightText.insightImages.push("lightbulbImg");
-      this.insightText.insightInfos.push(
-        this.insightExampleText(
-          value,
-          dataName,
-          visual.axisValues,
-          visual.legendValues
-        )
-      );
-    }
+    // if (value) {
+    //   this.insightText.insightImages.push("lightbulbImg");
+    //   this.insightText.insightInfos.push(
+    //     this.insightExampleText(
+    //       value,
+    //       dataName,
+    //       visual.axisValues,
+    //       visual.legendValues
+    //     )
+    //   );
+    // }
 
-    if (highestValues) {
-      this.insightText.insightImages.push("lightbulbImg");
-      this.insightText.insightInfos.push(
-        this.insightHighestValueText(highestValues, visual.legend)
-      );
-    }
+    // if (highestValues) {
+    //   this.insightText.insightImages.push("lightbulbImg");
+    //   this.insightText.insightInfos.push(
+    //     this.insightHighestValueText(highestValues, visual.legend)
+    //   );
+    // }
 
-    if (highestCategory) {
-      this.insightText.insightImages.push("lightbulbImg");
-      this.insightText.insightInfos.push(
-        this.insightHighestCategoryText(highestCategory)
-      );
-    }
+    // if (highestCategory) {
+    //   this.insightText.insightImages.push("lightbulbImg");
+    //   this.insightText.insightInfos.push(
+    //     this.insightHighestCategoryText(highestCategory)
+    //   );
+    // }
     return this.insightText;
   }
 }

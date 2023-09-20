@@ -8,6 +8,8 @@ import ComboChart from "../Visualizations/ComboChartVisualContent";
 import Card from "../Visualizations/CardVisualContent";
 import Slicer from "../Visualizations/SlicerVisualContent";
 import GlobalFilters from "../Visualizations/GlobalFiltersVisualContent";
+import Matrix from "../Visualizations/MatrixVisualContent";
+import Table from "../Visualizations/TableVisualContent";
 
 interface FormBody {
   prompt: string;
@@ -26,6 +28,7 @@ export default class GeneralDescription {
     and: " and ",
     over: " over ",
     to: "to",
+    for: " for "
   };
   private actions = {
     displays: " displays ",
@@ -64,6 +67,11 @@ export default class GeneralDescription {
     xAxis: "X-axis",
     yAxis: "Y-axis",
     legend: "legend",
+    column: "column",
+    row: "row",
+    cell: "cell",
+    UpperCaseColumn: "Column",
+    UpperCaseRow: "Row",
   };
 
   private axisInfo = {
@@ -72,9 +80,14 @@ export default class GeneralDescription {
   };
 
   private legendInfo = {
-    mark: " represent a different ",
+    mark: " represent(s) a different ",
     legend: " distinguished by color",
     color: " and its corresponding color",
+  };
+
+  private tableInfo = {
+    every: "Every ",
+    field: "value "
   };
 
   private filterInfo = {
@@ -228,6 +241,69 @@ export default class GeneralDescription {
     return text;
   }
 
+  cellText(cells?: string, columns?: string, rows?: string) {
+    let text = "";
+    text =
+      this.articles.a +
+      this.components.cell +
+      this.legendInfo.mark +
+      this.tableInfo.field;
+    if(cells){
+      text += this.prepositions.of +
+      cells;
+    }
+    if(columns){
+      text += 
+        this.prepositions.for +
+        columns;
+    }
+
+    if(columns && rows){
+      text += 
+        this.prepositions.and;
+    }
+
+    if(rows){
+      text += 
+        this.prepositions.for +
+        columns;
+    }
+    text +=  this.punctuations.dot +
+      this.lineBreak;
+
+    return text;
+  }
+
+  columnText(columns: string) {
+    let text = "";
+    text =
+      this.tableInfo.every +
+      this.components.column +
+      this.legendInfo.mark +
+      this.tableInfo.field +
+      this.prepositions.of +
+      columns +
+      this.punctuations.dot +
+      this.lineBreak;
+
+    return text;
+  }
+
+  rowText(rows: string) {
+    let text = "";
+    text =
+      this.tableInfo.every +
+      this.components.row +
+      this.legendInfo.mark +
+      this.tableInfo.field +
+      this.prepositions.of +
+      rows +
+      this.punctuations.dot +
+      this.lineBreak;
+
+    return text;
+  }
+
   filterText(filters: Filter[]) {
     let text = "";
 
@@ -257,7 +333,7 @@ export default class GeneralDescription {
 
   getBeginnerVisDesc(
     visualType: string,
-    visual: LineChart | BarChart | ColumnChart | ComboChart | Card | Slicer | GlobalFilters
+    visual: LineChart | BarChart | ColumnChart | ComboChart | Card | Slicer | GlobalFilters | Matrix | Table
   ) {
     let filters;
 
@@ -300,6 +376,49 @@ export default class GeneralDescription {
         this.text.generalInfos.push(generalTextFilter + purposeTextFilter);
 
         filters = visual.globalFilterInfos.filters;
+        break;
+      case "matrix":
+      case "table":
+        visual = visual as Matrix | Table;
+
+        this.text.generalImages.push("infoImg");
+        this.text.generalInfos.push(visual.description);
+        const purposeTextMatrix = this.purposeText(visual?.task);
+
+        const dataStringMatrix = helper.dataToString(visual.data.attributes!, "and");
+        const channelStringMatrix = helper.dataToString(visual.channel.channel!, "and");
+
+        const generalTextMatrix = this.generalText(channelStringMatrix, dataStringMatrix);
+        this.text.generalImages.push("dataImg");
+        this.text.generalInfos.push(generalTextMatrix + purposeTextMatrix);
+
+        let dataStringColumn;
+        let dataStringRow;
+        let dataStringCell;
+
+        if(visual.encoding.columns.length !== 0){
+          const columnNames = visual.encoding.columns.map((column) => column.attribute);
+          dataStringColumn = helper.dataToString(columnNames, "and");
+          this.text.generalImages.push("columnImg");
+          this.text.generalInfos.push(this.columnText(dataStringColumn));
+        }
+
+        if(visual.encoding.rows.length !== 0){
+          const rowNames = visual.encoding.rows.map((rows) => rows.attribute);
+          dataStringRow = helper.dataToString(rowNames, "and");
+          this.text.generalImages.push("rowImg");
+          this.text.generalInfos.push(this.rowText(dataStringRow));
+        }
+
+        if(visual.encoding.values.length !== 0){
+          const cellNames = visual.encoding.values.map((values) => values.attribute);
+          dataStringCell = helper.dataToString(cellNames, "and");
+        }
+
+        this.text.generalImages.push("tableImg");
+        this.text.generalInfos.push(this.cellText(dataStringCell, dataStringColumn, dataStringRow));
+
+        filters = visual.localFilters.localFilters;
         break;
       default:
         let dataName;
@@ -391,7 +510,7 @@ export default class GeneralDescription {
 
   getIntermediateVisDesc(
     visualType: string,
-    visual: LineChart | BarChart | ColumnChart | ComboChart | Card | Slicer | GlobalFilters
+    visual: LineChart | BarChart | ColumnChart | ComboChart | Card | Slicer | GlobalFilters | Matrix | Table
   ) {
     let filters;
     switch (visualType) {
@@ -425,6 +544,51 @@ export default class GeneralDescription {
 
         filters = visual.globalFilterInfos.filters;
         break;
+      case "matrix":
+      case "table":
+          visual = visual as Matrix | Table;
+  
+          const dataStringMatrix = helper.dataToString(visual.data.attributes!, "and");
+          const channelStringMatrix = helper.dataToString(visual.channel.channel!, "and");
+  
+          const generalTextMatrix = this.generalText(channelStringMatrix, dataStringMatrix);
+          this.text.generalImages.push("dataImg");
+          this.text.generalInfos.push(generalTextMatrix);
+  
+          let dataStringColumn;
+          let dataStringRow;
+          let dataStringCell;
+  
+          if(visual.encoding.columns.length !== 0){
+            const columnNames = visual.encoding.columns.map((column) => column.attribute);
+            dataStringColumn = helper.dataToString(columnNames, "and");
+            this.text.generalImages.push("columnImg");
+            this.text.generalInfos.push(this.components.UpperCaseColumn+
+              this.punctuations.colon +
+              dataStringColumn +
+              this.punctuations.dot);
+          }
+  
+          if(visual.encoding.rows.length !== 0){
+            const rowNames = visual.encoding.rows.map((rows) => rows.attribute);
+            dataStringRow = helper.dataToString(rowNames, "and");
+            this.text.generalImages.push("rowImg");
+            this.text.generalInfos.push(this.components.UpperCaseRow +
+              this.punctuations.colon +
+              dataStringRow +
+              this.punctuations.dot);
+          }
+  
+          if(visual.encoding.values.length !== 0){
+            const cellNames = visual.encoding.values.map((values) => values.attribute);
+            dataStringCell = helper.dataToString(cellNames, "and");
+          }
+
+          this.text.generalImages.push("tableImg");
+          this.text.generalInfos.push(this.cellText(dataStringCell, dataStringColumn, dataStringRow));
+  
+          filters = visual.localFilters.localFilters;
+          break;
       default:
         visual = visual as LineChart | BarChart | ColumnChart | ComboChart;
 
@@ -521,7 +685,7 @@ export default class GeneralDescription {
 
   getAdvancedVisDesc(
     visualType: string,
-    visual: LineChart | BarChart | ColumnChart | ComboChart | Card | Slicer | GlobalFilters
+    visual: LineChart | BarChart | ColumnChart | ComboChart | Card | Slicer | GlobalFilters | Matrix | Table
   ) {
     switch (visualType) {
       case "card":
@@ -548,6 +712,32 @@ export default class GeneralDescription {
         this.text.generalImages.push("dataImg");
         this.text.generalInfos.push(generalTextFilter);
         break;
+      case "matrix":
+      case "table":
+          visual = visual as Matrix | Table;  
+
+          let dataStringColumn;
+          let dataStringRow;
+          let dataStringCell;
+  
+          if(visual.encoding.columns.length !== 0){
+            const columnNames = visual.encoding.columns.map((column) => column.attribute);
+            dataStringColumn = helper.dataToString(columnNames, "and");
+          }
+  
+          if(visual.encoding.rows.length !== 0){
+            const rowNames = visual.encoding.rows.map((rows) => rows.attribute);
+            dataStringRow = helper.dataToString(rowNames, "and");
+          }
+  
+          if(visual.encoding.values.length !== 0){
+            const cellNames = visual.encoding.values.map((values) => values.attribute);
+            dataStringCell = helper.dataToString(cellNames, "and");
+          }
+
+          this.text.generalImages.push("tableImg");
+          this.text.generalInfos.push(this.cellText(dataStringCell, dataStringColumn, dataStringRow));
+          break;
       default:
         visual = visual as LineChart | BarChart | ColumnChart | ComboChart;
         let dataName;

@@ -16,6 +16,8 @@ import Data from "./Data";
 import { ExpertiseLevel, Level } from "../UI/redux/expertise";
 import { IExportDataResult } from "powerbi-models";
 import GlobalFilters from "../onboarding/ts/Content/Visualizations/GlobalFiltersVisualContent";
+import Matrix from "../onboarding/ts/Content/Visualizations/MatrixVisualContent";
+import Table from "../onboarding/ts/Content/Visualizations/TableVisualContent";
 /*
 Get encoding of the visualization
 @param visual (VisualDescriptor) (https://learn.microsoft.com/ru-ru/javascript/api/powerbi/powerbi-client/visualdescriptor.visualdescriptor)
@@ -442,6 +444,16 @@ export async function getVisualInfos(
         const filters = new GlobalFilters();
         await filters.setGlobalFilterInformation();
         visualInfos = filters.getGlobalFilterInfo(expertiseLevel);
+        break;
+      case "pivotTable":
+        const matrix = new Matrix();
+        await matrix.setVisualInformation(visual!);
+        visualInfos = await matrix.getMatrixChartInfo(expertiseLevel);
+        break;
+      case "tableEx":
+        const table = new Table();
+        await table.setVisualInformation(visual!);
+        visualInfos = await table.getTableChartInfo(expertiseLevel);
         break;
       default:
         break;

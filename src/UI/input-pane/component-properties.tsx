@@ -166,6 +166,12 @@ export default function Components(props: Props) {
       case "lineChart":
         newTitle = "Line Chart";
         break;
+      case "pivotTable":
+        newTitle = "Matrix";
+        break;
+      case "tableEx":
+        newTitle = "Table";
+        break;
       default:
         newTitle = title;
     }

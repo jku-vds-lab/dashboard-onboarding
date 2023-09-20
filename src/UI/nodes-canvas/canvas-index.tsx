@@ -513,6 +513,12 @@ export default function NodesCanvas(props: Props) {
         case "clusteredColumnChart":
           newTitle = "Column Chart";
           break;
+        case "pivotTable":
+          newTitle = "Matrix";
+          break;
+        case "tableEx":
+          newTitle = "Table";
+          break;
         case "lineChart":
           newTitle = "Line Chart";
           break;
