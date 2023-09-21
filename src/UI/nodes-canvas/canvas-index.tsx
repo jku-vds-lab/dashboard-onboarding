@@ -61,14 +61,16 @@ export default function NodesCanvas(props: Props) {
   });
 
   const handleMouseClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    event.preventDefault();
     const { clientX, clientY } = event;
     setMousePosition({ x: clientX, y: clientY });
+    setIsOpen(true);
   };
 
   function createIntitialNodes() {
     const initialNodes: Node[] = [];
     // try {
-    //   debugger;
+    //
     //   const createdNodes = createNodes(global.settings.traversalStrategy);
     //   if (createdNodes) {
     //     for (const node of createdNodes) {
@@ -295,36 +297,35 @@ export default function NodesCanvas(props: Props) {
     setNodeData(node);
   };
 
-  const onSelectionContextMenu = useCallback(
-    (event, sNodes: Node[]) => {
-      event.preventDefault();
-      const { clientX, clientY } = event;
-      const reactFlowBounds =
-        reactFlowWrapper?.current?.getBoundingClientRect();
-      const left = reactFlowBounds ? reactFlowBounds.left : 0;
-      const top = reactFlowBounds ? reactFlowBounds.top : 0;
-      setPosition({
-        x: event.clientX - left,
-        y: event.clientY - top,
-      });
+  const getMousePositionFromReactFlow = useCallback((event: any) => {
+    const reactFlowBounds = reactFlowWrapper?.current?.getBoundingClientRect();
 
-      setSelectedNodes(sNodes);
-      setIsOpen(true);
-    },
-    [setSelectedNodes]
-  );
+    const left = reactFlowBounds ? reactFlowBounds.left : 0;
+    const top = reactFlowBounds ? reactFlowBounds.top : 0;
+    const { clientX, clientY } = event;
+    const position = {
+      x: clientX - left,
+      y: clientY - top,
+    };
+    return position;
+  }, []);
 
   const onNodeContextMenu = useCallback(
     (event) => {
       event.preventDefault();
-      const position = getPosition(event);
-      setPosition({
-        x: position.x,
-        y: position.y,
-      });
+      setMousePosition(getMousePositionFromReactFlow(event));
       setIsOpen(true);
     },
-    [getPosition]
+    [getMousePositionFromReactFlow]
+  );
+  const onSelectionContextMenu = useCallback(
+    (event, sNodes: Node[]) => {
+      event.preventDefault();
+      setMousePosition(getMousePositionFromReactFlow(event));
+      setIsOpen(true);
+      setSelectedNodes(sNodes);
+    },
+    [setSelectedNodes, getMousePositionFromReactFlow]
   );
 
   const buildTraversal = useCallback(
@@ -573,7 +574,7 @@ export default function NodesCanvas(props: Props) {
           <ContextMenu
             isOpen={isOpen}
             onClick={handleMouseClick}
-            position={position}
+            position={mousePosition}
             onMouseLeave={() => setIsOpen(false)}
             actions={[
               { label: "Delete", effect: deleteNode },

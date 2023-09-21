@@ -9,15 +9,10 @@ interface ContextProps {
 }
 
 export const ContextMenu = memo((props: ContextProps) => {
-  const handleClick = () => {
-    // console.log("Div clicked!");
-    // Perform any desired actions on mouse click
-  };
   return props.isOpen ? (
     <div
       className="context-menu"
       onMouseLeave={props.onMouseLeave}
-      onClick={handleClick}
       style={{
         position: "absolute",
         left: props.position.x,
