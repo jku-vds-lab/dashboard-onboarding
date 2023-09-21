@@ -21,7 +21,7 @@ interface Props {
   setNodes: any;
 }
 
- export default function StoryPane(props: Props) {
+export default function StoryPane(props: Props) {
   const [trigger, setTrigger] = useState(0);
   const [showMediaOptions, setShowMediaOptions] = useState(false);
   const [nodes, setNodes] = useState([]);
@@ -42,6 +42,12 @@ interface Props {
   useEffect(() => {
     async function fillTextBox() {
       // console.log("Trying to fill the box", nodeBasicName);
+      console.log("Node full name", nodeFullName);
+
+      if (nodeFullName.includes("group")) {
+        console.log("nothing to show in a group");
+        return;
+      }
       if (nodeFullName?.length > 0) {
         const visInfo = new SaveAndFetchContent(nodeFullName);
         await visInfo.getVisualDescInEditor(expertiseLevel);
@@ -86,8 +92,8 @@ interface Props {
       let visualName = "";
       let category: string[];
       let count: number;
-      nodeFullName
-      switch(nodeBasicName){
+      nodeFullName;
+      switch (nodeBasicName) {
         case "dashboard":
         case "globalFilter":
           visualName = nodeBasicName;
@@ -96,24 +102,31 @@ interface Props {
           visual = global.allVisuals.find((visual) => {
             return visual.name == nodeBasicName;
           });
-    
+
           if (!visual) {
             return;
           }
-    
+
           visualName = "visual";
       }
 
-      if(nodeFullName.length > 3){
+      if (nodeFullName.length > 3) {
         category = [nodeFullName[1]];
         count = parseInt(nodeFullName[2]);
-      }else{
-        category = ["general"]
+      } else {
+        category = ["general"];
         count = parseInt(nodeFullName[1]);
       }
-      startOnboardingAt(visualName, visual, category, count, expertiseLevel, true);
+      startOnboardingAt(
+        visualName,
+        visual,
+        category,
+        count,
+        expertiseLevel,
+        true
+      );
     }
-  }
+  };
 
   const addMediaOptions = () => {
     setShowMediaOptions(true);
