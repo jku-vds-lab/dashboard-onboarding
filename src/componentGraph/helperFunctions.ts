@@ -117,7 +117,7 @@ export function getSpecificDataPoint(
     case 0:
       return "0";
     case 1:
-      return axisData[0].get(selectedLegendValue);
+      return axisData[0].get(dataName);
     default:
       const legendData = axisData.filter(
         (dataMap) => dataMap.get(legendName) === selectedLegendValue

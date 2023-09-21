@@ -14,7 +14,7 @@ import c_icon_3 from "../assets/img/icon-5.png";
 import c_icon_4 from "../assets/img/icon-3.png";
 import c_icon_5 from "../assets/img/icon-2.png";
 import c_icon_6 from "../assets/img/icon-4.png";
-import c_icon_table from "../assets/img/icon-table.svg";
+import c_icon_table from "../assets/img/icon-table.png";
 import { allVisuals } from "../../onboarding/ts/globalVariables";
 
 export default function ComponentPane() {

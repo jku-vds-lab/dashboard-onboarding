@@ -127,8 +127,75 @@ export default class InsightDescription {
         // }
         break;
       case "matrix":
-        break;
       case "table":
+        visual = visual as Table | Matrix;
+        dataName = visual.dataName;
+
+        if((visual.row === "" && visual.column === "") || (visual.row === "" && visual.dataName === "")){
+          break;
+        }
+        
+        if (expertiseLevel === Level.Low) {
+          value = helper.getSpecificDataPoint(
+            visual.data.data,
+            visual.row,
+            visual.rowValues[Math.floor(visual.rowValues.length / 2)],
+            visual.dataName,
+            visual.column,
+            visual.columnValues[Math.floor(visual.columnValues.length / 2)]
+          );
+        }
+
+        if (expertiseLevel !== Level.High) {
+          if(visual.data.data.length > 100){
+            highestValues = helper.getHighestValue(
+              visual.data.data,
+              visual.dataName,
+              [visual.rowValues[Math.floor(visual.rowValues.length / 2)]],
+              visual.row,
+              visual.column,
+              visual.columnValues
+            );
+          } else {
+            highestValues = helper.getHighestValue(
+              visual.data.data,
+              visual.dataName,
+              visual.rowValues,
+              visual.row,
+              visual.column,
+              visual.columnValues
+            );
+          }
+        }
+
+        if (visual.column) {
+          highestCategory = helper.getHighestCategory(
+            visual.data.data,
+            visual.dataName,
+            visual.columnValues,
+            visual.column
+          );
+        }
+
+        
+        if (value) {
+          this.insightText.insightImages.push("lightbulbImg");
+          this.insightText.insightInfos.push(
+            this.insightExampleText(
+              value,
+              dataName,
+              visual.rowValues,
+              visual.columnValues
+            )
+          );
+        }
+
+        if (highestValues) {
+          this.insightText.insightImages.push("lightbulbImg");
+          this.insightText.insightInfos.push(
+            this.insightHighestValueText(highestValues, visual.column)
+          );
+        }
         break;
       default:
         visual = visual as LineChart | BarChart | ColumnChart;
@@ -146,14 +213,25 @@ export default class InsightDescription {
         }
 
         if (expertiseLevel !== Level.High) {
-          highestValues = helper.getHighestValue(
-            visual.data.data,
-            visual.dataName,
-            visual.legendValues,
-            visual.legend,
-            visual.axis,
-            visual.axisValues
-          );
+          if(visual.data.data.length > 100){
+            highestValues = helper.getHighestValue(
+              visual.data.data,
+              visual.dataName,
+              [visual.legendValues[Math.floor(visual.legendValues.length / 2)]],
+              visual.legend,
+              visual.axis,
+              visual.axisValues
+            );
+          } else {
+            highestValues = helper.getHighestValue(
+              visual.data.data,
+              visual.dataName,
+              visual.legendValues,
+              visual.legend,
+              visual.axis,
+              visual.axisValues
+            );
+          }
         }
 
         if (visual.legend) {
@@ -164,33 +242,34 @@ export default class InsightDescription {
             visual.legend
           );
         }
+
+        
+    if (value) {
+      this.insightText.insightImages.push("lightbulbImg");
+      this.insightText.insightInfos.push(
+        this.insightExampleText(
+          value,
+          dataName,
+          visual.axisValues,
+          visual.legendValues
+        )
+      );
     }
 
-    // if (value) {
-    //   this.insightText.insightImages.push("lightbulbImg");
-    //   this.insightText.insightInfos.push(
-    //     this.insightExampleText(
-    //       value,
-    //       dataName,
-    //       visual.axisValues,
-    //       visual.legendValues
-    //     )
-    //   );
-    // }
+    if (highestValues) {
+      this.insightText.insightImages.push("lightbulbImg");
+      this.insightText.insightInfos.push(
+        this.insightHighestValueText(highestValues, visual.legend)
+      );
+    }
+    }
 
-    // if (highestValues) {
-    //   this.insightText.insightImages.push("lightbulbImg");
-    //   this.insightText.insightInfos.push(
-    //     this.insightHighestValueText(highestValues, visual.legend)
-    //   );
-    // }
-
-    // if (highestCategory) {
-    //   this.insightText.insightImages.push("lightbulbImg");
-    //   this.insightText.insightInfos.push(
-    //     this.insightHighestCategoryText(highestCategory)
-    //   );
-    // }
+    if (highestCategory) {
+      this.insightText.insightImages.push("lightbulbImg");
+      this.insightText.insightInfos.push(
+        this.insightHighestCategoryText(highestCategory)
+      );
+    }
     return this.insightText;
   }
 }

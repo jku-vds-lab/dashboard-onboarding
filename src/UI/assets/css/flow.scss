@@ -96,7 +96,7 @@ div[data-id*="Matrix"] {
     background-color: #{$matrix-color};
   }
   &:after{
-    background-image: url("../img/icon-table.svg");
+    background-image: url("../img/icon-table.png");
   }
 }
 
@@ -105,7 +105,7 @@ div[data-id*="Table"] {
     background-color: #{$table-color};
   }
   &:after{
-    background-image: url("../img/icon-table.svg");
+    background-image: url("../img/icon-table.png");
   }
 }
 
