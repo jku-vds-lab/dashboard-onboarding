@@ -1,21 +1,28 @@
+import React, { useState } from "react";
 import Dropdown from "react-bootstrap/Dropdown";
 // import icon from "../icon-1.svg";
 // import icon1 from "./../../assets/img/arrow-down.png";
 import icon from "../../assets/img/icon-12.svg";
 export default function GroupNodeType(nodeData: any) {
-  function updateLabel(event: any) {
-    const label = event.target.innerText;
-    event.target.closest(".dropdown").nextElementSibling.innerText = label;
+  const [label, setLabel] = useState(nodeData.data.traverse);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-    nodeData.data.traverse = label;
+  function updateLabel(event: any) {
+    const newLabel = event.target.innerText;
+    setLabel(newLabel);
+    nodeData.data.traverse = newLabel;
+  }
+
+  function toggleDropdown() {
+    setIsDropdownOpen(!isDropdownOpen);
   }
   function updateGroup() {}
 
   return (
-    <div className={`node node-group`} onClick={updateGroup}>
+    <div className={`node node-group`} onClick={toggleDropdown}>
       <div className={`header`}>
         <div className="header-label">Traversal: {nodeData.data.traverse}</div>
-        <Dropdown>
+        <Dropdown show={isDropdownOpen}>
           <Dropdown.Toggle variant="" className="n-button options">
             <img
               className="icon options"
