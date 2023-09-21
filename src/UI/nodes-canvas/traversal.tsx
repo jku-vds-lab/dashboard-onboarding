@@ -106,7 +106,7 @@ export class TraversalOrder {
   }
 
   // separate nodes that are within and without a group
-  async onClick(props: any) {
+  onClick(props: any) {
     try {
       const storyNodes = props.nodes;
 
@@ -124,7 +124,7 @@ export class TraversalOrder {
       }
 
       this.setRank();
-      await createTraversalOfNodes(this.allNodes);
+      createTraversalOfNodes(this.allNodes);
       this.defaultNodes = [];
       this.groupNodes = [];
       this.allNodes = [];

@@ -43,7 +43,7 @@ export default class Slicer extends Visualization {
     return this.text;
   }
 
-  getSlicerChartInteractionExample(){
+  getSlicerInteractionExample(){
     const exampleText = this.interactionExample.getInteractionInfo("slicer", this);
     return exampleText?exampleText:"";
   }

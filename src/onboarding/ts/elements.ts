@@ -1,3 +1,4 @@
+import { VisualDescriptor } from "visualDescriptor";
 import * as global from "./globalVariables";
 import {
   getVisualIndex,
@@ -320,14 +321,17 @@ export function createYoutubeVideo(attributes: {
   document.getElementById(attributes.parentId)?.appendChild(video);
 }
 
-export function createSlider(attributes: {id: string; min: string; max:string; parentId:string}, onChange: any){
+export function createSlider(attributes: {id: string; min: string; max:string; value: string; parentId:string}, visualInfo: { type: string, categories: string[], count: number, visual?: VisualDescriptor }, onChange: any){
   const slider = document.createElement("input");
   slider.id = attributes.id;
   slider.name = attributes.id;
   slider.type = "range";
   slider.min = attributes.min;
   slider.max = attributes.max;
-  slider.onchange = onChange();
+  slider.value = attributes.value;
+  slider.addEventListener("input", () => {
+    onChange(visualInfo);
+  });
   document.getElementById(attributes.parentId)?.appendChild(slider);
 }
 

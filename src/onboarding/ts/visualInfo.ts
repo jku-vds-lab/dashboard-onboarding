@@ -7,12 +7,14 @@ import { divisor } from "./sizes";
 import { TraversalElement } from "./traversal";
 import { icons } from "./textIcons";
 import { VisualDescriptor } from "powerbi-client";
+import { ExpertiseLevel } from "../../UI/redux/expertise";
 
 export async function createVisualInfo(
   traversal: TraversalElement[],
   visual: VisualDescriptor,
   count: number,
-  categories: string[]
+  categories: string[], 
+  expertiseLevel?: ExpertiseLevel
 ) {
   document.getElementById("contentText")!.innerHTML = "";
   const visualData = helpers.getDataWithId(
@@ -47,60 +49,44 @@ export async function createVisualInfo(
     elements.createSource(sourceAttributes);
   }
 
-  await info.createTabsWithContent(visual, visualData, count, categories);
+  await info.createTabsWithContent(visual, visualData, categories, expertiseLevel);
 }
 
 export async function createTabsWithContent(
   visual: VisualDescriptor,
   visualData: any,
-  count: number,
-  categories: string[]
+  categories: string[], 
+  expertiseLevel?: ExpertiseLevel
 ) {
-  const visualInfos = await helpers.getVisualInfos(visual);
+  const visualInfos = await helpers.getVisualInfos(visual.type, expertiseLevel, visual);
 
   createTabs(categories);
 
-  if (categories.includes("general")) {
-    const generalImages = [];
-    const generalInfos = [];
+  if (categories.includes("general") || categories.includes("General")) {
+    let generalImages = [];
+    let generalInfos = [];
 
-    for (let i = 0; i < visualData.generalInfosStatus.length; ++i) {
-      switch (visualData.generalInfosStatus[i]) {
-        case global.infoStatus.original:
-          generalImages.push(visualInfos.generalImages[i]);
-          generalInfos.push(visualInfos.generalInfos[i]);
-          break;
-        case global.infoStatus.changed:
-        case global.infoStatus.added:
-          generalImages.push("dotImg");
-          generalInfos.push(visualData.changedGeneralInfos[i]);
-          break;
-        default:
-          break;
-      }
+    if(visualData.changedGeneralInfos.length === 0){
+      generalImages = visualInfos.generalImages;
+      generalInfos = visualInfos.generalInfos;
+    } else {
+      generalImages = visualData.changedGeneralImages;
+      generalInfos = visualData.changedGeneralInfos;
     }
 
     createInfoList(generalImages, generalInfos, "generalTab", false);
   }
 
-  if (categories.includes("interaction")) {
-    const interactionImages = [];
-    const interactionInfos = [];
+  if (categories.includes("interaction") || categories.includes("Interaction")) {
+    let interactionImages = [];
+    let interactionInfos = [];
 
-    for (let i = 0; i < visualData.interactionInfosStatus.length; ++i) {
-      switch (visualData.interactionInfosStatus[i]) {
-        case global.infoStatus.original:
-          interactionImages.push(visualInfos.interactionImages[i]);
-          interactionInfos.push(visualInfos.interactionInfos[i]);
-          break;
-        case global.infoStatus.changed:
-        case global.infoStatus.added:
-          interactionImages.push("dotImg");
-          interactionInfos.push(visualData.changedInteractionInfos[i]);
-          break;
-        default:
-          break;
-      }
+    if(visualData.changedInteractionInfos.length === 0){
+      interactionImages = visualInfos.interactionImages;
+      interactionInfos = visualInfos.interactionInfos;
+    } else {
+      interactionImages = visualData.changedInteractionImages;
+      interactionInfos = visualData.changedInteractionInfos;
     }
 
     createInfoList(
@@ -109,63 +95,26 @@ export async function createTabsWithContent(
       "interactionTab",
       false
     );
-    helper.createInteractionExampleButton("interactionTab", visual);
+    helper.createInteractionExampleButton("interactionTab");
   }
 
-  if (categories.includes("insight")) {
-    const insightImages = [];
-    const insightInfos = [];
+  if (categories.includes("insight") || categories.includes("Insight")) {
+    let insightImages = [];
+    let insightInfos = [];
 
-    for (let i = 0; i < visualData.insightInfosStatus.length; ++i) {
-      switch (visualData.insightInfosStatus[i]) {
-        case global.infoStatus.original:
-          insightImages.push(visualInfos.insightImages[i]);
-          insightInfos.push(visualInfos.insightInfos[i]);
-          break;
-        case global.infoStatus.changed:
-        case global.infoStatus.added:
-          insightImages.push("dotImg");
-          insightInfos.push(visualData.changedInsightInfos[i]);
-          break;
-        default:
-          break;
-      }
+    if(visualData.changedInsightInfos.length === 0){
+      insightImages = visualInfos.insightImages;
+      insightInfos = visualInfos.insightInfos;
+    } else {
+      insightImages = visualData.changedInsightImages;
+      insightInfos = visualData.changedInsightInfos;
     }
 
     createInfoList(insightImages, insightInfos, "insightTab", false);
   }
-
-  const otherCategories = categories.filter(
-    (category) =>
-      category !== "general" &&
-      category !== "interaction" &&
-      category !== "insight"
-  );
-  for (const category of otherCategories) {
-    const images = [];
-    const infos = [];
-
-    for (let i = 0; i < visualData[category + "InfosStatus"].length; ++i) {
-      switch (visualData[category + "InfosStatus"][i]) {
-        case global.infoStatus.original:
-          images.push(visualInfos[category + "Images"][i]);
-          infos.push(visualInfos[category + "Infos"][i]);
-          break;
-        case global.infoStatus.changed:
-        case global.infoStatus.added:
-          images.push("dotImg");
-          infos.push(visualData["changed" + category + "Infos"][i]);
-          break;
-        default:
-          break;
-      }
-    }
-
-    createInfoList(images, infos, category + "Tab", false);
-  }
 }
 
-function createTabs(categories: string[]) {
+export function createTabs(categories: string[]) {
   let divAttributes = global.createDivAttributes();
   divAttributes.id = "visualInfoTabs";
   divAttributes.parentId = "contentText";
@@ -182,10 +131,10 @@ function createTabs(categories: string[]) {
   const attributes = [];
 
   for (const category of categories) {
-    ids.push(category + "Pill");
+    ids.push(category.toLowerCase() + "Pill");
   }
 
-  if (categories.includes("general")) {
+  if (categories.includes("general") || categories.includes("General")) {
     const aAttributes = global.createTabAnchorAttributes();
     aAttributes.id = "generalLink";
     if (divisor <= 2) {
@@ -199,7 +148,7 @@ function createTabs(categories: string[]) {
     attributes.push(aAttributes);
   }
 
-  if (categories.includes("interaction")) {
+  if (categories.includes("interaction") || categories.includes("Interaction")) {
     const aAttributes = global.createTabAnchorAttributes();
     aAttributes.id = "interactionLink";
     if (divisor <= 2) {
@@ -213,7 +162,7 @@ function createTabs(categories: string[]) {
     attributes.push(aAttributes);
   }
 
-  if (categories.includes("insight")) {
+  if (categories.includes("insight") || categories.includes("Insight")) {
     const aAttributes = global.createTabAnchorAttributes();
     aAttributes.id = "insightLink";
     if (divisor <= 2) {
@@ -224,21 +173,6 @@ function createTabs(categories: string[]) {
     }
     aAttributes.href = "insightTab";
     aAttributes.parentId = "insightPill";
-    attributes.push(aAttributes);
-  }
-
-  const otherCategories = categories.filter(
-    (category) =>
-      category !== "general" &&
-      category !== "interaction" &&
-      category !== "insight"
-  );
-  for (const category of otherCategories) {
-    const aAttributes = global.createTabAnchorAttributes();
-    aAttributes.id = category + "Link";
-    aAttributes.content = helpers.firstLetterToUpperCase(category);
-    aAttributes.href = category + "Tab";
-    aAttributes.parentId = category + "Pill";
     attributes.push(aAttributes);
   }
 
@@ -254,8 +188,8 @@ function createTabs(categories: string[]) {
   const tabPills = [];
 
   for (const category of categories) {
-    ids.push(category + "Tab");
-    tabPills.push(category + "Link");
+    ids.push(category.toLowerCase() + "Tab");
+    tabPills.push(category.toLowerCase() + "Link");
   }
 
   createTabContent(ids, tabPills);
@@ -317,6 +251,7 @@ export async function createInfoList(
   document.getElementById(parentId)?.appendChild(ul);
   for (let i = 0; i < infos.length; ++i) {
     const li = document.createElement("li");
+    li.className = images[i];
     if (editor) {
       li.style.listStyleImage = "url(" + icons["white-" + images[i]] + ")";
       li.style.paddingLeft = "10px";

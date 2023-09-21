@@ -79,7 +79,7 @@ export default function RecordView(props: Props) {
         });
 
         if (visual) {
-          startOnboardingAt("visual", visual, 1);
+          startOnboardingAt("visual", visual, [], 1);
         }
       }
     } catch (error) {

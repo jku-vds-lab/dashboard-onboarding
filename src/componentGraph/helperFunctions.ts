@@ -15,6 +15,7 @@ import { TraversalElement, isGroup } from "../onboarding/ts/traversal";
 import Data from "./Data";
 import { ExpertiseLevel, Level } from "../UI/redux/expertise";
 import { IExportDataResult } from "powerbi-models";
+import GlobalFilters from "../onboarding/ts/Content/Visualizations/GlobalFiltersVisualContent";
 /*
 Get encoding of the visualization
 @param visual (VisualDescriptor) (https://learn.microsoft.com/ru-ru/javascript/api/powerbi/powerbi-client/visualdescriptor.visualdescriptor)
@@ -385,10 +386,10 @@ export function firstLetterToUpperCase(str: string) {
 }
 
 export async function getVisualInfos(
-  visual: VisualDescriptor,
-  expertiseLevel: ExpertiseLevel = { Domain: Level.Medium, Vis: Level.Medium }
+  visualType: string,
+  expertiseLevel?: ExpertiseLevel,
+  visual?: VisualDescriptor
 ): Promise<BasicTextFormat> {
-  const type = visual.type;
   let visualInfos: BasicTextFormat = {
     generalImages: [],
     generalInfos: [],
@@ -398,41 +399,49 @@ export async function getVisualInfos(
     interactionInfos: [],
   };
   try {
-    switch (type) {
+    if(!expertiseLevel){
+      expertiseLevel = { Domain: Level.Medium, Vis: Level.Medium };
+    }
+    switch (visualType) {
       case "card":
       case "multiRowCard":
         const card = new Card();
-        await card.setVisualInformation(visual);
+        await card.setVisualInformation(visual!);
         visualInfos = await card.getCardInfo(expertiseLevel);
         break;
       case "lineClusteredColumnComboChart":
         const combo = new ComboChart();
-        await combo.setVisualInformation(visual);
+        await combo.setVisualInformation(visual!);
         visualInfos = await combo.getLineClusteredColumnComboChartInfo(
           expertiseLevel
         );
         break;
       case "lineChart":
         const lineChart = new LineChart();
-        await lineChart.setVisualInformation(visual);
+        await lineChart.setVisualInformation(visual!);
         visualInfos = await lineChart.getLineChartInfo(expertiseLevel);
         break;
       case "clusteredBarChart":
         const barChart = new BarChart();
-        await barChart.setVisualInformation(visual);
+        await barChart.setVisualInformation(visual!);
         visualInfos = await barChart.getClusteredBarChartInfo(expertiseLevel);
         break;
       case "clusteredColumnChart":
         const columnChart = new ColumnChart();
-        await columnChart.setVisualInformation(visual);
+        await columnChart.setVisualInformation(visual!);
         visualInfos = await columnChart.getClusteredColumnChartInfo(
           expertiseLevel
         );
         break;
       case "slicer":
         const slicer = new Slicer();
-        await slicer.setVisualInformation(visual);
+        await slicer.setVisualInformation(visual!);
         visualInfos = await slicer.getSlicerInfo(expertiseLevel);
+        break;
+      case "globalFilter":
+        const filters = new GlobalFilters();
+        await filters.setGlobalFilterInformation();
+        visualInfos = filters.getGlobalFilterInfo(expertiseLevel);
         break;
       default:
         break;
@@ -536,13 +545,13 @@ export async function getVisualData(visual: VisualDescriptor) {
   return visualDataMap;
 }
 
-export function dataToString(dataArray: string | any[]) {
+export function dataToString(dataArray: string | any[], prepositions: string) {
   let dataString = "";
   for (let i = 0; i < dataArray.length; i++) {
     if (dataArray[i].length != 0) {
       dataString += dataArray[i];
       if (i == dataArray.length - 2) {
-        dataString += " and ";
+        dataString += " " + prepositions + " ";
       } else if (i != dataArray.length - 1) {
         dataString += ", ";
       }

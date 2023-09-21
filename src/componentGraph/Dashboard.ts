@@ -30,23 +30,9 @@ export default class Dashboard {
     this.task = this.getTaskData();
     const vis = new Visualization();
     this.visualizations = await vis.getVisualizations();
-    this.globalFilter = await this.getGlobalFilter();
+    const filter = new GlobalFilter();
+    this.globalFilter = await filter.getGlobalFilter();
     this.layout = this.getLayoutData();
-  }
-
-  async getGlobalFilter(): Promise<GlobalFilter> {
-    this.globalFilter = new GlobalFilter();
-
-    const pageFilters = await getPageFilters(page);
-    for (const pageFilter of pageFilters) {
-      const filter = new Filter();
-      filter.attribute = <string>pageFilter?.attribute;
-      filter.values = <string[]>pageFilter?.values;
-      filter.operation = getOperation(<string>pageFilter?.operator);
-
-      this.globalFilter.filters.push(filter);
-    }
-    return this.globalFilter;
   }
 
   getPurposeData() {

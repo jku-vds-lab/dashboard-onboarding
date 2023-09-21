@@ -1,6 +1,7 @@
 import BarChart from "../Visualizations/BarChartVisualContent";
 import ColumnChart from "../Visualizations/ColumnChartVisualContent";
 import ComboChart from "../Visualizations/ComboChartVisualContent";
+import GlobalFilters from "../Visualizations/GlobalFiltersVisualContent";
 import LineChart from "../Visualizations/LineChartVisualContent";
 import Slicer from "../Visualizations/SlicerVisualContent";
 
@@ -10,6 +11,8 @@ export default class InteractionExampleDescription {
     representing: " representing ",
     data: " data ",
     element: "element ",
+    filter: " filter ",
+    select: " select one of its "
   };
 
   private prepositions = {
@@ -57,43 +60,39 @@ export default class InteractionExampleDescription {
     return text;
   }
 
-  interactionSlicerText(mark: string, dataPoint: string) {
-    let text = "";
-
-    text =
-      this.interactionInfo.click +
+  interactionGlobalFilterText(
+    mark: string,
+    dataName: string,
+  ) {
+    const text =
+      this.interactionInfo.click + this.interactionInfo.filter +
+      dataName +
+      this.prepositions.and + this.interactionInfo.select +
       mark +
-      dataPoint +
-      this.punctuations.dot +
-      this.lineBreak;
-
-    return text;
-  }
-
-  interactionElementText(dataValue: string) {
-    let text = "";
-
-    text =
-      this.interactionInfo.click +
-      this.interactionInfo.element +
-      dataValue +
-      this.punctuations.dot +
-      this.lineBreak;
+      this.punctuations.dot + this.lineBreak;
 
     return text;
   }
 
   getInteractionInfo(
     visualType: string,
-    visual: LineChart | BarChart | ColumnChart | ComboChart | Slicer
+    visual: LineChart | BarChart | ColumnChart | ComboChart | Slicer | GlobalFilters
   ) {
     switch (visualType) {
       case "slicer":
+        visual = visual as Slicer;
         return this.interactionText(
           visual.mark,
           visual.data.data[Math.floor(visual.data.data.length / 2)].get(
             visual.data.attributes[0]
           )
+        );
+      case "globalFilter":
+        visual = visual as GlobalFilters;
+        const exampleFilter = visual.globalFilterInfos.filters[Math.floor(visual.globalFilterInfos.filters.length / 2)];
+        return this.interactionGlobalFilterText(
+          visual.globalFilterInfos.mark,
+          exampleFilter.attribute
         );
       default:
         visual = visual as LineChart | BarChart | ColumnChart;
