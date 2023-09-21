@@ -41,9 +41,6 @@ export default function StoryPane(props: Props) {
 
   useEffect(() => {
     async function fillTextBox() {
-      // console.log("Trying to fill the box", nodeBasicName);
-      console.log("Node full name", nodeFullName);
-
       if (nodeFullName.includes("group")) {
         console.log("nothing to show in a group");
         return;

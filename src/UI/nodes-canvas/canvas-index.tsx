@@ -265,29 +265,46 @@ export default function NodesCanvas(props: Props) {
     }
   };
 
-  const onNodeDragStart = useCallback(
-    (event, node) => {
-      const intersections = getIntersectingNodes(node).map((n) => n.id);
+  const onNodeDragStop = useCallback(
+    (event, draggedNode: Node) => {
+      const intersections = getIntersectingNodes(draggedNode).map((n) => n.id);
+      const groupItem = intersections.find((item) => item.includes("group"));
+      console.log("dragged node", draggedNode);
+      console.log("intersections", intersections);
 
       //check if the node is dropped to the group
-      setNodes((nodes) =>
-        nodes.map((n) => ({
-          ...n,
-          className: intersections.includes(n.id) ? "highlight" : "",
-        }))
-      );
+      if (groupItem) {
+        console.log("group item", groupItem);
+        const groupNode = nodes.find((node) => node.id == groupItem);
+        if (groupNode) {
+          setNodes((currentNodes) =>
+            currentNodes.map((node) => {
+              if (node.id == draggedNode.id && node.type != "group") {
+                node.extent = "parent";
+                node.parentNode = groupItem;
+                node.position = {
+                  x: node.position.x - groupNode.position.x,
+                  y: node.position.y - groupNode.position.y,
+                };
+                node.draggable = true;
+              }
+              return node;
+            })
+          );
+        }
+      }
+
       props.setNodesForSave(nodes);
     },
     [getIntersectingNodes, nodes, props, setNodes]
   );
 
-  const onNodeDragStop = (event: any, node: Node) => {
-    if (node.type == "group") {
-      nodes.forEach((sNode) => {
-        if (sNode.parentNode == node.id) {
-          // console.log(sNode.positionAbsolute); // --> this is not getting updated
-        }
-      });
+  const onNodeDragStart = (event: any, draggedNode: Node) => {
+    const intersections = getIntersectingNodes(draggedNode).map((n) => n.id);
+    const groupItem = intersections.find((item) => item.includes("group"));
+
+    if (groupItem) {
+      console.log("detected group on node start");
     }
   };
 
