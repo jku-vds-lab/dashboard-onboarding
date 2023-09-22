@@ -4,6 +4,7 @@ import ReactFlow, {
   Controls,
   useReactFlow,
   ReactFlowInstance,
+  OnSelectionChangeParams,
 } from "reactflow";
 import { Node } from "reactflow";
 import "reactflow/dist/style.css";
@@ -358,16 +359,23 @@ export default function NodesCanvas(props: Props) {
     },
     [createNodes, setNodes]
   );
-
+  const onSelectionChangeFunction = (params: OnSelectionChangeParams) => {
+    setSelectedNodes(params.nodes);
+  };
   const deleteNode = useCallback(() => {
     if (nodeData?.type === "group") {
       setNodes((nodes) => nodes.filter((n) => n.parentNode !== nodeData.id));
       setNodes((nodes) => nodes.filter((n) => n.id !== nodeData.id));
-    } else if (nodeData?.type === "default") {
+    } else if (nodeData?.type === "default" && selectedNodes.length <= 1) {
+      console.log("Deleting single node", nodeData);
       setNodes((nodes) => nodes.filter((n) => n.id !== nodeData.id));
+    } else if (selectedNodes.length > 1) {
+      console.log("Deleting selected node", selectedNodes);
+      const selectedNodeIds = new Set(selectedNodes.map((node) => node.id));
+      setNodes((nodes) => nodes.filter((n) => !selectedNodeIds.has(n.id)));
     }
     setIsOpen(false);
-  }, [nodeData?.id, nodeData?.type, setNodes]);
+  }, [nodeData, selectedNodes, setNodes]);
 
   const addGroup = useCallback(() => {
     try {
@@ -584,6 +592,7 @@ export default function NodesCanvas(props: Props) {
           onNodeMouseEnter={onNodeMouseEnter}
           onNodeContextMenu={onNodeContextMenu}
           onSelectionContextMenu={onSelectionContextMenu}
+          onSelectionChange={onSelectionChangeFunction}
           snapToGrid
           fitView
         >
