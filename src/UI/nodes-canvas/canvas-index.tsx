@@ -185,11 +185,6 @@ export default function NodesCanvas(props: Props) {
     [reactFlowInstance]
   );
 
-  const onDragOver = useCallback((event) => {
-    event.preventDefault();
-    event.dataTransfer.dropEffect = "move";
-  }, []);
-
   const getCount = useCallback(
     (id: string) => {
       let count = 1;
@@ -219,6 +214,11 @@ export default function NodesCanvas(props: Props) {
     },
     [nodes]
   );
+
+  const onDragOver = useCallback((event) => {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = "move";
+  }, []);
 
   const onDrop = useCallback(
     (event) => {
@@ -252,7 +252,7 @@ export default function NodesCanvas(props: Props) {
     [getCount, getPosition, defaultNode, setNodes]
   );
 
-  const onClick = (event: any) => {
+  const onNodeClick = (event: any) => {
     const container = document.getElementById("canvas-container");
     event.target.classList.contains("react-flow__pane")
       ? container?.classList.remove("show")
@@ -565,7 +565,7 @@ export default function NodesCanvas(props: Props) {
           nodes={nodes}
           nodeTypes={nodeTypes}
           onDrop={onDrop}
-          onClick={onClick}
+          onNodeClick={onNodeClick}
           onDragOver={onDragOver}
           onNodesChange={onNodesChange}
           onNodeMouseEnter={onNodeMouseEnter}

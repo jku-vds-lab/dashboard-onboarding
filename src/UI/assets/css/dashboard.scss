@@ -194,7 +194,8 @@ $color-white: #f1f1f1;
 
 .individual-item:hover {
   background-color: #f5f5f5;
-  color:black
+  color:black;
+  cursor:pointer;
 }
   .component-accordion{
     .accordion-item{
