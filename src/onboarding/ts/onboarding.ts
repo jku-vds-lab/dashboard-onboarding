@@ -133,42 +133,46 @@ export async function startOnboardingAt(
   expertiseLevel?: ExpertiseLevel,
   outputPane?: boolean
 ) {
-  // helpers.reloadOnboarding(); // Reload: Why is this needed?
-  infoCard.removeInfoCard();
-  removeFilterInfoCard();
-  removeDashboardInfoCard();
-  introCard.removeIntroCard();
+  try {
+    // helpers.reloadOnboarding(); // Reload: Why is this needed?
+    infoCard.removeInfoCard();
+    removeFilterInfoCard();
+    removeDashboardInfoCard();
+    introCard.removeIntroCard();
 
-  switch (type) {
-    case "intro":
-      createIntroCard();
-      break;
-    case "dashboard":
-      createDashboardInfoCard(count!);
-      break;
-    case "globalFilter":
-      await createFilterInfoCard(categories!, count!, expertiseLevel);
-      break;
-    case "interaction":
-      if (outputPane) {
-        await createInteractionCardForOutputPane(visual);
-      } else {
-        await startInteractionExample();
-      }
-      break;
-    case "reportChanged":
-      helpers.removeContainerOffset();
-      showReportChanges();
-      break;
-    case "visualChanged":
-      await showVisualChanges(visual);
-      break;
-    case "visual":
-      await createInfoCard(visual, count!, categories!, expertiseLevel);
-      break;
-    case "explorationOverlay":
-      createOnboardingOverlay();
-      break;
+    switch (type) {
+      case "intro":
+        createIntroCard();
+        break;
+      case "dashboard":
+        createDashboardInfoCard(count!);
+        break;
+      case "globalFilter":
+        await createFilterInfoCard(categories!, count!, expertiseLevel);
+        break;
+      case "interaction":
+        if (outputPane) {
+          await createInteractionCardForOutputPane(visual);
+        } else {
+          await startInteractionExample();
+        }
+        break;
+      case "reportChanged":
+        helpers.removeContainerOffset();
+        showReportChanges();
+        break;
+      case "visualChanged":
+        await showVisualChanges(visual);
+        break;
+      case "visual":
+        await createInfoCard(visual, count!, categories!, expertiseLevel);
+        break;
+      case "explorationOverlay":
+        createOnboardingOverlay();
+        break;
+    }
+  } catch (error) {
+    console.log("Error on startonboarding at", error);
   }
 }
 
