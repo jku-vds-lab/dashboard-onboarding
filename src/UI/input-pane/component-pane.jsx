@@ -84,7 +84,6 @@ export default function ComponentPane() {
     for (let i = 0; i < allVisuals.length; i++) {
       let visData = getVisData(allVisuals[i]);
       const existingTab = tabsData.find((tab) => tab.eventKey === visData[1]);
-      console.log("Visdata", visData);
 
       if (existingTab) {
         const newVis = {

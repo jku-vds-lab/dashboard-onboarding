@@ -18,7 +18,6 @@ export default class GroupNode {
     let nodeWidth = 0;
     let nodeHeight = 0;
     this.groupNode.nodes.forEach((node: Node) => {
-      console.log("node ", node.position.x, node.position.y);
       if (node.position.x < minX) {
         minX = node.position.x;
       }
@@ -45,15 +44,12 @@ export default class GroupNode {
 
     width = maxX - minX + minWidth;
     height = maxY - minY + minHeight;
-    if (height < 0) {
-      height = -height;
-    }
+    // if (height < 0) {
+    //   height = -height;
+    // }
 
     if (setPos) {
       position = { x: minX - xOffset / 2, y: minY - yOffsetTop };
-
-      // position = { x: minX, y: minY };
-      console.log("group position", position);
     }
 
     this.groupNode = {

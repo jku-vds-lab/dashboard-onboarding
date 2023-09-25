@@ -48,8 +48,9 @@ export default function NodesCanvas(props: Props) {
     return new DefaultNode();
   }, []);
   const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isAddGroupClicked, setIsAddGroupClicked] = useState(false);
 
-  const [setReactFlowInstance] = useState<ReactFlowInstance>();
+  // const [setReactFlowInstance] = useState<ReactFlowInstance>();
   const reactFlowInstance = useReactFlow();
   const { getIntersectingNodes } = useReactFlow();
   const [nodeData, setNodeData] = useState<Node>();
@@ -60,6 +61,11 @@ export default function NodesCanvas(props: Props) {
     x: 0,
     y: 0,
   });
+
+  const onInit = (reactFlowInstance: ReactFlowInstance) => {
+    reactFlowInstance.zoomTo(2);
+    reactFlowInstance.fitView();
+  };
 
   const handleMouseClick = (event: React.MouseEvent<HTMLDivElement>) => {
     event.preventDefault();
@@ -333,6 +339,15 @@ export default function NodesCanvas(props: Props) {
 
   const addGroup = useCallback(() => {
     try {
+      if (isAddGroupClicked) {
+        return;
+      }
+      setIsAddGroupClicked(true);
+
+      setTimeout(() => {
+        setIsAddGroupClicked(false);
+      }, 300);
+
       let noGroup = false;
       selectedNodes.forEach((sNode) => {
         if (sNode.type == "group") {
@@ -364,6 +379,11 @@ export default function NodesCanvas(props: Props) {
 
       selectedNodes.forEach((node: Node) => {
         console.log("node ", node.position.x, node.position.y);
+        console.log(
+          "node absolute",
+          node.positionAbsolute?.x,
+          node.positionAbsolute?.y
+        );
         if (node.position.x < minX) {
           minX = node.position.x;
         }
@@ -382,11 +402,17 @@ export default function NodesCanvas(props: Props) {
       //   x: minX,
       //   y: minY,
       // });
-
+      console.log("calculated post, ", minX, minY);
       const groupNode = groupNodeObj.getGroupNode(
-        true,
+        false,
         { x: minX, y: minY },
         groupType.all
+      );
+
+      console.log(
+        "GRoupnode post, ",
+        groupNode.position.x,
+        groupNode.position.y
       );
       setNodes((nds) => nds.concat(groupNode));
 
@@ -561,7 +587,7 @@ export default function NodesCanvas(props: Props) {
     <div className="dndflow">
       <div className="reactflow-wrapper" ref={reactFlowWrapper}>
         <ReactFlow
-          // onInit={setReactFlowInstance}
+          onInit={onInit}
           nodes={nodes}
           nodeTypes={nodeTypes}
           onDrop={onDrop}
