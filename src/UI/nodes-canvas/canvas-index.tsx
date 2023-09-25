@@ -5,8 +5,9 @@ import ReactFlow, {
   useReactFlow,
   ReactFlowInstance,
   OnSelectionChangeParams,
+  useEdgesState,
 } from "reactflow";
-import { Node } from "reactflow";
+import { Node, Edge } from "reactflow";
 import "reactflow/dist/style.css";
 import "../assets/css/flow.scss";
 import * as global from "../../onboarding/ts/globalVariables";
@@ -88,6 +89,26 @@ export default function NodesCanvas(props: Props) {
     }
 
     return initialNodes;
+  }
+
+  function createInitialEdges(): Edge<any>[] {
+    const edges: Edge[] = [];
+
+    try {
+      nodes.forEach((node, index) => {
+        if (index < nodes.length - 1) {
+          edges.push({
+            id: `e${index}`,
+            source: node.id,
+            target: nodes[index + 1].id,
+            type: "edge",
+          });
+        }
+      });
+    } catch (error) {
+      console.log("Error in create initial nodes", error);
+    }
+    return edges;
   }
 
   const createNodes = useCallback(
@@ -173,6 +194,7 @@ export default function NodesCanvas(props: Props) {
   );
   const initialNodes: Node[] = createIntitialNodes();
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const [edges] = useEdgesState(createInitialEdges());
 
   const getPosition = useCallback(
     (event: any) => {
@@ -589,6 +611,7 @@ export default function NodesCanvas(props: Props) {
         <ReactFlow
           onInit={onInit}
           nodes={nodes}
+          edges={edges}
           nodeTypes={nodeTypes}
           onDrop={onDrop}
           onNodeClick={onNodeClick}
