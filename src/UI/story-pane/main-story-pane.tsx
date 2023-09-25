@@ -197,9 +197,8 @@ export default function StoryPane(props: Props) {
                 id="textBox"
                 className="editable form-control"
                 contentEditable="true"
-              >
-                {/* This is where the text should go */}
-              </div>
+                onInput={saveAnnotationChanges}
+              ></div>
               <div className="controls">
                 <div
                   className="btn btn-secondary btn-sm me-auto"
