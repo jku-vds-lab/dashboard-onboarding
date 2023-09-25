@@ -220,7 +220,9 @@ export default function Components(props: Props) {
   return (
     <div>
       {inputNodes.map((node) => (
-        <div key={node.mainComponent.id}>{node.mainComponent}</div>
+        <div key={node.mainComponent.id} className="individual-item">
+          {node.mainComponent}
+        </div>
       ))}
     </div>
   );

@@ -54,7 +54,7 @@ export default function NodesCanvas(props: Props) {
   const { getIntersectingNodes } = useReactFlow();
   const [nodeData, setNodeData] = useState<Node>();
   const [isOpen, setIsOpen] = useState(false);
-  const reactFlowWrapper = useRef<HTMLInputElement>(null); // this could be the reason why we run into the initial worng position issue
+  const reactFlowWrapper = useRef<HTMLInputElement>(null); // this could be the reason why we run into the initial wrong position issue
   const [selectedNodes, setSelectedNodes] = useNodesState<null>([]);
   const [mousePosition, setMousePosition] = React.useState<MousePosition>({
     x: 0,
@@ -70,17 +70,16 @@ export default function NodesCanvas(props: Props) {
 
   function createIntitialNodes() {
     const initialNodes: Node[] = [];
-    // try {
-    //
-    //   const createdNodes = createNodes(global.settings.traversalStrategy);
-    //   if (createdNodes) {
-    //     for (const node of createdNodes) {
-    //       initialNodes.push(node);
-    //     }
-    //   }
-    // } catch (error) {
-    //   console.log("Error in create initial nodes", error);
-    // }
+    try {
+      const createdNodes = createNodes(global.settings.traversalStrategy);
+      if (createdNodes) {
+        for (const node of createdNodes) {
+          initialNodes.push(node);
+        }
+      }
+    } catch (error) {
+      console.log("Error in create initial nodes", error);
+    }
 
     return initialNodes;
   }
@@ -266,49 +265,6 @@ export default function NodesCanvas(props: Props) {
     }
   };
 
-  const onNodeDragStop = useCallback(
-    (event, draggedNode: Node) => {
-      const intersections = getIntersectingNodes(draggedNode).map((n) => n.id);
-      const groupItem = intersections.find((item) => item.includes("group"));
-      console.log("dragged node", draggedNode);
-      console.log("intersections", intersections);
-
-      //check if the node is dropped to the group
-      if (groupItem) {
-        console.log("group item", groupItem);
-        const groupNode = nodes.find((node) => node.id == groupItem);
-        if (groupNode) {
-          setNodes((currentNodes) =>
-            currentNodes.map((node) => {
-              if (node.id == draggedNode.id && node.type != "group") {
-                node.extent = "parent";
-                node.parentNode = groupItem;
-                node.position = {
-                  x: node.position.x - groupNode.position.x,
-                  y: node.position.y - groupNode.position.y,
-                };
-                node.draggable = true;
-              }
-              return node;
-            })
-          );
-        }
-      }
-
-      props.setNodesForSave(nodes);
-    },
-    [getIntersectingNodes, nodes, props, setNodes]
-  );
-
-  const onNodeDragStart = (event: any, draggedNode: Node) => {
-    const intersections = getIntersectingNodes(draggedNode).map((n) => n.id);
-    const groupItem = intersections.find((item) => item.includes("group"));
-
-    if (groupItem) {
-      console.log("detected group on node start");
-    }
-  };
-
   const onNodeMouseEnter = (e: any, node: Node) => {
     if (node.type === "group") {
     }
@@ -367,10 +323,8 @@ export default function NodesCanvas(props: Props) {
       setNodes((nodes) => nodes.filter((n) => n.parentNode !== nodeData.id));
       setNodes((nodes) => nodes.filter((n) => n.id !== nodeData.id));
     } else if (nodeData?.type === "default" && selectedNodes.length <= 1) {
-      console.log("Deleting single node", nodeData);
       setNodes((nodes) => nodes.filter((n) => n.id !== nodeData.id));
     } else if (selectedNodes.length > 1) {
-      console.log("Deleting selected node", selectedNodes);
       const selectedNodeIds = new Set(selectedNodes.map((node) => node.id));
       setNodes((nodes) => nodes.filter((n) => !selectedNodeIds.has(n.id)));
     }
@@ -402,9 +356,36 @@ export default function NodesCanvas(props: Props) {
         position: { x: 0, y: 0 },
         data: null,
       });
+
+      let minX = Infinity;
+      let minY = Infinity;
+      let maxX = -Infinity;
+      let maxY = -Infinity;
+
+      selectedNodes.forEach((node: Node) => {
+        console.log("node ", node.position.x, node.position.y);
+        if (node.position.x < minX) {
+          minX = node.position.x;
+        }
+        if (node.position.y < minY) {
+          minY = node.position.y;
+        }
+        if (node.position.x > maxX) {
+          maxX = node.position.x;
+        }
+        if (node.position.y > maxY) {
+          maxY = node.position.y;
+        }
+      });
+
+      // const position = reactFlowInstance.project({
+      //   x: minX,
+      //   y: minY,
+      // });
+
       const groupNode = groupNodeObj.getGroupNode(
         true,
-        { x: 0, y: 0 },
+        { x: minX, y: minY },
         groupType.all
       );
       setNodes((nds) => nds.concat(groupNode));
@@ -587,8 +568,6 @@ export default function NodesCanvas(props: Props) {
           onClick={onClick}
           onDragOver={onDragOver}
           onNodesChange={onNodesChange}
-          onNodeDragStart={onNodeDragStart}
-          onNodeDragStop={onNodeDragStop}
           onNodeMouseEnter={onNodeMouseEnter}
           onNodeContextMenu={onNodeContextMenu}
           onSelectionContextMenu={onSelectionContextMenu}
