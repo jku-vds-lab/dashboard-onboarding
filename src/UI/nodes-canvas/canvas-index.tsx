@@ -442,7 +442,7 @@ export default function NodesCanvas(props: Props) {
     } catch (error) {
       console.log("Error", error);
     }
-  }, [getCount, nodes, selectedNodes, setNodes]);
+  }, [getCount, isAddGroupClicked, nodes, selectedNodes, setNodes]);
 
   useEffect(() => {
     if (props.trigger) {
