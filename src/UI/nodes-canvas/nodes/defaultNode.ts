@@ -71,6 +71,7 @@ export default class DefaultNode {
   getFullNodeNameArray(event: any, name?: string) {
     let nodeName = "";
     let nameArray: string[] = [];
+
     if (name) {
       nodeName = name;
     } else {

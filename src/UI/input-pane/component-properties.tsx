@@ -207,24 +207,25 @@ export default function Components(props: Props) {
     event: any,
     nodeType: string,
     nodeId: string,
-    visType: string,
-    title: string
+    visClassName: string,
+    visTitle: string,
+    visDisplayTitle: string,
+    visParentId: string,
+    visType: string
   ) {
     try {
       let nodeFullName: string[] = [];
       if (nodeId) {
         nodeFullName = nodeId.split(" ");
       }
+      nodeFullName.push("1");
 
       if (visType) {
         const splitVisType = visType.split(" ")[0];
         if (splitVisType.length > 0) {
-          nodeFullName.push(splitVisType[0]);
+          nodeFullName.push(splitVisType);
         }
       }
-
-      console.log("Full name", nodeFullName);
-
       const visInfo = new SaveAndFetchContent(nodeFullName);
       await visInfo.getVisualDescInEditor(expertiseLevel);
     } catch (error) {
@@ -248,7 +249,18 @@ export default function Components(props: Props) {
           onDragStart(event, "default", id, visType, visTitle)
         }
         draggable
-        onClick={(event) => onClick(event, "default", id, visType, visTitle)}
+        onClick={(event) =>
+          onClick(
+            event,
+            "default",
+            id,
+            visClassName,
+            visTitle,
+            visDisplayTitle,
+            visParentId,
+            visType
+          )
+        }
       >
         {visDisplayTitle}
       </div>
