@@ -22,8 +22,8 @@ function UserLevel() {
   // redux starts
   const dispatch = useDispatch();
   // redux  ends
-  const [selectedX, setSelectedX] = useState<number | null>(null);
-  const [selectedY, setSelectedY] = useState<number | null>(null);
+  const [selectedX, setSelectedX] = useState<number | null>(1);
+  const [selectedY, setSelectedY] = useState<number | null>(1);
 
   const handleCellClick = (xIndex: number, yIndex: number) => {
     setSelectedX(xIndex);

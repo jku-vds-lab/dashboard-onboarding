@@ -4,8 +4,10 @@ import ReactFlow, {
   Controls,
   useReactFlow,
   ReactFlowInstance,
+  OnSelectionChangeParams,
+  useEdgesState,
 } from "reactflow";
-import { Node } from "reactflow";
+import { Node, Edge } from "reactflow";
 import "reactflow/dist/style.css";
 import "../assets/css/flow.scss";
 import * as global from "../../onboarding/ts/globalVariables";
@@ -47,51 +49,125 @@ export default function NodesCanvas(props: Props) {
     return new DefaultNode();
   }, []);
   const [position, setPosition] = useState({ x: 0, y: 0 });
-  const initialNodes: Node[] = createIntitialNodes();
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const [isAddGroupClicked, setIsAddGroupClicked] = useState(false);
 
-  const [setReactFlowInstance] = useState<ReactFlowInstance>();
+  // const [setReactFlowInstance] = useState<ReactFlowInstance>();
   const reactFlowInstance = useReactFlow();
   const { getIntersectingNodes } = useReactFlow();
   const [nodeData, setNodeData] = useState<Node>();
   const [isOpen, setIsOpen] = useState(false);
-  const reactFlowWrapper = useRef<HTMLInputElement>(null); // this could be the reason why we run into the initial worng position issue
+  const reactFlowWrapper = useRef<HTMLInputElement>(null); // this could be the reason why we run into the initial wrong position issue
   const [selectedNodes, setSelectedNodes] = useNodesState<null>([]);
   const [mousePosition, setMousePosition] = React.useState<MousePosition>({
     x: 0,
     y: 0,
   });
 
-  const handleMouseClick = (event: React.MouseEvent<HTMLDivElement>) => {
-    // console.log("Mouse click is called");
-    const { clientX, clientY } = event;
+  const onInit = (reactFlowInstance: ReactFlowInstance) => {
+    reactFlowInstance.zoomTo(2);
+    reactFlowInstance.fitView();
+  };
 
+  const handleMouseClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    const { clientX, clientY } = event;
     setMousePosition({ x: clientX, y: clientY });
+    setIsOpen(true);
   };
 
   function createIntitialNodes() {
     const initialNodes: Node[] = [];
-    const createdNodes = createNodes(global.settings.traversalStrategy);
-    if (createdNodes) {
-      for (const node of createdNodes) {
-        initialNodes.push(node);
+    try {
+      const createdNodes = createNodes(global.settings.traversalStrategy);
+      if (createdNodes) {
+        for (const node of createdNodes) {
+          initialNodes.push(node);
+        }
       }
+    } catch (error) {
+      console.log("Error in create initial nodes", error);
     }
+
     return initialNodes;
   }
 
-  function createNodes(traversal: TraversalElement[]) {
-    const createdNodes: Node[] = [];
-    let prevNode;
+  function createInitialEdges(): Edge<any>[] {
+    const edges: Edge[] = [];
 
-    for (const elem of traversal) {
-      if (elem.element.id === "group") {
-        const nodesWithinGroup: Node[] = [];
-        const visuals = elem.element.visuals;
+    try {
+      nodes.forEach((node, index) => {
+        if (index < nodes.length - 1) {
+          edges.push({
+            id: `e${index}`,
+            source: node.id,
+            target: nodes[index + 1].id,
+            type: "edge",
+          });
+        }
+      });
+    } catch (error) {
+      console.log("Error in create initial nodes", error);
+    }
+    return edges;
+  }
 
-        for (let i = 0; i < visuals.length; i++) {
-          for (let j = 0; j < visuals[i].length; j++) {
-            const visTitle = getTitle(visuals[i][j]);
+  const createNodes = useCallback(
+    (traversal: TraversalElement[]) => {
+      const createdNodes: Node[] = [];
+      let prevNode;
+      try {
+        for (const elem of traversal) {
+          if (!elem.element) {
+            console.log("returning because elem is undefined");
+            return;
+          }
+          if (elem.element.id === "group") {
+            const nodesWithinGroup: Node[] = [];
+            const visuals = elem.element.visuals;
+
+            for (let i = 0; i < visuals.length; i++) {
+              for (let j = 0; j < visuals[i].length; j++) {
+                const visTitle = getTitle(visuals[i][j]);
+                if (!visTitle) {
+                  return;
+                }
+                const visType = getType(visTitle);
+                const newNode = defaultNode().getNode(
+                  event,
+                  visType,
+                  getID(visuals[i][j]),
+                  "default",
+                  getPositionWithinGroup(i, j),
+                  visTitle
+                );
+
+                nodesWithinGroup.push(newNode);
+                createdNodes.push(newNode);
+              }
+            }
+
+            const groupNodeObj = new GroupNode({
+              nodes: nodesWithinGroup,
+              id: "group " + elem.count,
+              position: { x: 0, y: 0 },
+              data: null,
+            });
+
+            const groupNode = groupNodeObj.getGroupNode(
+              false,
+              getPositionForWholeTrav(prevNode),
+              elem.element.type
+            );
+            createdNodes.push(groupNode);
+            prevNode = groupNode;
+
+            nodesWithinGroup.forEach((node) => {
+              node.parentNode = groupNode?.id;
+              node.extent = "parent";
+              node.draggable = true;
+            });
+          } else {
+            const visTitle = getTitle(elem);
             if (!visTitle) {
               return;
             }
@@ -99,57 +175,26 @@ export default function NodesCanvas(props: Props) {
             const newNode = defaultNode().getNode(
               event,
               visType,
-              getID(visuals[i][j]),
+              getID(elem),
               "default",
-              getPositionWithinGroup(i, j),
+              getPositionForWholeTrav(prevNode),
               visTitle
             );
-
-            nodesWithinGroup.push(newNode);
             createdNodes.push(newNode);
+            prevNode = newNode;
           }
         }
-
-        const groupNodeObj = new GroupNode({
-          nodes: nodesWithinGroup,
-          id: "group " + elem.count,
-          position: { x: 0, y: 0 },
-          data: null,
-        });
-
-        const groupNode = groupNodeObj.getGroupNode(
-          false,
-          getPositionForWholeTrav(prevNode),
-          elem.element.type
-        );
-        createdNodes.push(groupNode);
-        prevNode = groupNode;
-
-        nodesWithinGroup.forEach((node) => {
-          node.parentNode = groupNode?.id;
-          node.extent = "parent";
-          node.draggable = true;
-        });
-      } else {
-        const visTitle = getTitle(elem);
-        if (!visTitle) {
-          return;
-        }
-        const visType = getType(visTitle);
-        const newNode = defaultNode().getNode(
-          event,
-          visType,
-          getID(elem),
-          "default",
-          getPositionForWholeTrav(prevNode),
-          visTitle
-        );
-        createdNodes.push(newNode);
-        prevNode = newNode;
+      } catch (error) {
+        console.log("Error in create Nodes", error);
       }
-    }
-    return createdNodes;
-  }
+
+      return createdNodes;
+    },
+    [defaultNode]
+  );
+  const initialNodes: Node[] = createIntitialNodes();
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const [edges] = useEdgesState(createInitialEdges());
 
   const getPosition = useCallback(
     (event: any) => {
@@ -166,6 +211,36 @@ export default function NodesCanvas(props: Props) {
       return position;
     },
     [reactFlowInstance]
+  );
+
+  const getCount = useCallback(
+    (id: string) => {
+      let count = 1;
+      let sameNodes;
+      let index = 1;
+
+      if (id.split(" ").length > 1) {
+        sameNodes = nodes.filter(
+          (node) => node.id.split(" ")[0] + " " + node.id.split(" ")[1] === id
+        );
+        index = 2;
+      } else {
+        sameNodes = nodes.filter(
+          (node) =>
+            node.id.split(" ").length < 4 && node.id.split(" ")[0] === id
+        );
+      }
+
+      if (sameNodes.length > 0) {
+        const max = Math.max(
+          ...sameNodes.map((node) => parseInt(node.id.split(" ")[index]))
+        );
+        count += max;
+      }
+
+      return count;
+    },
+    [nodes]
   );
 
   const onDragOver = useCallback((event) => {
@@ -202,36 +277,10 @@ export default function NodesCanvas(props: Props) {
 
       setNodes((nds) => nds.concat(newNode));
     },
-    [nodes, getPosition, defaultNode, setNodes]
+    [getCount, getPosition, defaultNode, setNodes]
   );
 
-  function getCount(id: string) {
-    let count = 1;
-    let sameNodes;
-    let index = 1;
-
-    if (id.split(" ").length > 1) {
-      sameNodes = nodes.filter(
-        (node) => node.id.split(" ")[0] + " " + node.id.split(" ")[1] === id
-      );
-      index = 2;
-    } else {
-      sameNodes = nodes.filter(
-        (node) => node.id.split(" ").length < 4 && node.id.split(" ")[0] === id
-      );
-    }
-
-    if (sameNodes.length > 0) {
-      const max = Math.max(
-        ...sameNodes.map((node) => parseInt(node.id.split(" ")[index]))
-      );
-      count += max;
-    }
-
-    return count;
-  }
-
-  const onClick = (event: any) => {
+  const onNodeClick = (event: any) => {
     const container = document.getElementById("canvas-container");
     event.target.classList.contains("react-flow__pane")
       ? container?.classList.remove("show")
@@ -239,35 +288,8 @@ export default function NodesCanvas(props: Props) {
 
     const fullNameArray = defaultNode().getFullNodeNameArray(event);
     const basicName = defaultNode().getBasicName(event);
-
-    dispatch(increment([basicName, fullNameArray]));
-  };
-
-  const onNodeDragStart = useCallback(
-    (event, node) => {
-      const intersections = getIntersectingNodes(node).map((n) => n.id);
-
-      //check if the node is dropped to the group
-      setNodes((nodes) =>
-        nodes.map((n) => ({
-          ...n,
-          className: intersections.includes(n.id) ? "highlight" : "",
-        }))
-      );
-      props.setNodesForSave(nodes);
-    },
-    [getIntersectingNodes, setNodes]
-  );
-
-  const onNodeDragStop = (event: any, node: Node) => {
-    // console.log("Node pos", node.position);
-
-    if (node.type == "group") {
-      nodes.forEach((sNode) => {
-        if (sNode.parentNode == node.id) {
-          // console.log(sNode.positionAbsolute); // --> this is not getting updated
-        }
-      });
+    if (fullNameArray && basicName) {
+      dispatch(increment([basicName, fullNameArray]));
     }
   };
 
@@ -277,59 +299,89 @@ export default function NodesCanvas(props: Props) {
     setNodeData(node);
   };
 
-  const onSelectionContextMenu = useCallback(
-    (event, sNodes: Node[]) => {
-      event.preventDefault();
-      const { clientX, clientY } = event;
-      const reactFlowBounds =
-        reactFlowWrapper?.current?.getBoundingClientRect();
-      const left = reactFlowBounds ? reactFlowBounds.left : 0;
-      const top = reactFlowBounds ? reactFlowBounds.top : 0;
-      setPosition({
-        x: event.clientX - left,
-        y: event.clientY - top,
-      });
+  const getMousePositionFromReactFlow = useCallback((event: any) => {
+    const reactFlowBounds = reactFlowWrapper?.current?.getBoundingClientRect();
 
-      setSelectedNodes(sNodes);
-      setIsOpen(true);
-    },
-    [setSelectedNodes]
-  );
+    const left = reactFlowBounds ? reactFlowBounds.left : 0;
+    const top = reactFlowBounds ? reactFlowBounds.top : 0;
+    const { clientX, clientY } = event;
+    const position = {
+      x: clientX - left,
+      y: clientY - top,
+    };
+    return position;
+  }, []);
 
   const onNodeContextMenu = useCallback(
     (event) => {
       event.preventDefault();
-      const position = getPosition(event);
-      setPosition({
-        x: position.x,
-        y: position.y,
-      });
+      setMousePosition(getMousePositionFromReactFlow(event));
       setIsOpen(true);
     },
-    [getPosition]
+    [getMousePositionFromReactFlow]
+  );
+  const onSelectionContextMenu = useCallback(
+    (event, sNodes: Node[]) => {
+      event.preventDefault();
+      setMousePosition(getMousePositionFromReactFlow(event));
+      setIsOpen(true);
+      setSelectedNodes(sNodes);
+    },
+    [setSelectedNodes, getMousePositionFromReactFlow]
   );
 
+  const buildTraversal = useCallback(
+    (traversal: any) => {
+      setNodes([]);
+
+      const createdNodes = createNodes(traversal);
+      if (createdNodes) {
+        for (const node of createdNodes) {
+          setNodes((nds) => nds.concat(node));
+        }
+      }
+    },
+    [createNodes, setNodes]
+  );
+  const onSelectionChangeFunction = (params: OnSelectionChangeParams) => {
+    setSelectedNodes(params.nodes);
+  };
   const deleteNode = useCallback(() => {
     if (nodeData?.type === "group") {
       setNodes((nodes) => nodes.filter((n) => n.parentNode !== nodeData.id));
       setNodes((nodes) => nodes.filter((n) => n.id !== nodeData.id));
-    } else if (nodeData?.type === "default") {
+    } else if (nodeData?.type === "default" && selectedNodes.length <= 1) {
       setNodes((nodes) => nodes.filter((n) => n.id !== nodeData.id));
+    } else if (selectedNodes.length > 1) {
+      const selectedNodeIds = new Set(selectedNodes.map((node) => node.id));
+      setNodes((nodes) => nodes.filter((n) => !selectedNodeIds.has(n.id)));
     }
     setIsOpen(false);
-  }, [nodes]);
+  }, [nodeData, selectedNodes, setNodes]);
 
   const addGroup = useCallback(() => {
     try {
-      let noGroup = false;
+      if (isAddGroupClicked) {
+        return;
+      }
+      setIsAddGroupClicked(true);
 
+      setTimeout(() => {
+        setIsAddGroupClicked(false);
+      }, 300);
+
+      let noGroup = false;
       selectedNodes.forEach((sNode) => {
         if (sNode.type == "group") {
+          noGroup = true;
+        }
+        if (sNode.parentNode) {
           noGroup = true;
         }
       });
 
       if (noGroup) {
+        console.log("Returning because this is a noGroup");
         return;
       }
 
@@ -341,10 +393,48 @@ export default function NodesCanvas(props: Props) {
         position: { x: 0, y: 0 },
         data: null,
       });
+
+      let minX = Infinity;
+      let minY = Infinity;
+      let maxX = -Infinity;
+      let maxY = -Infinity;
+
+      selectedNodes.forEach((node: Node) => {
+        console.log("node ", node.position.x, node.position.y);
+        console.log(
+          "node absolute",
+          node.positionAbsolute?.x,
+          node.positionAbsolute?.y
+        );
+        if (node.position.x < minX) {
+          minX = node.position.x;
+        }
+        if (node.position.y < minY) {
+          minY = node.position.y;
+        }
+        if (node.position.x > maxX) {
+          maxX = node.position.x;
+        }
+        if (node.position.y > maxY) {
+          maxY = node.position.y;
+        }
+      });
+
+      // const position = reactFlowInstance.project({
+      //   x: minX,
+      //   y: minY,
+      // });
+      console.log("calculated post, ", minX, minY);
       const groupNode = groupNodeObj.getGroupNode(
-        true,
-        { x: 0, y: 0 },
+        false,
+        { x: minX, y: minY },
         groupType.all
+      );
+
+      console.log(
+        "GRoupnode post, ",
+        groupNode.position.x,
+        groupNode.position.y
       );
       setNodes((nds) => nds.concat(groupNode));
 
@@ -371,35 +461,20 @@ export default function NodesCanvas(props: Props) {
           }
         });
       });
-
-      // console.log("Nodes", nodes);
-      // console.log("Selected Nodes", selectedNodes);
     } catch (error) {
       console.log("Error", error);
     }
-  }, [nodes, selectedNodes, setNodes]);
+  }, [getCount, isAddGroupClicked, nodes, selectedNodes, setNodes]);
 
   useEffect(() => {
     if (props.trigger) {
-      // console.log("q", props.traversal);
       buildTraversal(props.traversal);
     }
-  }, [props.trigger]);
+  }, [buildTraversal, props.traversal, props.trigger]);
 
   useEffect(() => {
     props.setNodesForSave(nodes);
-  }, [nodes]);
-
-  function buildTraversal(traversal: any) {
-    setNodes([]);
-
-    const createdNodes = createNodes(traversal);
-    if (createdNodes) {
-      for (const node of createdNodes) {
-        setNodes((nds) => nds.concat(node));
-      }
-    }
-  }
+  }, [nodes, props]);
 
   function getPositionForWholeTrav(prevNode: any) {
     let pos = {
@@ -534,18 +609,18 @@ export default function NodesCanvas(props: Props) {
     <div className="dndflow">
       <div className="reactflow-wrapper" ref={reactFlowWrapper}>
         <ReactFlow
-          // onInit={setReactFlowInstance}
+          onInit={onInit}
           nodes={nodes}
+          edges={edges}
           nodeTypes={nodeTypes}
           onDrop={onDrop}
-          onClick={onClick}
+          onNodeClick={onNodeClick}
           onDragOver={onDragOver}
           onNodesChange={onNodesChange}
-          onNodeDragStart={onNodeDragStart}
-          onNodeDragStop={onNodeDragStop}
           onNodeMouseEnter={onNodeMouseEnter}
           onNodeContextMenu={onNodeContextMenu}
           onSelectionContextMenu={onSelectionContextMenu}
+          onSelectionChange={onSelectionChangeFunction}
           snapToGrid
           fitView
         >
@@ -553,7 +628,7 @@ export default function NodesCanvas(props: Props) {
           <ContextMenu
             isOpen={isOpen}
             onClick={handleMouseClick}
-            position={position}
+            position={mousePosition}
             onMouseLeave={() => setIsOpen(false)}
             actions={[
               { label: "Delete", effect: deleteNode },

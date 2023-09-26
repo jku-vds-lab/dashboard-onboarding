@@ -52,8 +52,8 @@ export default class DefaultNode {
       boxShadow: "0 0 4px #1a1717",
       fontSize: "8px",
       textAlign: "left",
-      paddingLeft: "15px",
-      paddingRight: "25px",
+      paddingLeft: "8px",
+      paddingRight: "12px",
       lineHeight: "1.2",
     };
     return nodeStyle;
@@ -71,6 +71,7 @@ export default class DefaultNode {
   getFullNodeNameArray(event: any, name?: string) {
     let nodeName = "";
     let nameArray: string[] = [];
+
     if (name) {
       nodeName = name;
     } else {

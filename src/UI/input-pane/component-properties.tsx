@@ -1,6 +1,11 @@
 import { allVisuals } from "../../onboarding/ts/globalVariables";
 import Accordion from "react-bootstrap/Accordion";
 import "../assets/css/dashboard.scss";
+import { useCallback } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import type { RootState } from "../redux/store";
+import { increment } from "../redux/nodeModalities";
+import SaveAndFetchContent from "../../onboarding/ts/Content/saveAndFetchContent";
 
 export interface InputNode {
   mainComponent: any;
@@ -17,6 +22,11 @@ export default function Components(props: Props) {
   const className = "dndnode";
   const visParentId = "componentNodes";
   let inputNode: InputNode;
+
+  // redux starts
+  const dispatch = useDispatch();
+  // redux  ends
+  const expertiseLevel = useSelector((state: RootState) => state.expertise);
 
   switch (props.visual) {
     case "dashboard":
@@ -193,6 +203,36 @@ export default function Components(props: Props) {
     event.dataTransfer.effectAllowed = "move";
   }
 
+  async function onClick(
+    event: any,
+    nodeType: string,
+    nodeId: string,
+    visClassName: string,
+    visTitle: string,
+    visDisplayTitle: string,
+    visParentId: string,
+    visType: string
+  ) {
+    try {
+      let nodeFullName: string[] = [];
+      if (nodeId) {
+        nodeFullName = nodeId.split(" ");
+      }
+      nodeFullName.push("1");
+
+      if (visType) {
+        const splitVisType = visType.split(" ")[0];
+        if (splitVisType.length > 0) {
+          nodeFullName.push(splitVisType);
+        }
+      }
+      const visInfo = new SaveAndFetchContent(nodeFullName);
+      await visInfo.getVisualDescInEditor(expertiseLevel);
+    } catch (error) {
+      console.log("Error on click at comonents", error);
+    }
+  }
+
   function createNode(
     id: string,
     visClassName: string,
@@ -209,6 +249,18 @@ export default function Components(props: Props) {
           onDragStart(event, "default", id, visType, visTitle)
         }
         draggable
+        onClick={(event) =>
+          onClick(
+            event,
+            "default",
+            id,
+            visClassName,
+            visTitle,
+            visDisplayTitle,
+            visParentId,
+            visType
+          )
+        }
       >
         {visDisplayTitle}
       </div>
@@ -220,7 +272,9 @@ export default function Components(props: Props) {
   return (
     <div>
       {inputNodes.map((node) => (
-        <div key={node.mainComponent.id}>{node.mainComponent}</div>
+        <div key={node.mainComponent.id} className="individual-item">
+          {node.mainComponent}
+        </div>
       ))}
     </div>
   );

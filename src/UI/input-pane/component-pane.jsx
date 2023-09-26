@@ -3,7 +3,9 @@ import React, { useState, useEffect } from "react";
 import Draggable from "react-draggable";
 import { PhotoshopPicker } from "react-color";
 import { Nav, Tab, OverlayTrigger, Tooltip, Button } from "react-bootstrap";
-import Accordion from "react-bootstrap/Accordion";
+import { Accordion } from "react-bootstrap/Accordion";
+import Card from "react-bootstrap/Card";
+import { ListGroup } from "react-bootstrap";
 import * as global from "../../onboarding/ts/globalVariables";
 
 import "../assets/css/dashboard.scss";
@@ -82,7 +84,6 @@ export default function ComponentPane() {
     for (let i = 0; i < allVisuals.length; i++) {
       let visData = getVisData(allVisuals[i]);
       const existingTab = tabsData.find((tab) => tab.eventKey === visData[1]);
-      console.log("Visdata", visData);
 
       if (existingTab) {
         const newVis = {
@@ -263,21 +264,20 @@ export default function ComponentPane() {
             onClick={showPicker}
           ></span>
         </div>
-        <Accordion alwaysOpen className="component-accordion">
+        <Card className="custom-card">
           {components.map((component) => (
-            <Accordion.Item
-              eventKey={component.visualId}
-              key={component.visualId}
-            >
-              <Accordion.Button className="basic">
+            <>
+              <Card.Title className="custom-card-header">
                 {component.title}
-              </Accordion.Button>
-              <Accordion.Body>
-                <Components visual={component.visualId} />
-              </Accordion.Body>
-            </Accordion.Item>
+              </Card.Title>
+              <ListGroup className="custom-list-group" variant="flush">
+                <ListGroup.Item className="custom-list-group-item">
+                  <Components visual={component.visualId} />
+                </ListGroup.Item>
+              </ListGroup>
+            </>
           ))}
-        </Accordion>
+        </Card>
       </Tab.Pane>
     );
   }
