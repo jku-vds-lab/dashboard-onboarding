@@ -38,6 +38,7 @@ interface Props {
   trigger: number;
   traversal: any;
   setNodesForSave: any;
+  setEdgesForSave: any;
 }
 interface MousePosition {
   x: number;
@@ -503,7 +504,8 @@ export default function NodesCanvas(props: Props) {
 
   useEffect(() => {
     props.setNodesForSave(nodes);
-  }, [nodes, props]);
+    props.setEdgesForSave(edges);
+  }, [nodes, props, edges]);
 
   function getPositionForWholeTrav(prevNode: any) {
     let pos = {
@@ -657,7 +659,6 @@ export default function NodesCanvas(props: Props) {
   const onSave = useCallback(() => {
     if (reactFlowInstance) {
       const flow = reactFlowInstance.toObject();
-      debugger;
     }
   }, [reactFlowInstance]);
   return (

@@ -24,9 +24,6 @@ export class TraversalOrder {
       this.defaultNodes.forEach((sNode, index) => {
         sNode.rank = index + 1;
       });
-
-      debugger;
-
       this.allNodes.push(...this.defaultNodes);
       this.allNodes.push(...this.groupNodes);
       this.allNodes = this.allNodes.sort(this.compare);
@@ -110,6 +107,7 @@ export class TraversalOrder {
   // separate nodes that are within and without a group
   onClick(props: any) {
     try {
+      debugger;
       const storyNodes = props.nodes;
 
       if (storyNodes.length > 0) {

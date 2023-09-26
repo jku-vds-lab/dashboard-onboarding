@@ -21,11 +21,9 @@ export default function ParentComponent(props: ParentComponentProps) {
   });
 
   useEffect(() => {
-    debugger;
     async function getDetails() {
       const pages = await props.report.getPages();
       const active = pages.find((p) => p.isActive);
-      debugger;
 
       if (active) {
         setActivePage(active);

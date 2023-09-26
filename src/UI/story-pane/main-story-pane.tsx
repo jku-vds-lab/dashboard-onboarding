@@ -19,12 +19,14 @@ interface Props {
   mainTrigger: number;
   traversal: any;
   setNodes: any;
+  setEdges: any;
 }
 
 export default function StoryPane(props: Props) {
   const [trigger, setTrigger] = useState(0);
   const [showMediaOptions, setShowMediaOptions] = useState(false);
   const [nodes, setNodes] = useState([]);
+  const [edges, setEdges] = useState([]);
   let timer: ReturnType<typeof setTimeout>;
 
   // redux starts
@@ -73,7 +75,9 @@ export default function StoryPane(props: Props) {
       const visInfo = new SaveAndFetchContent(nodeFullName);
       visInfo.saveVisualInfo(images, infos);
       clearTimeout(timer);
-      timer = setTimeout(() => {reloadOnboarding()}, timeout);
+      timer = setTimeout(() => {
+        reloadOnboarding();
+      }, timeout);
     } catch (error) {
       console.log("Error in saveAnnotatiionChanges", error);
     }
@@ -140,7 +144,9 @@ export default function StoryPane(props: Props) {
 
   useEffect(() => {
     props.setNodes(nodes);
-  }, [nodes, props]);
+    props.setEdges(edges);
+    debugger;
+  }, [nodes, edges, props]);
 
   const buildTraversal = () => {
     setTrigger((trigger) => trigger + 1);
@@ -158,6 +164,7 @@ export default function StoryPane(props: Props) {
             trigger={trigger}
             traversal={props.traversal}
             setNodesForSave={setNodes}
+            setEdgesForSave={setEdges}
           />
         </ReactFlowProvider>
       </div>
@@ -198,7 +205,9 @@ export default function StoryPane(props: Props) {
                 id="textBox"
                 className="editable form-control"
                 contentEditable="true"
-                onInput={function() {saveAnnotationChanges(500)}}
+                onInput={function () {
+                  saveAnnotationChanges(500);
+                }}
               ></div>
               <div className="controls">
                 <div
@@ -208,7 +217,12 @@ export default function StoryPane(props: Props) {
                   <FaUndo />
                 </div>
                 <div className="btn btn-secondary btn-sm me-auto ms-2">
-                  <FaCheck id="saveText" onClick={function() {saveAnnotationChanges(0)}} />
+                  <FaCheck
+                    id="saveText"
+                    onClick={function () {
+                      saveAnnotationChanges(0);
+                    }}
+                  />
                 </div>
               </div>
             </div>
