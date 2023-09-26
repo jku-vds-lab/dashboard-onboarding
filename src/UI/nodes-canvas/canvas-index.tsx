@@ -6,6 +6,7 @@ import ReactFlow, {
   ReactFlowInstance,
   OnSelectionChangeParams,
   useEdgesState,
+  applyEdgeChanges,
 } from "reactflow";
 import { Node, Edge } from "reactflow";
 import "reactflow/dist/style.css";
@@ -194,7 +195,11 @@ export default function NodesCanvas(props: Props) {
   );
   const initialNodes: Node[] = createIntitialNodes();
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges] = useEdgesState(createInitialEdges());
+  const [edges, setEdges] = useEdgesState(createInitialEdges());
+  const onEdgesChange = useCallback(
+    (changes) => setEdges((eds) => applyEdgeChanges(changes, eds)),
+    []
+  );
 
   const getPosition = useCallback(
     (event: any) => {
@@ -280,18 +285,38 @@ export default function NodesCanvas(props: Props) {
     [getCount, getPosition, defaultNode, setNodes]
   );
 
-  const onNodeClick = (event: any) => {
-    const container = document.getElementById("canvas-container");
-    event.target.classList.contains("react-flow__pane")
-      ? container?.classList.remove("show")
-      : container?.classList.add("show");
+  const onNodeClick = useCallback(
+    (event: any, clickedNode: Node) => {
+      try {
+        setNodes((nodes: Node[]) => {
+          nodes.forEach((node: Node) => {
+            if (node.id == clickedNode.id) {
+              console.log("This node is selected", node);
+              node.style = {
+                ...node.style,
+                opacity: 0.25,
+              };
+              return node;
+            }
+          });
+          return nodes;
+        });
+        const container = document.getElementById("canvas-container");
+        event.target.classList.contains("react-flow__pane")
+          ? container?.classList.remove("show")
+          : container?.classList.add("show");
 
-    const fullNameArray = defaultNode().getFullNodeNameArray(event);
-    const basicName = defaultNode().getBasicName(event);
-    if (fullNameArray && basicName) {
-      dispatch(increment([basicName, fullNameArray]));
-    }
-  };
+        const fullNameArray = defaultNode().getFullNodeNameArray(event);
+        const basicName = defaultNode().getBasicName(event);
+        if (fullNameArray && basicName) {
+          dispatch(increment([basicName, fullNameArray]));
+        }
+      } catch (error) {
+        console.log("Error on nodeclick", error);
+      }
+    },
+    [defaultNode, dispatch, setNodes]
+  );
 
   const onNodeMouseEnter = (e: any, node: Node) => {
     if (node.type === "group") {
@@ -617,6 +642,7 @@ export default function NodesCanvas(props: Props) {
           onNodeClick={onNodeClick}
           onDragOver={onDragOver}
           onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
           onNodeMouseEnter={onNodeMouseEnter}
           onNodeContextMenu={onNodeContextMenu}
           onSelectionContextMenu={onSelectionContextMenu}
