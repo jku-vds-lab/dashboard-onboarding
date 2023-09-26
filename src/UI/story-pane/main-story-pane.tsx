@@ -46,7 +46,6 @@ export default function StoryPane(props: Props) {
         return;
       }
       if (nodeFullName?.length > 0) {
-        console.log("Node full name", nodeFullName);
         const visInfo = new SaveAndFetchContent(nodeFullName);
         await visInfo.getVisualDescInEditor(expertiseLevel);
       }

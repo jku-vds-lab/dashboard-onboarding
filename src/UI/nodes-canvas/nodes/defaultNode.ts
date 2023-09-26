@@ -55,6 +55,7 @@ export default class DefaultNode {
       paddingLeft: "8px",
       paddingRight: "12px",
       lineHeight: "1.2",
+      opacity: 1,
     };
     return nodeStyle;
   }
