@@ -25,6 +25,7 @@ export default function StoryPane(props: Props) {
   const [trigger, setTrigger] = useState(0);
   const [showMediaOptions, setShowMediaOptions] = useState(false);
   const [nodes, setNodes] = useState([]);
+  let timer: ReturnType<typeof setTimeout>;
 
   // redux starts
   const nodeFullName = useSelector(
@@ -54,7 +55,7 @@ export default function StoryPane(props: Props) {
     fillTextBox().catch(console.error);
   }, [expertiseLevel, nodeBasicName, nodeFullName]);
 
-  const saveAnnotationChanges = () => {
+  const saveAnnotationChanges = (timeout: number) => {
     try {
       const infos = [];
       const images: string[] = [];
@@ -71,7 +72,8 @@ export default function StoryPane(props: Props) {
 
       const visInfo = new SaveAndFetchContent(nodeFullName);
       visInfo.saveVisualInfo(images, infos);
-      reloadOnboarding();
+      clearTimeout(timer);
+      timer = setTimeout(() => {reloadOnboarding()}, timeout);
     } catch (error) {
       console.log("Error in saveAnnotatiionChanges", error);
     }
@@ -196,7 +198,7 @@ export default function StoryPane(props: Props) {
                 id="textBox"
                 className="editable form-control"
                 contentEditable="true"
-                onInput={saveAnnotationChanges}
+                onInput={function() {saveAnnotationChanges(500)}}
               ></div>
               <div className="controls">
                 <div
@@ -206,7 +208,7 @@ export default function StoryPane(props: Props) {
                   <FaUndo />
                 </div>
                 <div className="btn btn-secondary btn-sm me-auto ms-2">
-                  <FaCheck id="saveText" onClick={saveAnnotationChanges} />
+                  <FaCheck id="saveText" onClick={function() {saveAnnotationChanges(0)}} />
                 </div>
               </div>
             </div>
