@@ -16,7 +16,7 @@ export default class InsightDescription {
 
   private insightInfo = {
     value: "A value of ",
-    measured: " was measured for ",
+    measured: " was measured",
     highest: "The highest value of ",
     average: "On average ",
     highestCategory: " has higher values than any other category",
@@ -25,6 +25,7 @@ export default class InsightDescription {
   private prepositions = {
     and: " and ",
     space: " ",
+    for: " for "
   };
 
   private punctuations = {
@@ -46,12 +47,20 @@ export default class InsightDescription {
       value +
       this.prepositions.space +
       dataName +
-      this.insightInfo.measured +
-      axisValues[Math.floor(axisValues.length / 2)];
+      this.insightInfo.measured;
 
-    if (legendValues && legendValues?.length !== 0) {
+    if (axisValues && axisValues?.length !== 0) {
       text +=
-        this.prepositions.and +
+        this.prepositions.for +
+        axisValues[Math.floor(axisValues.length / 2)];
+      if (legendValues && legendValues?.length !== 0) {
+        text +=
+          this.prepositions.and +
+          legendValues[Math.floor(legendValues.length / 2)];
+      }
+    } else if (legendValues && legendValues?.length !== 0) {
+      text +=
+        this.prepositions.for +
         legendValues[Math.floor(legendValues.length / 2)];
     }
 
@@ -66,10 +75,10 @@ export default class InsightDescription {
     text =
       this.insightInfo.highest +
       highestValues[0] +
-      this.insightInfo.measured +
+      this.insightInfo.measured + this.prepositions.for +
       highestValues[1];
 
-    if (legend) {
+    if(highestValues[2]){
       text += this.prepositions.and + highestValues[2];
     }
 
@@ -129,56 +138,60 @@ export default class InsightDescription {
       case "matrix":
       case "table":
         visual = visual as Table | Matrix;
-        dataName = visual.dataName;
+        let attributes = undefined;
+        if(visual.row === "" && visual.column === ""){
+          attributes = visual.data.attributes;
+          dataName = visual.data.attributes[Math.floor(visual.data.attributes.length / 2)];
+        } else if(visual.row === "" && visual.dataName === ""){
+          dataName = visual.data.attributes[Math.floor(visual.data.attributes.length / 2)];
+        }else{
+          dataName = visual.dataName;
+        }
 
-        if((visual.row === "" && visual.column === "") || (visual.row === "" && visual.dataName === "")){
-          break;
-        }
-        
-        if (expertiseLevel === Level.Low) {
-          value = helper.getSpecificDataPoint(
-            visual.data.data,
-            visual.row,
-            visual.rowValues[Math.floor(visual.rowValues.length / 2)],
-            visual.dataName,
-            visual.column,
-            visual.columnValues[Math.floor(visual.columnValues.length / 2)]
-          );
-        }
+        value = helper.getSpecificDataPoint(
+          visual.data.data,
+          visual.row,
+          visual.rowValues[Math.floor(visual.rowValues.length / 2)],
+          dataName,
+          visual.column,
+          visual.columnValues[Math.floor(visual.columnValues.length / 2)]
+        );
 
         if (expertiseLevel !== Level.High) {
           if(visual.data.data.length > 100){
             highestValues = helper.getHighestValue(
               visual.data.data,
-              visual.dataName,
+              dataName,
               [visual.rowValues[Math.floor(visual.rowValues.length / 2)]],
               visual.row,
               visual.column,
-              visual.columnValues
+              visual.columnValues,
+              attributes
             );
           } else {
             highestValues = helper.getHighestValue(
               visual.data.data,
-              visual.dataName,
+              dataName,
               visual.rowValues,
               visual.row,
               visual.column,
-              visual.columnValues
+              visual.columnValues,
+              attributes
             );
           }
         }
 
-        if (visual.column) {
-          highestCategory = helper.getHighestCategory(
-            visual.data.data,
-            visual.dataName,
-            visual.columnValues,
-            visual.column
-          );
-        }
-
+        highestCategory = helper.getHighestCategory(
+          visual.data.data,
+          dataName,
+          visual.columnValues,
+          visual.column,
+          attributes
+        );
         
-        if (value) {
+        if (value !== null && value !== undefined && 
+          (expertiseLevel === Level.Low || 
+          ((highestValues === null || highestValues === undefined) && (highestCategory === null || highestCategory === undefined)))) {
           this.insightText.insightImages.push("lightbulbImg");
           this.insightText.insightInfos.push(
             this.insightExampleText(
@@ -190,7 +203,7 @@ export default class InsightDescription {
           );
         }
 
-        if (highestValues) {
+        if (highestValues !== null && highestValues !== undefined) {
           this.insightText.insightImages.push("lightbulbImg");
           this.insightText.insightInfos.push(
             this.insightHighestValueText(highestValues, visual.column)
@@ -244,27 +257,27 @@ export default class InsightDescription {
         }
 
         
-    if (value) {
-      this.insightText.insightImages.push("lightbulbImg");
-      this.insightText.insightInfos.push(
-        this.insightExampleText(
-          value,
-          dataName,
-          visual.axisValues,
-          visual.legendValues
-        )
-      );
+      if (value !== null && value !== undefined) {
+        this.insightText.insightImages.push("lightbulbImg");
+        this.insightText.insightInfos.push(
+          this.insightExampleText(
+            value,
+            dataName,
+            visual.axisValues,
+            visual.legendValues
+          )
+        );
+      }
+
+      if (highestValues !== null && highestValues !== undefined) {
+        this.insightText.insightImages.push("lightbulbImg");
+        this.insightText.insightInfos.push(
+          this.insightHighestValueText(highestValues, visual.legend)
+        );
+      }
     }
 
-    if (highestValues) {
-      this.insightText.insightImages.push("lightbulbImg");
-      this.insightText.insightInfos.push(
-        this.insightHighestValueText(highestValues, visual.legend)
-      );
-    }
-    }
-
-    if (highestCategory) {
+    if (highestCategory !== null && highestCategory !== undefined) {
       this.insightText.insightImages.push("lightbulbImg");
       this.insightText.insightInfos.push(
         this.insightHighestCategoryText(highestCategory)

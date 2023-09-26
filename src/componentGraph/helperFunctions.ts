@@ -110,7 +110,11 @@ export function getSpecificDataPoint(
   );
 
   if (legendName === "") {
-    return axisData[0].get(dataName);
+    if(axisData[0].get(dataName) === ""){
+      return 0;
+    } else{
+      return axisData[0].get(dataName);
+    }
   }
 
   switch (axisData.length) {
@@ -144,9 +148,15 @@ export function getHighestCategory(
   visualData: Map<string, string>[],
   dataName: string,
   legendValues: string[],
-  legendName: string
+  legendName: string,
+  dataAttributes?: string[]
 ) {
   const sums = [];
+
+  
+  if(dataAttributes){
+    return getHighestAttribute(dataAttributes, visualData)[1];
+  }
 
   for (const legendValue of legendValues) {
     const legendData = visualData.filter(
@@ -156,6 +166,9 @@ export function getHighestCategory(
     for (const dataPoint of legendData) {
       const data = dataPoint.get(dataName);
       if (data) {
+        if(!parseInt(data)){
+          return;
+        }
         sum += parseInt(data);
       }
     }
@@ -172,11 +185,16 @@ export function getHighestValue(
   legendValues: string[],
   legendName: string,
   axisName: string,
-  axisValues: string[]
+  axisValues: string[],
+  dataAttributes?: string[]
 ) {
   let max = Number.MIN_SAFE_INTEGER;
   let highestCategory = "";
   let highestAxis = "";
+
+  if(dataAttributes){
+    return getHighestAttribute(dataAttributes, visualData);
+  }
 
   if (legendName === "") {
     const sums = [];
@@ -186,6 +204,9 @@ export function getHighestValue(
       );
       const data = axisData[0].get(dataName);
       if (data) {
+        if(!parseInt(data)){
+          return;
+        }
         sums.push(parseInt(data));
       }
     }
@@ -210,6 +231,9 @@ export function getHighestValue(
       for (const axisDataPoint of axisData) {
         const data = axisDataPoint.get(dataName);
         if (data) {
+          if(!parseInt(data)){
+            return;
+          }
           sum += parseInt(data);
         }
       }
@@ -227,6 +251,26 @@ export function getHighestValue(
   }
 
   return [max, highestCategory, highestAxis];
+}
+
+function getHighestAttribute(dataAttributes: string[], visualData: Map<string, string>[]):[number, string]{
+  let highestAxis = "";
+  const sums = [];
+  for (const attribute of dataAttributes) {
+    const data = visualData[0].get(attribute);
+    if (data) {
+      if(!parseInt(data)){
+        break;
+      }
+      sums.push(parseInt(data));
+    }
+  }
+  const max = Math.max(...sums);
+  const position = sums.indexOf(max);
+  if (dataAttributes[position]) {
+    highestAxis = dataAttributes[position];
+  }
+  return [max, highestAxis];
 }
 
 export async function getSpecificDataInfo(
