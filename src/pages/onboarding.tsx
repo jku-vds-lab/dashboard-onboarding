@@ -23,10 +23,10 @@ export default function Onboarding() {
             Edit Dashboard Onboarding
           </button>
         </Link>
-        <div className="row">
-          <div className="col-10" id="reportContainer">
-            <MyReport isMainPage={true} />
-          </div>
+      </div>
+      <div className="row">
+        <div className="col-10" id="reportContainer">
+          <MyReport isMainPage={true} />
         </div>
       </div>
     </div>
