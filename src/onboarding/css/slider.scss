@@ -53,23 +53,11 @@ input[type=range]::-ms-thumb {
   @include range-thumb();
 }
 
-
-
-
-//And now the ticks
 .ticks {
   display: flex;
   justify-content: space-between;
   padding: $unit;
-  padding-left: 26%;
-  padding-right: 26%;
-}
-.tick {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  width: 1px;
-  height: $unit;
-  line-height: $unit * 5;
-  margin-bottom: $unit*2;
+  padding-left: 20%;
+  padding-right: 20%;
+  margin-bottom: 10px;
 }

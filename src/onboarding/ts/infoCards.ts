@@ -90,50 +90,65 @@ export async function createInfoCard(
 }
 
 export function createExpertiseSlider(type: string, categories: string[], count: number, parentId: string, visual?: VisualDescriptor){
-  const labelAttributes = global.createLabelAttributes();
-  labelAttributes.id = "sliderLabel";
-  labelAttributes.for = "level";
-  labelAttributes.parentId = parentId;
-  labelAttributes.style = `font-size: ${textSize}rem; text-align: center; width: 100%; font-weight: 500;`
-  labelAttributes.content = "Level of Detail:";
   const currentValue = currentSliderValue(categories).toString();
-  elements.createLabel(labelAttributes);
   elements.createSlider({id: "level", min: "1", max: "3", value: currentValue, parentId: parentId},
   { type: type, categories: categories, count: count, visual: visual }, setExpertiseLevel);
-  elements.createSliderLabels(["Low", "Medium", "High"], parentId);
+  elements.createSliderLabels(["less Details", "", "more Details"], parentId);
 }
 
 function currentSliderValue(categories: string[]){
   const state = store.getState();
   const expertise = state.expertise;
+  let currentValue;
   if(categories.includes("general") && categories.includes("insight")){
     if(expertise.Vis < expertise.Domain ){
-      return expertise.Vis;
+      currentValue = expertise.Vis;
     } else {
-      return expertise.Domain;
+      currentValue = expertise.Domain;
     }
   } else if(categories.includes("general")){
-    return expertise.Vis;
+    currentValue = expertise.Vis;
   } else if(categories.includes("insight")){
-    return expertise.Domain;
+    currentValue = expertise.Domain;
   }
-  return "1";
+
+  switch(currentValue){
+    case 1:
+      return Level.High;
+    case 3:
+      return Level.Low;
+    default:
+      return Level.Medium;
+  }
 }
 
 function setExpertiseLevel(visualInfo: { type: string, categories: string[], count: number, visual?: VisualDescriptor }){
   const slider = document.getElementById("level")! as HTMLInputElement;
-  const currentLevel = slider.value;
+  const sliderLevel = slider.value;
+  let currentLevel;
+  switch(sliderLevel){
+    case "1":
+      currentLevel = Level.High;
+      break;
+    case "3":
+      currentLevel = Level.Low;
+      break;
+    default:
+      currentLevel = Level.Medium;
+      break;
+  }
+  debugger
   let newExpertise: ExpertiseLevel;
 
   const state = store.getState();
   const expertise = state.expertise;
 
   if(visualInfo.categories.includes("general") && !visualInfo.categories.includes("insight")){
-    newExpertise = {Domain: expertise.Domain, Vis: parseInt(currentLevel)};
+    newExpertise = {Domain: expertise.Domain, Vis: currentLevel};
   } else if(visualInfo.categories.includes("insight") && !visualInfo.categories.includes("general")){
-    newExpertise = {Domain: parseInt(currentLevel), Vis: expertise.Vis};
+    newExpertise = {Domain: currentLevel, Vis: expertise.Vis};
   } else {
-    newExpertise = {Domain: parseInt(currentLevel), Vis: parseInt(currentLevel)};
+    newExpertise = {Domain: currentLevel, Vis: currentLevel};
   }
 
   store.dispatch(decrement(newExpertise));

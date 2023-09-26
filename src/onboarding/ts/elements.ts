@@ -16,6 +16,7 @@ import {
   setCurrentId,
   updateLookedAt,
 } from "./traversal";
+import * as sizes from "./sizes";
 
 export function addStylesheet(URL: string) {
   const style = document.createElement("link");
@@ -342,6 +343,7 @@ export function createSliderLabels(content:string[], parentId:string){
   for(const text of content){
     const span = document.createElement("span");
     span.className = "tick";
+    span.style.cssText = `font-size: ${sizes.textSize}rem; position: relative; display: flex; justify-content: center;`;
     span.innerHTML = text;
     document.getElementsByClassName("ticks")[0].appendChild(span);
   }
