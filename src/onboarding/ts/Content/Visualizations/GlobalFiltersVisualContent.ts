@@ -33,7 +33,7 @@ export default class GlobalFilters {
     async setGlobalFilterInformation(){
         await this.globalFilterInfos.getGlobalFilter();
         
-        this.filterNames = []//this.filters.map((filter) => filter.attribute);
+        this.filterNames = this.globalFilterInfos.filters.map((filter) => filter.attribute);
     }
 
   getGlobalFilterInfo(expertiseLevel: ExpertiseLevel) {

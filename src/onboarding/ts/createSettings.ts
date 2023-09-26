@@ -59,9 +59,11 @@ export function getTraversalElement(elem: any) {
     traversalElem.element = getTraversalElement(vis.name);
     traversalStrategy.push(traversalElem);
   }
-  const traversalElem2 = createTraversalElement("globalFilter");
-  traversalElem2.element = getTraversalElement("globalFilter");
-  traversalStrategy.push(traversalElem2);
+  if(global.componentGraph.dashboard.globalFilter.filters.length !== 0){
+    const traversalElem2 = createTraversalElement("globalFilter");
+    traversalElem2.element = getTraversalElement("globalFilter");
+    traversalStrategy.push(traversalElem2);
+  }
   return traversalStrategy;
 }
 

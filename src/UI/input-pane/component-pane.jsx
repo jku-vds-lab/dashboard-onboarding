@@ -35,20 +35,6 @@ export default function ComponentPane() {
         },
       ],
     },
-    {
-      eventKey: "filter",
-      tooltip: "Filter",
-      iconSrc: c_icon_2,
-      headerText: "Filter",
-      colorVariable: "--filter-color",
-      colorValue: "#e7298a",
-      components: [
-        {
-          visualId: "globalFilters",
-          title: "Global Filters",
-        },
-      ],
-    },
   ]);
   const [selectedTab, setSelectedTab] = useState("dashboard");
   const [isPickerVisible, setPickerVisible] = useState(false);
@@ -81,6 +67,35 @@ export default function ComponentPane() {
   };
 
   function getTabsDataOfVisuals() {
+
+    if(global.componentGraph.dashboard.globalFilter.filters.length !== 0){
+      const existingTab = tabsData.find((tab) => tab.eventKey === "filter");
+
+      if (existingTab) {
+        const newVis = {
+          visualId: "globalFilters",
+          title: "Global Filters",
+        };
+
+        existingTab.components.push(newVis);
+      } else {
+        const tab = {};
+        tab.eventKey = "filter";
+        tab.tooltip = "Filter";
+        tab.iconSrc = c_icon_2;
+        tab.headerText = "Filter";
+        tab.colorVariable = "--filter-color";
+        tab.colorValue = "#e7298a";
+        tab.components = [
+          {
+            visualId: "globalFilters",
+            title: "Global Filters",
+          },
+        ];
+        tabsData.push(tab);
+      }
+    }
+    
     for (let i = 0; i < allVisuals.length; i++) {
       let visData = getVisData(allVisuals[i]);
       const existingTab = tabsData.find((tab) => tab.eventKey === visData[1]);

@@ -19,9 +19,13 @@ export function basicTraversalStrategy() {
     traversalElem2.categories = categories;
     trav.push(traversalElem2);
   }
-  const traversalElem1 = createTraversalElement("globalFilter");
-  traversalElem1.element = getTraversalElement("globalFilter");
-  trav.push(traversalElem1);
+  
+  if(global.componentGraph.dashboard.globalFilter.filters.length !== 0){
+    const traversalElem1 = createTraversalElement("globalFilter");
+    traversalElem1.element = getTraversalElement("globalFilter");
+    trav.push(traversalElem1);
+  }
+
   return trav;
 }
 
@@ -39,9 +43,16 @@ export function depthFirstTraversalStrategyOriginal() {
       trav.push(traversalElem2);
     }
   }
-  const traversalElem1 = createTraversalElement("globalFilter");
-  traversalElem1.element = getTraversalElement("globalFilter");
-  trav.push(traversalElem1);
+
+  if(global.componentGraph.dashboard.globalFilter.filters.length !== 0){
+    const categories = getStandartCategories("globalFilter");
+    for (const category of categories) {
+      const traversalElem1 = createTraversalElement("globalFilter");
+      traversalElem1.element = getTraversalElement("globalFilter");
+      traversalElem1.categories = [category];
+      trav.push(traversalElem1);
+    }
+  }
   return trav;
 }
 
@@ -56,6 +67,14 @@ export function martiniGlassTraversalStrategy() {
     traversalElem2.categories = ["general"];
     trav.push(traversalElem2);
   }
+
+  if(global.componentGraph.dashboard.globalFilter.filters.length !== 0){
+    const traversalElem1 = createTraversalElement("globalFilter");
+    traversalElem1.element = getTraversalElement("globalFilter");
+    traversalElem1.categories = ["general"];
+    trav.push(traversalElem1);
+  }
+
   for (const vis of global.currentVisuals) {
     const traversalElem3 = createTraversalElement(vis.type);
     traversalElem3.element = getTraversalElement(vis.name);
@@ -70,9 +89,12 @@ export function martiniGlassTraversalStrategy() {
     trav.push(traversalElem4);
   }
 
-  const traversalElem1 = createTraversalElement("globalFilter");
-  traversalElem1.element = getTraversalElement("globalFilter");
-  trav.push(traversalElem1);
+ if(global.componentGraph.dashboard.globalFilter.filters.length !== 0){
+    const traversalElem1 = createTraversalElement("globalFilter");
+    traversalElem1.element = getTraversalElement("globalFilter");
+    traversalElem1.categories = ["interaction"];
+    trav.push(traversalElem1);
+  }
   return trav;
 }
 
@@ -85,10 +107,15 @@ export function depthFirstTraversalStrategy() {
     traversalElem1.count = 1;
     trav.push(traversalElem1);
 
-    const traversalElem2 = createTraversalElement("globalFilter");
-    traversalElem2.element = getTraversalElement("globalFilter");
-    traversalElem2.count = 1;
-    trav.push(traversalElem2);
+    if(global.componentGraph.dashboard.globalFilter.filters.length !== 0){
+      const categories = getStandartCategories("globalFilter");
+      for (const category of categories) {
+        const traversalElem1 = createTraversalElement("globalFilter");
+        traversalElem1.element = getTraversalElement("globalFilter");
+        traversalElem1.categories = [category];
+        trav.push(traversalElem1);
+      }
+    }
 
     const groupFilters = createGroup();
     groupFilters.type = groupType.atLeastOne;
@@ -215,12 +242,17 @@ export async function filterFirstTraversalStrategy() {
     const traversalElem1 = createTraversalElement("dashboard");
     traversalElem1.element = await getTraversalElement("dashboard");
     traversalElem1.count = 1;
-    trav.push(traversalElem1);
 
-    const traversalElem2 = createTraversalElement("globalFilter");
-    traversalElem2.element = await getTraversalElement("globalFilter");
-    traversalElem2.count = 1;
-    trav.push(traversalElem2);
+    trav.push(traversalElem1);
+    if(global.componentGraph.dashboard.globalFilter.filters.length !== 0){
+      const categories = getStandartCategories("globalFilter");
+      for (const category of categories) {
+        const traversalElem1 = createTraversalElement("globalFilter");
+        traversalElem1.element = getTraversalElement("globalFilter");
+        traversalElem1.categories = [category];
+        trav.push(traversalElem1);
+      }
+    }
 
     const groupFilters = createGroup();
     groupFilters.type = groupType.atLeastOne;

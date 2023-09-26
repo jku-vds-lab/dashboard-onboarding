@@ -137,7 +137,6 @@ function setExpertiseLevel(visualInfo: { type: string, categories: string[], cou
       currentLevel = Level.Medium;
       break;
   }
-  debugger
   let newExpertise: ExpertiseLevel;
 
   const state = store.getState();

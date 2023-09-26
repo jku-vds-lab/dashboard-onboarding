@@ -1,4 +1,4 @@
-import { allVisuals } from "../../onboarding/ts/globalVariables";
+import { allVisuals, componentGraph } from "../../onboarding/ts/globalVariables";
 import Accordion from "react-bootstrap/Accordion";
 import "../assets/css/dashboard.scss";
 import { useCallback } from "react";
@@ -44,31 +44,33 @@ export default function Components(props: Props) {
       inputNodes.push(inputNode);
       break;
     case "globalFilters":
-      inputNode = {
-        mainComponent: createNode(
-          "globalFilter",
-          className + " GlobalFilter",
-          "GlobalFilters",
-          "General",
-          visParentId,
-          "GlobalFilter"
-        ),
-        key: "globalFilter",
-      };
-      inputNodes.push(inputNode);
-
-      inputNode = {
-        mainComponent: createNode(
-          "globalFilter",
-          className + " GlobalFilter",
-          "GlobalFilters",
-          "Interaction",
-          visParentId,
-          "GlobalFilter"
-        ),
-        key: "globalFilter",
-      };
-      inputNodes.push(inputNode);
+      if(componentGraph.dashboard.globalFilter.filters.length !== 0){
+        inputNode = {
+          mainComponent: createNode(
+            "globalFilter",
+            className + " GlobalFilter",
+            "Global Filters",
+            "General",
+            visParentId,
+            "GlobalFilter"
+          ),
+          key: "globalFilter",
+        };
+        inputNodes.push(inputNode);
+  
+        inputNode = {
+          mainComponent: createNode(
+            "globalFilter Interaction",
+            className + " GlobalFilter",
+            "Global Filters Interaction",
+            "Interaction",
+            visParentId,
+            "GlobalFilter"
+          ),
+          key: "globalFilter",
+        };
+        inputNodes.push(inputNode);
+      }
       break;
     default:
       const vis = allVisuals.find((vis) => vis.name === props.visual);

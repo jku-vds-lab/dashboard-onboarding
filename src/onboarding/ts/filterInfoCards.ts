@@ -100,7 +100,7 @@ export async function createTabsWithContent(
 
   createTabs(categories);
 
-  if (categories.includes("general")) {
+  if (categories.includes("general") || categories.includes("General")) {
     let generalImages = [];
     let generalInfos = [];
 
@@ -115,7 +115,7 @@ export async function createTabsWithContent(
     createInfoList(generalImages, generalInfos, "generalTab", false);
   }
 
-  if (categories.includes("interaction")) {
+  if (categories.includes("interaction") || categories.includes("Interaction")) {
     let interactionImages = [];
     let interactionInfos = [];
 
