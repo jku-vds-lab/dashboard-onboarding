@@ -143,7 +143,7 @@ export default function Traversal(props: any) {
       className="btn btn-secondary btn-dark ms-2"
       onClick={() => tOrder.onClick(props)}
     >
-      Save Traversal
+      Save your story
     </div>
   );
 }

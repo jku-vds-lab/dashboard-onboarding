@@ -57,7 +57,7 @@ export default function TraversalPane(props: any) {
 
       <Dropdown className="custom-dropdown">
         <Dropdown.Toggle>
-          {selectedOption ? selectedOption : "Pick a story..."}
+          {selectedOption ? selectedOption : "Custom"}
         </Dropdown.Toggle>
         <Dropdown.Menu>
           <Dropdown.Item
