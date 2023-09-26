@@ -102,9 +102,9 @@ export async function reloadOnboardingAt() {
   if (document.getElementById("introCard")) {
     await startOnboardingAt("intro");
   } else if (document.getElementById("dashboardInfoCard")) {
-    await startOnboardingAt("dashboard", findCurrentTraversalCount());
+    await startOnboardingAt("dashboard", null, ["general"], findCurrentTraversalCount());
   } else if (document.getElementById("filterInfoCard")) {
-    await startOnboardingAt("globalFilter", findCurrentTraversalCount());
+    await startOnboardingAt("globalFilter", null, ["general"], findCurrentTraversalCount());
   } else if (document.getElementById("interactionCard")) {
     await startOnboardingAt("interaction");
   } else if (document.getElementById("showChangesCard")) {
@@ -122,6 +122,8 @@ export async function reloadOnboardingAt() {
     }
   } else if (global.hasOverlay && !global.interactionMode) {
     await startOnboardingAt("explorationOverlay");
+  } else {
+    await startOnboardingAt("intro");
   }
 }
 
