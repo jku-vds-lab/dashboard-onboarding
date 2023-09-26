@@ -131,7 +131,11 @@ export function createInformationCard(
       createDashboardInfoCard(count);
       break;
     case "globalFilter":
-      createFilterInfoCard(getStandartCategories("globalFilter"), count, state.expertise);
+      createFilterInfoCard(
+        getStandartCategories("globalFilter"),
+        count,
+        state.expertise
+      );
       break;
     case "group":
       createExplainGroupCard();
@@ -308,18 +312,14 @@ export function findCurrentTraversalVisual() {
     }
   }
 
-  if (
-    traversalElem.element.id === "globalFilter"
-  ) {
+  if (traversalElem.element.id === "globalFilter") {
     return [
       traversalElem.element.id,
       null,
       traversalElem.categories,
       traversalElem.count,
     ];
-  } else if (
-    traversalElem.element.id !== "dashboard"
-  ) {
+  } else if (traversalElem.element.id !== "dashboard") {
     return [
       traversalElem.element.id,
       currentVisuals.find((vis: any) => vis.name === traversalElem.element.id),
@@ -482,16 +482,14 @@ export function createTraversalOfNodes(
         trav.push(travElem);
       }
     }
-    // console.log("Trav", trav);
+    console.log("Trav", trav);
     updateTraversal(trav);
   } catch (error) {
     console.log("Error", error);
   }
 }
 
-export function updateTraversal(
-  newTraversalStrategy: TraversalElement[]
-) {
+export function updateTraversal(newTraversalStrategy: TraversalElement[]) {
   try {
     const traversal: TraversalElement[] = [];
     const oldTraversalStrategy = global.settings.traversalStrategy;

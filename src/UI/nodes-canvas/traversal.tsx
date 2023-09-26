@@ -25,6 +25,8 @@ export class TraversalOrder {
         sNode.rank = index + 1;
       });
 
+      debugger;
+
       this.allNodes.push(...this.defaultNodes);
       this.allNodes.push(...this.groupNodes);
       this.allNodes = this.allNodes.sort(this.compare);
