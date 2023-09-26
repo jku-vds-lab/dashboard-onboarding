@@ -72,7 +72,6 @@ export default function OutputPane() {
     <ResizePanel initialWidth={600} maxWidth={800} minWidth={400}>
       <ResizeHandleLeft
         className="resize"
-        onClick={() => reloadOnboarding(false)}
       >
         <div className="col-resize" />
       </ResizeHandleLeft>
