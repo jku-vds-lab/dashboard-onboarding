@@ -135,6 +135,10 @@ export async function startOnboardingAt(
 ) {
   try {
     // helpers.reloadOnboarding(); // Reload: Why is this needed?
+    if(!document.getElementById("onboarding")){
+      global.setIsGuidedTour(true);
+      helpers.createOnboarding();
+    }
     infoCard.removeInfoCard();
     removeFilterInfoCard();
     removeDashboardInfoCard();
