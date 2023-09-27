@@ -20,6 +20,8 @@ import c_icon_table from "../assets/img/icon-table.png";
 import { allVisuals } from "../../onboarding/ts/globalVariables";
 
 export default function ComponentPane() {
+  const [activeId, setActiveId] = useState(null);
+
   const [tabsData, setTabsData] = useState([
     {
       eventKey: "dashboard",
@@ -67,8 +69,7 @@ export default function ComponentPane() {
   };
 
   function getTabsDataOfVisuals() {
-
-    if(global.componentGraph.dashboard.globalFilter.filters.length !== 0){
+    if (global.componentGraph.dashboard.globalFilter.filters.length !== 0) {
       const existingTab = tabsData.find((tab) => tab.eventKey === "filter");
 
       if (existingTab) {
@@ -95,7 +96,7 @@ export default function ComponentPane() {
         tabsData.push(tab);
       }
     }
-    
+
     for (let i = 0; i < allVisuals.length; i++) {
       let visData = getVisData(allVisuals[i]);
       const existingTab = tabsData.find((tab) => tab.eventKey === visData[1]);

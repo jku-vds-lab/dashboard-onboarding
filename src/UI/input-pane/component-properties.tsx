@@ -1,11 +1,23 @@
-import { allVisuals, componentGraph } from "../../onboarding/ts/globalVariables";
+import {
+  allVisuals,
+  componentGraph,
+} from "../../onboarding/ts/globalVariables";
 import Accordion from "react-bootstrap/Accordion";
 import "../assets/css/dashboard.scss";
-import { useCallback } from "react";
+import {
+  JSXElementConstructor,
+  Key,
+  ReactElement,
+  ReactNodeArray,
+  ReactPortal,
+  useCallback,
+  useState,
+} from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../redux/store";
 import { increment } from "../redux/nodeModalities";
 import SaveAndFetchContent from "../../onboarding/ts/Content/saveAndFetchContent";
+import React from "react";
 
 export interface InputNode {
   mainComponent: any;
@@ -22,10 +34,13 @@ export default function Components(props: Props) {
   const className = "dndnode";
   const visParentId = "componentNodes";
   let inputNode: InputNode;
+  const [activeItem, setActiveItem] = useState({
+    mainId: 0,
+    subId: 0,
+  });
 
-  // redux starts
-  const dispatch = useDispatch();
-  // redux  ends
+  const [activeNodeId, setActiveNodeId] = useState("");
+
   const expertiseLevel = useSelector((state: RootState) => state.expertise);
 
   switch (props.visual) {
@@ -44,7 +59,7 @@ export default function Components(props: Props) {
       inputNodes.push(inputNode);
       break;
     case "globalFilters":
-      if(componentGraph.dashboard.globalFilter.filters.length !== 0){
+      if (componentGraph.dashboard.globalFilter.filters.length !== 0) {
         inputNode = {
           mainComponent: createNode(
             "globalFilter",
@@ -57,7 +72,7 @@ export default function Components(props: Props) {
           key: "globalFilter",
         };
         inputNodes.push(inputNode);
-  
+
         inputNode = {
           mainComponent: createNode(
             "globalFilter Interaction",
@@ -216,6 +231,7 @@ export default function Components(props: Props) {
     visType: string
   ) {
     try {
+      setActiveNodeId(nodeId);
       let nodeFullName: string[] = [];
       if (nodeId) {
         nodeFullName = nodeId.split(" ");
@@ -243,10 +259,15 @@ export default function Components(props: Props) {
     visParentId: string,
     visType: string
   ) {
+    const isActive = id === activeNodeId;
+    const combinedClass = `${visClassName} ${
+      isActive ? "individual-item-active" : ""
+    }`;
+
     const myDiv = (
       <div
         id={id + className}
-        className={visClassName}
+        className={combinedClass}
         onDragStart={(event) =>
           onDragStart(event, "default", id, visType, visTitle)
         }
@@ -270,6 +291,120 @@ export default function Components(props: Props) {
 
     return myDiv;
   }
+
+  // function handleSubItemClick(mainId: any, subId: any) {
+  //   debugger;
+  //   console.log("Input nodes", inputNodes);
+  //   setActiveItem({
+  //     mainId: mainId,
+  //     subId: subId,
+  //   });
+  // }
+  // function handleClick(node: any) {
+  //   setActiveItem(node.mainComponent.props.children[0]);
+  //   if (node.mainComponent.props.children[0] === activeItem.subId) {
+  //     console.log("Yes ");
+  //   }
+  //   debugger;
+  // }
+  // return (
+  //   <div>
+  //     {inputNodes.map((node) => (
+  //       <div key={node.mainComponent.id} className="individual-item">
+  //         {node.mainComponent}
+  //       </div>
+  //     ))}
+  //   </div>
+  // );
+
+  // return (
+  //   <div>
+  //     {inputNodes.map((node) => (
+  //       <div key={node.mainComponent.id} className="individual-item">
+  //         {node.mainComponent}
+  //         {node.subComponents?.map((sub: any) => (
+  //           <div
+  //             key={sub.id}
+  //             className={
+  //               sub.id === activeItem.subId ? "individual-item-active" : ""
+  //             }
+  //             onClick={() => handleSubItemClick(node.mainComponent.id, sub.id)}
+  //           ></div>
+  //         ))}
+  //       </div>
+  //     ))}
+  //   </div>
+  // );
+
+  // return (
+  //   <div>
+  //     {inputNodes.map((node) => (
+  //       <div
+  //         key={node.mainComponent.id}
+  //         className="individual-item"
+  //         onClick={() => handleClick(node)}
+  //       >
+  //         {node.mainComponent}
+  //       </div>
+  //     ))}
+  //   </div>
+  // );
+  // return (
+  //   <div>
+  //     {inputNodes.map((node, mainIndex) => (
+  //       <div key={node.mainComponent.id}
+
+  //       className={
+  //         mainIndex === activeItem.mainId &&
+  //         activeItem.subId == 0
+  //           ? "individual-item-active"
+  //           : "individual-item"
+  //       }
+  //       >
+  //         {React.Children.map(
+  //           node.mainComponent.props.children,
+  //           (child, childIndex) => {
+  //             // Only consider the first child (at index 0)
+  //             if (childIndex === 0) {
+  //               return (
+  //                 <div
+  //                   key={mainIndex + "-" + childIndex}
+  //                   className={
+  //                     mainIndex === activeItem.mainId &&
+  //                     childIndex === activeItem.subId
+  //                       ? "individual-item-active"
+  //                       : "individual-item"
+  //                   }
+  //                   onClick={() => handleSubItemClick(mainIndex, childIndex)}
+  //                 >
+  //                   {child}
+  //                 </div>
+  //               );
+  //             }
+  //             return null; // Or return the child as is if you don't want to add any special logic
+  //           }
+  //         )}
+  //       </div>
+  //     ))}
+  //   </div>
+  // );
+
+  // return (
+  //   <div>
+  //     {inputNodes.map((node, mainIndex) => (
+  //       <div
+  //         key={node.mainComponent.id}
+  //         className={
+  //           mainIndex === activeItem.mainId && activeItem.subId == 0
+  //             ? "individual-item-active"
+  //             : "individual-item"
+  //         }
+  //       >
+  //         {node.mainComponent}
+  //       </div>
+  //     ))}
+  //   </div>
+  // );
 
   return (
     <div>
