@@ -7,6 +7,8 @@ import ReactFlow, {
   OnSelectionChangeParams,
   useEdgesState,
   applyEdgeChanges,
+  addEdge,
+  Panel,
 } from "reactflow";
 import { Node, Edge } from "reactflow";
 import "reactflow/dist/style.css";
@@ -36,6 +38,7 @@ interface Props {
   trigger: number;
   traversal: any;
   setNodesForSave: any;
+  setEdgesForSave: any;
 }
 interface MousePosition {
   x: number;
@@ -102,7 +105,7 @@ export default function NodesCanvas(props: Props) {
             id: `e${index}`,
             source: node.id,
             target: nodes[index + 1].id,
-            type: "edge",
+            type: "default",
           });
         }
       });
@@ -198,7 +201,7 @@ export default function NodesCanvas(props: Props) {
   const [edges, setEdges] = useEdgesState(createInitialEdges());
   const onEdgesChange = useCallback(
     (changes) => setEdges((eds) => applyEdgeChanges(changes, eds)),
-    []
+    [setEdges]
   );
 
   const getPosition = useCallback(
@@ -377,12 +380,14 @@ export default function NodesCanvas(props: Props) {
       setNodes((nodes) => nodes.filter((n) => n.id !== nodeData.id));
     } else if (nodeData?.type === "default" && selectedNodes.length <= 1) {
       setNodes((nodes) => nodes.filter((n) => n.id !== nodeData.id));
+      setEdges((edges) => edges.filter((e) => e.source !== nodeData.id));
     } else if (selectedNodes.length > 1) {
       const selectedNodeIds = new Set(selectedNodes.map((node) => node.id));
       setNodes((nodes) => nodes.filter((n) => !selectedNodeIds.has(n.id)));
+      setEdges((edges) => edges.filter((e) => !selectedNodeIds.has(e.source)));
     }
     setIsOpen(false);
-  }, [nodeData, selectedNodes, setNodes]);
+  }, [nodeData, selectedNodes, setNodes, setEdges]);
 
   const addGroup = useCallback(() => {
     try {
@@ -499,7 +504,8 @@ export default function NodesCanvas(props: Props) {
 
   useEffect(() => {
     props.setNodesForSave(nodes);
-  }, [nodes, props]);
+    props.setEdgesForSave(edges);
+  }, [nodes, props, edges]);
 
   function getPositionForWholeTrav(prevNode: any) {
     let pos = {
@@ -630,6 +636,31 @@ export default function NodesCanvas(props: Props) {
     }
   }
 
+  const onConnectStart = useCallback((_, { nodeId }) => {
+    // connectingNodeId.current = nodeId;
+    console.log("node id on start", nodeId);
+  }, []);
+
+  const onConnectEnd = useCallback((event: MouseEvent | TouchEvent) => {
+    // connectingNodeId.current = nodeId;
+    // console.log("node id on end", event);
+    // console.log("target ", event.target);
+    // contains("data-id")
+  }, []);
+
+  const onConnect = useCallback(
+    (params) => {
+      setEdges((eds) => addEdge(params, eds));
+      console.log("Params", params);
+    },
+    [setEdges]
+  );
+
+  const onSave = useCallback(() => {
+    if (reactFlowInstance) {
+      const flow = reactFlowInstance.toObject();
+    }
+  }, [reactFlowInstance]);
   return (
     <div className="dndflow">
       <div className="reactflow-wrapper" ref={reactFlowWrapper}>
@@ -647,10 +678,16 @@ export default function NodesCanvas(props: Props) {
           onNodeContextMenu={onNodeContextMenu}
           onSelectionContextMenu={onSelectionContextMenu}
           onSelectionChange={onSelectionChangeFunction}
+          onConnect={onConnect}
+          onConnectStart={onConnectStart}
+          onConnectEnd={onConnectEnd}
           snapToGrid
           fitView
         >
           <Controls />
+          <Panel position="top-right">
+            <button onClick={onSave}>save</button>
+          </Panel>
           <ContextMenu
             isOpen={isOpen}
             onClick={handleMouseClick}

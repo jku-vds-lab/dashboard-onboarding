@@ -11,6 +11,7 @@ export default function MainLayout() {
   const [trigger, setTrigger] = useState(0);
   const [traversal, setTrav] = useState("");
   const [nodes, setNodes] = useState([]);
+  const [edges, setEdges] = useState([]);
 
   const buildTraversal = () => {
     setTrigger((trigger) => trigger + 1);
@@ -28,7 +29,7 @@ export default function MainLayout() {
       <div className="toolbar control-toolbar">
         <TraversalPane buildTraversal={buildTraversal} setTrav={setTrav} />
         <div>
-          <Traversal nodes={nodes} />
+          <Traversal nodes={nodes} edges={edges} />
           <Link to="/">
             <div className="btn btn-secondary btn-dark ms-2">
               Publish Onboarding
@@ -46,6 +47,7 @@ export default function MainLayout() {
           mainTrigger={trigger}
           traversal={traversal}
           setNodes={setNodes}
+          setEdges={setEdges}
         />
         <OutputPane />
       </div>

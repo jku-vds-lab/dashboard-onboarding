@@ -132,7 +132,7 @@ div[data-id*="Table"] {
 }
 
 .react-flow__handle{
-  visibility: hidden;
+  visibility: visible;
   width:8px;
   height:8px;
   background-color: #{$default-handle-color};
