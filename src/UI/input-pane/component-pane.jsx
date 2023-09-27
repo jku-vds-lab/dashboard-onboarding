@@ -20,7 +20,7 @@ import c_icon_table from "../assets/img/icon-table.png";
 import { allVisuals } from "../../onboarding/ts/globalVariables";
 
 export default function ComponentPane() {
-  const [activeId, setActiveId] = useState(null);
+  const [activeId, setActiveId] = useState("");
 
   const [tabsData, setTabsData] = useState([
     {
@@ -268,7 +268,10 @@ export default function ComponentPane() {
       </Nav.Item>
     );
   }
-
+  function onClick(id) {
+    debugger;
+    setActiveId(id);
+  }
   function TabPaneItem({ eventKey, headerText, colorValue, components }) {
     return (
       <Tab.Pane eventKey={eventKey}>
@@ -286,9 +289,16 @@ export default function ComponentPane() {
               <Card.Title className="custom-card-header">
                 {component.title}
               </Card.Title>
-              <ListGroup className="custom-list-group" variant="flush">
+              <ListGroup
+                className="custom-list-group"
+                onClick={() => onClick(component.id)}
+                variant="flush"
+              >
                 <ListGroup.Item className="custom-list-group-item">
-                  <Components visual={component.visualId} />
+                  <Components
+                    visual={component.visualId}
+                    clickedId={activeId}
+                  />
                 </ListGroup.Item>
               </ListGroup>
             </>

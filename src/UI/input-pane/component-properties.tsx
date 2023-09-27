@@ -27,6 +27,7 @@ export interface InputNode {
 
 interface Props {
   visual: string;
+  clickedId: string;
 }
 
 export default function Components(props: Props) {
@@ -34,10 +35,6 @@ export default function Components(props: Props) {
   const className = "dndnode";
   const visParentId = "componentNodes";
   let inputNode: InputNode;
-  const [activeItem, setActiveItem] = useState({
-    mainId: 0,
-    subId: 0,
-  });
 
   const [activeNodeId, setActiveNodeId] = useState("");
 
@@ -231,7 +228,16 @@ export default function Components(props: Props) {
     visType: string
   ) {
     try {
-      setActiveNodeId(nodeId);
+      // setActiveNodeId("");
+      debugger;
+      if (activeNodeId.includes(props.clickedId)) {
+        setActiveNodeId("");
+      }
+      if (activeNodeId === nodeId) {
+        setActiveNodeId(""); // If the current node is clicked again, you can deselect it. Remove this line if you don't want this behavior.
+      } else {
+        setActiveNodeId(nodeId);
+      }
       let nodeFullName: string[] = [];
       if (nodeId) {
         nodeFullName = nodeId.split(" ");
@@ -259,7 +265,14 @@ export default function Components(props: Props) {
     visParentId: string,
     visType: string
   ) {
-    const isActive = id === activeNodeId;
+    debugger;
+    console.log(inputNodes);
+
+    let isActive = false;
+    if (id === activeNodeId) {
+      isActive = true;
+    }
+    isActive = id === activeNodeId;
     const combinedClass = `${visClassName} ${
       isActive ? "individual-item-active" : ""
     }`;
@@ -291,121 +304,6 @@ export default function Components(props: Props) {
 
     return myDiv;
   }
-
-  // function handleSubItemClick(mainId: any, subId: any) {
-  //   debugger;
-  //   console.log("Input nodes", inputNodes);
-  //   setActiveItem({
-  //     mainId: mainId,
-  //     subId: subId,
-  //   });
-  // }
-  // function handleClick(node: any) {
-  //   setActiveItem(node.mainComponent.props.children[0]);
-  //   if (node.mainComponent.props.children[0] === activeItem.subId) {
-  //     console.log("Yes ");
-  //   }
-  //   debugger;
-  // }
-  // return (
-  //   <div>
-  //     {inputNodes.map((node) => (
-  //       <div key={node.mainComponent.id} className="individual-item">
-  //         {node.mainComponent}
-  //       </div>
-  //     ))}
-  //   </div>
-  // );
-
-  // return (
-  //   <div>
-  //     {inputNodes.map((node) => (
-  //       <div key={node.mainComponent.id} className="individual-item">
-  //         {node.mainComponent}
-  //         {node.subComponents?.map((sub: any) => (
-  //           <div
-  //             key={sub.id}
-  //             className={
-  //               sub.id === activeItem.subId ? "individual-item-active" : ""
-  //             }
-  //             onClick={() => handleSubItemClick(node.mainComponent.id, sub.id)}
-  //           ></div>
-  //         ))}
-  //       </div>
-  //     ))}
-  //   </div>
-  // );
-
-  // return (
-  //   <div>
-  //     {inputNodes.map((node) => (
-  //       <div
-  //         key={node.mainComponent.id}
-  //         className="individual-item"
-  //         onClick={() => handleClick(node)}
-  //       >
-  //         {node.mainComponent}
-  //       </div>
-  //     ))}
-  //   </div>
-  // );
-  // return (
-  //   <div>
-  //     {inputNodes.map((node, mainIndex) => (
-  //       <div key={node.mainComponent.id}
-
-  //       className={
-  //         mainIndex === activeItem.mainId &&
-  //         activeItem.subId == 0
-  //           ? "individual-item-active"
-  //           : "individual-item"
-  //       }
-  //       >
-  //         {React.Children.map(
-  //           node.mainComponent.props.children,
-  //           (child, childIndex) => {
-  //             // Only consider the first child (at index 0)
-  //             if (childIndex === 0) {
-  //               return (
-  //                 <div
-  //                   key={mainIndex + "-" + childIndex}
-  //                   className={
-  //                     mainIndex === activeItem.mainId &&
-  //                     childIndex === activeItem.subId
-  //                       ? "individual-item-active"
-  //                       : "individual-item"
-  //                   }
-  //                   onClick={() => handleSubItemClick(mainIndex, childIndex)}
-  //                 >
-  //                   {child}
-  //                 </div>
-  //               );
-  //             }
-  //             return null; // Or return the child as is if you don't want to add any special logic
-  //           }
-  //         )}
-  //       </div>
-  //     ))}
-  //   </div>
-  // );
-
-  // return (
-  //   <div>
-  //     {inputNodes.map((node, mainIndex) => (
-  //       <div
-  //         key={node.mainComponent.id}
-  //         className={
-  //           mainIndex === activeItem.mainId && activeItem.subId == 0
-  //             ? "individual-item-active"
-  //             : "individual-item"
-  //         }
-  //       >
-  //         {node.mainComponent}
-  //       </div>
-  //     ))}
-  //   </div>
-  // );
-
   return (
     <div>
       {inputNodes.map((node) => (
