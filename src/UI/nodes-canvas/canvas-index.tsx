@@ -292,17 +292,26 @@ export default function NodesCanvas(props: Props) {
     (event: any, clickedNode: Node) => {
       try {
         setNodes((nodes: Node[]) => {
-          nodes.forEach((node: Node) => {
+          return nodes.map((node: Node) => {
             if (node.id == clickedNode.id) {
               console.log("This node is selected", node);
-              node.style = {
-                ...node.style,
-                opacity: 0.25,
+              return {
+                ...node,
+                style: {
+                  ...node.style,
+                  boxShadow: "0px 0px 2px 2px #ffffff", // adjust color, blur, and spread as desired
+                },
               };
-              return node;
+            } else {
+              return {
+                ...node,
+                style: {
+                  ...node.style,
+                  boxShadow: "0px 0px 0px 0px ", // adjust color, blur, and spread as desired
+                },
+              };
             }
           });
-          return nodes;
         });
         const container = document.getElementById("canvas-container");
         event.target.classList.contains("react-flow__pane")
@@ -431,11 +440,6 @@ export default function NodesCanvas(props: Props) {
 
       selectedNodes.forEach((node: Node) => {
         console.log("node ", node.position.x, node.position.y);
-        console.log(
-          "node absolute",
-          node.positionAbsolute?.x,
-          node.positionAbsolute?.y
-        );
         if (node.position.x < minX) {
           minX = node.position.x;
         }
