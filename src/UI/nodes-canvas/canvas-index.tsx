@@ -518,7 +518,7 @@ export default function NodesCanvas(props: Props) {
       const prevNodeHeight = parseInt(String(prevNode.style?.height!), 10);
       pos = {
         x: prevNode.position.x,
-        y: prevNode.position.y + prevNodeHeight + offset,
+        y: prevNode.position.y + prevNodeHeight + offset, // BUG: removing prevNodeHeight leads to the created groups beeing positioned correctly, but then nodes and groups in generated traversals are not correct anymore, need to find out why this is called for creating groups and how to handle this
       };
     }
     return pos;
