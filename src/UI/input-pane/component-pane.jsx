@@ -20,7 +20,7 @@ import c_icon_table from "../assets/img/icon-table.png";
 import { allVisuals } from "../../onboarding/ts/globalVariables";
 
 export default function ComponentPane() {
-  const [activeId, setActiveId] = useState("");
+  const [activeId, setActiveId] = useState("RANDOM");
 
   const [tabsData, setTabsData] = useState([
     {
@@ -269,7 +269,9 @@ export default function ComponentPane() {
     );
   }
   function onClick(id) {
-    debugger;
+    // debugger;
+    console.log("Parent clicked during capture phase!");
+
     setActiveId(id);
   }
   function TabPaneItem({ eventKey, headerText, colorValue, components }) {
@@ -291,7 +293,7 @@ export default function ComponentPane() {
               </Card.Title>
               <ListGroup
                 className="custom-list-group"
-                onClick={() => onClick(component.id)}
+                onClickCapture={() => onClick(component.visualId)}
                 variant="flush"
               >
                 <ListGroup.Item className="custom-list-group-item">

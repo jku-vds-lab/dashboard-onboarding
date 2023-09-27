@@ -37,6 +37,7 @@ export default function Components(props: Props) {
   let inputNode: InputNode;
 
   const [activeNodeId, setActiveNodeId] = useState("");
+  let myActiveId = " ";
 
   const expertiseLevel = useSelector((state: RootState) => state.expertise);
 
@@ -217,27 +218,14 @@ export default function Components(props: Props) {
     event.dataTransfer.effectAllowed = "move";
   }
 
-  async function onClick(
-    event: any,
-    nodeType: string,
-    nodeId: string,
-    visClassName: string,
-    visTitle: string,
-    visDisplayTitle: string,
-    visParentId: string,
-    visType: string
-  ) {
+  async function onClick(event: any, nodeId: string, visType: string) {
     try {
-      // setActiveNodeId("");
-      debugger;
-      if (activeNodeId.includes(props.clickedId)) {
-        setActiveNodeId("");
-      }
-      if (activeNodeId === nodeId) {
-        setActiveNodeId(""); // If the current node is clicked again, you can deselect it. Remove this line if you don't want this behavior.
-      } else {
-        setActiveNodeId(nodeId);
-      }
+      // debugger;
+      console.log("Child clicked during bubbling phase!");
+
+      setActiveNodeId(nodeId);
+      myActiveId = nodeId;
+      console.log("Active node id: ", myActiveId);
       let nodeFullName: string[] = [];
       if (nodeId) {
         nodeFullName = nodeId.split(" ");
@@ -265,14 +253,17 @@ export default function Components(props: Props) {
     visParentId: string,
     visType: string
   ) {
-    debugger;
-    console.log(inputNodes);
-
     let isActive = false;
-    if (id === activeNodeId) {
-      isActive = true;
+    const prevIDClicked = props.clickedId;
+
+    if (id.includes(prevIDClicked)) {
+      // debugger;
+      console.log("My active id", myActiveId);
+      if (activeNodeId === id) {
+        isActive = true;
+      }
     }
-    isActive = id === activeNodeId;
+
     const combinedClass = `${visClassName} ${
       isActive ? "individual-item-active" : ""
     }`;
@@ -285,18 +276,7 @@ export default function Components(props: Props) {
           onDragStart(event, "default", id, visType, visTitle)
         }
         draggable
-        onClick={(event) =>
-          onClick(
-            event,
-            "default",
-            id,
-            visClassName,
-            visTitle,
-            visDisplayTitle,
-            visParentId,
-            visType
-          )
-        }
+        onClickCapture={(event) => onClick(event, id, visType)}
       >
         {visDisplayTitle}
       </div>
@@ -307,7 +287,11 @@ export default function Components(props: Props) {
   return (
     <div>
       {inputNodes.map((node) => (
-        <div key={node.mainComponent.id} className="individual-item">
+        <div
+          key={node.mainComponent.id}
+          className="individual-item"
+          // onClickCapture={() => onAnotherClick(node)}
+        >
           {node.mainComponent}
         </div>
       ))}
