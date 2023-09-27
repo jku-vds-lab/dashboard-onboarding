@@ -111,7 +111,6 @@ export default class MyReport extends React.Component<AppProps, AppState> {
 
         const isMainPage = this.props.isMainPage;
         report.on("loaded", async function () {
-          global.setIsEditor(false);
           onboarding.onLoadReport(isMainPage);
           global.setIsLoaded(true);
         });

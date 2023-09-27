@@ -239,7 +239,11 @@ export function createCardContent(
 ) {
   const divAttributes = global.createDivAttributes();
   divAttributes.id = "cardContent";
-  divAttributes.classes = "contentPlacementBig";
+  if(global.isEditor){
+    divAttributes.classes = "contentPlacementEditor";
+  } else {
+    divAttributes.classes = "contentPlacementBig";
+  }
   divAttributes.parentId = parentId;
   elements.createDiv(divAttributes);
 
@@ -477,12 +481,22 @@ export function getVisualCardPos(
     const rightX = leftDistance + visualLayoutWidth / sizes.reportDivisor;
     const rightDistance = global.reportWidth! - rightX;
 
-    if (rightDistance > leftDistance || leftDistance < global.infoCardWidth) {
-      position.x = offset + rightX;
-      position.pos = "right";
-    } else {
-      position.x = leftDistance - offset - cardWidth;
-      position.pos = "left";
+    if(global.isEditor){
+      if (rightDistance  + global.filterClosedWidth > global.infoCardWidth) {
+        position.x = offset + rightX;
+        position.pos = "right";
+      } else {
+        position.x = leftDistance - offset - cardWidth;
+        position.pos = "left";
+      }
+    } else{
+      if (rightDistance > leftDistance || leftDistance < global.infoCardWidth) {
+        position.x = offset + rightX;
+        position.pos = "right";
+      } else {
+        position.x = leftDistance - offset - cardWidth;
+        position.pos = "left";
+      }
     }
     position.y = offset + visualLayoutY / sizes.reportDivisor;
   } catch (error) {

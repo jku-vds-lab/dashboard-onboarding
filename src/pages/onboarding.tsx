@@ -1,8 +1,13 @@
 import { Link } from "react-router-dom";
 import * as global from "../onboarding/ts/globalVariables";
 import MyReport from "./report";
+import { useEffect } from "react";
 
 export default function Onboarding() {
+  useEffect(() => {
+    global.setIsEditor(false);
+  },[]);
+    
   return (
     // <MyReport isMainPage={true} />
     <div className="container-fluid" id="flexContainer">

@@ -1,11 +1,13 @@
-$unit: 5px;
+html {
+  --sliderSize: 20px;
+}
 
 * {box-sizing: border-box;}
 
 @mixin range-track {
   -webkit-appearance: none;
   width: 100%;
-  height: $unit * 4;
+  height: var(--sliderSize);
   color: transparent;
   background:rgb(218, 226, 238);
   border-radius: 999px;
@@ -13,8 +15,8 @@ $unit: 5px;
 }
 @mixin range-thumb {
   -webkit-appearance: none;
-  height: $unit * 4;
-  width: $unit * 4;
+  height: var(--sliderSize);
+  width: var(--sliderSize);
   border-radius: 30px;
   background: black;
   box-shadow: 0px 2px 10px -2px black(1);
@@ -56,7 +58,7 @@ input[type=range]::-ms-thumb {
 .ticks {
   display: flex;
   justify-content: space-between;
-  padding: $unit;
+  padding: 5px;
   padding-left: 20%;
   padding-right: 20%;
   margin-bottom: 10px;

@@ -14,8 +14,9 @@ export const editCardWidthOriginal = 500;
 export const explainGroupCardWidthOriginal = 500;
 export const explainGroupCardHeightOriginal = 150;
 export const textSizeOriginal = 1;
-export const headlineSizeOriginal = 2.5;
+export const headlineSizeOriginal = 1.5;
 export const filterOpenedWidthOriginal = 250;
+const sliderSizeOriginal = 20;
 
 export let divisor = 1;
 export let reportDivisor = 1;
@@ -39,7 +40,11 @@ export function setReportHeightDivision(newReportHeight: number) {
 
 export function setSizeVariables() {
   global.setInfoCardMargin(infoCardMarginOriginal / divisor);
-  global.setInfoCardWidth(infoCardWidthOriginal / divisor);
+  if(global.isEditor){
+    global.setInfoCardWidth(300);
+  } else {
+    global.setInfoCardWidth(infoCardWidthOriginal / divisor);
+  }
   global.setIntroCardMargin(introCardMarginOriginal / divisor);
   global.setIntroCardWidth(introCardWidthOriginal / divisor);
   global.setInteractionCardWidth(interactionCardWidthOriginal / divisor);
@@ -51,7 +56,15 @@ export function setSizeVariables() {
   global.setExplainGroupCardWidth(explainGroupCardWidthOriginal / divisor);
   global.setExplainGroupCardHeight(explainGroupCardHeightOriginal / divisor);
   textSize = textSizeOriginal / divisor;
+  if(textSize < 0.65){
+    textSize = 0.65;
+  }
   headlineSize = headlineSizeOriginal / divisor;
+  if(headlineSize < 0.65){
+    headlineSize = 0.65;
+  }
+
+  document.documentElement.style.setProperty('--sliderSize', sliderSizeOriginal/divisor + "px");
 }
 
 export async function resize(isMainPage: boolean) {

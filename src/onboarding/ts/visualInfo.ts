@@ -258,8 +258,8 @@ export async function createInfoList(
     } else {
       if (divisor <= 2) {
         li.style.listStyleImage = "url(" + icons[images[i]] + ")";
+        li.style.paddingLeft = "10px";
       }
-      li.style.paddingLeft = "10px";
     }
 
     li.innerHTML = infos[i];
