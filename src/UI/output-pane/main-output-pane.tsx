@@ -69,13 +69,7 @@ export default function OutputPane() {
   }, [nodeBasicName, nodeFullName, expertiseLevel]);
 
   return (
-    <ResizePanel initialWidth={600} maxWidth={800} minWidth={400}>
-      <ResizeHandleLeft
-        className="resize"
-      >
-        <div className="col-resize" />
-      </ResizeHandleLeft>
-      <ResizeContent>
+    <div id="outputPane">
         <div id="outputView">
           <div className="label">Output View</div>
           <div
@@ -91,7 +85,6 @@ export default function OutputPane() {
             <UserLevel />
           </div>
         </div>
-      </ResizeContent>
-    </ResizePanel>
+    </div>
   );
 }
