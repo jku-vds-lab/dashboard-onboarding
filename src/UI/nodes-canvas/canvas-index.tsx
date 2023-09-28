@@ -320,6 +320,7 @@ export default function NodesCanvas(props: Props) {
 
         const fullNameArray = defaultNode().getFullNodeNameArray(event);
         const basicName = defaultNode().getBasicName(event);
+        debugger;
         if (fullNameArray && basicName) {
           dispatch(increment([basicName, fullNameArray]));
         }
