@@ -241,7 +241,8 @@ export default function ComponentPane() {
     return [name, type, icon, variable, color];
   }
 
-  function TabItem({ eventKey, tooltip, iconSrc }) {
+  function TabItem({ eventKey, tooltip, iconSrc, label, colorValue }) {
+    debugger;
     const handleClick = () => {
       setSelectedTab(eventKey);
       const selectedTabData = tabsData.find((tab) => tab.eventKey === eventKey);
@@ -251,19 +252,24 @@ export default function ComponentPane() {
     return (
       <Nav.Item>
         <Nav.Link eventKey={eventKey} onClick={handleClick}>
-          {/* <OverlayTrigger
-            trigger={["hover", "focus"]}
-            placement="left"
-            overlay={<Tooltip>{tooltip}</Tooltip>}
-          > */}
-          <img
-            className="icon options"
-            src={iconSrc}
-            width="18px"
-            height="18px"
-            alt="Component icon"
-          />
-          {/* </OverlayTrigger> */}
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <div className="color-header">
+              <span
+                className="color-box"
+                style={{ backgroundColor: colorValue, cursor: "pointer" }}
+                onClick={showPicker}
+              ></span>
+            </div>
+            <div style={{ marginRight: "10px" }}>{label}</div>
+            <img
+              className="icon options"
+              src={iconSrc}
+              width="18px"
+              height="18px"
+              alt="Component icon"
+              style={{ marginRight: "10px" }}
+            />
+          </div>
         </Nav.Link>
       </Nav.Item>
     );
@@ -277,14 +283,6 @@ export default function ComponentPane() {
   function TabPaneItem({ eventKey, headerText, colorValue, components }) {
     return (
       <Tab.Pane eventKey={eventKey}>
-        <div className="tab-body-header">
-          <span>{headerText}</span>
-          <span
-            className="color-box"
-            style={{ backgroundColor: colorValue }}
-            onClick={showPicker}
-          ></span>
-        </div>
         <Card className="custom-card">
           {components.map((component) => (
             <>
@@ -312,7 +310,7 @@ export default function ComponentPane() {
 
   return (
     <div className="h-100 overflow-hidden">
-      <div className="label">Components</div>
+      <div className="label">Visuals</div>
       <Tab.Container
         id="component-graph"
         defaultActiveKey={tabsData[0].eventKey}
@@ -325,6 +323,8 @@ export default function ComponentPane() {
                 eventKey={tab.eventKey}
                 tooltip={tab.tooltip}
                 iconSrc={tab.iconSrc}
+                label={tab.headerText}
+                colorValue={tab.colorValue}
               />
             ))}
           </Nav>
