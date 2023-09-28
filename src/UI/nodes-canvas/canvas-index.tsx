@@ -125,7 +125,7 @@ export default function NodesCanvas(props: Props) {
             console.log("returning because elem is undefined");
             return;
           }
-          if (elem.element.id === "group") {
+          if (elem.element.id.includes("group")) {
             const nodesWithinGroup: Node[] = [];
             const visuals = elem.element.visuals;
 
@@ -461,7 +461,7 @@ export default function NodesCanvas(props: Props) {
       // });
       console.log("calculated post, ", minX, minY);
       const groupNode = groupNodeObj.getGroupNode(
-        false,
+        true,
         { x: minX, y: minY },
         groupType.all
       );
@@ -520,10 +520,13 @@ export default function NodesCanvas(props: Props) {
 
     if (prevNode) {
       const offset = 5;
-      const prevNodeHeight = parseInt(String(prevNode.style?.height!), 10);
+      let prevNodeHeight = 0;
+      if (!prevNode.id.includes("group")) {
+        prevNodeHeight = parseInt(String(prevNode.style?.height!), 10);
+      }
       pos = {
         x: prevNode.position.x,
-        y: prevNode.position.y + prevNodeHeight + offset, // BUG: removing prevNodeHeight leads to the created groups beeing positioned correctly, but then nodes and groups in generated traversals are not correct anymore, need to find out why this is called for creating groups and how to handle this
+        y: prevNode.position.y + prevNodeHeight + offset,
       };
     }
     return pos;
