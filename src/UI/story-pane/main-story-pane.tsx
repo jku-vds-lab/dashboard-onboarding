@@ -145,7 +145,6 @@ export default function StoryPane(props: Props) {
   useEffect(() => {
     props.setNodes(nodes);
     props.setEdges(edges);
-    debugger;
   }, [nodes, edges, props]);
 
   const buildTraversal = () => {

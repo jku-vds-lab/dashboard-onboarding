@@ -36,6 +36,10 @@ export default function Components(props: Props) {
   const visParentId = "componentNodes";
   let inputNode: InputNode;
 
+  // redux starts
+  const dispatch = useDispatch();
+  // redux  ends
+
   const [activeNodeId, setActiveNodeId] = useState("");
   let myActiveId = " ";
 
@@ -238,8 +242,14 @@ export default function Components(props: Props) {
           nodeFullName.push(splitVisType);
         }
       }
-      const visInfo = new SaveAndFetchContent(nodeFullName);
-      await visInfo.getVisualDescInEditor(expertiseLevel);
+      // const visInfo = new SaveAndFetchContent(nodeFullName);
+      // await visInfo.getVisualDescInEditor(expertiseLevel);
+
+      const basicName = nodeFullName[0];
+
+      if (nodeFullName && basicName) {
+        dispatch(increment([basicName, nodeFullName]));
+      }
     } catch (error) {
       console.log("Error on click at comonents", error);
     }
