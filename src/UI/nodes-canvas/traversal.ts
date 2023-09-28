@@ -2,128 +2,97 @@ import { createTraversalOfNodes } from "../../onboarding/ts/traversal";
 import "../assets/css/flow.scss";
 import { IGroupNode } from "./nodes/groupNode";
 import { IDefaultNode } from "./nodes/defaultNode";
+import { Edge } from "reactflow";
 
 export class TraversalOrder {
   private defaultNodes: IDefaultNode[] = [];
   private groupNodes: IGroupNode[] = [];
   private allNodes: (IDefaultNode | IGroupNode)[] = [];
   private groupId: number = 100;
-
-  constructor() {
+  private edges: Edge[] = [];
+  private stories: (IDefaultNode | IGroupNode | any)[][];
+  constructor(edges: Edge[], allNodes: (IDefaultNode | IGroupNode)[]) {
+    this.edges = edges;
     this.defaultNodes = [];
     this.groupNodes = [];
-    this.allNodes = [];
+    this.allNodes = allNodes;
     this.groupId = 99; // new ids for new possible groups
+    this.stories = [];
   }
-  setRank() {
-    // sort simple nodes by y- position
-    // if they are of the same y-position, check if they are in the same group, assign rank based on x position
-    // here the rank needs to be set (and assigned in group, if necessary)
+
+  findNextEdge(currentNodeId: string) {
+    return this.edges.find((edge) => edge.source === currentNodeId);
+  }
+
+  getNodeById(nodeId: string) {
+    return this.allNodes.find((node) => node.id === nodeId);
+  }
+
+  buildStory(startEdge: Edge) {
+    let story: any = [];
     try {
-      this.defaultNodes = this.defaultNodes.sort(this.compare);
-      this.defaultNodes.forEach((sNode, index) => {
-        sNode.rank = index + 1;
+      story = [this.getNodeById(startEdge.target)]; // Add the starting node
+      let currentTarget = startEdge.target;
+
+      while (currentTarget) {
+        const nextEdge = this.findNextEdge(currentTarget);
+        if (!nextEdge) break;
+        story.push(this.getNodeById(nextEdge.target));
+        currentTarget = nextEdge.target;
+      }
+    } catch (error) {
+      console.log("Error in building a story", error);
+    }
+
+    return story;
+  }
+
+  buildStories(allNodes: (IDefaultNode | IGroupNode)[], edges: Edge[]) {
+    try {
+      debugger;
+      this.allNodes = allNodes;
+      this.edges = edges;
+      this.edges.forEach((edge) => {
+        if (edge.source === "") {
+          const story = this.buildStory(edge);
+          this.stories.push(story);
+        }
       });
-      this.allNodes.push(...this.defaultNodes);
-      this.allNodes.push(...this.groupNodes);
-      this.allNodes = this.allNodes.sort(this.compare);
-      // console.log(this.defaultNodes);
+
+      // Handle stand-alone nodes (edges with both source and target as null)
+      this.edges.forEach((edge: Edge) => {
+        if (edge.source === "" && edge.target === "") {
+          this.stories.push([this.getNodeById(edge.target)]);
+        }
+      });
+      console.log("Stories", this.stories);
     } catch (error) {
-      console.log("Error", error);
+      console.log("Error in building stories", error);
     }
-  }
-
-  compareAndRank(elem1: IDefaultNode, elem2: IDefaultNode) {
-    // -1: elem1 then elem2
-    // 1: elem2 then elem1
-    // 0: elem1 = elem 2
-    // const groupNodeObj = new GroupNode({
-    //   nodes: selectedNodes,
-    //   id: "group " + groupId.id++,
-    //   position: { x: 0, y: 0 },
-    //   data: null,
-    // });
-    try {
-      const xPos1 = elem1.positionAbsolute
-        ? elem1.positionAbsolute.x
-        : elem1.position.x;
-      const xPos2 = elem2.positionAbsolute
-        ? elem2.positionAbsolute.x
-        : elem2.position.x;
-      const yPos1 = elem1.positionAbsolute
-        ? elem1.positionAbsolute.y
-        : elem1.position.y;
-      const yPos2 = elem2.positionAbsolute
-        ? elem2.positionAbsolute.y
-        : elem2.position.y;
-
-      if (yPos1 == yPos2) {
-        // also has to be the global minima
-        // const groupNode: IGroupNode = {
-        //   nodes: [elem1, elem2],
-        //   id: "group " + this.groupId++,
-        //   data: {
-        //     title: "group node",
-        //     type: "group",
-        //     traverse: groupType.onlyOne,
-        //   },
-        //   position: { x: xPos1, y: yPos1 },
-        // };
-        // this.groupNodes.push(groupNode);
-        return xPos1 - xPos2;
-      } else {
-        return yPos1 - yPos2;
-      }
-    } catch (error) {
-      console.log("Error", error);
-    }
-    return 0;
-  }
-
-  compare(elem1: IDefaultNode | IGroupNode, elem2: IDefaultNode | IGroupNode) {
-    // -1: elem1 then elem2
-    // 1: elem2 then elem1
-    try {
-      const yPos1 = elem1.positionAbsolute
-        ? elem1.positionAbsolute.y
-        : elem1.position.y;
-      const yPos2 = elem2.positionAbsolute
-        ? elem2.positionAbsolute.y
-        : elem2.position.y;
-
-      if (yPos1 < yPos2) {
-        return -1;
-      } else if (yPos1 > yPos2) {
-        return 1;
-      } else {
-        return 0;
-      }
-    } catch (error) {
-      console.log("Error", error);
-    }
-    return 0;
   }
 
   // separate nodes that are within and without a group
-  createTraversal(nodes: any) {
+  // createTraversal(nodes: any) {
+  createTraversal() {
     try {
       debugger;
-      const storyNodes = nodes;
+      // const storyNodes = nodes;
 
-      if (storyNodes.length > 0) {
-        this.defaultNodes = storyNodes.filter((sNode: any) => {
-          if (sNode.type == "default") {
-            if (!sNode.parentNode) {
-              return sNode;
-            }
-          }
-        });
-        this.groupNodes = storyNodes.filter(
-          (sNode: any) => sNode.type == "group"
-        );
-      }
+      // if (storyNodes.length > 0) {
+      //   this.defaultNodes = storyNodes.filter((sNode: any) => {
+      //     if (sNode.type == "default") {
+      //       if (!sNode.parentNode) {
+      //         return sNode;
+      //       }
+      //     }
+      //   });
+      //   this.groupNodes = storyNodes.filter(
+      //     (sNode: any) => sNode.type == "group"
+      //   );
+      // }
 
-      this.setRank();
+      // this.setRank();
+      // this.buildStories();
       createTraversalOfNodes(this.allNodes);
       this.defaultNodes = [];
       this.groupNodes = [];

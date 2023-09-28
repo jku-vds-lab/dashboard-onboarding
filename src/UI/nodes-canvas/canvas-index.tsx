@@ -104,8 +104,16 @@ export default function NodesCanvas(props: Props) {
         if (index < nodes.length - 1) {
           edges.push({
             id: `e${index}`,
-            source: node.id,
+            source: index === 0 ? "" : nodes[index - 1].id,
             target: nodes[index + 1].id,
+            type: "default",
+          });
+        }
+        if (index == nodes.length - 1) {
+          edges.push({
+            id: `e${index}`,
+            source: index === 0 ? "" : nodes[index - 1].id,
+            target: "",
             type: "default",
           });
         }
@@ -321,7 +329,6 @@ export default function NodesCanvas(props: Props) {
 
         const fullNameArray = defaultNode().getFullNodeNameArray(event);
         const basicName = defaultNode().getBasicName(event);
-        debugger;
         if (fullNameArray && basicName) {
           dispatch(increment([basicName, fullNameArray]));
         }
@@ -511,8 +518,8 @@ export default function NodesCanvas(props: Props) {
   useEffect(() => {
     props.setNodesForSave(nodes);
     props.setEdgesForSave(edges);
-    const tOrder = new TraversalOrder();
-    tOrder.createTraversal(nodes);
+    const tOrder = new TraversalOrder(edges, nodes);
+    tOrder.buildStories(nodes, edges);
   }, [nodes, props, edges]);
 
   function getPositionForWholeTrav(prevNode: any) {
@@ -662,7 +669,6 @@ export default function NodesCanvas(props: Props) {
   const onConnect = useCallback(
     (params) => {
       setEdges((eds) => addEdge(params, eds));
-      console.log("Params", params);
     },
     [setEdges]
   );
