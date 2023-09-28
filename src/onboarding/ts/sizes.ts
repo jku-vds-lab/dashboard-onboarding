@@ -164,9 +164,14 @@ function resizeHeaderButtons() {
     if (editButton) {
       editButton.style.fontSize = textSize + "rem";
     }
-    document.getElementById("guidedTour")!.style.fontSize = textSize + "rem";
-    document.getElementById("dashboardExploration")!.style.fontSize =
-      textSize + "rem";
+    const tourButton = document.getElementById("guidedTour");
+    if (tourButton) {
+      tourButton.style.fontSize = textSize + "rem";
+    }
+    const explorationButton = document.getElementById("dashboardExploration")
+    if (explorationButton) {
+      explorationButton.style.fontSize = textSize + "rem";
+    }
   } catch (error) {
     console.log("Error in resizeHeaderButtons()", error);
   }
