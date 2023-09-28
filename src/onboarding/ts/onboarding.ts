@@ -36,6 +36,8 @@ import * as disable from "./disableArea";
 import * as infoCard from "./infoCards";
 import * as introCard from "./introCards";
 import { ExpertiseLevel } from "../../UI/redux/expertise";
+import { store } from "../../UI/redux/store";
+
 export async function onLoadReport(isMainPage: boolean) {
   console.log("Report is loading");
   try {
@@ -89,6 +91,7 @@ export async function onDataSelected(event: { detail: { dataPoints: any[] } }) {
       showReportChanges();
     }
   } else {
+    reloadOnboardingAt();
     helpers.recreateInteractionExampleButton();
   }
 }
@@ -99,12 +102,15 @@ export async function reloadOnboarding(isMainPage: boolean) {
 }
 
 export async function reloadOnboardingAt() {
+  const state = store.getState();
+  const expertise = state.expertise;
+
   if (document.getElementById("introCard")) {
     await startOnboardingAt("intro");
   } else if (document.getElementById("dashboardInfoCard")) {
     await startOnboardingAt("dashboard", null, ["general"], findCurrentTraversalCount());
   } else if (document.getElementById("filterInfoCard")) {
-    await startOnboardingAt("globalFilter", null, ["general"], findCurrentTraversalCount());
+    await startOnboardingAt("globalFilter", null, ["general"], findCurrentTraversalCount(), expertise);
   } else if (document.getElementById("interactionCard")) {
     await startOnboardingAt("interaction");
   } else if (document.getElementById("showChangesCard")) {
@@ -116,8 +122,10 @@ export async function reloadOnboardingAt() {
     if (traversalElement) {
       await startOnboardingAt(
         "visual",
-        traversalElement[0],
-        traversalElement[1]
+        traversalElement[1],
+        traversalElement[2],
+        traversalElement[3],
+        expertise
       );
     }
   } else if (global.hasOverlay && !global.interactionMode) {
