@@ -4,21 +4,11 @@ import {
 } from "../../onboarding/ts/globalVariables";
 import Accordion from "react-bootstrap/Accordion";
 import "../assets/css/dashboard.scss";
-import {
-  JSXElementConstructor,
-  Key,
-  ReactElement,
-  ReactNodeArray,
-  ReactPortal,
-  useCallback,
-  useState,
-} from "react";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../redux/store";
 import { increment } from "../redux/nodeModalities";
-import SaveAndFetchContent from "../../onboarding/ts/Content/saveAndFetchContent";
 import React from "react";
-import { active } from "d3";
 
 export interface InputNode {
   mainComponent: any;
@@ -41,12 +31,8 @@ export default function Components(props: Props) {
   const dispatch = useDispatch();
   // redux  ends
 
-  const [activeNodeId, setActiveNodeId] = useState("");
   const [isActive, setIsActive] = useState(false);
-  const expertiseLevel = useSelector((state: RootState) => state.expertise);
-  const globalNodeFullName = useSelector(
-    (state: RootState) => state.nodeModal.fullName
-  );
+
   switch (props.visual) {
     case "dashboard":
       inputNode = {
@@ -226,14 +212,6 @@ export default function Components(props: Props) {
 
   async function onClick(event: any, nodeId: string, visType: string) {
     try {
-      // debugger;
-      console.log("Child clicked during bubbling phase!");
-
-      // setActiveNodeId(nodeId);
-      // setIsActive(true);
-      // myActiveId = nodeId;
-      // console.log("Props clickedId", props.clickedId);
-      // console.log("Active node id: ", myActiveId);
       let nodeFullName: string[] = [];
       if (nodeId) {
         nodeFullName = nodeId.split(" ");
@@ -246,9 +224,6 @@ export default function Components(props: Props) {
           nodeFullName.push(splitVisType);
         }
       }
-      // const visInfo = new SaveAndFetchContent(nodeFullName);
-      // await visInfo.getVisualDescInEditor(expertiseLevel);
-
       const basicName = nodeFullName[0];
 
       if (nodeFullName && basicName) {
@@ -267,22 +242,6 @@ export default function Components(props: Props) {
     visParentId: string,
     visType: string
   ) {
-    // let isActive = false;
-
-    // if (globalNodeFullName.length > 1) {
-    //   const myActiveID = globalNodeFullName[0] + "  " + globalNodeFullName[1];
-    //   console.log("MY ACITVE ID", myActiveID);
-
-    //   // console.log("MY ID", id);
-    //   if (myActiveID === id) {
-    //     isActive = true;
-    //   }
-    // }
-
-    // inputNodes.forEach((node: InputNode) => {
-    //   console.log("Each node be like", node.mainComponent.props.id);
-    // });
-
     const combinedClass = `${visClassName} ${
       isActive ? "individual-item-active" : ""
     }`;
@@ -306,11 +265,7 @@ export default function Components(props: Props) {
   return (
     <div>
       {inputNodes.map((node) => (
-        <div
-          key={node.mainComponent.id}
-          className="individual-item"
-          // onClickCapture={() => onAnotherClick(node)}
-        >
+        <div key={node.mainComponent.id} className="individual-item">
           {node.mainComponent}
         </div>
       ))}

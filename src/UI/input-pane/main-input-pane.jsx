@@ -1,4 +1,3 @@
-import TraversalPane from "./traversal-pane";
 import ComponentPane from "./component-pane";
 
 import {
@@ -8,7 +7,7 @@ import {
 } from "react-hook-resize-panel";
 import "../assets/css/dashboard.scss";
 
-export default function InputPane(props) {
+export default function InputPane() {
   //TODO: Move TraversalPane to the Main Layout to the toolbar
 
   return (
