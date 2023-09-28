@@ -105,10 +105,10 @@ export class TraversalOrder {
   }
 
   // separate nodes that are within and without a group
-  onClick(props: any) {
+  createTraversal(nodes: any) {
     try {
       debugger;
-      const storyNodes = props.nodes;
+      const storyNodes = nodes;
 
       if (storyNodes.length > 0) {
         this.defaultNodes = storyNodes.filter((sNode: any) => {
@@ -134,16 +134,16 @@ export class TraversalOrder {
   }
 }
 
-export default function Traversal(props: any) {
-  const tOrder = new TraversalOrder();
+// export default function Traversal(props: any) {
+//   const tOrder = new TraversalOrder();
 
-  return (
-    <div
-      id="traversal"
-      className="btn btn-secondary btn-dark ms-2"
-      onClick={() => tOrder.onClick(props)}
-    >
-      Save your story
-    </div>
-  );
-}
+//   return (
+//     <div
+//       id="traversal"
+//       className="btn btn-secondary btn-dark ms-2"
+//       onClick={() => tOrder.onClick(props)}
+//     >
+//       Save your story
+//     </div>
+//   );
+// }

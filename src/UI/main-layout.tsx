@@ -5,7 +5,7 @@ import OutputPane from "./output-pane/main-output-pane";
 import { useState } from "react";
 import TraversalPane from "./input-pane/traversal-pane";
 import { Link } from "react-router-dom";
-import Traversal from "./nodes-canvas/traversal";
+// import Traversal from "./nodes-canvas/traversal";
 
 export default function MainLayout() {
   const [trigger, setTrigger] = useState(0);
@@ -29,7 +29,7 @@ export default function MainLayout() {
       <div className="toolbar control-toolbar">
         <TraversalPane buildTraversal={buildTraversal} setTrav={setTrav} />
         <div>
-          <Traversal nodes={nodes} edges={edges} />
+          {/* <Traversal nodes={nodes} edges={edges} /> */}
           <Link to="/">
             <div className="btn btn-secondary btn-dark ms-2">
               Publish Onboarding

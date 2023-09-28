@@ -26,6 +26,7 @@ import GroupNode from "./nodes/groupNode";
 import GroupNodeType from "./nodes/groupNodeType";
 import DefaultNode from "./nodes/defaultNode";
 import React from "react";
+import { TraversalOrder } from "./traversal";
 
 // redux starts
 import { useDispatch } from "react-redux";
@@ -510,6 +511,8 @@ export default function NodesCanvas(props: Props) {
   useEffect(() => {
     props.setNodesForSave(nodes);
     props.setEdgesForSave(edges);
+    const tOrder = new TraversalOrder();
+    tOrder.createTraversal(nodes);
   }, [nodes, props, edges]);
 
   function getPositionForWholeTrav(prevNode: any) {
@@ -664,11 +667,11 @@ export default function NodesCanvas(props: Props) {
     [setEdges]
   );
 
-  const onSave = useCallback(() => {
-    if (reactFlowInstance) {
-      const flow = reactFlowInstance.toObject();
-    }
-  }, [reactFlowInstance]);
+  // const onSave = useCallback(() => {
+  //   if (reactFlowInstance) {
+  //     const flow = reactFlowInstance.toObject();
+  //   }
+  // }, [reactFlowInstance]);
   return (
     <div className="dndflow">
       <div className="reactflow-wrapper" ref={reactFlowWrapper}>
@@ -693,9 +696,6 @@ export default function NodesCanvas(props: Props) {
           fitView
         >
           <Controls />
-          <Panel position="top-right">
-            <button onClick={onSave}>save</button>
-          </Panel>
           <ContextMenu
             isOpen={isOpen}
             onClick={handleMouseClick}
