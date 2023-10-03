@@ -122,7 +122,7 @@ function currentSliderValue(categories: string[]){
   }
 }
 
-function setExpertiseLevel(visualInfo: { type: string, categories: string[], count: number, visual?: VisualDescriptor }){
+async function setExpertiseLevel(visualInfo: { type: string, categories: string[], count: number, visual?: VisualDescriptor }){
   const slider = document.getElementById("level")! as HTMLInputElement;
   const sliderLevel = slider.value;
   let currentLevel;
@@ -151,7 +151,7 @@ function setExpertiseLevel(visualInfo: { type: string, categories: string[], cou
   }
 
   store.dispatch(decrement(newExpertise));
-  startOnboardingAt(visualInfo.type, visualInfo.visual, visualInfo.categories, visualInfo.count, newExpertise);
+  await startOnboardingAt(visualInfo.type, visualInfo.visual, visualInfo.categories, visualInfo.count, newExpertise);
 }
 
 export function createInfoCardButtons(

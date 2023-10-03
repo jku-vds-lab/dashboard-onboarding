@@ -331,8 +331,8 @@ export function createSlider(attributes: {id: string; min: string; max:string; v
   slider.max = attributes.max;
   slider.value = attributes.value;
   slider.style.cssText = "hight: 30px; witdh 100%;"
-  slider.addEventListener("input", () => {
-    onChange(visualInfo);
+  slider.addEventListener("input", async () => {
+    await onChange(visualInfo);
   });
   document.getElementById(attributes.parentId)?.appendChild(slider);
 }
