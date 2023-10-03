@@ -61,7 +61,7 @@ export default class GroupNode {
         type: "group",
         traverse: groupType,
       },
-      className: "dndnode node-group",
+      className: "node-group",
       style: { width: width, height: height },
       zIndex: -1,
     };

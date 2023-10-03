@@ -531,9 +531,7 @@ export default function NodesCanvas(props: Props) {
     if (prevNode) {
       const offset = 5;
       let prevNodeHeight = 0;
-      if (!prevNode.id.includes("group")) {
-        prevNodeHeight = parseInt(String(prevNode.style?.height!), 10);
-      }
+      prevNodeHeight = parseInt(String(prevNode.style?.height!), 10);
       pos = {
         x: prevNode.position.x,
         y: prevNode.position.y + prevNodeHeight + offset,
