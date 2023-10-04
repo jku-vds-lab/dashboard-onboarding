@@ -181,36 +181,28 @@ export function getCurrentTraversalElementType(traversal: TraversalElement[]) {
 export function createGroupOverlay() {
   const currentElement = global.settings.traversalStrategy[currentId];
   const firstVisuals: TraversalElement[] = [];
-  const notTraversed: TraversalElement[] = [];
+ 
   for (const trav of currentElement.element.visuals) {
-    if (
-      !trav.every((vis: TraversalElement) =>
-        lookedAtInGroup.elements.find(
-          (elem) =>
-            elem.id === vis.element.id &&
-            elem.categories.every((category) =>
-              vis.categories.includes(category)
-            ) &&
-            elem.count === vis.count
+    if (currentElement.element.type === groupType.all) {
+      if (
+        !trav.every((vis: TraversalElement) =>
+          lookedAtInGroup.elements.find(
+            (elem) =>
+              elem.id === vis.element.id &&
+              elem.categories.every((category) =>
+                vis.categories.includes(category)
+              ) &&
+              elem.count === vis.count
+          )
         )
-      )
-    ) {
-      notTraversed.push(trav);
-    }
-  }
-  notTraversed.forEach((trav: TraversalElement) => firstVisuals.push(trav[0]));
-  if (
-    currentElement.element.type === groupType.atLeastOne &&
-    currentId !== global.settings.traversalStrategy.length - 1
-  ) {
-    if (isGroup(currentElement.element)) {
-      currentElement.element.visuals.forEach((trav) =>
+      ) {
         firstVisuals.push(trav[0])
-      );
+      }
     } else {
-      firstVisuals.push(global.settings.traversalStrategy[currentId + 1]);
+      firstVisuals.push(trav[0]);
     }
   }
+  
   createInformationCard("group", currentElement.count, firstVisuals, undefined);
 }
 

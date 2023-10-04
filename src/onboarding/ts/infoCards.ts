@@ -211,7 +211,9 @@ export function createCardButtonsWithGroup(
           visInGroup.count === count
       );
       if (elemInGroup) {
-        index = traversalElem.visuals[i].indexOf(elemInGroup!);
+        index = traversalElem.visuals[i].findIndex((visInGroup: TraversalElement) => visInGroup.element.id === id &&
+          visInGroup.categories.every((category) => categories.includes(category)) &&
+          visInGroup.count === count);
         travLength = traversalElem.visuals[i].length - 1;
         setVisualInGroupIndex(index);
         setTraversalInGroupIndex(i);
@@ -219,9 +221,9 @@ export function createCardButtonsWithGroup(
     }
 
     if (index === travLength && index === 0) {
-      createCardButtonsForLastGroupElement("", rightButton, traversalElem);
+      createCardButtonsForLastGroupElement(traversal, "", rightButton, traversalElem);
     } else if (index === travLength) {
-      createCardButtonsForLastGroupElement(
+      createCardButtonsForLastGroupElement(traversal,
         "previousInGroup",
         rightButton,
         traversalElem
@@ -242,6 +244,7 @@ export function createCardButtonsWithGroup(
 }
 
 function createCardButtonsForLastGroupElement(
+  traversal: TraversalElement[],
   leftButton: string,
   rightButton: string,
   traversalElem: any
@@ -251,6 +254,19 @@ function createCardButtonsForLastGroupElement(
   } else {
     if (traversalElem.type === groupType.onlyOne) {
       helpers.createCardButtons("cardButtons", leftButton, "", rightButton);
+    }  else if (traversalElem.type === groupType.atLeastOne) {
+      let outOfGroupButton = "out of group";
+      if (
+        currentId === traversal.length - 1 &&
+        global.isGuidedTour
+      ) {
+        outOfGroupButton = "close";
+      }
+      if(leftButton){
+        helpers.createCardButtons("cardButtons", leftButton, outOfGroupButton, "back to group");
+      } else {
+        helpers.createCardButtons("cardButtons", outOfGroupButton, "", "back to group");
+      }
     } else {
       let traversed = 0;
       for (const trav of traversalElem.visuals) {

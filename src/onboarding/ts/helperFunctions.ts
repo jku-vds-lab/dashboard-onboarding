@@ -175,6 +175,16 @@ export function createCardButtons(
         buttonAttributes.content = "Previous";
         buttonAttributes.function = createGroupOverlay;
         break;
+      case "out of group":
+        buttonAttributes.id = "outOfGroupButton";
+        buttonAttributes.content = "Out Of Group";
+        buttonAttributes.function = nextInfoCard;
+        break;
+      case "close":
+        buttonAttributes.id = "endButton";
+        buttonAttributes.content = "Close";
+        buttonAttributes.function = removeOnboarding;
+        break;
       default:
         buttonAttributes.id = "previousButton";
         buttonAttributes.content = "Previous";
@@ -227,6 +237,27 @@ export function createCardButtons(
         buttonAttributes.id = "nextButton";
         buttonAttributes.content = "Next";
         buttonAttributes.function = nextInfoCard;
+    }
+    elements.createButton(buttonAttributes);
+  }
+
+  if (middleButton != "") {
+    const buttonAttributes = global.createButtonAttributes();
+    buttonAttributes.classes =
+      global.darkOutlineButtonClass + " positionCenter cardButtons";
+    buttonAttributes.style = `font-size: ${sizes.textSize}rem; margin-bottom: 20px;`;
+    buttonAttributes.parentId = id;
+    switch (middleButton) {
+      case "out of group":
+        buttonAttributes.id = "outOfGroupButton";
+        buttonAttributes.content = "Out Of Group";
+        buttonAttributes.function = nextInfoCard;
+        break;
+      case "close":
+        buttonAttributes.id = "endButton";
+        buttonAttributes.content = "Close";
+        buttonAttributes.function = removeOnboarding;
+        break;
     }
     elements.createButton(buttonAttributes);
   }
@@ -446,9 +477,9 @@ export async function createComponentGraph() {
 
 export function getSettings() {
   try {
-    if (localStorage.getItem("settings") == null) {
+    //if (localStorage.getItem("settings") == null) {
       createSettings();
-    }
+    //}
     global.setSettings(JSON.parse(localStorage.getItem("settings")!, reviver));
   } catch (error) {
     console.log("Error in getSettings()", error);
