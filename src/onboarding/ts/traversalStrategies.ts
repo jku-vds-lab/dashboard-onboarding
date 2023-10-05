@@ -9,6 +9,9 @@ import * as global from "./globalVariables";
 
 export function basicTraversalStrategy() {
   const trav = [];
+  const traversalElemW = createTraversalElement("welcomeCard");
+  traversalElemW.element = getTraversalElement("welcomeCard");
+  trav.push(traversalElemW);
   const traversalElem = createTraversalElement("dashboard");
   traversalElem.element = getTraversalElement("dashboard");
   trav.push(traversalElem);
@@ -31,6 +34,9 @@ export function basicTraversalStrategy() {
 
 export function depthFirstTraversalStrategyOriginal() {
   const trav = [];
+  const traversalElemW = createTraversalElement("welcomeCard");
+  traversalElemW.element = getTraversalElement("welcomeCard");
+  trav.push(traversalElemW);
   const traversalElem = createTraversalElement("dashboard");
   traversalElem.element = getTraversalElement("dashboard");
   trav.push(traversalElem);
@@ -58,6 +64,9 @@ export function depthFirstTraversalStrategyOriginal() {
 
 export function martiniGlassTraversalStrategy() {
   const trav = [];
+  const traversalElemW = createTraversalElement("welcomeCard");
+  traversalElemW.element = getTraversalElement("welcomeCard");
+  trav.push(traversalElemW);
   const traversalElem = createTraversalElement("dashboard");
   traversalElem.element = getTraversalElement("dashboard");
   trav.push(traversalElem);
@@ -102,6 +111,9 @@ export function depthFirstTraversalStrategy() {
   const trav = [];
   // "current visuals", currentVisuals);
   try {
+    const traversalElemW = createTraversalElement("welcomeCard");
+    traversalElemW.element = getTraversalElement("welcomeCard");
+    trav.push(traversalElemW);
     const traversalElem1 = createTraversalElement("dashboard");
     traversalElem1.element = getTraversalElement("dashboard");
     traversalElem1.count = 1;
@@ -178,6 +190,9 @@ export async function similarVisTraversalStrategy() {
   const trav = [];
   // "current visuals", currentVisuals);
   try {
+    const traversalElemW = createTraversalElement("welcomeCard");
+    traversalElemW.element = getTraversalElement("welcomeCard");
+    trav.push(traversalElemW);
     const groupFilters = createGroup();
     groupFilters.type = groupType.onlyOne;
     const groupGeneralVis = createGroup();
@@ -239,6 +254,9 @@ export async function filterFirstTraversalStrategy() {
   const trav = [];
   // "current visuals", currentVisuals);
   try {
+    const traversalElemW = createTraversalElement("welcomeCard");
+    traversalElemW.element = getTraversalElement("welcomeCard");
+    trav.push(traversalElemW);
     const traversalElem1 = createTraversalElement("dashboard");
     traversalElem1.element = await getTraversalElement("dashboard");
     traversalElem1.count = 1;

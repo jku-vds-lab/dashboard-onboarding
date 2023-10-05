@@ -106,7 +106,7 @@ export async function reloadOnboardingAt() {
   const expertise = state.expertise;
 
   if (document.getElementById("introCard")) {
-    await startOnboardingAt("intro");
+    await startOnboardingAt("welcomeCard", null, ["general"], findCurrentTraversalCount());
   } else if (document.getElementById("dashboardInfoCard")) {
     await startOnboardingAt("dashboard", null, ["general"], findCurrentTraversalCount());
   } else if (document.getElementById("filterInfoCard")) {
@@ -131,7 +131,7 @@ export async function reloadOnboardingAt() {
   } else if (global.hasOverlay && !global.interactionMode) {
     await startOnboardingAt("explorationOverlay");
   } else {
-    await startOnboardingAt("intro");
+    await startOnboardingAt("welcomeCard", null, ["general"], 1);
   }
 }
 
@@ -155,9 +155,6 @@ export async function startOnboardingAt(
     introCard.removeIntroCard();
 
     switch (type) {
-      case "intro":
-        createIntroCard();
-        break;
       case "welcomeCard":
         createIntroCard(count!);
         break;
@@ -198,7 +195,7 @@ export function createGuidedTour() {
 
   global.setIsGuidedTour(true);
   helpers.createOnboarding();
-  createIntroCard();
+  startGuidedTour();
 }
 
 export function createDashboardExploration() {
@@ -209,13 +206,11 @@ export function createDashboardExploration() {
 
     helpers.startExplorationMode();
     helpers.createOnboarding();
-    createIntroCard();
+    createOnboardingOverlay();
   }
 }
 
 export function startGuidedTour() {
-  //global.setCurrentVisualIndex(0);
-  removeIntroCard();
   setCurrentId(0);
   getCurrentTraversalElementType(global.settings.traversalStrategy);
 }
@@ -243,6 +238,22 @@ export function createOnboardingOverlay() {
     attributes.classes = "col-2 " + global.darkOutlineButtonClass;
     attributes.function = () => {
       return createDashboardInfoOnButtonClick(1);
+    };
+    attributes.parentId = "onboarding-header";
+    elements.createButton(attributes);
+  }
+
+  if (
+    findVisualIndexInTraversal(global.basicTraversal, "welcomeCard", 1) !== -1
+  ) {
+    const attributes = global.createButtonAttributes();
+    attributes.id = "welcomeCardExplaination";
+    attributes.content = "Introduction";
+    attributes.style =
+      `font-size: ${textSize}rem; ` + global.onboardingButtonStyle;
+    attributes.classes = "col-2 " + global.darkOutlineButtonClass;
+    attributes.function = () => {
+      return createWelcomeCardOnButtonClick(1);
     };
     attributes.parentId = "onboarding-header";
     elements.createButton(attributes);
@@ -308,6 +319,21 @@ export function createOverlayForVisuals(visuals: TraversalElement[]) {
         attributes.parentId = "onboarding-header";
         elements.createButton(attributes);
         break;
+      case "welcomeCard":
+        const attributesW = global.createButtonAttributes();
+        attributesW.id = "welcomeCardExplaination";
+        attributesW.count = visualInfo.count;
+        attributesW.content = "Introduction";
+        attributesW.style =
+          `font-size: ${textSize}rem; border: 5px solid lightgreen;` +
+          global.onboardingButtonStyle;
+          attributesW.classes = "col-2 " + global.darkOutlineButtonClass;
+          attributesW.function = () => {
+          return createWelcomeCardOnButtonClick(visualInfo.count);
+        };
+        attributesW.parentId = "onboarding-header";
+        elements.createButton(attributesW);
+        break;
       case "globalFilter":
         style = helpers.getClickableStyle(
           -global.settings.reportOffset.top,
@@ -358,6 +384,18 @@ function createDashboardInfoOnButtonClick(count: number) {
   const lookedAt = createLookedAtIds("dashboard", ["general"], 1);
   updateLookedAt(lookedAt);
   createDashboardInfoCard(1);
+}
+
+function createWelcomeCardOnButtonClick(count: number) {
+  helpers.removeOnboardingOverlay();
+  helpers.removeContainerOffset();
+  removeExplainGroupCard();
+  setCurrentId(
+    findVisualIndexInTraversal(global.basicTraversal, "welcomeCard", count)
+  );
+  const lookedAt = createLookedAtIds("welcomeCard", ["general"], 1);
+  updateLookedAt(lookedAt);
+  createIntroCard();
 }
 
 function createOverlay(

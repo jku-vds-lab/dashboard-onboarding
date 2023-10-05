@@ -591,6 +591,8 @@ export default function NodesCanvas(props: Props) {
     let type = title;
     if (title === "Global Filters") {
       type = "GlobalFilter";
+    } else if (title === "Introduction") {
+      type = "WelcomeCard";
     }
     return type;
   }
@@ -598,6 +600,9 @@ export default function NodesCanvas(props: Props) {
   function getTitle(elem: TraversalElement) {
     let visTitle = "";
     switch (elem.element.id) {
+      case "welcomeCard":
+        visTitle = "Introduction";
+        break;
       case "dashboard":
         visTitle = "Dashboard";
         break;

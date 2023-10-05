@@ -28,13 +28,13 @@ export default function ComponentPane() {
       eventKey: "welcomeCard",
       tooltip: "WelcomeCard",
       iconSrc: welcomeCard,
-      headerText: "Welcome Card",
+      headerText: "Introduction",
       colorVariable: "--welcomeCard-color",
       colorValue: "#8f744b",
       components: [
         {
           visualId: "welcomeCard",
-          title: "Welcome Card",
+          title: "Introduction",
         },
       ],
     },

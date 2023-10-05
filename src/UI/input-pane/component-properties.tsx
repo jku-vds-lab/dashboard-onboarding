@@ -39,7 +39,7 @@ export default function Components(props: Props) {
         mainComponent: createNode(
           "welcomeCard",
           className + " WelcomeCard",
-          "Welcome Card",
+          "Introduction",
           "General",
           visParentId,
           "WelcomeCard"

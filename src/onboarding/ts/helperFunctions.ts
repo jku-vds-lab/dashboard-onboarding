@@ -392,6 +392,7 @@ export function createOnboardingButtons() {
 
 function endExplorationMode() {
   elements.removeElement("dashboardExplaination");
+  elements.removeElement("welcomeCardExplaination");
   global.setExplorationMode(false);
   global.setHasOverlay(false);
   const button = document.getElementById("dashboardExploration");
@@ -610,6 +611,7 @@ export function removeOnboarding() {
 export function reloadOnboarding() {
   removeFrame();
   elements.removeElement("dashboardExplaination");
+  elements.removeElement("welcomeCardExplaination");
   elements.removeElement("onboarding");
   createOnboarding();
 }
@@ -617,6 +619,7 @@ export function reloadOnboarding() {
 export function removeOnboardingOverlay() {
   global.setHasOverlay(false);
   elements.removeElement("dashboardExplaination");
+  elements.removeElement("welcomeCardExplaination");
   global.currentVisuals.forEach(function (visual) {
     elements.removeElement(visual.name);
   });

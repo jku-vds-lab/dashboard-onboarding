@@ -53,6 +53,9 @@ export function getTraversalElement(elem: any) {
 }
 
  function setTraversalStrategy() {
+  const traversalElemW = createTraversalElement("welcomeCard");
+  traversalElemW.element = getTraversalElement("welcomeCard");
+  traversalStrategy.push(traversalElemW);
   const traversalElem1 = createTraversalElement("dashboard");
   traversalElem1.element = getTraversalElement("dashboard");
   traversalStrategy.push(traversalElem1);

@@ -2,9 +2,10 @@ import * as helpers from "./helperFunctions";
 import * as global from "./globalVariables";
 import { removeElement } from "./elements";
 import { disableAll } from "./disableArea";
-import { startGuidedTour, createOnboardingOverlay } from "./onboarding";
+import { createOnboardingOverlay } from "./onboarding";
 import { TraversalElement } from "./traversal";
 import { getDataWithId } from "../../componentGraph/helperFunctions";
+import { nextInfoCard } from "./infoCards";
 
 export function createIntroCard(count?: number){
     disableAll();
@@ -67,7 +68,7 @@ export function getBasicIntroText(){
 
 export function getStartFunction(){
     if(global.isGuidedTour){
-        return startGuidedTour; 
+        return nextInfoCard; 
      }else{
          return createOnboardingOverlay; 
      }

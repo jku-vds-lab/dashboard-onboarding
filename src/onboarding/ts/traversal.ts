@@ -8,7 +8,7 @@ import { createFilterInfoCard, removeFilterInfoCard } from "./filterInfoCards";
 import { currentVisuals } from "./globalVariables";
 import { removeOnboardingOverlay } from "./helperFunctions";
 import { createInfoCard, removeInfoCard } from "./infoCards";
-import { removeIntroCard } from "./introCards";
+import { createIntroCard, removeIntroCard } from "./introCards";
 import { createOverlayForVisuals } from "./onboarding";
 import * as helpers from "./helperFunctions";
 import * as global from "./globalVariables";
@@ -127,12 +127,15 @@ export function createInformationCard(
 
   const state = store.getState();
   switch (type) {
+    case "welcomeCard":
+      createIntroCard(count);
+      break;
     case "dashboard":
       createDashboardInfoCard(count);
       break;
     case "globalFilter":
       createFilterInfoCard(
-        getStandartCategories("globalFilter"),
+        categories!,
         count,
         state.expertise
       );
@@ -163,10 +166,12 @@ export function getCurrentTraversalElementType(traversal: TraversalElement[]) {
       firstVisuals.push(trav[0])
     );
     createInformationCard("group", currentElement.count, firstVisuals);
+  } else if (currentElement.element.id === "welcomeCard") {
+    createInformationCard("welcomeCard", currentElement.count);
   } else if (currentElement.element.id === "dashboard") {
     createInformationCard("dashboard", currentElement.count);
   } else if (currentElement.element.id === "globalFilter") {
-    createInformationCard("globalFilter", currentElement.count);
+    createInformationCard("globalFilter", currentElement.count, undefined, undefined, currentElement.categories);
   } else {
     createInformationCard(
       "visual",
@@ -589,6 +594,7 @@ export function getStandartCategories(type: string) {
       categories = ["general", "interaction"];
       break;
     case "dashboard":
+    case "welcomeCard":
       categories = ["general"];
       break;
     default:
