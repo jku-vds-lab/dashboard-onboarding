@@ -31,14 +31,17 @@ export class TraversalOrder {
   buildStory(startEdge: Edge) {
     let story: any = [];
     try {
-      story = [this.getNodeById(startEdge.target)]; // Add the starting node
-      let currentTarget = startEdge.target;
+      story = [this.getNodeById(startEdge.source)]; // Add the starting node
+      let currentTarget = startEdge.source;
 
       while (currentTarget) {
         const nextEdge = this.findNextEdge(currentTarget);
         if (!nextEdge) break;
-        story.push(this.getNodeById(nextEdge.target));
         currentTarget = nextEdge.target;
+        const node = this.getNodeById(nextEdge.target);
+        if (node != undefined) {
+          story.push(node);
+        }
       }
     } catch (error) {
       console.log("Error in building a story", error);
@@ -49,23 +52,21 @@ export class TraversalOrder {
 
   buildStories(allNodes: (IDefaultNode | IGroupNode)[], edges: Edge[]) {
     try {
-      debugger;
       this.allNodes = allNodes;
       this.edges = edges;
+
       this.edges.forEach((edge) => {
-        if (edge.source === "") {
+        if (edge.sourceHandle == null) {
           const story = this.buildStory(edge);
           this.stories.push(story);
         }
       });
 
-      // Handle stand-alone nodes (edges with both source and target as null)
-      this.edges.forEach((edge: Edge) => {
-        if (edge.source === "" && edge.target === "") {
-          this.stories.push([this.getNodeById(edge.target)]);
-        }
-      });
+      console.log("----------------------------------");
+      console.log("Nodes", this.allNodes);
+      console.log("Edges", this.edges);
       console.log("Stories", this.stories);
+      console.log("----------------------------------");
     } catch (error) {
       console.log("Error in building stories", error);
     }

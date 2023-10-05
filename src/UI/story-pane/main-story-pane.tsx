@@ -142,7 +142,6 @@ export default function StoryPane(props: Props) {
 
   useEffect(() => {
     if (props.mainTrigger) {
-      console.log("q", props.traversal);
       buildTraversal();
     }
   }, [props.mainTrigger, props.traversal]);

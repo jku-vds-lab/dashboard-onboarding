@@ -31,6 +31,7 @@ import { TraversalOrder } from "./traversal";
 // redux starts
 import { useDispatch } from "react-redux";
 import { increment } from "../redux/nodeModalities";
+import { NodePath } from "@babel/traverse";
 // redux ends
 
 const nodeTypes = { group: GroupNodeType };
@@ -100,19 +101,25 @@ export default function NodesCanvas(props: Props) {
     const edges: Edge[] = [];
 
     try {
+      if (nodes === undefined) {
+        return edges;
+      }
       nodes.forEach((node, index) => {
         if (index < nodes.length - 1) {
           edges.push({
             id: `e${index}`,
-            source: index === 0 ? "" : nodes[index - 1].id,
+            source: node.id,
+            sourceHandle: index == 0 ? null : nodes[index - 1].id,
             target: nodes[index + 1].id,
             type: "default",
           });
         }
+
         if (index == nodes.length - 1) {
           edges.push({
             id: `e${index}`,
             source: index === 0 ? "" : nodes[index - 1].id,
+            sourceHandle: index == 0 ? null : node.id,
             target: "",
             type: "default",
           });
@@ -398,14 +405,25 @@ export default function NodesCanvas(props: Props) {
       setNodes((nodes) => nodes.filter((n) => n.id !== nodeData.id));
     } else if (nodeData?.type === "default" && selectedNodes.length <= 1) {
       setNodes((nodes) => nodes.filter((n) => n.id !== nodeData.id));
+      edges.forEach((edge: Edge) => {
+        if (edge.sourceHandle == nodeData.id) {
+          edge.sourceHandle = null;
+        }
+        if (edge.target == nodeData.id) {
+          edge.target = "";
+        }
+      });
       setEdges((edges) => edges.filter((e) => e.source !== nodeData.id));
+      setEdges((edges) => edges.filter((e) => e.target !== nodeData.id));
     } else if (selectedNodes.length > 1) {
       const selectedNodeIds = new Set(selectedNodes.map((node) => node.id));
       setNodes((nodes) => nodes.filter((n) => !selectedNodeIds.has(n.id)));
+
       setEdges((edges) => edges.filter((e) => !selectedNodeIds.has(e.source)));
+      setEdges((edges) => edges.filter((e) => !selectedNodeIds.has(e.target)));
     }
     setIsOpen(false);
-  }, [nodeData, selectedNodes, setNodes, setEdges]);
+  }, [nodeData, selectedNodes, setNodes, setEdges, edges]);
 
   const addGroup = useCallback(() => {
     try {
@@ -475,7 +493,7 @@ export default function NodesCanvas(props: Props) {
       );
 
       console.log(
-        "GRoupnode post, ",
+        "Groupnode post, ",
         groupNode.position.x,
         groupNode.position.y
       );

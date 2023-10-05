@@ -257,7 +257,6 @@ export default function ComponentPane() {
   }
 
   function TabItem({ eventKey, tooltip, iconSrc, label, colorValue }) {
-    debugger;
     const handleClick = () => {
       setSelectedTab(eventKey);
       const selectedTabData = tabsData.find((tab) => tab.eventKey === eventKey);
@@ -275,7 +274,6 @@ export default function ComponentPane() {
                 onClick={showPicker}
               ></span>
             </div>
-            <div style={{ marginRight: "10px" }}>{label}</div>
             <img
               className="icon options"
               src={iconSrc}
@@ -284,6 +282,7 @@ export default function ComponentPane() {
               alt="Component icon"
               style={{ marginRight: "10px" }}
             />
+            <div style={{ marginRight: "10px" }}>{label}</div>
           </div>
         </Nav.Link>
       </Nav.Item>
