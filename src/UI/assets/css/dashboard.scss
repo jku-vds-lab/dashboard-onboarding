@@ -5,6 +5,7 @@ $bg-darker: rgb(17, 17, 17);
 $bg-dark-1: #2B2D30;
 $bg-dark-2: rgb(83,83,83);
 $bg-dark-1-lighter: rgb(170, 170, 170);
+$welcomeCard-color: #8f744b;
 $dashboard-color: #4e91e9;
 $line-chart-color: #d95f02;
 $bar-chart-color: #1b9e77;
@@ -460,6 +461,9 @@ $color-white: #f1f1f1;
   max-width:52px !important;
 }
 
+.welcomeCard .color-box{
+  background-color: #{$welcomeCard-color};
+}
 .dashboard .color-box{
   background-color: #{$dashboard-color};
 }

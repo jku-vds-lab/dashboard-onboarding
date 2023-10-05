@@ -36,6 +36,8 @@ export function getTraversalElement(elem: any) {
       const traversalGroupVisuals = setGroup(elem);
       elem.visuals = traversalGroupVisuals;
       traversalElement = elem;
+    } else if(elem === "welcomeCard"){
+      traversalElement = setWelcomeInfo();
     } else if (elem === "dashboard") {
       traversalElement = setDashboardInfo();
     } else if (elem === "globalFilter") {
@@ -117,6 +119,12 @@ function setDashboardInfo() {
   const settingsDashboardInfo = global.createDashboardInfo();
 
   return settingsDashboardInfo;
+}
+
+function setWelcomeInfo() {
+  const settingsWelcomeInfo = global.createWelcomeInfo();
+
+  return settingsWelcomeInfo;
 }
 
 function setVisualsInfo(id: string) {

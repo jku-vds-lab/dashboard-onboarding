@@ -158,6 +158,9 @@ export async function startOnboardingAt(
       case "intro":
         createIntroCard();
         break;
+      case "welcomeCard":
+        createIntroCard(count!);
+        break;
       case "dashboard":
         createDashboardInfoCard(count!);
         break;

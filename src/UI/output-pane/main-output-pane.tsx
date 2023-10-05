@@ -42,6 +42,7 @@ export default function OutputPane() {
       switch(nodeBasicName){
         case "dashboard":
         case "globalFilter":
+        case "welcomeCard":
           visualName = nodeBasicName;
           break;
         default:

@@ -34,6 +34,20 @@ export default function Components(props: Props) {
   const [isActive, setIsActive] = useState(false);
 
   switch (props.visual) {
+    case "welcomeCard":
+      inputNode = {
+        mainComponent: createNode(
+          "welcomeCard",
+          className + " WelcomeCard",
+          "Welcome Card",
+          "General",
+          visParentId,
+          "WelcomeCard"
+        ),
+        key: "dashboard",
+      };
+      inputNodes.push(inputNode);
+      break;
     case "dashboard":
       inputNode = {
         mainComponent: createNode(

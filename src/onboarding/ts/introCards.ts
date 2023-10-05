@@ -3,8 +3,10 @@ import * as global from "./globalVariables";
 import { removeElement } from "./elements";
 import { disableAll } from "./disableArea";
 import { startGuidedTour, createOnboardingOverlay } from "./onboarding";
+import { TraversalElement } from "./traversal";
+import { getDataWithId } from "../../componentGraph/helperFunctions";
 
-export function createIntroCard(){
+export function createIntroCard(count?: number){
     disableAll();
     
     const style = helpers.getCardStyle(global.introCardMargin, 0, global.introCardWidth, "") + `right:0;margin:auto;`;
@@ -12,7 +14,7 @@ export function createIntroCard(){
 
     helpers.createCloseButton("closeButton", "closeButtonPlacementBig", "", helpers.removeOnboarding, "introCard");
 
-    helpers.createCardContent(getIntroTitle(), getIntroText(), "introCard");
+    helpers.createCardContent(getIntroTitle(), getIntroText(count), "introCard");
 
     helpers.createCardButtons("cardButtons", "skip", "", "start");
 }
@@ -28,10 +30,34 @@ function getIntroTitle(){
     }else{
         return "Welcome to the dashboard exploration of " + global.page.displayName; 
     }
-    
 }
 
-function getIntroText(){
+ export function getIntroText(count?: number){
+    let traversal: TraversalElement[];
+    if (global.explorationMode) {
+      traversal = global.basicTraversal;
+    } else {
+      traversal = global.settings.traversalStrategy;
+    }
+    
+    const welcomeData = getDataWithId(
+        traversal,
+        "welcomeCard",
+        ["general"],
+        count?count:1
+    );
+    if (!welcomeData) {
+        return;
+    }
+
+    if(welcomeData.changedGeneralInfos.length === 0){
+        return getBasicIntroText();
+    } else {
+        return welcomeData.changedGeneralInfos[0];
+    }
+}
+
+export function getBasicIntroText(){
     if(global.isGuidedTour){
         return "The guided tour will show you the outline of this dashboard.<br>You can navigate through all visualizations with the next and previous buttons.<br>It will introduce you to the different kinds of graphs and elements and it explains how you can interact with them.";
     } else{

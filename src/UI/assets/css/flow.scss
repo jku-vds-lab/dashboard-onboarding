@@ -3,6 +3,7 @@ $bg-dark-1: #2B2D30;
 $bg-dark-2: rgb(83,83,83);
 $default-handle-color: rgb(158, 159, 160);
 $default-node-color: #545454;
+$welcomeCard-color: var(--welcomeCard-color);
 $dashboard-color: var(--dashboard-color);
 $line-chart-color: var(--line-chart-color);
 $bar-chart-color: var(--bar-chart-color);
@@ -26,6 +27,16 @@ $color-white: #f1f1f1;
   display: none;
 }
 
+
+div[data-id*="WelcomeCard"]{
+  &:before{
+    background-color: #{$welcomeCard-color};
+  }
+  &:after{
+    background-image: url("../img/welcomeCard.png");
+  }
+
+}
 div[data-id*="Dashboard"]{
   &:before{
     background-color: #{$dashboard-color};
@@ -74,15 +85,6 @@ div[data-id*="Column"] {
   }
   &:after{
     background-image: url("../img/icon-3.png");
-  }
-}
-
-div[data-id*="dashboard"] {
-  &:before{
-    background-color: #{$dashboard-color};
-  }
-  &:after{
-    background-image: url("../img/icon-1.png");
   }
 }
 div[data-id*="GlobalFilter"] {

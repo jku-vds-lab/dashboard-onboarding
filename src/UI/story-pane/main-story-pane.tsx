@@ -64,12 +64,16 @@ export default function StoryPane(props: Props) {
       const textBox = document.getElementById(
         "textBox"
       )! as HTMLTextAreaElement;
-      const child = textBox.children[0];
-      const listElems = child.children;
-
-      for (let i = 0; i < listElems.length; i++) {
-        images.push(listElems[i].className);
-        infos.push(listElems[i].innerHTML);
+      if(nodeBasicName === "welcomeCard"){
+        infos.push(textBox.innerHTML);
+      } else{
+        const child = textBox.children[0];
+        const listElems = child.children;
+  
+        for (let i = 0; i < listElems.length; i++) {
+          images.push(listElems[i].className);
+          infos.push(listElems[i].innerHTML);
+        }
       }
 
       const visInfo = new SaveAndFetchContent(nodeFullName);
@@ -83,9 +87,9 @@ export default function StoryPane(props: Props) {
     }
   };
 
-  const resetAnnotationChanges = () => {
+  const resetAnnotationChanges = async () => {
     const visInfo = new SaveAndFetchContent(nodeFullName);
-    visInfo.resetVisualInfo(expertiseLevel);
+    await visInfo.resetVisualInfo(expertiseLevel);
     reloadOnboarding();
   };
 
@@ -99,6 +103,7 @@ export default function StoryPane(props: Props) {
       switch (nodeBasicName) {
         case "dashboard":
         case "globalFilter":
+        case "welcomeCard":
           visualName = nodeBasicName;
           break;
         default:

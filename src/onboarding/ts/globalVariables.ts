@@ -81,6 +81,14 @@ export interface DashboardInfo {
   changedGeneralInfos: string[];
 }
 
+export interface WelcomeInfo {
+  id: string;
+  mediaType: mediaType;
+  videoURL: string;
+  changedGeneralImages: string[];
+  changedGeneralInfos: string[];
+}
+
 export interface SettingsVisual {
   id: string;
   mediaType: mediaType;
@@ -169,6 +177,17 @@ export function createDashboardInfo() {
     changedGeneralInfos: [],
   };
   return dashboardInfo;
+}
+
+export function createWelcomeInfo() {
+  const welcomeInfo: WelcomeInfo = {
+    id: "welcomeCard",
+    mediaType: mediaType.text,
+    videoURL: "",
+    changedGeneralImages: [],
+    changedGeneralInfos: [],
+  };
+  return welcomeInfo;
 }
 
 export function createVisual() {
