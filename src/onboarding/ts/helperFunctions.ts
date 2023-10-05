@@ -477,9 +477,9 @@ export async function createComponentGraph() {
 
 export function getSettings() {
   try {
-    //if (localStorage.getItem("settings") == null) {
+    if (localStorage.getItem("settings") == null) {
       createSettings();
-    //}
+    }
     global.setSettings(JSON.parse(localStorage.getItem("settings")!, reviver));
   } catch (error) {
     console.log("Error in getSettings()", error);
