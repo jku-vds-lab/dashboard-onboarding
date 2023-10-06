@@ -76,7 +76,6 @@ export class TraversalOrder {
   // createTraversal(nodes: any) {
   createTraversal() {
     try {
-      debugger;
       // const storyNodes = nodes;
 
       // if (storyNodes.length > 0) {

@@ -3,6 +3,14 @@ import Dropdown from "react-bootstrap/Dropdown";
 // import icon from "../icon-1.svg";
 // import icon1 from "./../../assets/img/arrow-down.png";
 import icon from "../../assets/img/icon-12.svg";
+import { Handle } from "reactflow";
+// import "./buttonedge.css";
+enum Position {
+  Left = "left",
+  Top = "top",
+  Right = "right",
+  Bottom = "bottom",
+}
 export default function GroupNodeType(nodeData: any) {
   const [label, setLabel] = useState(nodeData.data.traverse);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -20,6 +28,8 @@ export default function GroupNodeType(nodeData: any) {
 
   return (
     <div className={`node node-group`} onClick={toggleDropdown}>
+      <Handle type="source" position={Position.Bottom} />
+      <Handle type="target" position={Position.Top} />
       <div className={`header`}>
         <div className="header-label">Traversal: {nodeData.data.traverse}</div>
         <Dropdown show={isDropdownOpen}>
