@@ -213,6 +213,8 @@ export default function NodesCanvas(props: Props) {
     [setEdges]
   );
 
+  const [edgeCount, setEdgeCount] = useState(edges.length);
+
   const getPosition = useCallback(
     (event: any) => {
       const reactFlowBounds =
@@ -688,15 +690,16 @@ export default function NodesCanvas(props: Props) {
       //   });
       // });
       const newEdge = {
-        id: `e${nodes.length}`,
+        id: `e${edgeCount + 1}`,
         source: params.source,
         sourceHandle: params.source,
         target: params.target,
         type: "default",
       };
+      setEdgeCount(edgeCount + 1);
       setEdges((eds) => addEdge(newEdge, eds));
     },
-    [setEdges, nodes]
+    [edgeCount, setEdges]
   );
 
   return (
