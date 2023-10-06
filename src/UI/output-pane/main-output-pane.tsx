@@ -38,8 +38,8 @@ export default function OutputPane() {
       let visualName = "";
       let category: string[];
       let count: number;
-      nodeFullName
-      switch(nodeBasicName){
+      nodeFullName;
+      switch (nodeBasicName) {
         case "dashboard":
         case "globalFilter":
         case "welcomeCard":
@@ -49,43 +49,54 @@ export default function OutputPane() {
           visual = global.allVisuals.find((visual) => {
             return visual.name == nodeBasicName;
           });
-    
+
           if (!visual) {
             return;
           }
-    
+
           visualName = "visual";
       }
 
-      if(nodeFullName.length > 3){
+      if (nodeFullName.length > 3) {
         category = [nodeFullName[1]];
         count = parseInt(nodeFullName[2]);
-      }else{
-        category = ["general"]
+      } else {
+        category = ["general"];
         count = parseInt(nodeFullName[1]);
       }
 
-      startOnboardingAt(visualName, visual, category, count, expertiseLevel, true);
+      startOnboardingAt(
+        visualName,
+        visual,
+        category,
+        count,
+        expertiseLevel,
+        true
+      );
     }
   }, [nodeBasicName, nodeFullName, expertiseLevel]);
 
   return (
     <div id="outputPane">
-        <div id="outputView">
-          <div className="label">Output View</div>
-          <div
-            id="outputView"
-            style={{ color: "black", backgroundColor: "white" }}
-          >
-            <OutputView />
-          </div>
+      <div id="outputView">
+        <div className="label">Output View</div>
+        <div
+          id="outputView"
+          style={{ color: "black", backgroundColor: "white" }}
+        >
+          <OutputView />
         </div>
-        <div id="userLevel">
-          <div className="label">User Level</div>
-          <div id="userMatrix">
-            <UserLevel />
-          </div>
+      </div>
+      <div id="userLevel">
+        <span>
+          Click on a matrix cell to set the user level based on their domain or
+          vis expertise!
+        </span>
+        <div className="label">User Level</div>
+        <div id="userMatrix">
+          <UserLevel />
         </div>
+      </div>
     </div>
   );
 }
