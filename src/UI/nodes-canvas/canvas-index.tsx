@@ -694,11 +694,6 @@ export default function NodesCanvas(props: Props) {
     [setEdges]
   );
 
-  // const onSave = useCallback(() => {
-  //   if (reactFlowInstance) {
-  //     const flow = reactFlowInstance.toObject();
-  //   }
-  // }, [reactFlowInstance]);
   return (
     <div className="dndflow">
       <div className="reactflow-wrapper" ref={reactFlowWrapper}>
