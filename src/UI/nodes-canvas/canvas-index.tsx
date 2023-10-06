@@ -665,15 +665,25 @@ export default function NodesCanvas(props: Props) {
     }
   }
 
-  const onConnectStart = useCallback((_, { nodeId }) => {
-    console.log("node id on start", nodeId);
-  }, []);
-
-  const onConnectEnd = useCallback((event: MouseEvent | TouchEvent) => {}, []);
-
+  // Handle multiple connects here
   const onConnect = useCallback(
     (params) => {
       console.log("Params", params);
+
+      // setEdges((edges: Edge<any>[]) => {
+      //   return edges.map((edge: Edge) => {
+      //     if (edge.source == params.source) {
+      //       if (edge.target) {
+      //         //update target handles of the source edge
+      //         return {
+      //           ...edge,
+      //           // targetHandle: [edge.target, params.target]
+      //         };
+      //       }
+      //     }
+      //     return edge;
+      //   });
+      // });
       const newEdge = {
         id: `e${nodes.length}`,
         source: params.source,
@@ -704,8 +714,6 @@ export default function NodesCanvas(props: Props) {
           onSelectionContextMenu={onSelectionContextMenu}
           onSelectionChange={onSelectionChangeFunction}
           onConnect={onConnect}
-          onConnectStart={onConnectStart}
-          onConnectEnd={onConnectEnd}
           snapToGrid
           fitView
         >

@@ -21,7 +21,13 @@ export class TraversalOrder {
   }
 
   findNextEdge(currentNodeId: string) {
-    return this.edges.find((edge) => edge.source === currentNodeId);
+    let edges: Edge[] = [];
+    try {
+      edges = this.edges.filter((edge) => edge.source === currentNodeId);
+    } catch (error) {
+      console.log("Error in finding edges", error);
+    }
+    return edges;
   }
 
   getNodeById(nodeId: string) {
@@ -32,18 +38,22 @@ export class TraversalOrder {
     let story: any = [];
     try {
       story = [this.getNodeById(startEdge.target)]; // Add the starting node
+
       let currentTarget = startEdge.target;
 
       while (currentTarget) {
-        const nextEdge = this.findNextEdge(currentTarget);
-        if (!nextEdge) {
+        const nextEdges = this.findNextEdge(currentTarget);
+        if (nextEdges.length == 0) {
           break;
         }
-        currentTarget = nextEdge.target;
-        const node = this.getNodeById(nextEdge.target);
-        if (node != undefined) {
-          story.push(node);
-        }
+        nextEdges.forEach((nextEdge: Edge) => {
+          // this would actually be the group node because the branching happens here
+          currentTarget = nextEdge.target;
+          const node = this.getNodeById(nextEdge.target);
+          if (node != undefined) {
+            story.push(node);
+          }
+        });
       }
     } catch (error) {
       console.log("Error in building a story", error);
@@ -54,12 +64,15 @@ export class TraversalOrder {
 
   buildStories() {
     try {
+      // start a story from every edge which has no sourceHandle
       this.edges.forEach((edge) => {
         if (edge.sourceHandle == null) {
           const story = this.buildStory(edge);
           this.stories.push(story);
         }
       });
+
+      // handle branching
 
       console.log("----------------------------------");
       console.log("Nodes", this.allNodes);
