@@ -24,6 +24,7 @@ export class TraversalOrder {
     this.allNodes = allNodes;
     this.groupId = 99; // new ids for new possible groups
     this.stories = [];
+    this.graph = new Graph();
   }
 
   getNodeById(nodeId: string) {
@@ -57,23 +58,7 @@ export class TraversalOrder {
               story.push(nextNode);
             }
           } else if (currentNode) {
-            const mainGNode = {
-              id: `group_${currentNode}`,
-              type: "group",
-              nodes: [],
-              position: { x: 0, y: 0 },
-              data: {
-                title: "group node",
-                type: "group",
-                traverse: groupType.onlyOne,
-              },
-              groupNode: [],
-            };
-            const groupNode = this.createGroupNode(
-              currentNode,
-              visitedNodes,
-              mainGNode
-            );
+            const groupNode = this.createGroupNode(currentNode, visitedNodes);
             if (groupNode && !visitedNodes.has(groupNode.id)) {
               story.push(groupNode);
               visitedNodes.add(groupNode.id);
@@ -94,10 +79,24 @@ export class TraversalOrder {
   createGroupNode(
     nodeId: string,
     visitedNodes: Set<string>,
-    mainGNode: IGroupNode
+    mainGNode?: IGroupNode
   ): IGroupNode {
+    if (!mainGNode) {
+      mainGNode = {
+        id: `group_${nodeId}`,
+        type: "group",
+        nodes: [],
+        position: { x: 0, y: 0 },
+        data: {
+          title: "group node",
+          type: "group",
+          traverse: groupType.onlyOne,
+        },
+        groupNode: [],
+      };
+    }
+
     this.graph.forEachOutNeighbor(nodeId, (neighbour: string) => {
-      console.log("Building a group for the ", neighbour);
       const gNode: IGroupNode = {
         id: `group_${neighbour}`,
         type: "group",
@@ -113,7 +112,6 @@ export class TraversalOrder {
 
       if (!visitedNodes.has(neighbour)) {
         const branchStory = this.buildStory(neighbour, visitedNodes);
-        console.log("Pushing the story in ", gNode);
         gNode.nodes.push(...branchStory);
       } else {
         console.log("Already visited ", neighbour);
@@ -129,25 +127,14 @@ export class TraversalOrder {
     return mainGNode;
   }
 
-  followSingleNode(
-    nodeId: string,
-    visitedNodes: Set<string>
-  ): IDefaultNode | IGroupNode | null {
-    const nextNode = this.getNodeById(nodeId);
-
-    if (nextNode && !visitedNodes.has(nextNode.id)) {
-      visitedNodes.add(nextNode.id);
-      return nextNode;
-    }
-    return null;
-  }
-
   buildStories() {
     try {
       this.entryNodes.forEach((nodeId: string) => {
+        console.log("------------------------");
         console.log("Story for ", nodeId);
         const story = this.buildStory(nodeId);
         console.log("--> ", story);
+        console.log("------------------------");
         this.stories.push(story);
       });
     } catch (error) {
@@ -155,14 +142,19 @@ export class TraversalOrder {
     }
   }
 
+  // ghost node is being added for no reason
   convertToGraph() {
-    this.allNodes.forEach((node: IDefaultNode | IGroupNode) => {
-      this.graph.addNode(node.id);
-    });
+    try {
+      this.allNodes.forEach((node: IDefaultNode | IGroupNode) => {
+        this.graph.addNode(node.id);
+      });
 
-    this.edges.forEach((edge: Edge) => {
-      this.graph.addEdge(edge.source, edge.target);
-    });
+      this.edges.forEach((edge: Edge) => {
+        this.graph.addEdge(edge.source, edge.target);
+      });
+    } catch (error) {
+      console.log("Error while converting to graph", error);
+    }
   }
 
   findStartingStoryNodes() {
