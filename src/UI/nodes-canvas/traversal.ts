@@ -50,11 +50,8 @@ export class TraversalOrder {
     return story;
   }
 
-  buildStories(allNodes: (IDefaultNode | IGroupNode)[], edges: Edge[]) {
+  buildStories() {
     try {
-      this.allNodes = allNodes;
-      this.edges = edges;
-
       this.edges.forEach((edge) => {
         if (edge.sourceHandle == null) {
           const story = this.buildStory(edge);
@@ -72,8 +69,6 @@ export class TraversalOrder {
     }
   }
 
-  // separate nodes that are within and without a group
-  // createTraversal(nodes: any) {
   createTraversal() {
     try {
       // const storyNodes = nodes;
@@ -90,9 +85,7 @@ export class TraversalOrder {
       //     (sNode: any) => sNode.type == "group"
       //   );
       // }
-
-      // this.setRank();
-      // this.buildStories();
+      this.buildStories();
       createTraversalOfNodes(this.allNodes);
       this.defaultNodes = [];
       this.groupNodes = [];
@@ -102,17 +95,3 @@ export class TraversalOrder {
     }
   }
 }
-
-// export default function Traversal(props: any) {
-//   const tOrder = new TraversalOrder();
-
-//   return (
-//     <div
-//       id="traversal"
-//       className="btn btn-secondary btn-dark ms-2"
-//       onClick={() => tOrder.onClick(props)}
-//     >
-//       Save your story
-//     </div>
-//   );
-// }

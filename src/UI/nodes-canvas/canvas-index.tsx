@@ -537,7 +537,7 @@ export default function NodesCanvas(props: Props) {
     props.setNodesForSave(nodes);
     props.setEdgesForSave(edges);
     const tOrder = new TraversalOrder(edges, nodes);
-    tOrder.buildStories(nodes, edges);
+    tOrder.createTraversal();
   }, [nodes, props, edges]);
 
   function getPositionForWholeTrav(prevNode: any) {
