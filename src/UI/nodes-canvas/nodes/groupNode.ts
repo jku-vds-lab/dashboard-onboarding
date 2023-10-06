@@ -1,7 +1,8 @@
 import { Node } from "reactflow";
 export interface IGroupNode extends Node {
-  nodes: Node[];
+  nodes: (Node | IGroupNode)[];
   id: string;
+  groupNode?: IGroupNode[];
 }
 export default class GroupNode {
   private groupNode: IGroupNode;
