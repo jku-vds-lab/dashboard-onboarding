@@ -31,12 +31,14 @@ export class TraversalOrder {
   buildStory(startEdge: Edge) {
     let story: any = [];
     try {
-      story = [this.getNodeById(startEdge.source)]; // Add the starting node
-      let currentTarget = startEdge.source;
+      story = [this.getNodeById(startEdge.target)]; // Add the starting node
+      let currentTarget = startEdge.target;
 
       while (currentTarget) {
         const nextEdge = this.findNextEdge(currentTarget);
-        if (!nextEdge) break;
+        if (!nextEdge) {
+          break;
+        }
         currentTarget = nextEdge.target;
         const node = this.getNodeById(nextEdge.target);
         if (node != undefined) {

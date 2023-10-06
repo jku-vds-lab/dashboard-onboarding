@@ -105,22 +105,12 @@ export default function NodesCanvas(props: Props) {
         return edges;
       }
       nodes.forEach((node, index) => {
-        if (index < nodes.length - 1) {
+        if (index < nodes.length) {
           edges.push({
             id: `e${index}`,
-            source: node.id,
+            source: index == 0 ? "null" : nodes[index - 1].id,
             sourceHandle: index == 0 ? null : nodes[index - 1].id,
-            target: nodes[index + 1].id,
-            type: "default",
-          });
-        }
-
-        if (index == nodes.length - 1) {
-          edges.push({
-            id: `e${index}`,
-            source: index === 0 ? "" : nodes[index - 1].id,
-            sourceHandle: index == 0 ? null : node.id,
-            target: "",
+            target: node.id,
             type: "default",
           });
         }
@@ -676,22 +666,24 @@ export default function NodesCanvas(props: Props) {
   }
 
   const onConnectStart = useCallback((_, { nodeId }) => {
-    // connectingNodeId.current = nodeId;
     console.log("node id on start", nodeId);
   }, []);
 
-  const onConnectEnd = useCallback((event: MouseEvent | TouchEvent) => {
-    // connectingNodeId.current = nodeId;
-    // console.log("node id on end", event);
-    // console.log("target ", event.target);
-    // contains("data-id")
-  }, []);
+  const onConnectEnd = useCallback((event: MouseEvent | TouchEvent) => {}, []);
 
   const onConnect = useCallback(
     (params) => {
-      setEdges((eds) => addEdge(params, eds));
+      console.log("Params", params);
+      const newEdge = {
+        id: `e${nodes.length}`,
+        source: params.source,
+        sourceHandle: params.source,
+        target: params.target,
+        type: "default",
+      };
+      setEdges((eds) => addEdge(newEdge, eds));
     },
-    [setEdges]
+    [setEdges, nodes]
   );
 
   return (
