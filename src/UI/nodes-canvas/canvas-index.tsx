@@ -9,6 +9,8 @@ import ReactFlow, {
   applyEdgeChanges,
   addEdge,
   Panel,
+  getIncomers,
+  getConnectedEdges,
 } from "reactflow";
 import { Node, Edge } from "reactflow";
 import "reactflow/dist/style.css";
@@ -105,12 +107,13 @@ export default function NodesCanvas(props: Props) {
         return edges;
       }
       nodes.forEach((node, index) => {
-        if (index < nodes.length) {
+        if (index < nodes.length && index > 0) {
           edges.push({
             id: `e${index}`,
             source: index == 0 ? "null" : nodes[index - 1].id,
             sourceHandle: index == 0 ? null : nodes[index - 1].id,
             target: node.id,
+            targetHandle: node.id,
             type: "default",
           });
         }
@@ -396,11 +399,11 @@ export default function NodesCanvas(props: Props) {
     } else if (nodeData?.type === "default" && selectedNodes.length <= 1) {
       setNodes((nodes) => nodes.filter((n) => n.id !== nodeData.id));
       edges.forEach((edge: Edge) => {
-        if (edge.sourceHandle == nodeData.id) {
+        if (edge.source == nodeData.id) {
           edge.sourceHandle = null;
         }
         if (edge.target == nodeData.id) {
-          edge.target = "";
+          edge.targetHandle = null;
         }
       });
       setEdges((edges) => edges.filter((e) => e.source !== nodeData.id));
@@ -413,7 +416,7 @@ export default function NodesCanvas(props: Props) {
       setEdges((edges) => edges.filter((e) => !selectedNodeIds.has(e.target)));
     }
     setIsOpen(false);
-  }, [nodeData, selectedNodes, setNodes, setEdges, edges]);
+  }, [nodeData, selectedNodes, setNodes, edges, setEdges]);
 
   const addGroup = useCallback(() => {
     try {
