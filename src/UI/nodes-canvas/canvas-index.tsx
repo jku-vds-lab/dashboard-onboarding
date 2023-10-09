@@ -66,6 +66,7 @@ export default function NodesCanvas(props: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const reactFlowWrapper = useRef<HTMLInputElement>(null); // this could be the reason why we run into the initial wrong position issue
   const [selectedNodes, setSelectedNodes] = useNodesState<null>([]);
+  const [selectedEdges, setSelectedEdges] = useEdgesState<null>([]);
   const [mousePosition, setMousePosition] = React.useState<MousePosition>({
     x: 0,
     y: 0,
@@ -720,6 +721,7 @@ export default function NodesCanvas(props: Props) {
           onSelectionContextMenu={onSelectionContextMenu}
           onSelectionChange={onSelectionChangeFunction}
           onConnect={onConnect}
+          deleteKeyCode={"Delete"}
           snapToGrid
           fitView
         >
