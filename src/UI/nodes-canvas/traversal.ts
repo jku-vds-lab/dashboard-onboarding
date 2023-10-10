@@ -131,10 +131,9 @@ export class TraversalOrder {
     try {
       this.entryNodes.forEach((nodeId: string) => {
         console.log("------------------------");
-        console.log("Story for ", nodeId);
         const story = this.buildStory(nodeId);
-        console.log("--> ", story);
-        console.log("------------------------");
+        console.log("Story for ", nodeId, story);
+        console.log("************************");
         this.stories.push(story);
       });
     } catch (error) {
@@ -158,6 +157,7 @@ export class TraversalOrder {
   }
 
   findStartingStoryNodes() {
+    // check that the node is also not in a group
     this.graph.forEachNode((nodeId) => {
       if (this.graph.inDegree(nodeId) == 0) {
         this.entryNodes.push(nodeId);
