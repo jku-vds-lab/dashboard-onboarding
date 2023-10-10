@@ -93,7 +93,7 @@ export default function StoryPane(props: Props) {
     reloadOnboarding();
   };
 
-  const reloadOnboarding = () => {
+  const reloadOnboarding = async () => {
     if (nodeBasicName && expertiseLevel) {
       let visual = undefined;
       let visualName = "";
@@ -125,7 +125,7 @@ export default function StoryPane(props: Props) {
         category = ["general"];
         count = parseInt(nodeFullName[1]);
       }
-      startOnboardingAt(
+      await startOnboardingAt(
         visualName,
         visual,
         category,

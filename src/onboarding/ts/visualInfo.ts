@@ -59,6 +59,7 @@ export async function createTabsWithContent(
   expertiseLevel?: ExpertiseLevel
 ) {
   const visualInfos = await helpers.getVisualInfos(visual.type, expertiseLevel, visual);
+  elements.removeElement("visualInfoTabs");
 
   createTabs(categories);
 
