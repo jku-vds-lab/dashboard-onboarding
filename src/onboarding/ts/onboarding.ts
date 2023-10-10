@@ -345,8 +345,14 @@ export function createOverlayForVisuals(visuals: TraversalElement[]) {
         createOverlay("globalFilter", style, visualInfo.count, ["general"]);
         break;
       default:
+        let currentElement: TraversalElement;
+        if(visualInfo.element.id === "group"){
+          currentElement = visualInfo.element.visuals[0]
+        } else {
+          currentElement = visualInfo;
+        }
         const visual = global.currentVisuals.find(
-          (vis: VisualDescriptor) => vis.name === visualInfo.element.id
+          (vis: VisualDescriptor) => vis.name === currentElement.element.id
         );
         if (!visual) {
           return;
@@ -366,8 +372,8 @@ export function createOverlayForVisuals(visuals: TraversalElement[]) {
         createOverlay(
           visual.name,
           style,
-          visualInfo.count,
-          visualInfo.categories
+          currentElement.count,
+          currentElement.categories
         );
         break;
     }
