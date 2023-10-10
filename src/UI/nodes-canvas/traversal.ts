@@ -79,10 +79,10 @@ export class TraversalOrder {
   createGroupNode(
     nodeId: string,
     visitedNodes: Set<string>,
-    mainGNode?: IGroupNode
+    // mainGNode?: IGroupNode
   ): IGroupNode {
-    if (!mainGNode) {
-      mainGNode = {
+    // if (!mainGNode) {
+     const mainGNode: IGroupNode = {
         id: `group_${nodeId}`,
         type: "group",
         nodes: [],
@@ -94,31 +94,32 @@ export class TraversalOrder {
         },
         groupNode: [],
       };
-    }
+    // }
 
     this.graph.forEachOutNeighbor(nodeId, (neighbour: string) => {
-      const gNode: IGroupNode = {
-        id: `group_${neighbour}`,
-        type: "group",
-        nodes: [],
-        position: { x: 0, y: 0 },
-        data: {
-          title: "group node",
-          type: "group",
-          traverse: groupType.all,
-        },
-        groupNode: [],
-      };
+      // const gNode: IGroupNode = {
+      //   id: `${neighbour} group`,
+      //   type: "group",
+      //   nodes: [],
+      //   position: { x: 0, y: 0 },
+      //   data: {
+      //     title: "group node",
+      //     type: "group",
+      //     traverse: groupType.all,
+      //   },
+      //   groupNode: [],
+      // };
 
       if (!visitedNodes.has(neighbour)) {
         const branchStory = this.buildStory(neighbour, visitedNodes);
-        gNode.nodes.push(...branchStory);
+        mainGNode.nodes.push(...branchStory);
       } else {
         console.log("Already visited ", neighbour);
       }
 
       if (mainGNode && mainGNode.groupNode) {
-        mainGNode.groupNode.push(gNode);
+        // mainGNode.nodes.push(gNode);
+        // mainGNode.groupNode.push(gNode);
       } else {
         console.error("mainGNode or mainGNode.groupNode is undefined!");
       }
@@ -127,15 +128,18 @@ export class TraversalOrder {
     return mainGNode;
   }
 
-  buildStories() {
+  buildStories(): (IDefaultNode | IGroupNode)[] | undefined {
     try {
+      let story;
       this.entryNodes.forEach((nodeId: string) => {
         console.log("------------------------");
-        const story = this.buildStory(nodeId);
+        story = this.buildStory(nodeId);
         console.log("Story for ", nodeId, story);
         console.log("************************");
         this.stories.push(story);
       });
+
+      return story
     } catch (error) {
       console.log("Error in building stories", error);
     }
@@ -157,10 +161,12 @@ export class TraversalOrder {
   }
 
   findStartingStoryNodes() {
-    // check that the node is also not in a group
     this.graph.forEachNode((nodeId) => {
       if (this.graph.inDegree(nodeId) == 0) {
-        this.entryNodes.push(nodeId);
+        const node = this.allNodes.find((node) => node.id === nodeId);
+        if(node?.parentNode === "" || node?.parentNode === undefined || node?.parentNode === null){
+          this.entryNodes.push(nodeId);
+        }
       }
     });
   }
@@ -169,8 +175,10 @@ export class TraversalOrder {
     try {
       this.convertToGraph();
       this.findStartingStoryNodes();
-      this.buildStories();
-      createTraversalOfNodes(this.allNodes);
+      const story = this.buildStories();
+      if(story){
+        createTraversalOfNodes(story);
+      }
       this.defaultNodes = [];
       this.groupNodes = [];
       this.allNodes = [];
