@@ -385,45 +385,50 @@ export function getDataWithId(
 ) {
   const traversalElements = traversal;
 
-  let foundVisual: TraversalElement = {
-    element: null,
-    categories: [],
-    count: 0,
-  };
   for (const elem of traversalElements) {
     if (isGroup(elem.element)) {
       for (const groupTraversals of elem.element.visuals) {
         for (const groupElem of groupTraversals) {
-          if (
+          if(isGroup(groupElem.element)){
+            const foundGroupElem = getDatafromGroup(groupElem.element.visuals, ID, categories, count);
+            if(foundGroupElem){
+              return foundGroupElem.element;
+            }
+          }else if (
             groupElem.element.id === ID &&
             groupElem.categories.every((category: string) =>
               categories.includes(category)
             ) &&
             groupElem.count == count
           ) {
-            foundVisual = groupElem;
+            return groupElem.element;
           }
         }
       }
-      // } else {
-      //   if (
-      //     elem.element.id === ID &&
-      //     elem.categories.every((category: string) =>
-      //       categories.includes(category)
-      //     ) &&
-      //     elem.count == count
-      //   ) {
-      //     foundVisual = elem;
-      //   }
-      // }
     } else {
       if (elem.element.id === ID) {
-        foundVisual = elem;
+        return elem.element;
       }
     }
   }
+}
 
-  return foundVisual?.element; //as global.SettingsVisual;
+function getDatafromGroup(visuals: TraversalElement[][], id: string, categories: string[], count: number): TraversalElement | undefined{
+  for (const groupTraversals of visuals) {
+    for (const groupElem of groupTraversals) {
+      if(isGroup(groupElem)){
+         return getDatafromGroup(groupElem.element.visuals, id, categories, count);
+      }else if (
+        groupElem.element.id === id &&
+        groupElem.categories.every((category: string) =>
+          categories.includes(category)
+        ) &&
+        groupElem.count == count
+      ) {
+        return groupElem;
+      }
+    }
+  }
 }
 
 export function firstLetterToUpperCase(str: string) {

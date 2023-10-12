@@ -4,14 +4,17 @@ import * as elements from "./elements";
 import * as disable from "./disableArea";
 import { createVisualInfo } from "./visualInfo";
 import {
+  addGroupInGroupIndex,
   createInformationCard,
   createLookedAtIds,
+  currentGroupElement,
   currentId,
   getCurrentTraversalElementType,
   groupType,
   isGroup,
   lookedAtInGroup,
   setCurrentId,
+  setGroup,
   setTraversalInGroupIndex,
   setVisualInGroupIndex,
   TraversalElement,
@@ -199,36 +202,20 @@ export function createCardButtonsWithGroup(
 ) {
   const traversalElem = traversal[currentId].element;
   if (isGroup(traversalElem)) {
-    let index = 0;
-    let travLength = 0;
-    for (let i = 0; i < traversalElem.visuals.length; i++) {
-      const elemInGroup = traversalElem.visuals[i].find(
-        (visInGroup: TraversalElement) =>
-          visInGroup.element.id === id &&
-          visInGroup.categories.every((category) =>
-            categories.includes(category)
-          ) &&
-          visInGroup.count === count
-      );
-      if (elemInGroup) {
-        index = traversalElem.visuals[i].findIndex((visInGroup: TraversalElement) => visInGroup.element.id === id &&
-          visInGroup.categories.every((category) => categories.includes(category)) &&
-          visInGroup.count === count);
-        travLength = traversalElem.visuals[i].length - 1;
-        setVisualInGroupIndex(index);
-        setTraversalInGroupIndex(i);
-      }
+    const travLength = getElementIndexInGroup(traversalElem, id, categories, count);
+    if(!travLength){
+      return;
     }
 
-    if (index === travLength && index === 0) {
+    if (visualInGroupIndex === (travLength -1) && visualInGroupIndex === 0) {
       createCardButtonsForLastGroupElement(traversal, "", rightButton, traversalElem);
-    } else if (index === travLength) {
+    } else if (visualInGroupIndex === (travLength -1)) {
       createCardButtonsForLastGroupElement(traversal,
         "previousInGroup",
         rightButton,
         traversalElem
       );
-    } else if (index === 0) {
+    } else if (visualInGroupIndex === 0) {
       helpers.createCardButtons("cardButtons", leftButton, "", "nextInGroup");
     } else {
       helpers.createCardButtons(
@@ -243,6 +230,35 @@ export function createCardButtonsWithGroup(
   }
 }
 
+
+function getElementIndexInGroup( traversalElem: any,
+  id: string,
+  categories: string[],
+  count: number): number | undefined{
+  for (let i = 0; i < traversalElem.visuals.length; i++) {
+    for(let j = 0; j < traversalElem.visuals[i].length; j++){
+      const visInGroup = traversalElem.visuals[i][j];
+      if(isGroup(visInGroup.element)){
+          const travLength = getElementIndexInGroup(visInGroup.element, id, categories, count);
+          if(travLength !== null && travLength !== undefined){
+            addGroupInGroupIndex([i, j]);
+            setGroup(visInGroup);
+            return travLength;
+          }
+      } else{
+        if(visInGroup.element.id === id &&
+          visInGroup.categories.every((category: string) => categories.includes(category)) &&
+          visInGroup.count === count){
+            setVisualInGroupIndex(j);
+            setTraversalInGroupIndex(i);
+            return traversalElem.visuals[i].length;
+          }
+      }
+    }
+  }
+  return undefined;
+}
+
 function createCardButtonsForLastGroupElement(
   traversal: TraversalElement[],
   leftButton: string,
@@ -252,9 +268,10 @@ function createCardButtonsForLastGroupElement(
   if (global.explorationMode) {
     helpers.createCardButtons("cardButtons", leftButton, "", "back to group");
   } else {
-    if (traversalElem.type === groupType.onlyOne) {
+    const group = currentGroupElement? currentGroupElement.element : traversalElem;
+    if (group.type === groupType.onlyOne) {
       helpers.createCardButtons("cardButtons", leftButton, "", rightButton);
-    }  else if (traversalElem.type === groupType.atLeastOne) {
+    }  else if (group.type === groupType.atLeastOne) {
       let outOfGroupButton = "out of group";
       if (
         currentId === traversal.length - 1 &&
@@ -269,7 +286,7 @@ function createCardButtonsForLastGroupElement(
       }
     } else {
       let traversed = 0;
-      for (const trav of traversalElem.visuals) {
+      for (const trav of group.visuals) {
         if (
           trav.every((vis: TraversalElement) =>
             lookedAtInGroup.elements.find(
@@ -357,7 +374,7 @@ export function previousInfoCard() {
 }
 
 export function nextInGroup() {
-  const currentElement = global.settings.traversalStrategy[currentId].element;
+  const currentElement = currentGroupElement? currentGroupElement.element : global.settings.traversalStrategy[currentId].element;
 
   setVisualInGroupIndex(visualInGroupIndex + 1);
 
@@ -387,7 +404,7 @@ export function nextInGroup() {
 }
 
 export function previousInGroup() {
-  const currentElement = global.settings.traversalStrategy[currentId].element;
+  const currentElement = currentGroupElement? currentGroupElement.element : global.settings.traversalStrategy[currentId].element;
 
   setVisualInGroupIndex(visualInGroupIndex - 1);
 

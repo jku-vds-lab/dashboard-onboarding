@@ -136,66 +136,13 @@ export default function NodesCanvas(props: Props) {
             return;
           }
           if (elem.element.id.includes("group")) {
-            const nodesWithinGroup: Node[] = [];
-            const visuals = elem.element.visuals;
-
-            for (let i = 0; i < visuals.length; i++) {
-              for (let j = 0; j < visuals[i].length; j++) {
-                const visTitle = getTitle(visuals[i][j]);
-                if (!visTitle) {
-                  return;
-                }
-                const visType = getType(visTitle);
-                const newNode = defaultNode().getNode(
-                  event,
-                  visType,
-                  getID(visuals[i][j]),
-                  "default",
-                  getPositionWithinGroup(i, j),
-                  visTitle
-                );
-
-                nodesWithinGroup.push(newNode);
-                createdNodes.push(newNode);
-              }
-            }
-
-            const groupNodeObj = new GroupNode({
-              nodes: nodesWithinGroup,
-              id: "group " + elem.count,
-              position: { x: 0, y: 0 },
-              data: null,
-            });
-
-            const groupNode = groupNodeObj.getGroupNode(
-              false,
-              getPositionForWholeTrav(prevNode),
-              elem.element.type
-            );
-            createdNodes.push(groupNode);
-            prevNode = groupNode;
-
-            nodesWithinGroup.forEach((node) => {
-              node.parentNode = groupNode?.id;
-              node.extent = "parent";
-              node.draggable = true;
-            });
+            createGroupNode(elem, prevNode, createdNodes);
           } else {
-            const visTitle = getTitle(elem);
-            if (!visTitle) {
-              return;
+            const newNode = createDefaultNode(elem, prevNode);
+            if(newNode){
+              createdNodes.push(newNode);
+              prevNode = newNode;
             }
-            const visType = getType(visTitle);
-            const newNode = defaultNode().getNode(
-              event,
-              visType,
-              getID(elem),
-              "default",
-              getPositionForWholeTrav(prevNode),
-              visTitle
-            );
-            createdNodes.push(newNode);
-            prevNode = newNode;
           }
         }
       } catch (error) {
@@ -206,6 +153,63 @@ export default function NodesCanvas(props: Props) {
     },
     [defaultNode]
   );
+
+  function createDefaultNode(elem: TraversalElement, prevNode: Node | undefined){
+    const visTitle = getTitle(elem);
+    if (!visTitle) {
+      return;
+    }
+    const visType = getType(visTitle);
+    const newNode = defaultNode().getNode(
+      event,
+      visType,
+      getID(elem),
+      "default",
+      getPositionForWholeTrav(prevNode),
+      visTitle
+    );
+    return newNode;
+  }
+
+  function createGroupNode(elem: TraversalElement, prevNode: Node | undefined, createdNodes: Node[]){
+    const nodesWithinGroup: Node[] = [];
+    const visuals = elem.element.visuals; 
+    for (let i = 0; i < visuals.length; i++) {
+      for (let j = 0; j < visuals[i].length; j++) {
+        if(visuals[i][j].element.id.includes("group")){
+          createGroupNode(visuals[i][j], prevNode, createdNodes);
+        } else{
+          const newNode = createDefaultNode(visuals[i][j], prevNode);
+          if(newNode){
+            createdNodes.push(newNode);
+            nodesWithinGroup.push(newNode);
+          }
+        }
+      }
+    }
+
+    const groupNodeObj = new GroupNode({
+      nodes: nodesWithinGroup,
+      id: "group " + elem.count,
+      position: { x: 0, y: 0 },
+      data: null,
+    });
+
+    const groupNode = groupNodeObj.getGroupNode(
+      false,
+      getPositionForWholeTrav(prevNode),
+      elem.element.type
+    );
+    createdNodes.push(groupNode);
+    prevNode = groupNode;
+
+    nodesWithinGroup.forEach((node) => {
+      node.parentNode = groupNode?.id;
+      node.extent = "parent";
+      node.draggable = true;
+    });
+  }
+
   const initialNodes: Node[] = createIntitialNodes();
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges] = useEdgesState(createInitialEdges());

@@ -25,6 +25,7 @@ import {
   findVisualIndexInTraversal,
   getCurrentTraversalElementType,
   getStandartCategories,
+  groupType,
   removeExplainGroupCard,
   setCurrentId,
   TraversalElement,
@@ -228,7 +229,7 @@ export function createOnboardingOverlay() {
   global.setInteractionMode(false);
 
   if (
-    findVisualIndexInTraversal(global.basicTraversal, "dashboard", 1) !== -1
+    findVisualIndexInTraversal(global.basicTraversal, "dashboard", ["general"], 1) !== -1
   ) {
     const attributes = global.createButtonAttributes();
     attributes.id = "dashboardExplaination";
@@ -244,7 +245,7 @@ export function createOnboardingOverlay() {
   }
 
   if (
-    findVisualIndexInTraversal(global.basicTraversal, "welcomeCard", 1) !== -1
+    findVisualIndexInTraversal(global.basicTraversal, "welcomeCard", ["general"], 1) !== -1
   ) {
     const attributes = global.createButtonAttributes();
     attributes.id = "welcomeCardExplaination";
@@ -261,7 +262,7 @@ export function createOnboardingOverlay() {
 
   global.currentVisuals.forEach(function (visual: VisualDescriptor) {
     if (
-      findVisualIndexInTraversal(global.basicTraversal, visual.name, 1) !== -1
+      findVisualIndexInTraversal(global.basicTraversal, visual.name, getStandartCategories(visual.type), 1) !== -1
     ) {
       const visualLayoutX = visual.layout.x ?? 0;
       const visualLayoutY = visual.layout.y ?? 0;
@@ -279,7 +280,7 @@ export function createOnboardingOverlay() {
   });
 
   if (
-    findVisualIndexInTraversal(global.basicTraversal, "globalFilter", 1) !== -1
+    findVisualIndexInTraversal(global.basicTraversal, "globalFilter", ["general"], 1) !== -1
   ) {
     const style = helpers.getClickableStyle(
       -global.settings.reportOffset.top,
@@ -346,11 +347,21 @@ export function createOverlayForVisuals(visuals: TraversalElement[]) {
         break;
       default:
         let currentElement: TraversalElement;
-        if(visualInfo.element.id === "group"){
-          currentElement = visualInfo.element.visuals[0]
+        if(visualInfo.element.id.includes("group")){
+          if(visualInfo.element.type === groupType.onlyOne){
+            const firstVisuals = [];
+            for(const trav of visualInfo.element.visuals){
+              firstVisuals.push(trav[0]);
+            }
+            createOverlayForVisuals(firstVisuals);
+            break;
+          } else {
+            currentElement = visualInfo.element.visuals[0][0];
+          }
         } else {
           currentElement = visualInfo;
         }
+
         const visual = global.currentVisuals.find(
           (vis: VisualDescriptor) => vis.name === currentElement.element.id
         );
@@ -385,7 +396,7 @@ function createDashboardInfoOnButtonClick(count: number) {
   helpers.removeContainerOffset();
   removeExplainGroupCard();
   setCurrentId(
-    findVisualIndexInTraversal(global.basicTraversal, "dashboard", count)
+    findVisualIndexInTraversal(global.basicTraversal, "dashboard", ["general"], count)
   );
   const lookedAt = createLookedAtIds("dashboard", ["general"], 1);
   updateLookedAt(lookedAt);
@@ -397,7 +408,7 @@ function createWelcomeCardOnButtonClick(count: number) {
   helpers.removeContainerOffset();
   removeExplainGroupCard();
   setCurrentId(
-    findVisualIndexInTraversal(global.basicTraversal, "welcomeCard", count)
+    findVisualIndexInTraversal(global.basicTraversal, "welcomeCard", ["general"], count)
   );
   const lookedAt = createLookedAtIds("welcomeCard", ["general"], 1);
   updateLookedAt(lookedAt);

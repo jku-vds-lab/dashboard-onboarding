@@ -3,6 +3,7 @@ import * as global from "./globalVariables";
 import { getNewDashboardInfo } from "./dashboardInfoCard";
 import { replacer } from "../../componentGraph/ComponentGraph";
 import {
+  createGroup,
   createTraversalElement,
   findTraversalVisual,
   Group,
@@ -93,6 +94,16 @@ function setGroup(elem: Group) {
           traversalElem.count = vis.count;
           traversalElem.categories = vis.categories;
           traversalElem.element = setFilterInfo();
+          visuals.push(traversalElem);
+        } else if(vis.element.id.includes("group")){
+          const traversalElem = createTraversalElement("");
+          traversalElem.count = vis.count;
+          traversalElem.categories = vis.categories;
+          traversalElem.element = createGroup();
+          traversalElem.element.id = vis.element.id;
+          traversalElem.element.type = vis.element.type;
+          const traversalGroupVisuals = setGroup(vis.element);
+          traversalElem.element.visuals = traversalGroupVisuals;
           visuals.push(traversalElem);
         } else {
           const traversalElem = createTraversalElement("");

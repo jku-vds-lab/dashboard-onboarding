@@ -79,9 +79,7 @@ export class TraversalOrder {
   createGroupNode(
     nodeId: string,
     visitedNodes: Set<string>,
-    // mainGNode?: IGroupNode
   ): IGroupNode {
-    // if (!mainGNode) {
      const mainGNode: IGroupNode = {
         id: `group_${nodeId}`,
         type: "group",
@@ -94,34 +92,14 @@ export class TraversalOrder {
         },
         groupNode: [],
       };
-    // }
 
     this.graph.forEachOutNeighbor(nodeId, (neighbour: string) => {
-      // const gNode: IGroupNode = {
-      //   id: `${neighbour} group`,
-      //   type: "group",
-      //   nodes: [],
-      //   position: { x: 0, y: 0 },
-      //   data: {
-      //     title: "group node",
-      //     type: "group",
-      //     traverse: groupType.all,
-      //   },
-      //   groupNode: [],
-      // };
 
       if (!visitedNodes.has(neighbour)) {
         const branchStory = this.buildStory(neighbour, visitedNodes);
         mainGNode.nodes.push(...branchStory);
       } else {
         console.log("Already visited ", neighbour);
-      }
-
-      if (mainGNode && mainGNode.groupNode) {
-        // mainGNode.nodes.push(gNode);
-        // mainGNode.groupNode.push(gNode);
-      } else {
-        console.error("mainGNode or mainGNode.groupNode is undefined!");
       }
     });
 

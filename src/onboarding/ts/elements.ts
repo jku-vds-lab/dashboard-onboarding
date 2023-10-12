@@ -69,11 +69,12 @@ export function createDiv(attributes: {
           findVisualIndexInTraversal(
             global.settings.traversalStrategy,
             attributes.id,
+            attributes.categories,
             attributes.count
           )
         );
         if (
-          global.settings.traversalStrategy[currentId].element.id === "group"
+          global.settings.traversalStrategy[currentId].element.id.includes("group")
         ) {
           const lookedAt = createLookedAtIds(
             attributes.id,
