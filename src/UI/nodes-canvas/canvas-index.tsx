@@ -171,13 +171,14 @@ export default function NodesCanvas(props: Props) {
     return newNode;
   }
 
-  function createGroupNode(elem: TraversalElement, prevNode: Node | undefined, createdNodes: Node[]){
+  function createGroupNode(elem: TraversalElement, prevNode: Node | undefined, createdNodes: Node[]) {
     const nodesWithinGroup: Node[] = [];
     const visuals = elem.element.visuals; 
     for (let i = 0; i < visuals.length; i++) {
       for (let j = 0; j < visuals[i].length; j++) {
         if(visuals[i][j].element.id.includes("group")){
-          createGroupNode(visuals[i][j], prevNode, createdNodes);
+          const newGroup = createGroupNode(visuals[i][j], prevNode, createdNodes);
+          nodesWithinGroup.push(newGroup);
         } else{
           const newNode = createDefaultNode(visuals[i][j], prevNode);
           if(newNode){
@@ -190,7 +191,7 @@ export default function NodesCanvas(props: Props) {
 
     const groupNodeObj = new GroupNode({
       nodes: nodesWithinGroup,
-      id: "group " + elem.count,
+      id: elem.element.id + " " + elem.count,
       position: { x: 0, y: 0 },
       data: null,
     });
@@ -208,6 +209,7 @@ export default function NodesCanvas(props: Props) {
       node.extent = "parent";
       node.draggable = true;
     });
+    return groupNode;
   }
 
   const initialNodes: Node[] = createIntitialNodes();
