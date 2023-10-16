@@ -225,26 +225,24 @@ export default class InsightDescription {
           );
         }
 
-        if (expertiseLevel !== Level.High) {
-          if(visual.data.data.length > 100){
-            highestValues = helper.getHighestValue(
-              visual.data.data,
-              visual.dataName,
-              [visual.legendValues[Math.floor(visual.legendValues.length / 2)]],
-              visual.legend,
-              visual.axis,
-              visual.axisValues
-            );
-          } else {
-            highestValues = helper.getHighestValue(
-              visual.data.data,
-              visual.dataName,
-              visual.legendValues,
-              visual.legend,
-              visual.axis,
-              visual.axisValues
-            );
-          }
+        if(visual.data.data.length > 100){
+          highestValues = helper.getHighestValue(
+            visual.data.data,
+            visual.dataName,
+            [visual.legendValues[Math.floor(visual.legendValues.length / 2)]],
+            visual.legend,
+            visual.axis,
+            visual.axisValues
+          );
+        } else {
+          highestValues = helper.getHighestValue(
+            visual.data.data,
+            visual.dataName,
+            visual.legendValues,
+            visual.legend,
+            visual.axis,
+            visual.axisValues
+          );
         }
 
         if (visual.legend) {
@@ -269,11 +267,13 @@ export default class InsightDescription {
         );
       }
 
-      if (highestValues !== null && highestValues !== undefined) {
-        this.insightText.insightImages.push("lightbulbImg");
-        this.insightText.insightInfos.push(
-          this.insightHighestValueText(highestValues, visual.legend)
-        );
+      if(expertiseLevel !== Level.High || (highestCategory === null || highestCategory === undefined)){
+        if (highestValues !== null && highestValues !== undefined) {
+          this.insightText.insightImages.push("lightbulbImg");
+          this.insightText.insightInfos.push(
+            this.insightHighestValueText(highestValues, visual.legend)
+          );
+        }
       }
     }
 

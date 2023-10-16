@@ -196,7 +196,7 @@ export function getHighestValue(
     return getHighestAttribute(dataAttributes, visualData);
   }
 
-  if (legendName === "") {
+  if (legendName === "" || legendName === undefined) {
     const sums = [];
     for (const axisValue of axisValues) {
       const axisData = visualData.filter(
