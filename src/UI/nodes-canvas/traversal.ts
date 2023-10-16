@@ -49,7 +49,6 @@ export class TraversalOrder {
       while (currentNode) {
         let nextNode = null;
         this.graph.forEachOutNeighbor(currentNode, (neighbour: string) => {
-          debugger
           nextNode = neighbour;
           if(!insideGroup || this.graph.inDegree(neighbour) === 1) {
             if (this.graph.outDegree(currentNode) == 0) {
@@ -100,7 +99,6 @@ export class TraversalOrder {
     this.graph.forEachOutNeighbor(nodeId, (neighbour: string) => {
 
       if (!visitedNodes.has(neighbour)) {
-        debugger
         const branchStory = this.buildStory(neighbour, visitedNodes, true);
         mainGNode.nodes.push(...branchStory);
       } else {
@@ -156,7 +154,6 @@ export class TraversalOrder {
 
   createTraversal() {
     try {
-      debugger
       this.convertToGraph();
       this.findStartingStoryNodes();
       const story = this.buildStories();

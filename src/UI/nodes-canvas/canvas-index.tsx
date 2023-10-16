@@ -136,9 +136,10 @@ export default function NodesCanvas(props: Props) {
             return;
           }
           if (elem.element.id.includes("group")) {
-            createGroupNode(elem, prevNode, createdNodes);
+            const groupNode = createGroupNode(elem, prevNode, createdNodes);
+            prevNode = groupNode;
           } else {
-            const newNode = createDefaultNode(elem, prevNode);
+            const newNode = createDefaultNode(elem, prevNode, getPositionForWholeTrav(prevNode));
             if(newNode){
               createdNodes.push(newNode);
               prevNode = newNode;
@@ -154,7 +155,9 @@ export default function NodesCanvas(props: Props) {
     [defaultNode]
   );
 
-  function createDefaultNode(elem: TraversalElement, prevNode: Node | undefined){
+  function createDefaultNode(elem: TraversalElement, prevNode: Node | undefined, position: {
+    x: number,
+    y: number}){
     const visTitle = getTitle(elem);
     if (!visTitle) {
       return;
@@ -165,7 +168,7 @@ export default function NodesCanvas(props: Props) {
       visType,
       getID(elem),
       "default",
-      getPositionForWholeTrav(prevNode),
+      position,
       visTitle
     );
     return newNode;
@@ -180,7 +183,7 @@ export default function NodesCanvas(props: Props) {
           const newGroup = createGroupNode(visuals[i][j], prevNode, createdNodes);
           nodesWithinGroup.push(newGroup);
         } else{
-          const newNode = createDefaultNode(visuals[i][j], prevNode);
+          const newNode = createDefaultNode(visuals[i][j], prevNode, getPositionWithinGroup(i, j));
           if(newNode){
             createdNodes.push(newNode);
             nodesWithinGroup.push(newNode);
@@ -202,7 +205,6 @@ export default function NodesCanvas(props: Props) {
       elem.element.type
     );
     createdNodes.push(groupNode);
-    prevNode = groupNode;
 
     nodesWithinGroup.forEach((node) => {
       node.parentNode = groupNode?.id;
