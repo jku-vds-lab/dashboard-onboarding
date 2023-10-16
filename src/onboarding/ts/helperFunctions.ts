@@ -42,37 +42,45 @@ import { createFilterInfoCard } from "./filterInfoCards";
 import { store } from "../../UI/redux/store";
 
 export function addContainerOffset(cardHeight: number) {
-  const rect = document
-    .getElementById("flexContainer")!
-    .getBoundingClientRect();
-  const pageOffset = parseInt(
-    window.getComputedStyle(document.getElementById("flexContainer")!)
-      .paddingTop
-  );
-  const buttonHeaderHeight =
-    document.getElementById("onboarding-header")!.clientHeight;
+  let rect = null;
+  let pageOffset = 0;
+  let buttonHeaderHeight = 0;
+
+  const flex = document
+    .getElementById("flexContainer");
+  if(flex){
+    rect = flex.getBoundingClientRect();
+    pageOffset = parseInt(
+      window.getComputedStyle(flex)
+        .paddingTop
+    );
+
+    const header = document.getElementById("onboarding-header");
+    if (header) {
+      buttonHeaderHeight = header.clientHeight;
+      const headerOffset = cardHeight - pageOffset + global.globalCardTop;
+      header.style.marginTop = headerOffset + "px";
+    }
+    
+  }
+
   const reportOffsetTop = parseInt(
     window.getComputedStyle(document.getElementById("reportContainer")!)
       .paddingTop
   );
 
-  const header = document.getElementById("onboarding-header");
-  if (header) {
-    const headerOffset = cardHeight - pageOffset + global.globalCardTop;
-    header.style.marginTop = headerOffset + "px";
-  }
-
   const onboarding = document.getElementById("onboarding");
   if (onboarding) {
+    const rectTop = rect? rect.top:0;
     global.setOnboardingOffset(
-      pageOffset + buttonHeaderHeight + reportOffsetTop + rect.top
+      pageOffset + buttonHeaderHeight + reportOffsetTop + rectTop
     );
     const top =
       global.globalCardTop +
       cardHeight +
       buttonHeaderHeight +
       reportOffsetTop +
-      rect.top;
+      rectTop;
     onboarding.style.top = top + "px";
   }
 

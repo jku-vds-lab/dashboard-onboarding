@@ -23,15 +23,19 @@ export function showReportChanges() {
     global.explainGroupCardHeight +
     `px;pointer-events:auto;border-radius:10px;background-color:lightsteelblue;z-index: 99 !important;`;
   if (global.isEditor) {
+    let rect = null;
     const flex = document
-      .getElementById("flexContainer")!
-      .getBoundingClientRect();
+      .getElementById("flexContainer")
+    if(flex){
+      rect = flex.getBoundingClientRect();
+    }
     const onboarding = document
       .getElementById("onboarding")!
       .getBoundingClientRect();
+    const flexTop = rect ? rect.top:0;
     style +=
       `position:relative;top:` +
-      -(onboarding.top - flex.top - global.globalCardTop) +
+      -(onboarding.top - flexTop - global.globalCardTop) +
       `px;margin: 0 auto;`;
   } else {
     style +=
