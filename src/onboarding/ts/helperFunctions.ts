@@ -61,7 +61,7 @@ export function addContainerOffset(cardHeight: number) {
       const headerOffset = cardHeight - pageOffset + global.globalCardTop;
       header.style.marginTop = headerOffset + "px";
     }
-    
+
   }
 
   const reportOffsetTop = parseInt(
@@ -584,7 +584,7 @@ export function removeContainerOffset() {
   }
 
   const onboarding = document.getElementById("onboarding");
-  if (onboarding) {
+  if (onboarding && !global.isEditor) {
     onboarding.style.top = global.onboardingOffset + "px";
   }
 
