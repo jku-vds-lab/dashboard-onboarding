@@ -33,7 +33,8 @@ export class TraversalOrder {
 
   buildStory(
     startNodeId: string,
-    visitedNodes: Set<string> = new Set()
+    visitedNodes: Set<string> = new Set(),
+    insideGroup?: boolean
   ): (IDefaultNode | IGroupNode)[] {
     const story: (IDefaultNode | IGroupNode)[] = [];
     try {
@@ -48,20 +49,23 @@ export class TraversalOrder {
       while (currentNode) {
         let nextNode = null;
         this.graph.forEachOutNeighbor(currentNode, (neighbour: string) => {
+          debugger
           nextNode = neighbour;
-          if (this.graph.outDegree(currentNode) == 0) {
-            nextNode = null;
-            return story;
-          } else if (this.graph.outDegree(currentNode) == 1) {
-            const nextNode = this.getNodeById(neighbour);
-            if (nextNode) {
-              story.push(nextNode);
-            }
-          } else if (currentNode) {
-            const groupNode = this.createGroupNode(currentNode, visitedNodes);
-            if (groupNode && !visitedNodes.has(groupNode.id)) {
-              story.push(groupNode);
-              visitedNodes.add(groupNode.id);
+          if(!insideGroup || this.graph.inDegree(neighbour) === 1) {
+            if (this.graph.outDegree(currentNode) == 0) {
+              nextNode = null;
+              return story;
+            } else if (this.graph.outDegree(currentNode) == 1) {
+              const nextNode = this.getNodeById(neighbour);
+              if (nextNode) {
+                story.push(nextNode);
+              }
+            } else if (currentNode) {
+              const groupNode = this.createGroupNode(currentNode, visitedNodes);
+              if (groupNode && !visitedNodes.has(groupNode.id)) {
+                story.push(groupNode);
+                visitedNodes.add(groupNode.id);
+              }
             }
           }
         });
@@ -96,7 +100,8 @@ export class TraversalOrder {
     this.graph.forEachOutNeighbor(nodeId, (neighbour: string) => {
 
       if (!visitedNodes.has(neighbour)) {
-        const branchStory = this.buildStory(neighbour, visitedNodes);
+        debugger
+        const branchStory = this.buildStory(neighbour, visitedNodes, true);
         mainGNode.nodes.push(...branchStory);
       } else {
         console.log("Already visited ", neighbour);
@@ -151,6 +156,7 @@ export class TraversalOrder {
 
   createTraversal() {
     try {
+      debugger
       this.convertToGraph();
       this.findStartingStoryNodes();
       const story = this.buildStories();
