@@ -598,6 +598,7 @@ function removeDesignVisuals() {
     return (
       visual.type !== "" &&
       visual.type !== "basicShape" &&
+      visual.type !== "shape" &&
       visual.type !== "textbox" &&
       visual.type !== "actionButton"
     );
