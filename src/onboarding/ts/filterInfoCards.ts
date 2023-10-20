@@ -29,8 +29,10 @@ export async function createFilterInfoCard(categories: string[], count: number, 
     "filterInfoCard"
   );
 
-  createExpertiseSlider("globalFilter", categories, count, "filterInfoCard")
-
+  if(categories[0] !== "interaction"){
+    createExpertiseSlider("globalFilter", categories, count, "filterInfoCard");
+  }
+  
   let traversal: TraversalElement[];
   if (global.explorationMode) {
     traversal = global.basicTraversal;

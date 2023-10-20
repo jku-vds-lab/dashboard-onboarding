@@ -71,7 +71,9 @@ export async function createInfoCard(
     );
   }
 
-  createExpertiseSlider("visual", categories, count, "infoCard", visual);
+  if(categories[0] !== "interaction"){
+    createExpertiseSlider("visual", categories, count, "infoCard", visual);
+  }
 
   let traversal: TraversalElement[];
   if (global.explorationMode) {
