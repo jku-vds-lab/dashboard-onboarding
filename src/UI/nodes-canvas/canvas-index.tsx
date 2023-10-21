@@ -397,8 +397,17 @@ export default function NodesCanvas(props: Props) {
           setNodes((nds) => nds.concat(node));
         }
       }
+    
+      setEdges([]);
+
+      const createdEdges = createInitialEdges();
+      if (createdEdges) {
+        for (const edge of createdEdges) {
+          setEdges((e) => e.concat(edge));
+        }
+      }
     },
-    [createNodes, setNodes]
+    [createNodes, setNodes, createInitialEdges, setEdges]
   );
   const onSelectionChangeFunction = (params: OnSelectionChangeParams) => {
     setSelectedNodes(params.nodes);
