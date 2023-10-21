@@ -91,7 +91,7 @@ export async function onDataSelected(event: { detail: { dataPoints: any[] } }) {
       global.setSelectedTargets(selectedData.identity);
       showReportChanges();
     }
-  } else {
+  } else if(document.getElementById("onboarding")){
     reloadOnboardingAt();
     helpers.recreateInteractionExampleButton();
   }
