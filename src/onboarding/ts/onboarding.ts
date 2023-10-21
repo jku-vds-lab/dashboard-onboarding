@@ -111,7 +111,7 @@ export async function reloadOnboardingAt() {
   } else if (document.getElementById("dashboardInfoCard")) {
     await startOnboardingAt("dashboard", null, ["general"], findCurrentTraversalCount());
   } else if (document.getElementById("filterInfoCard")) {
-    await startOnboardingAt("globalFilter", null, ["general"], findCurrentTraversalCount(), expertise);
+    await startOnboardingAt("globalFilter", null, ["general", "interaction"], findCurrentTraversalCount(), expertise);
   } else if (document.getElementById("interactionCard")) {
     await startOnboardingAt("interaction");
   } else if (document.getElementById("showChangesCard")) {
@@ -280,7 +280,7 @@ export function createOnboardingOverlay() {
   });
 
   if (
-    findVisualIndexInTraversal(global.basicTraversal, "globalFilter", ["general"], 1) !== -1
+    findVisualIndexInTraversal(global.basicTraversal, "globalFilter", ["general", "interaction"], 1) !== -1
   ) {
     const style = helpers.getClickableStyle(
       -global.settings.reportOffset.top,
@@ -343,7 +343,7 @@ export function createOverlayForVisuals(visuals: TraversalElement[]) {
           global.reportHeight!
         );
         style += "border: 5px solid lightgreen;";
-        createOverlay("globalFilter", style, visualInfo.count, ["general"]);
+        createOverlay("globalFilter", style, visualInfo.count, ["general", "interaction"]);
         break;
       default:
         let currentElement: TraversalElement;
