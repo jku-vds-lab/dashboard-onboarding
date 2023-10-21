@@ -88,11 +88,11 @@ export default function OutputPane() {
         </div>
       </div>
       <div id="userLevel">
+        <div className="label">User Level</div>
         <span>
           Click on a matrix cell to set the user level based on their domain or
           vis expertise!
         </span>
-        <div className="label">User Level</div>
         <div id="userMatrix">
           <UserLevel />
         </div>
