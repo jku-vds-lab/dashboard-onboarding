@@ -182,6 +182,7 @@ export default class InsightDescription {
         }
 
         highestCategory = helper.getHighestCategory(
+          visual,
           visual.data.data,
           dataName,
           visual.columnValues,
@@ -245,8 +246,9 @@ export default class InsightDescription {
           );
         }
 
-        if (visual.legend) {
+        if (visual.legend || visual.encoding.yAxes.length > 1) {
           highestCategory = helper.getHighestCategory(
+            visual,
             visual.data.data,
             visual.dataName,
             visual.legendValues,

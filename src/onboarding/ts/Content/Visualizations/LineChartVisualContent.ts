@@ -21,6 +21,7 @@ export default class LineChart extends Visualization {
   legendValues: string[];
   dataValue: YAxis;
   dataName: string;
+  isVertical: boolean;
 
   constructor() {
     super();
@@ -43,6 +44,7 @@ export default class LineChart extends Visualization {
     this.legendValues = [];
     this.dataValue = new YAxis();
     this.dataName = "";
+    this.isVertical = true;
   }
   
   async setVisualInformation(visual: VisualDescriptor){

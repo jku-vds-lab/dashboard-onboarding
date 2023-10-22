@@ -21,6 +21,7 @@ export default class BarChart extends Visualization {
   legendValues: string[];
   dataValue: YAxis;
   dataName: string;
+  isVertical: boolean;
 
   constructor() {
     super();
@@ -43,6 +44,7 @@ export default class BarChart extends Visualization {
     this.legendValues = [];
     this.dataValue = new YAxis();
     this.dataName = "";
+    this.isVertical = false;
   }
 
   async setVisualInformation(visual:VisualDescriptor){    

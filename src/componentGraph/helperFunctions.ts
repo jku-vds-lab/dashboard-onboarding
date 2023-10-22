@@ -145,6 +145,7 @@ export function getSpecificDataPoint(
 }
 
 export function getHighestCategory(
+  visual: any,
   visualData: Map<string, string>[],
   dataName: string,
   legendValues: string[],
@@ -152,31 +153,56 @@ export function getHighestCategory(
   dataAttributes?: string[]
 ) {
   const sums = [];
-
   
   if(dataAttributes){
     return getHighestAttribute(dataAttributes, visualData)[1];
   }
-
-  for (const legendValue of legendValues) {
-    const legendData = visualData.filter(
-      (dataMap) => dataMap.get(legendName) === legendValue
-    );
-    let sum = 0;
-    for (const dataPoint of legendData) {
-      const data = dataPoint.get(dataName);
-      if (data) {
-        if(!parseInt(data)){
-          return;
-        }
-        sum += parseInt(data);
-      }
+  
+  if(legendName === ""){
+    let axes = [];
+    if(visual.isVertical){
+      axes = visual.encoding.yAxes;
+    } else{
+      axes = visual.encoding.xAxes;
     }
-    sums.push(sum);
-  }
 
-  const position = sums.indexOf(Math.max(...sums));
-  return legendValues[position];
+    for (const axis of axes) {
+      let sum = 0;
+      for (const map of visualData) {
+        const data = map.get(axis.attribute);
+        if (data) {
+          if(!parseInt(data)){
+            return;
+          }
+          sum += parseInt(data);
+        }
+      }
+      sums.push(sum);
+    }
+    
+    const position = sums.indexOf(Math.max(...sums));
+    return axes[position].attribute;
+  } else{
+    for (const legendValue of legendValues) {
+      const legendData = visualData.filter(
+        (dataMap) => dataMap.get(legendName) === legendValue
+      );
+      let sum = 0;
+      for (const dataPoint of legendData) {
+        const data = dataPoint.get(dataName);
+        if (data) {
+          if(!parseInt(data)){
+            return;
+          }
+          sum += parseInt(data);
+        }
+      }
+      sums.push(sum);
+    }
+    
+    const position = sums.indexOf(Math.max(...sums));
+    return legendValues[position];
+  }
 }
 
 export function getHighestValue(

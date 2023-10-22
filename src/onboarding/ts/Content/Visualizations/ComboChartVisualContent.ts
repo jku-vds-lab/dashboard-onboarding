@@ -26,6 +26,7 @@ export default class ComboChart extends Visualization {
   lineName: YAxis[];
   lineAxes: string[];
   lineValues: string[];
+  isVertical: boolean;
 
   constructor() {
     super();
@@ -53,6 +54,7 @@ export default class ComboChart extends Visualization {
     this.lineName = [];
     this.lineAxes = [];
     this.lineValues = [];
+    this.isVertical = true;
   }
 
   async setVisualInformation(visual: VisualDescriptor) {
