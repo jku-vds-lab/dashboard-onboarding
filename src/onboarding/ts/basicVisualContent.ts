@@ -1,4 +1,5 @@
 import * as helper from "./../../componentGraph/helperFunctions";
+import { getGeneralInteractionInfo } from "./complexVisualContent";
 import * as global from "./globalVariables";
 import { VisualDescriptor } from "powerbi-client";
 
@@ -39,10 +40,18 @@ export async function getChartChanges(visual: any, isVertical: boolean) {
 
   if (!isVertical) {
     axis = CGVisual?.encoding.yAxes[0].attribute!;
-    dataName = CGVisual?.encoding.xAxes[0].attribute!;
+    const allAxis = [];
+    for(const axis of CGVisual?.encoding.xAxes!){
+      allAxis.push(axis.attribute!);
+    }
+    dataName = helper.dataToString(allAxis, "and");
   } else {
     axis = CGVisual?.encoding.xAxes[0].attribute!;
-    dataName = CGVisual?.encoding.yAxes[0].attribute!;
+    const allAxis = [];
+    for(const axis of CGVisual?.encoding.yAxes!){
+      allAxis.push(axis.attribute!);
+    }
+    dataName = helper.dataToString(allAxis, "and");
   }
   const axisValues = await helper.getSpecificDataInfo(visual, axis);
   const legendValues = await helper.getSpecificDataInfo(
@@ -59,23 +68,36 @@ export async function getChartChanges(visual: any, isVertical: boolean) {
     );
   });
 
-  // let visualInteractionInfo = helpers.getGeneralInteractionInfo(
-  //   additionalFilters,
-  //   dataName
-  // );
+  let visualInteractionInfo = getGeneralInteractionInfo(
+    additionalFilters,
+    dataName
+  );
 
-  // if (axisValues && legendValues) {
-  //   visualInteractionInfo += helpers.getTargetInteractionFilter(axis);
-  //   visualInteractionInfo += " and ";
-  //   visualInteractionInfo +=
-  //     helpers.getTargetInteractionFilter(legendAttribute);
-  // } else if (axisValues) {
-  //   visualInteractionInfo += helpers.getTargetInteractionFilter(axis);
-  // } else if (legendValues) {
-  //   visualInteractionInfo +=
-  //     helpers.getTargetInteractionFilter(legendAttribute);
-  // }
-  // visualInteractionInfo += ".";
+  if (axisValues.length !== 0 && legendValues.length !== 0) {
+    visualInteractionInfo += getTargetInteractionFilter(axis);
+    visualInteractionInfo += " and ";
+    visualInteractionInfo +=
+      getTargetInteractionFilter(legendAttribute);
+  } else if (axisValues.length !== 0) {
+    visualInteractionInfo += getTargetInteractionFilter(axis);
+  } else if (legendValues.length !== 0) {
+    visualInteractionInfo +=
+      getTargetInteractionFilter(legendAttribute);
+  }
+  visualInteractionInfo += ".";
 
-  return "visualInteractionInfo";
+  return visualInteractionInfo;
+}
+
+function getTargetInteractionFilter(target: string){
+  let visualInteractionInfo = "";
+  const filter = global.selectedTargets.filter(function (data) {
+      return data.target.column == target;
+  });
+  if(filter.length == 0){
+      visualInteractionInfo += " for all " + target + "s"; 
+  }else{
+      visualInteractionInfo += " for " + filter[0].equals;   
+  }
+  return visualInteractionInfo;
 }

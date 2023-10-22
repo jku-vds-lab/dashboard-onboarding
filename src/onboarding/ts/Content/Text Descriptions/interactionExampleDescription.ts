@@ -42,16 +42,16 @@ export default class InteractionExampleDescription {
       this.interactionInfo.representing +
       dataName;
 
-    if (axisValues && legendValues) {
+    if (axisValues && legendValues && axisValues.length !== 0 && legendValues.length !== 0) {
       text +=
         this.prepositions.for +
         legendValues[Math.floor(legendValues.length / 2)] +
         this.prepositions.and +
         axisValues[Math.floor(axisValues.length / 2)];
-    } else if (axisValues) {
+    } else if (axisValues && axisValues.length !== 0) {
       text +=
         this.prepositions.for + axisValues[Math.floor(axisValues.length / 2)];
-    } else if (legendValues) {
+    } else if (legendValues && legendValues.length !== 0) {
       text +=
         this.prepositions.for +
         legendValues[Math.floor(legendValues.length / 2)];
