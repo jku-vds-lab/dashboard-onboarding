@@ -19,7 +19,9 @@ import * as global from "../../onboarding/ts/globalVariables";
 import {
   TraversalElement,
   findTraversalVisual,
+  findVisualIndexInTraversal,
   groupType,
+  setCurrentId,
 } from "../../onboarding/ts/traversal";
 
 import { ContextMenu } from "./context-menu";
@@ -343,6 +345,24 @@ export default function NodesCanvas(props: Props) {
         if (fullNameArray && basicName) {
           dispatch(increment([basicName, fullNameArray]));
         }
+
+        const categories = [];
+        let count = 1;
+        if(fullNameArray.length <= 3){
+          categories.push("general");
+          count = parseInt(fullNameArray[1]);
+        } else{
+          categories.push(fullNameArray[1].toLowerCase());
+          count = parseInt(fullNameArray[2]);
+        }
+        setCurrentId(
+          findVisualIndexInTraversal(
+            global.settings.traversalStrategy,
+            fullNameArray[0],
+            categories,
+            count
+          )
+        );
       } catch (error) {
         console.log("Error on nodeclick", error);
       }
