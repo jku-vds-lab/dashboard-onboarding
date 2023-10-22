@@ -71,16 +71,14 @@ export function addContainerOffset(cardHeight: number) {
 
   const onboarding = document.getElementById("onboarding");
   if (onboarding) {
-    const rectTop = rect? rect.top:0;
     global.setOnboardingOffset(
-      pageOffset + buttonHeaderHeight + reportOffsetTop + rectTop
+      pageOffset + buttonHeaderHeight + reportOffsetTop
     );
     const top =
       global.globalCardTop +
       cardHeight +
       buttonHeaderHeight +
-      reportOffsetTop +
-      rectTop;
+      reportOffsetTop;
     onboarding.style.top = top + "px";
   }
 
