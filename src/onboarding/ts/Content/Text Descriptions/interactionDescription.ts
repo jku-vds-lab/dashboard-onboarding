@@ -88,7 +88,7 @@ export default class InteractionDescription {
     let text = "";
 
     text =
-      this.interactionInfo.click +
+      this.interactionInfo.hover +
       mark +
       this.interactionInfo.hoverAction +
       this.punctuations.dot +
