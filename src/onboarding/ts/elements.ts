@@ -8,6 +8,7 @@ import {
 import { removeHintCard, removeShowChangesCard } from "./showReportChanges";
 import { showVisualChanges } from "./showVisualsChanges";
 import {
+  TraversalElement,
   createInformationCard,
   createLookedAtIds,
   currentId,
@@ -65,16 +66,24 @@ export function createDiv(attributes: {
         removeOnboardingOverlay();
         removeContainerOffset();
         removeExplainGroupCard();
+
+        let traversal: TraversalElement[];
+        if (global.explorationMode) {
+          traversal = global.basicTraversal;
+        } else {
+          traversal = global.settings.traversalStrategy;
+        }
+        
         setCurrentId(
           findVisualIndexInTraversal(
-            global.settings.traversalStrategy,
+            traversal,
             attributes.id,
             attributes.categories,
             attributes.count
           )
         );
         if (
-          global.settings.traversalStrategy[currentId].element.id.includes("group")
+          traversal[currentId].element.id.includes("group")
         ) {
           const lookedAt = createLookedAtIds(
             attributes.id,
@@ -84,7 +93,7 @@ export function createDiv(attributes: {
           updateLookedAt(lookedAt);
         }
         if (attributes.id === "globalFilter") {
-          createInformationCard("globalFilter", attributes.count);
+          createInformationCard("globalFilter", attributes.count, undefined, undefined, attributes.categories);
         } else {
           createInformationCard(
             "visual",

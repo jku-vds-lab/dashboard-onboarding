@@ -288,7 +288,7 @@ export function createOnboardingOverlay() {
       global.filterOpenedWidth,
       global.reportHeight!
     );
-    createOverlay("globalFilter", style, 1);
+    createOverlay("globalFilter", style, 1, ["general", "interaction"]);
   }
 }
 
