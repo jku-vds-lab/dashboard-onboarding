@@ -142,18 +142,8 @@ async function setExpertiseLevel(visualInfo: { type: string, categories: string[
       currentLevel = Level.Medium;
       break;
   }
-  let newExpertise: ExpertiseLevel;
 
-  const state = store.getState();
-  const expertise = state.expertise;
-
-  if(visualInfo.categories.includes("general") && !visualInfo.categories.includes("insight")){
-    newExpertise = {Domain: expertise.Domain, Vis: currentLevel};
-  } else if(visualInfo.categories.includes("insight") && !visualInfo.categories.includes("general")){
-    newExpertise = {Domain: currentLevel, Vis: expertise.Vis};
-  } else {
-    newExpertise = {Domain: currentLevel, Vis: currentLevel};
-  }
+  const newExpertise = {Domain: currentLevel, Vis: currentLevel};
 
   store.dispatch(decrement(newExpertise));
   await startOnboardingAt(visualInfo.type, visualInfo.visual, visualInfo.categories, visualInfo.count, newExpertise);
