@@ -3,6 +3,7 @@ import Accordion from "react-bootstrap/Accordion";
 import Form from "react-bootstrap/Form";
 import {
   basicTraversalStrategy,
+  customTraversalStrategy,
   depthFirstTraversalStrategy,
   martiniGlassTraversalStrategy,
   similarVisTraversalStrategy,
@@ -16,7 +17,7 @@ export default function TraversalPane(props: any) {
 
   function createCustomTrav(option: string) {
     setSelectedOption(option);
-    const trav = global.settings.traversalStrategy;
+    const trav = customTraversalStrategy();
     props.setTrav(trav);
     props.buildTraversal();
   }

@@ -43,6 +43,7 @@ export class TraversalOrder {
       if (!startNode) {
         return story;
       }
+      // debugger;
       visitedNodes.add(startNodeId);
       story.push(startNode);
 
@@ -50,7 +51,7 @@ export class TraversalOrder {
         let nextNode = null;
         this.graph.forEachOutNeighbor(currentNode, (neighbour: string) => {
           nextNode = neighbour;
-          if(!insideGroup || this.graph.inDegree(neighbour) === 1) {
+          if (!insideGroup || this.graph.inDegree(neighbour) === 1) {
             if (this.graph.outDegree(currentNode) == 0) {
               nextNode = null;
               return story;
@@ -79,25 +80,21 @@ export class TraversalOrder {
     }
   }
 
-  createGroupNode(
-    nodeId: string,
-    visitedNodes: Set<string>,
-  ): IGroupNode {
-     const mainGNode: IGroupNode = {
-        id: `group_${nodeId}`,
+  createGroupNode(nodeId: string, visitedNodes: Set<string>): IGroupNode {
+    const mainGNode: IGroupNode = {
+      id: `group_${nodeId}`,
+      type: "group",
+      nodes: [],
+      position: { x: 0, y: 0 },
+      data: {
+        title: "group node",
         type: "group",
-        nodes: [],
-        position: { x: 0, y: 0 },
-        data: {
-          title: "group node",
-          type: "group",
-          traverse: groupType.onlyOne,
-        },
-        groupNode: [],
-      };
+        traverse: groupType.onlyOne,
+      },
+      groupNode: [],
+    };
 
     this.graph.forEachOutNeighbor(nodeId, (neighbour: string) => {
-
       if (!visitedNodes.has(neighbour)) {
         const branchStory = this.buildStory(neighbour, visitedNodes, true);
         mainGNode.nodes.push(...branchStory);
@@ -112,15 +109,17 @@ export class TraversalOrder {
   buildStories(): (IDefaultNode | IGroupNode)[] | undefined {
     try {
       let story;
+      console.log("Number of stories", this.stories.length);
+      console.log("------------------------BEGIN");
       this.entryNodes.forEach((nodeId: string) => {
         console.log("------------------------");
         story = this.buildStory(nodeId);
         console.log("Story for ", nodeId, story);
-        console.log("************************");
+        console.log("------------------------");
         this.stories.push(story);
       });
-
-      return story
+      console.log("------------------------END");
+      return story;
     } catch (error) {
       console.log("Error in building stories", error);
     }
@@ -129,23 +128,31 @@ export class TraversalOrder {
   // ghost node is being added for no reason
   convertToGraph() {
     try {
+      console.log("All nodes", this.allNodes);
       this.allNodes.forEach((node: IDefaultNode | IGroupNode) => {
         this.graph.addNode(node.id);
       });
-
+      console.log("All edges", this.edges);
       this.edges.forEach((edge: Edge) => {
         this.graph.addEdge(edge.source, edge.target);
       });
     } catch (error) {
+      debugger;
+
       console.log("Error while converting to graph", error);
     }
   }
 
   findStartingStoryNodes() {
+    debugger;
     this.graph.forEachNode((nodeId) => {
       if (this.graph.inDegree(nodeId) == 0) {
         const node = this.allNodes.find((node) => node.id === nodeId);
-        if(node?.parentNode === "" || node?.parentNode === undefined || node?.parentNode === null){
+        if (
+          node?.parentNode === "" ||
+          node?.parentNode === undefined ||
+          node?.parentNode === null
+        ) {
           this.entryNodes.push(nodeId);
         }
       }
@@ -157,7 +164,7 @@ export class TraversalOrder {
       this.convertToGraph();
       this.findStartingStoryNodes();
       const story = this.buildStories();
-      if(story){
+      if (story) {
         createTraversalOfNodes(story);
       }
       this.defaultNodes = [];

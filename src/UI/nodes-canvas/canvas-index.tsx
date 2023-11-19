@@ -90,6 +90,7 @@ export default function NodesCanvas(props: Props) {
     const initialNodes: Node[] = [];
     try {
       const createdNodes = createNodes(global.settings.traversalStrategy);
+      // console.log("Create Initial Nodes", createdNodes);
       if (createdNodes) {
         for (const node of createdNodes) {
           initialNodes.push(node);
@@ -102,7 +103,7 @@ export default function NodesCanvas(props: Props) {
     return initialNodes;
   }
 
-  function createInitialEdges(): Edge<any>[] {
+  const createInitialEdges = useCallback(() => {
     const edges: Edge[] = [];
 
     try {
@@ -110,22 +111,119 @@ export default function NodesCanvas(props: Props) {
         return edges;
       }
       nodes.forEach((node, index) => {
-        if (index < nodes.length && index > 0) {
-          edges.push({
-            id: `e${index}`,
-            source: index == 0 ? "null" : nodes[index - 1].id,
-            sourceHandle: index == 0 ? null : nodes[index - 1].id,
-            target: node.id,
-            targetHandle: node.id,
-            type: "default",
-          });
+        const sourceNode = node;
+
+        if (node.parentNode) {
+          return;
+        }
+
+        for (
+          let targetIndex = index + 1;
+          targetIndex < nodes.length;
+          targetIndex++
+        ) {
+          const targetNode = nodes[targetIndex];
+          if (targetNode.parentNode) {
+            continue;
+          }
+          if (!sourceNode.parentNode && !targetNode.parentNode) {
+            edges.push({
+              id: `e${index}`,
+              source: sourceNode.id,
+              sourceHandle: sourceNode.id,
+              target: targetNode.id,
+              targetHandle: targetNode.id,
+              type: "default",
+            });
+            break;
+          }
         }
       });
     } catch (error) {
       console.log("Error in create initial nodes", error);
     }
     return edges;
-  }
+  }, []);
+
+  const createDefaultNode = useCallback(
+    (
+      elem: TraversalElement,
+      position: {
+        x: number;
+        y: number;
+      }
+    ) => {
+      const visTitle = getTitle(elem);
+      if (!visTitle) {
+        return;
+      }
+      const visType = getType(visTitle);
+      const newNode = defaultNode().getNode(
+        event,
+        visType,
+        getID(elem),
+        "default",
+        position,
+        visTitle
+      );
+      return newNode;
+    },
+    [defaultNode]
+  );
+
+  const createGroupNode = useCallback(
+    (
+      elem: TraversalElement,
+      prevNode: Node | undefined,
+      createdNodes: Node[]
+    ) => {
+      const nodesWithinGroup: Node[] = [];
+      const visuals = elem.element.visuals;
+      for (let i = 0; i < visuals.length; i++) {
+        for (let j = 0; j < visuals[i].length; j++) {
+          if (visuals[i][j].element.id.includes("group")) {
+            const newGroup = createGroupNode(
+              visuals[i][j],
+              prevNode,
+              createdNodes
+            );
+            nodesWithinGroup.push(newGroup);
+          } else {
+            const newNode = createDefaultNode(
+              visuals[i][j],
+              getPositionWithinGroup(i, j)
+            );
+            if (newNode) {
+              createdNodes.push(newNode);
+              nodesWithinGroup.push(newNode);
+            }
+          }
+        }
+      }
+
+      const groupNodeObj = new GroupNode({
+        nodes: nodesWithinGroup,
+        id: elem.element.id + " " + elem.count,
+        position: { x: 0, y: 0 },
+        data: null,
+      });
+
+      const groupNode = groupNodeObj.getGroupNode(
+        false,
+        getPositionForWholeTrav(prevNode),
+        elem.element.type
+      );
+      createdNodes.push(groupNode);
+
+      nodesWithinGroup.forEach((node) => {
+        node.parentNode = groupNode?.id;
+        node.extent = "parent";
+        node.draggable = true;
+      });
+      return groupNode;
+    },
+    [createDefaultNode]
+  );
 
   const createNodes = useCallback(
     (traversal: TraversalElement[]) => {
@@ -139,10 +237,14 @@ export default function NodesCanvas(props: Props) {
           }
           if (elem.element.id.includes("group")) {
             const groupNode = createGroupNode(elem, prevNode, createdNodes);
+            // createdNodes.push(groupNode); // why was this not being added?
             prevNode = groupNode;
           } else {
-            const newNode = createDefaultNode(elem, prevNode, getPositionForWholeTrav(prevNode));
-            if(newNode){
+            const newNode = createDefaultNode(
+              elem,
+              getPositionForWholeTrav(prevNode) // will return 0,0 is the prevNode is undefined
+            );
+            if (newNode) {
               createdNodes.push(newNode);
               prevNode = newNode;
             }
@@ -154,67 +256,8 @@ export default function NodesCanvas(props: Props) {
 
       return createdNodes;
     },
-    [defaultNode]
+    [createDefaultNode, createGroupNode]
   );
-
-  function createDefaultNode(elem: TraversalElement, prevNode: Node | undefined, position: {
-    x: number,
-    y: number}){
-    const visTitle = getTitle(elem);
-    if (!visTitle) {
-      return;
-    }
-    const visType = getType(visTitle);
-    const newNode = defaultNode().getNode(
-      event,
-      visType,
-      getID(elem),
-      "default",
-      position,
-      visTitle
-    );
-    return newNode;
-  }
-
-  function createGroupNode(elem: TraversalElement, prevNode: Node | undefined, createdNodes: Node[]) {
-    const nodesWithinGroup: Node[] = [];
-    const visuals = elem.element.visuals; 
-    for (let i = 0; i < visuals.length; i++) {
-      for (let j = 0; j < visuals[i].length; j++) {
-        if(visuals[i][j].element.id.includes("group")){
-          const newGroup = createGroupNode(visuals[i][j], prevNode, createdNodes);
-          nodesWithinGroup.push(newGroup);
-        } else{
-          const newNode = createDefaultNode(visuals[i][j], prevNode, getPositionWithinGroup(i, j));
-          if(newNode){
-            createdNodes.push(newNode);
-            nodesWithinGroup.push(newNode);
-          }
-        }
-      }
-    }
-
-    const groupNodeObj = new GroupNode({
-      nodes: nodesWithinGroup,
-      id: elem.element.id + " " + elem.count,
-      position: { x: 0, y: 0 },
-      data: null,
-    });
-
-    const groupNode = groupNodeObj.getGroupNode(
-      false,
-      getPositionForWholeTrav(prevNode),
-      elem.element.type
-    );
-    createdNodes.push(groupNode);
-
-    nodesWithinGroup.forEach((node) => {
-      node.parentNode = groupNode?.id;
-      node.extent = "parent";
-      node.draggable = true;
-    });
-    return groupNode;
-  }
 
   const initialNodes: Node[] = createIntitialNodes();
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
@@ -348,10 +391,10 @@ export default function NodesCanvas(props: Props) {
 
         const categories = [];
         let count = 1;
-        if(fullNameArray.length <= 3){
+        if (fullNameArray.length <= 3) {
           categories.push("general");
           count = parseInt(fullNameArray[1]);
-        } else{
+        } else {
           categories.push(fullNameArray[1].toLowerCase());
           count = parseInt(fullNameArray[2]);
         }
@@ -412,12 +455,13 @@ export default function NodesCanvas(props: Props) {
       setNodes([]);
 
       const createdNodes = createNodes(traversal);
+      // console.log("Build Traversal", createdNodes);
       if (createdNodes) {
         for (const node of createdNodes) {
           setNodes((nds) => nds.concat(node));
         }
       }
-    
+
       setEdges([]);
 
       const createdEdges = createInitialEdges();
@@ -436,6 +480,8 @@ export default function NodesCanvas(props: Props) {
     if (nodeData?.type === "group") {
       setNodes((nodes) => nodes.filter((n) => n.parentNode !== nodeData.id));
       setNodes((nodes) => nodes.filter((n) => n.id !== nodeData.id));
+      setEdges((edges) => edges.filter((e) => e.source !== nodeData.id));
+      setEdges((edges) => edges.filter((e) => e.target !== nodeData.id));
     } else if (nodeData?.type === "default" && selectedNodes.length <= 1) {
       setNodes((nodes) => nodes.filter((n) => n.id !== nodeData.id));
       edges.forEach((edge: Edge) => {

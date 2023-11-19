@@ -146,11 +146,7 @@ export function createInformationCard(
       createDashboardInfoCard(count);
       break;
     case "globalFilter":
-      createFilterInfoCard(
-        categories!,
-        count,
-        state.expertise
-      );
+      createFilterInfoCard(categories!, count, state.expertise);
       break;
     case "group":
       createExplainGroupCard();
@@ -183,7 +179,13 @@ export function getCurrentTraversalElementType(traversal: TraversalElement[]) {
   } else if (currentElement.element.id === "dashboard") {
     createInformationCard("dashboard", currentElement.count);
   } else if (currentElement.element.id === "globalFilter") {
-    createInformationCard("globalFilter", currentElement.count, undefined, undefined, currentElement.categories);
+    createInformationCard(
+      "globalFilter",
+      currentElement.count,
+      undefined,
+      undefined,
+      currentElement.categories
+    );
   } else {
     createInformationCard(
       "visual",
@@ -196,9 +198,11 @@ export function getCurrentTraversalElementType(traversal: TraversalElement[]) {
 }
 
 export function createGroupOverlay() {
-  const currentElement = currentGroupElement? currentGroupElement : global.settings.traversalStrategy[currentId];
+  const currentElement = currentGroupElement
+    ? currentGroupElement
+    : global.settings.traversalStrategy[currentId];
   const firstVisuals: TraversalElement[] = [];
- 
+
   for (const trav of currentElement.element.visuals) {
     if (currentElement.element.type === groupType.all) {
       if (
@@ -213,13 +217,13 @@ export function createGroupOverlay() {
           )
         )
       ) {
-        firstVisuals.push(trav[0])
+        firstVisuals.push(trav[0]);
       }
     } else {
       firstVisuals.push(trav[0]);
     }
   }
-  
+
   createInformationCard("group", currentElement.count, firstVisuals, undefined);
 }
 
@@ -230,41 +234,68 @@ export function findVisualIndexInTraversal(
   count: number
 ) {
   const elem = traversal.find(
-    (vis) => vis.element.id === id &&
-    vis.categories.every((category) => categories.includes(category)) && vis.count === count
+    (vis) =>
+      vis.element.id === id &&
+      vis.categories.every((category) => categories.includes(category)) &&
+      vis.count === count
   );
   let index = traversal.indexOf(elem!);
   if (index == -1) {
     const groups = traversal.filter((object) => isGroup(object.element));
     for (const group of groups) {
-      const index = indexInGroup(traversal, group, group.element.visuals, id, categories, count)
-      return index? index:0;
+      const index = indexInGroup(
+        traversal,
+        group,
+        group.element.visuals,
+        id,
+        categories,
+        count
+      );
+      return index ? index : 0;
     }
     index = -1;
   }
   return index;
 }
 
-function indexInGroup(traversal: TraversalElement[], group: TraversalElement, visuals: TraversalElement[][],
-id: string,
-categories: string[],
-count: number): number | undefined{
+function indexInGroup(
+  traversal: TraversalElement[],
+  group: TraversalElement,
+  visuals: TraversalElement[][],
+  id: string,
+  categories: string[],
+  count: number
+): number | undefined {
   for (const groupTraversal of visuals) {
     for (const element of groupTraversal) {
-      if(isGroup(element.element)){
-        return indexInGroup(traversal, group, element.element.visuals, id, categories, count);
+      if (isGroup(element.element)) {
+        return indexInGroup(
+          traversal,
+          group,
+          element.element.visuals,
+          id,
+          categories,
+          count
+        );
       } else {
         const elemInGroup = groupTraversal.find(
           (visInGroup: TraversalElement) =>
             visInGroup.element.id === id &&
-            visInGroup.categories.every((category) => categories.includes(category)) && visInGroup.count === count
+            visInGroup.categories.every((category) =>
+              categories.includes(category)
+            ) &&
+            visInGroup.count === count
         );
         if (elemInGroup) {
-          console.log(traversal)
-          console.log(group)
+          console.log(traversal);
+          console.log(group);
           const groupElem = traversal.find(
             (vis) =>
-              vis.element.id === group.element.id && vis.categories.every((category) => group.categories.includes(category)) && vis.count === group.count
+              vis.element.id === group.element.id &&
+              vis.categories.every((category) =>
+                group.categories.includes(category)
+              ) &&
+              vis.count === group.count
           );
           const groupIndex = traversal.indexOf(groupElem!);
           return groupIndex;
@@ -290,44 +321,52 @@ export function findElementInTraversal(
   if (!foundElem) {
     const groups = traversal.filter((object) => isGroup(object.element));
     for (const group of groups) {
-      return searchInGroup(group.element.visuals, id, categories, count, groupType);
+      return searchInGroup(
+        group.element.visuals,
+        id,
+        categories,
+        count,
+        groupType
+      );
     }
-  } else if(groupType){
-    if(foundElem.element.type !== groupType){
+  } else if (groupType) {
+    if (foundElem.element.type !== groupType) {
       return;
     }
   }
   return foundElem;
 }
 
-function searchInGroup(visuals: TraversalElement[][],
+function searchInGroup(
+  visuals: TraversalElement[][],
   id: string,
   categories: string[],
   count: number,
-  groupType?: string): TraversalElement | undefined{
-    for (const groupTraversal of visuals) {
-      for(const element of groupTraversal){
-        if(isGroup(element) && !id.includes("group")){
-          return searchInGroup(element.visuals, id, categories, count);
-        } else {
-          const elemInGroup = groupTraversal.find(
-            (visInGroup: TraversalElement) =>
-              visInGroup.element.id === id &&
-              visInGroup.categories.every((category) =>
-                categories.includes(category)
-              ) &&
-              visInGroup.count === count
-          );
-          if (elemInGroup) {
-            if(groupType && elemInGroup.element.type !== groupType){
-              return;
-            }
-            return elemInGroup;
+  groupType?: string
+): TraversalElement | undefined {
+  for (const groupTraversal of visuals) {
+    for (const element of groupTraversal) {
+      if (isGroup(element) && !id.includes("group")) {
+        return searchInGroup(element.visuals, id, categories, count);
+      } else {
+        const elemInGroup = groupTraversal.find(
+          (visInGroup: TraversalElement) =>
+            visInGroup.element.id === id &&
+            visInGroup.categories.every((category) =>
+              categories.includes(category)
+            ) &&
+            visInGroup.count === count
+        );
+        if (elemInGroup) {
+          if (groupType && elemInGroup.element.type !== groupType) {
+            return;
           }
+          return elemInGroup;
         }
       }
     }
-    return undefined;
+  }
+  return undefined;
 }
 
 export function findTraversalVisual(id: string) {
@@ -424,15 +463,14 @@ export function createExplainGroupCard() {
     `px;pointer-events:auto;border-radius:10px;background-color:lightsteelblue;z-index: 99 !important;`;
   if (global.isEditor) {
     let rect = null;
-    const flex = document
-      .getElementById("flexContainer")
-    if(flex){
+    const flex = document.getElementById("flexContainer");
+    if (flex) {
       rect = flex.getBoundingClientRect();
     }
     const onboarding = document
       .getElementById("onboarding")!
       .getBoundingClientRect();
-    const flexTop = rect ? rect.top:0;
+    const flexTop = rect ? rect.top : 0;
     style +=
       `position:relative;top:` +
       -(onboarding.top - flexTop - global.globalCardTop) +
@@ -480,8 +518,8 @@ function createExplainGroupText() {
 }
 
 export function createTraversalOfGroupNodes(groupNode: IGroupNode) {
-  const group = createGroup();  
-  if(groupNode.id.includes("group_")){
+  const group = createGroup();
+  if (groupNode.id.includes("group_")) {
     group.id = "implicit_group";
   }
 
@@ -546,7 +584,7 @@ export function createTraversalOfNodes(
         trav.push(travElem);
       }
     }
-    console.log("Trav", trav);
+    console.log("Function createTraversalOfNodes", trav);
     updateTraversal(trav);
   } catch (error) {
     console.log("Error", error);
@@ -576,7 +614,7 @@ export function updateTraversal(newTraversalStrategy: TraversalElement[]) {
             const newVisuals = [];
             for (const groupElem of groupTraversal) {
               let oldSetting;
-              if(isGroup(groupElem.element)){
+              if (isGroup(groupElem.element)) {
                 oldSetting = findElementInTraversal(
                   oldTraversalStrategy,
                   groupElem.element.id,
@@ -584,7 +622,7 @@ export function updateTraversal(newTraversalStrategy: TraversalElement[]) {
                   groupElem.count,
                   groupElem.element.type
                 );
-              } else{
+              } else {
                 oldSetting = findElementInTraversal(
                   oldTraversalStrategy,
                   groupElem.element.id,

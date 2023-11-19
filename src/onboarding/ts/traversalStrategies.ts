@@ -22,8 +22,8 @@ export function basicTraversalStrategy() {
     traversalElem2.categories = categories;
     trav.push(traversalElem2);
   }
-  
-  if(global.componentGraph.dashboard.globalFilter.filters.length !== 0){
+
+  if (global.componentGraph.dashboard.globalFilter.filters.length !== 0) {
     const traversalElem1 = createTraversalElement("globalFilter");
     traversalElem1.element = getTraversalElement("globalFilter");
     trav.push(traversalElem1);
@@ -50,7 +50,7 @@ export function depthFirstTraversalStrategyOriginal() {
     }
   }
 
-  if(global.componentGraph.dashboard.globalFilter.filters.length !== 0){
+  if (global.componentGraph.dashboard.globalFilter.filters.length !== 0) {
     const categories = getStandartCategories("globalFilter");
     for (const category of categories) {
       const traversalElem1 = createTraversalElement("globalFilter");
@@ -77,7 +77,7 @@ export function martiniGlassTraversalStrategy() {
     trav.push(traversalElem2);
   }
 
-  if(global.componentGraph.dashboard.globalFilter.filters.length !== 0){
+  if (global.componentGraph.dashboard.globalFilter.filters.length !== 0) {
     const traversalElem1 = createTraversalElement("globalFilter");
     traversalElem1.element = getTraversalElement("globalFilter");
     traversalElem1.categories = ["general"];
@@ -98,11 +98,95 @@ export function martiniGlassTraversalStrategy() {
     trav.push(traversalElem4);
   }
 
- if(global.componentGraph.dashboard.globalFilter.filters.length !== 0){
+  if (global.componentGraph.dashboard.globalFilter.filters.length !== 0) {
     const traversalElem1 = createTraversalElement("globalFilter");
     traversalElem1.element = getTraversalElement("globalFilter");
     traversalElem1.categories = ["interaction"];
     trav.push(traversalElem1);
+  }
+  return trav;
+}
+
+export function customTraversalStrategy() {
+  const trav = [];
+  // "current visuals", currentVisuals);
+  try {
+    const traversalElemW = createTraversalElement("welcomeCard");
+    traversalElemW.element = getTraversalElement("welcomeCard");
+    trav.push(traversalElemW);
+    const traversalElem1 = createTraversalElement("dashboard");
+    traversalElem1.element = getTraversalElement("dashboard");
+    traversalElem1.count = 1;
+    trav.push(traversalElem1);
+
+    if (global.componentGraph.dashboard.globalFilter.filters.length !== 0) {
+      const categories = getStandartCategories("globalFilter");
+      for (const category of categories) {
+        const traversalElem1 = createTraversalElement("globalFilter");
+        traversalElem1.element = getTraversalElement("globalFilter");
+        traversalElem1.categories = [category];
+        trav.push(traversalElem1);
+      }
+    }
+
+    const groupFilters = createGroup();
+    groupFilters.type = groupType.atLeastOne;
+    const groupGeneralVis = createGroup();
+    groupGeneralVis.type = groupType.atLeastOne;
+    const groupOtherVis = createGroup();
+    groupOtherVis.type = groupType.all;
+
+    for (const vis of global.currentVisuals) {
+      const groupTrav = [];
+      const categories = getStandartCategories(vis.type);
+
+      for (const category of categories) {
+        const traversalElem = createTraversalElement(vis.type);
+        traversalElem.element = getTraversalElement(vis.name);
+        traversalElem.count = 1;
+        traversalElem.categories = [category];
+        groupTrav.push(traversalElem);
+      }
+      switch (vis.type) {
+        case "card":
+        case "multiRowCard":
+          groupGeneralVis.visuals.push(groupTrav);
+          break;
+        case "slicer":
+          groupFilters.visuals.push(groupTrav);
+          break;
+        default:
+          groupOtherVis.visuals.push(groupTrav);
+      }
+    }
+
+    console.log("Group General Vis: ", groupGeneralVis.visuals);
+    const topKPIs = groupGeneralVis;
+
+    if (groupGeneralVis.visuals.length > 3) {
+      topKPIs.visuals = groupGeneralVis.visuals.slice(1, 3);
+    }
+    if (groupGeneralVis.visuals.length > 0) {
+      const traversalElem4 = createTraversalElement("group");
+      traversalElem4.count = 1;
+      traversalElem4.element = topKPIs;
+      trav.push(traversalElem4);
+    }
+
+    if (groupOtherVis.visuals.length > 3) {
+      groupOtherVis.visuals = groupOtherVis.visuals.slice(0, 3);
+    }
+
+    if (groupOtherVis.visuals.length > 0) {
+      const traversalElem5 = createTraversalElement("group");
+      traversalElem5.count = 2;
+      traversalElem5.element = groupOtherVis;
+      trav.push(traversalElem5);
+    }
+
+    // trav.push(traversalElem6);
+  } catch (error) {
+    console.log("Error in testing", error);
   }
   return trav;
 }
@@ -119,7 +203,7 @@ export function depthFirstTraversalStrategy() {
     traversalElem1.count = 1;
     trav.push(traversalElem1);
 
-    if(global.componentGraph.dashboard.globalFilter.filters.length !== 0){
+    if (global.componentGraph.dashboard.globalFilter.filters.length !== 0) {
       const categories = getStandartCategories("globalFilter");
       for (const category of categories) {
         const traversalElem1 = createTraversalElement("globalFilter");
@@ -169,13 +253,14 @@ export function depthFirstTraversalStrategy() {
 
     if (groupGeneralVis.visuals.length > 0) {
       const traversalElem4 = createTraversalElement("group");
-      traversalElem4.count = 2;
+      traversalElem4.count = 4;
       traversalElem4.element = groupGeneralVis;
       trav.push(traversalElem4);
     }
 
     if (groupOtherVis.visuals.length > 0) {
       const traversalElem5 = createTraversalElement("group");
+
       traversalElem5.count = 3;
       traversalElem5.element = groupOtherVis;
       trav.push(traversalElem5);
@@ -262,7 +347,7 @@ export async function filterFirstTraversalStrategy() {
     traversalElem1.count = 1;
 
     trav.push(traversalElem1);
-    if(global.componentGraph.dashboard.globalFilter.filters.length !== 0){
+    if (global.componentGraph.dashboard.globalFilter.filters.length !== 0) {
       const categories = getStandartCategories("globalFilter");
       for (const category of categories) {
         const traversalElem1 = createTraversalElement("globalFilter");

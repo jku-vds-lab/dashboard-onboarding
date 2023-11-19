@@ -14,6 +14,7 @@ import {
 import { VisualDescriptor } from "powerbi-client";
 import { reportId } from "../../Config";
 import { store } from "../../UI/redux/store";
+import { customTraversalStrategy } from "./traversalStrategies";
 
 let visualIndex: number;
 
@@ -37,7 +38,7 @@ export function getTraversalElement(elem: any) {
       const traversalGroupVisuals = setGroup(elem);
       elem.visuals = traversalGroupVisuals;
       traversalElement = elem;
-    } else if(elem === "welcomeCard"){
+    } else if (elem === "welcomeCard") {
       traversalElement = setWelcomeInfo();
     } else if (elem === "dashboard") {
       traversalElement = setDashboardInfo();
@@ -53,23 +54,25 @@ export function getTraversalElement(elem: any) {
   return traversalElement;
 }
 
- function setTraversalStrategy() {
-  const traversalElemW = createTraversalElement("welcomeCard");
-  traversalElemW.element = getTraversalElement("welcomeCard");
-  traversalStrategy.push(traversalElemW);
-  const traversalElem1 = createTraversalElement("dashboard");
-  traversalElem1.element = getTraversalElement("dashboard");
-  traversalStrategy.push(traversalElem1);
-  for (const vis of global.currentVisuals) {
-    const traversalElem = createTraversalElement(vis.type);
-    traversalElem.element = getTraversalElement(vis.name);
-    traversalStrategy.push(traversalElem);
-  }
-  if(global.componentGraph.dashboard.globalFilter.filters.length !== 0){
-    const traversalElem2 = createTraversalElement("globalFilter");
-    traversalElem2.element = getTraversalElement("globalFilter");
-    traversalStrategy.push(traversalElem2);
-  }
+function setTraversalStrategy() {
+  // const traversalElemW = createTraversalElement("welcomeCard");
+  // traversalElemW.element = getTraversalElement("welcomeCard");
+  // traversalStrategy.push(traversalElemW);
+  // const traversalElem1 = createTraversalElement("dashboard");
+  // traversalElem1.element = getTraversalElement("dashboard");
+  // traversalStrategy.push(traversalElem1);
+  // for (const vis of global.currentVisuals) {
+  //   const traversalElem = createTraversalElement(vis.type);
+  //   traversalElem.element = getTraversalElement(vis.name);
+  //   traversalStrategy.push(traversalElem);
+  // }
+  // if(global.componentGraph.dashboard.globalFilter.filters.length !== 0){
+  //   const traversalElem2 = createTraversalElement("globalFilter");
+  //   traversalElem2.element = getTraversalElement("globalFilter");
+  //   traversalStrategy.push(traversalElem2);
+  // }
+
+  traversalStrategy.push(...customTraversalStrategy());
   return traversalStrategy;
 }
 
@@ -95,7 +98,7 @@ function setGroup(elem: Group) {
           traversalElem.categories = vis.categories;
           traversalElem.element = setFilterInfo();
           visuals.push(traversalElem);
-        } else if(vis.element.id.includes("group")){
+        } else if (vis.element.id.includes("group")) {
           const traversalElem = createTraversalElement("");
           traversalElem.count = vis.count;
           traversalElem.categories = vis.categories;
